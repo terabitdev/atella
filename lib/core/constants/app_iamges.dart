@@ -1,0 +1,11 @@
+const String onboardingImage = 'assets/images/onboardingimage.png';
+const String logo = 'assets/images/logo.png';
+const String cameraIcon = 'assets/images/camera.png';
+const String googleIcon = 'assets/images/google.png';
+const String homeIcon = 'assets/images/Home.png';
+const String createIcon = 'assets/images/create.png';
+const String profileIcon = 'assets/images/profile.png';
+const String emptyImage = 'assets/images/empty.png';
+const String searchIcon = 'assets/images/search.png';
+const String imageUrlIcon = 'assets/images/imageUrl.png';
+const String editbuttonIcon = 'assets/images/editbutton.png';
