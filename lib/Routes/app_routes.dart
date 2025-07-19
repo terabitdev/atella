@@ -8,4 +8,8 @@ class AppRoutes {
   static const String profile = '/profile';
   static const String create = '/create';
   static const String navBar = '/nav_bar';
+  static const String creativeBrief = '/creative_brief';
+  static const String gatheringBrief = '/gathering_brief';
+  static const String refineConcept = '/refine_concept';
+  static const String refiningConcept = '/refining_concept';
 }

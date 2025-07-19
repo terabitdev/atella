@@ -19,7 +19,7 @@ class HomeController extends GetxController {
 
   void startNewProject() {
     // Navigate to create project screen
-    Get.toNamed('/create');
+    Get.toNamed('/gathering_brief');
   }
 
   void clearSearch() {

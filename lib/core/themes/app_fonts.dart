@@ -97,3 +97,21 @@ final TextStyle VSTextStyle145002 = GoogleFonts.plusJakartaSans(
   fontWeight: FontWeight.w500,
   color: Colors.black,
 );
+
+final TextStyle QTextStyle16400 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: const Color.fromRGBO(44, 44, 44, 1),
+);
+
+final TextStyle QTextStyle14600 = GoogleFonts.outfit(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w600,
+  color: Color(0xFF8B5FE6),
+);
+
+final TextStyle GSTextStyle16600 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w600,
+  color: Colors.black,
+);

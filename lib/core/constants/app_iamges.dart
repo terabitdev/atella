@@ -9,3 +9,5 @@ const String emptyImage = 'assets/images/empty.png';
 const String searchIcon = 'assets/images/search.png';
 const String imageUrlIcon = 'assets/images/imageUrl.png';
 const String editbuttonIcon = 'assets/images/editbutton.png';
+const String chatbriefIcon = 'assets/images/chatbrief.png';
+const String refineIcon = 'assets/images/refineimage.png';
