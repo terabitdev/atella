@@ -1,3 +1,4 @@
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -36,6 +37,11 @@ final TextStyle ButtonTextStyle16600 = GoogleFonts.outfit(
   fontSize: 16.sp,
   fontWeight: FontWeight.w600,
   color: Colors.white,
+);
+final TextStyle GButtonTextStyle166001 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w600,
+  color: AppColors.splashcolor,
 );
 
 final TextStyle GoogleButtonTextStyle16600 = GoogleFonts.inter(
@@ -120,4 +126,46 @@ final TextStyle CBTextStyle12400 = GoogleFonts.outfit(
   fontSize: 12.sp,
   fontWeight: FontWeight.w400,
   color: Color.fromRGBO(44, 44, 44, 1),
+);
+
+final TextStyle GSTextStyle16400 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.white,
+);
+
+final TextStyle GSTextStyle17400 = GoogleFonts.outfit(
+  fontSize: 17.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.grey[700]!,
+);
+
+final TextStyle TPCTextStyle16400 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: const Color.fromRGBO(44, 44, 44, 1),
+);
+
+final TextStyle TPLTextStyle12400 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: const Color.fromRGBO(44, 44, 44, 1),
+);
+
+final TextStyle TPLTextStyle124001 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: AppColors.splashcolor,
+);
+
+final TextStyle TPTextStyle20600 = GoogleFonts.outfit(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.w600,
+  color: AppColors.splashcolor,
+);
+
+final TextStyle UITextTextStyle13500 = GoogleFonts.urbanist(
+  fontSize: 13.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.grey[700]!,
 );

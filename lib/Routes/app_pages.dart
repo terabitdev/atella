@@ -15,6 +15,8 @@ import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refining_brief_screen.dart';
 import 'package:atella/Modules/RefiningConcept/bindings/refining_concept_binding.dart';
+import 'package:atella/Modules/TechPack/Views/Screens/generate_tech_pack_screen.dart';
+import 'package:atella/Modules/TechPack/Views/Screens/tech_pack_details_screen.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/nav_bar.dart';
 import 'package:get/get.dart';
@@ -61,6 +63,14 @@ class AppPages {
       name: AppRoutes.finalDetails,
       page: () => const FinalDetailsScreen(),
       binding: FinalDetailsBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.generateTechPack,
+      page: () => GenerateTechPackScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.techPackDetails,
+      page: () => TechPackDetailsScreen(),
     ),
     // Add more routes here
   ];

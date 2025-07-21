@@ -17,3 +17,4 @@ const String chatbriefIcon = 'assets/images/chatbrief.png';
 const String refineIcon = 'assets/images/refineimage.png';
 const String finalimageIcon = 'assets/images/finalimage.png';
 const String generateIcon = 'assets/images/generate.png';
+const String generateTechPackIcon = 'assets/images/techpackgenerate.png';

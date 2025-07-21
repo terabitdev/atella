@@ -14,4 +14,6 @@ class AppRoutes {
   static const String refiningConcept = '/refining_concept';
   static const String finalDetailOnboard = '/final_detail_onboard';
   static const String finalDetails = '/final_details';
+  static const String generateTechPack = '/generate_tech_pack';
+  static const String techPackDetails = '/tech_pack_details_screen';
 }

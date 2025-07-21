@@ -300,6 +300,7 @@ class FinalDetailsController extends GetxController {
 
   // Generate final design
   void generateDesign() {
+    Get.toNamed('/generate_tech_pack');
     Get.snackbar(
       'Design Generated!',
       'Your custom design is being created...',
