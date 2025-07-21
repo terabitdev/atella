@@ -430,21 +430,18 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         // Show bottom input for all questions except the last two (index 5 and 6)
         if (controller.currentQuestionIndex < 5 &&
             !controller.isQuestionAnswered(currentQuestion.id)) {
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: TextInputWithSend(
-              controller: currentQuestion.id == 'colors'
+          return TextInputWithSend(
+            controller: currentQuestion.id == 'colors'
+                ? controller.colorController
+                : controller.fabricController,
+            placeholder: 'Lorem Ipsum',
+            onSend: () => controller.submitTextAnswer(
+              currentQuestion.id,
+              currentQuestion.id == 'colors'
                   ? controller.colorController
                   : controller.fabricController,
-              placeholder: 'Lorem Ipsum',
-              onSend: () => controller.submitTextAnswer(
-                currentQuestion.id,
-                currentQuestion.id == 'colors'
-                    ? controller.colorController
-                    : controller.fabricController,
-              ),
-              isLoading: controller.isTextLoading,
             ),
+            isLoading: controller.isTextLoading,
           );
         }
         return const SizedBox.shrink();

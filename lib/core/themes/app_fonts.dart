@@ -115,3 +115,9 @@ final TextStyle GSTextStyle16600 = GoogleFonts.outfit(
   fontWeight: FontWeight.w600,
   color: Colors.black,
 );
+
+final TextStyle CBTextStyle12400 = GoogleFonts.outfit(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w400,
+  color: Color.fromRGBO(44, 44, 44, 1),
+);

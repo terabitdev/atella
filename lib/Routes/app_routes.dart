@@ -12,4 +12,6 @@ class AppRoutes {
   static const String gatheringBrief = '/gathering_brief';
   static const String refineConcept = '/refine_concept';
   static const String refiningConcept = '/refining_concept';
+  static const String finalDetailOnboard = '/final_detail_onboard';
+  static const String finalDetails = '/final_details';
 }

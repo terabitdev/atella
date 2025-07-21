@@ -456,7 +456,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               title: 'Next Steps',
               onTap: () {
                 // Navigate to next screen
-                Get.toNamed('/next_screen'); // Update this route as needed
+                Get.toNamed(
+                  '/final_detail_onboard',
+                ); // Update this route as needed
               },
               color: const Color(0xFF8B5FE6),
               isloading: false,

@@ -5,8 +5,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class CreateScreen extends StatelessWidget {
-  const CreateScreen({super.key});
+class FinalDetailOnboard extends StatelessWidget {
+  const FinalDetailOnboard({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -17,7 +17,7 @@ class CreateScreen extends StatelessWidget {
           SizedBox(
             height: 450.h,
             width: double.infinity,
-            child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
+            child: Image.asset(finalimageIcon, fit: BoxFit.cover),
           ),
           Expanded(
             child: Container(
@@ -31,27 +31,15 @@ class CreateScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Gathering the Creative Brief ",
+                    "Final Details to Provide ",
                     textAlign: TextAlign.center,
                     style: OSTextStyle22700,
                   ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    "As your expert virtual fashion designer.",
-                    textAlign: TextAlign.center,
-                    style: GSTextStyle16600,
-                  ),
-                  SizedBox(height: 18.h),
-                  Text(
-                    "I’m here to help you create a custom garment or collection.",
-                    textAlign: TextAlign.center,
-                    style: OSTextStyle165002,
-                  ),
-                  SizedBox(height: 50.h),
+                  SizedBox(height: 70.h),
                   RoundButton(
-                    title: "Get Started",
+                    title: "Continue",
                     onTap: () {
-                      Get.toNamed('/creative_brief');
+                      Get.toNamed('/final_details');
                     },
                     color: const Color(0xFF8C82FF),
                     isloading: false,

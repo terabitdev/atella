@@ -2,6 +2,7 @@ import 'package:atella/Modules/Home/Controllers/navbar_controller.dart';
 import 'package:atella/core/constants/app_iamges.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
 class Custom_NavigationBar extends StatefulWidget {
@@ -32,15 +33,31 @@ class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
             indicatorColor: Colors.transparent, // Optional highlight effect
             destinations: [
               NavigationDestination(
-                icon: Image.asset(homeIcon, height: 30.h),
+                icon: SvgPicture.asset(
+                  controller.selectedindex.value == 0 ? homeColorIcon : home,
+                  height: 30.h,
+                  width: 30.w,
+                ),
                 label: 'Home',
               ),
               NavigationDestination(
-                icon: Image.asset(createIcon, height: 30.h),
+                icon: SvgPicture.asset(
+                  controller.selectedindex.value == 1
+                      ? createColorIcon
+                      : createIcon,
+                  height: 30.h,
+                  width: 30.w,
+                ),
                 label: 'Create',
               ),
               NavigationDestination(
-                icon: Image.asset(profileIcon, height: 30.h),
+                icon: SvgPicture.asset(
+                  controller.selectedindex.value == 2
+                      ? profileColorIcon
+                      : profileIcon,
+                  height: 30.h,
+                  width: 30.w,
+                ),
                 label: 'Profile',
               ),
             ],

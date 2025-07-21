@@ -6,6 +6,9 @@ import 'package:atella/Modules/Auth/View/Screens/verification_screen.dart';
 import 'package:atella/Modules/CreativeBrief/Bindings/creative_brief_binding.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Screens/creative_brief_Screen.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Screens/gathering_brief_screen.dart';
+import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_onboard.dart';
+import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_screen.dart';
+import 'package:atella/Modules/FinalDetails/bindings/final_detail_binding.dart';
 import 'package:atella/Modules/Home/View/Screens/create_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
@@ -49,6 +52,15 @@ class AppPages {
       name: AppRoutes.refiningConcept,
       page: () => const RefiningBriefScreen(),
       binding: RefiningConceptBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.finalDetailOnboard,
+      page: () => const FinalDetailOnboard(),
+    ),
+    GetPage(
+      name: AppRoutes.finalDetails,
+      page: () => const FinalDetailsScreen(),
+      binding: FinalDetailsBinding(),
     ),
     // Add more routes here
   ];
