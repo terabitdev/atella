@@ -1,5 +1,4 @@
 // File: lib/widgets/global_header.dart
-
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

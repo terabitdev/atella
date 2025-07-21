@@ -1,3 +1,4 @@
+import 'package:atella/Modules/TechPack/Views/Screens/tech_pack_ready_screen.dart';
 import 'package:atella/Routes/app_pages.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -20,8 +21,9 @@ class MyApp extends StatelessWidget {
         title: 'Atella',
         theme: ThemeData(primaryColor: Colors.deepPurpleAccent),
         debugShowCheckedModeBanner: false,
-        initialRoute: AppPages.INITIAL,
-        getPages: AppPages.routes,
+        // initialRoute: AppPages.INITIAL,
+        // getPages: AppPages.routes,
+        home: TechPackReadyScreen(),
       ),
     );
   }

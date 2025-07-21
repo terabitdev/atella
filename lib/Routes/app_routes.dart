@@ -16,4 +16,6 @@ class AppRoutes {
   static const String finalDetails = '/final_details';
   static const String generateTechPack = '/generate_tech_pack';
   static const String techPackDetails = '/tech_pack_details_screen';
+  static const String techPackReadyScreen = '/tech_pack_ready_screen';
+  static const String recommendedTechPack = '/recommended_tech_pack';
 }

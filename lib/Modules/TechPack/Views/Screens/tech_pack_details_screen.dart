@@ -416,7 +416,9 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const SizedBox(height: 20),
                                 OutlineGenerateRoundButton(
                                   title: 'Generate Tech Pack',
-                                  onTap: onContinue,
+                                  onTap: () {
+                                    Get.toNamed('/tech_pack_ready_screen');
+                                  },
                                   color: AppColors.splashcolor,
                                   loading: false,
                                   imagePath: generateTechPackIcon,
