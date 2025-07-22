@@ -1,5 +1,5 @@
 import 'package:atella/Modules/Home/Controllers/navbar_controller.dart';
-import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';

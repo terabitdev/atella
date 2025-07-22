@@ -2,7 +2,6 @@ import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/CreativeBrief/controllers/creative_brief_controller.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
-import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -29,25 +28,27 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             _buildHeader(),
-
-            // Main Content - Scrollable Questions List
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
                 child: _buildQuestionsList(),
               ),
             ),
-
-            // Loading Dots (only for non-last questions)
             _buildLoadingDots(),
+            Obx(() {
+              final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
+              final allQuestionsAnswered =
+                  controller.answers.length >= controller.questions.length;
 
-            // Bottom Input Area (only for questions 1-5)
-            _buildBottomInputArea(),
-
-            // Next Steps Button (only show when completed)
-            _buildBottomButton(),
+              if (allQuestionsAnswered) {
+                return _buildBottomButton();
+              }
+              if (isLastTwoQuestions) {
+                return const SizedBox.shrink();
+              }
+              return _buildBottomInputArea();
+            }),
           ],
         ),
       ),
@@ -61,7 +62,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         children: [
           Row(
             children: [
-              // Back Button
               GestureDetector(
                 onTap: Get.back,
                 child: Icon(
@@ -70,10 +70,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   color: Colors.black,
                 ),
               ),
-
               const Spacer(),
-
-              // Title with underline
               Column(
                 children: [
                   Text('Creative Brief', style: QTextStyle14600),
@@ -88,16 +85,11 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   ),
                 ],
               ),
-
               const Spacer(),
-
-              const SizedBox(width: 40), // Balance the back button
+              const SizedBox(width: 40),
             ],
           ),
-
           const SizedBox(height: 24),
-
-          // Timestamp
           Obx(
             () => Text(
               controller.currentTime,
@@ -114,26 +106,16 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildQuestionsList() {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) => ListView.builder(
+    return Obx(
+      () => ListView.builder(
         padding: const EdgeInsets.only(top: 32, bottom: 20),
-        itemCount: controller.currentQuestionIndex >= 5
-            ? controller
-                  .questions
-                  .length // Show all questions after question 5
-            : controller.currentQuestionIndex +
-                  1, // Show progressive questions for 1-5
+        itemCount: controller.currentQuestionIndex + 1,
         itemBuilder: (context, index) {
           final question = controller.questions[index];
           final isAnswered = controller.isQuestionAnswered(question.id);
           final isCurrentQuestion = index == controller.currentQuestionIndex;
 
-          return _buildQuestionItem(
-            question,
-            isAnswered,
-            isCurrentQuestion,
-            index,
-          );
+          return _buildQuestionItem(question, isAnswered, isCurrentQuestion);
         },
       ),
     );
@@ -143,14 +125,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     BriefQuestion question,
     bool isAnswered,
     bool isCurrentQuestion,
-    int index,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          // Question Bubble
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
@@ -162,13 +142,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 bottomLeft: Radius.circular(24.r),
                 bottomRight: Radius.circular(24.r),
               ),
-              // boxShadow: [
-              //   BoxShadow(
-              //     color: Colors.black.withOpacity(0.05),
-              //     blurRadius: 8,
-              //     offset: const Offset(0, 2),
-              //   ),
-              // ],
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -177,301 +150,163 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   child: Text(question.question, style: QTextStyle16400),
                 ),
                 const SizedBox(width: 12),
-                // Checkmark for answered questions
                 if (isAnswered)
                   Image.asset('assets/images/tick.png', height: 16, width: 16),
               ],
             ),
           ),
-
           const SizedBox(height: 16),
-
-          // Answer Options
           if (question.type == 'chips')
-            _buildChipOptions(question, isAnswered, isCurrentQuestion)
-          else if (question.type == 'text' &&
-              index >= 5) // Questions 6 and 7 (index 5 and 6)
-            _buildTextInputForQuestion(question, isAnswered, isCurrentQuestion),
+            _buildChipOptions(question, isAnswered)
+          else if (question.type == 'text' && isCurrentQuestion)
+            _buildTextInputForQuestion(question),
+          if (isAnswered && question.type == 'text')
+            _buildAnsweredText(question),
         ],
       ),
     );
   }
 
-  Widget _buildChipOptions(
-    BriefQuestion question,
-    bool isAnswered,
-    bool isCurrentQuestion,
-  ) {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) {
-        if (isAnswered) {
-          // Show answered options with selected one highlighted
-          final answer = controller.getAnswer(question.id);
-          return Wrap(
-            children: question.options.map((option) {
-              final isSelected =
-                  answer?.selectedOptions.contains(option) ?? false;
-              return Container(
-                margin: const EdgeInsets.only(right: 12, bottom: 8),
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
+  Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
+    return Obx(() {
+      final answer = controller.getAnswer(question.id);
+      return Wrap(
+        children: question.options.map((option) {
+          final isSelected = answer?.selectedOptions.contains(option) ?? false;
+          if (isAnswered) {
+            return Container(
+              margin: const EdgeInsets.only(right: 12, bottom: 8),
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+              decoration: BoxDecoration(
+                color: isSelected
+                    ? AppColors.buttonColor
+                    : const Color(0xFFF5F5F5),
+                borderRadius: BorderRadius.circular(20),
+                border: isSelected
+                    ? null
+                    : Border.all(color: const Color(0xFFE0E0E0)),
+              ),
+              child: Text(
+                option,
+                style: TextStyle(
+                  color: isSelected ? Colors.white : const Color(0xFF999999),
+                  fontSize: 14,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
                 ),
-                decoration: BoxDecoration(
-                  color: isSelected
-                      ? AppColors.buttonColor
-                      : const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(20),
-                  border: isSelected
-                      ? null
-                      : Border.all(color: const Color(0xFFE0E0E0)),
-                ),
-                child: Text(
-                  option,
-                  style: TextStyle(
-                    color: isSelected ? Colors.white : const Color(0xFF999999),
-                    fontSize: 14,
-                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                  ),
-                ),
-              );
-            }).toList(),
-          );
-        } else {
-          // Show interactive options for current question
-          return Wrap(
-            children: question.options.map((option) {
-              return SelectionChipWidget(
-                text: option,
-                isSelected: controller.isOptionSelected(option),
-                onTap: () => controller.selectOption(option),
-              );
-            }).toList(),
-          );
-        }
-      },
-    );
-  }
-
-  Widget buildAnsweredTextContent(BriefQuestion question) {
-    final answer = controller.getAnswer(question.id);
-    if (answer?.textInput != null) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF0F0F0),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          answer!.textInput!,
-          style: const TextStyle(fontSize: 14, color: Color(0xFF333333)),
-        ),
+              ),
+            );
+          } else {
+            return SelectionChipWidget(
+              text: option,
+              isSelected: controller.isOptionSelected(option),
+              onTap: () => controller.selectOption(option),
+            );
+          }
+        }).toList(),
       );
-    }
-    return const SizedBox.shrink();
+    });
   }
 
-  Widget _buildTextInputForQuestion(
-    BriefQuestion question,
-    bool isAnswered,
-    bool isCurrentQuestion,
-  ) {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) {
-        final textController = question.id == 'colors'
-            ? controller.colorController
-            : controller.fabricController;
-
-        // If question is answered and not being edited, show the answer with option to edit
-        if (isAnswered && !controller.isEditing(question.id)) {
-          final answer = controller.getAnswer(question.id);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Show the answered text
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF0F0F0),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  answer?.textInput ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF333333),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Show edit button
-              GestureDetector(
-                onTap: () => controller.enableEditing(question.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF8B5FE6).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF8B5FE6)),
-                  ),
-                  child: const Text(
-                    'Edit Answer',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF8B5FE6),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
+  Widget _buildTextInputForQuestion(BriefQuestion question) {
+    final textController = question.id == 'colors'
+        ? controller.colorController
+        : controller.fabricController;
+    return TextInputWithSend(
+      controller: textController,
+      placeholder: 'Lorem Ipsum',
+      onSend: () {
+        if (textController.text.trim().isNotEmpty) {
+          controller.submitTextAnswer(question.id, textController);
         }
-
-        // Show text input for current questions, future questions, or when editing
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextInputWithSend(
-              controller: textController,
-              placeholder: 'Lorem Ipsum',
-              onSend: () {
-                print(
-                  'TextInputWithSend onSend called for question: ${question.id}',
-                );
-                print('Text content: "${textController.text.trim()}"');
-                if (textController.text.trim().isNotEmpty) {
-                  print(
-                    'Calling submitTextAnswer for question: ${question.id}',
-                  );
-                  controller.submitTextAnswer(question.id, textController);
-                } else {
-                  print('Text is empty, not submitting');
-                }
-              },
-              isLoading: controller.isTextLoading,
-            ),
-            // Show cancel button if editing
-            if (controller.isEditing(question.id)) ...[
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => controller.cancelEditing(question.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFE0E0E0)),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF666666),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        );
       },
+      isLoading: controller.isTextLoading,
     );
   }
 
-  Widget _buildLoadingDots() {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) {
-        // Don't show dots after question 5 (when all questions are visible)
-        if (controller.currentQuestionIndex >= 5) {
-          return const SizedBox.shrink();
-        }
-
-        return Container(
-          padding: const EdgeInsets.symmetric(vertical: 20),
-          child: Row(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: List.generate(3, (index) {
-              return Container(
-                width: 8,
-                height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
-                decoration: BoxDecoration(
-                  color: AppColors.buttonColor,
-                  shape: BoxShape.circle,
-                ),
-              );
-            }),
-          ),
-        );
-      },
+  Widget _buildAnsweredText(BriefQuestion question) {
+    final answer = controller.getAnswer(question.id);
+    return Container(
+      margin: const EdgeInsets.only(right: 12, bottom: 8),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: BorderRadius.circular(20),
+      ),
+      child: Text(
+        answer?.textInput ?? '',
+        style: const TextStyle(fontSize: 14, color: Colors.white),
+      ),
     );
   }
 
   Widget _buildBottomInputArea() {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) {
-        final currentQuestion = controller.currentQuestion;
-
-        // Show bottom input for all questions except the last two (index 5 and 6)
-        if (controller.currentQuestionIndex < 5 &&
-            !controller.isQuestionAnswered(currentQuestion.id)) {
-          return TextInputWithSend(
-            controller: currentQuestion.id == 'colors'
+    return Obx(() {
+      final currentQuestion = controller.currentQuestion;
+      return TextInputWithSend(
+        controller: currentQuestion.id == 'colors'
+            ? controller.colorController
+            : controller.fabricController,
+        placeholder: 'Lorem Ipsum',
+        onSend: () {
+          final answer = controller.getAnswer(currentQuestion.id);
+          if (!controller.isOptionSelected('') &&
+              (answer?.selectedOptions.isEmpty ?? true)) {
+            Get.snackbar('Error', 'Please select an option before proceeding.');
+            return;
+          }
+          controller.submitTextAnswer(
+            currentQuestion.id,
+            currentQuestion.id == 'colors'
                 ? controller.colorController
                 : controller.fabricController,
-            placeholder: 'Lorem Ipsum',
-            onSend: () => controller.submitTextAnswer(
-              currentQuestion.id,
-              currentQuestion.id == 'colors'
-                  ? controller.colorController
-                  : controller.fabricController,
-            ),
-            isLoading: controller.isTextLoading,
           );
-        }
-        return const SizedBox.shrink();
-      },
-    );
+        },
+        isLoading: controller.isTextLoading,
+      );
+    });
   }
 
   Widget _buildBottomButton() {
-    return GetBuilder<CreativeBriefController>(
-      builder: (controller) {
-        // Debug information
-        print('Button Debug:');
-        print('Current question index: ${controller.currentQuestionIndex}');
-        print('Answers count: ${controller.answers.length}');
-        print('Total questions: ${controller.questions.length}');
-        print(
-          'Should show button: ${controller.currentQuestionIndex >= 5 && controller.answers.length >= 5}',
-        );
-
-        // Show button when all questions are visible (after question 5) and first 5 questions are answered
-        if (controller.currentQuestionIndex >= 5 &&
-            controller.answers.length >= 5) {
-          print('Showing Next Steps button!');
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: RoundButton(
-              title: 'Next Steps',
-              onTap: () {
-                Get.toNamed('/refine_concept');
-              },
-              color: AppColors.buttonColor,
-              isloading: false,
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
+    return Padding(
+      padding: const EdgeInsets.all(24),
+      child: RoundButton(
+        title: 'Next Steps',
+        onTap: () {
+          // Add any validation if needed before navigating
+          Get.toNamed('/refine_concept');
+        },
+        color: AppColors.buttonColor,
+        isloading: false,
+      ),
     );
   }
+}
+
+Widget _buildLoadingDots() {
+  return GetBuilder<CreativeBriefController>(
+    builder: (controller) {
+      // Don't show dots after question 5 (when all questions are visible)
+      if (controller.currentQuestionIndex >= 5) {
+        return const SizedBox.shrink();
+      }
+
+      return Container(
+        padding: const EdgeInsets.symmetric(vertical: 20),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: List.generate(3, (index) {
+            return Container(
+              width: 8,
+              height: 8,
+              margin: EdgeInsets.symmetric(horizontal: 4),
+              decoration: BoxDecoration(
+                color: AppColors.buttonColor,
+                shape: BoxShape.circle,
+              ),
+            );
+          }),
+        ),
+      );
+    },
+  );
 }

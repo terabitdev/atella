@@ -30,9 +30,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             children: [
               // Header
               GlobalHeader(title: 'Edit Profile', onBack: () => Get.back()),
-
               SizedBox(height: 32.h),
-
               // Profile Picture Section
               Center(
                 child: ProfilePictureWidget(

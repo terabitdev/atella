@@ -1,4 +1,4 @@
-import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
@@ -19,7 +19,7 @@ class AddProfilePicture extends StatelessWidget {
           borderType: BorderType.Circle,
           color: AppColors.buttonColor,
           dashPattern: [5, 5], // 5 is dash length, 5 is space length
-          strokeWidth: 2,
+          strokeWidth: 1,
           child: GestureDetector(
             onTap: onTap,
             child: Container(

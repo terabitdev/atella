@@ -5,8 +5,7 @@ import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widge
 import 'package:atella/Modules/FinalDetails/Views/Widgets/custom_check_boxes_widget.dart';
 import 'package:atella/Modules/FinalDetails/Views/Widgets/custom_generate_round_button_widget.dart';
 import 'package:atella/Modules/FinalDetails/controllers/final_detail_controller.dart';
-import 'package:atella/Widgets/custom_roundbutton.dart';
-import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';

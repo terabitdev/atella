@@ -1,6 +1,5 @@
-import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/services/splash_services.dart';
-import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -44,7 +43,12 @@ class _SplashScreenState extends State<SplashScreen> {
               children: [
                 Image.asset(logo, width: 34.w, height: 54.h),
                 SizedBox(width: 12.w), // 👈 Space between logo and text
-                Text('Atella', style: SSTextStyle42900),
+                // Text('Atella', style: SSTextStyle42900),
+                Image.asset(
+                  'assets/images/title.png',
+                  width: 160.w, // Adjust width as needed
+                  height: 48.h, // Adjust height as needed
+                ),
               ],
             ),
           ),

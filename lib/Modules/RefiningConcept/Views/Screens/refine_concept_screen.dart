@@ -1,5 +1,5 @@
 import 'package:atella/Widgets/custom_roundbutton.dart';
-import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';

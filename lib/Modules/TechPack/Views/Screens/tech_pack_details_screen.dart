@@ -1,15 +1,13 @@
 import 'package:atella/Modules/TechPack/Views/Widgets/roound_tag_container.dart';
 import 'package:atella/Widgets/app_header.dart';
-import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 import '../Widgets/tech_pack_question_field.dart';
 import '../Widgets/tech_pack_image_upload_container.dart';
 import 'package:atella/Modules/TechPack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/core/themes/app_colors.dart';
-import 'package:atella/core/constants/app_iamges.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
   TechPackDetailsScreen({Key? key}) : super(key: key);
@@ -17,6 +15,9 @@ class TechPackDetailsScreen extends StatelessWidget {
 
   void onContinue() {
     // TODO: Implement continue logic
+    // Example: Use ScreenUtil to set a responsive width
+    // double responsiveWidth = 100.w;
+    // You can use .w, .h, .sp, etc. for responsive sizing throughout the screen.
   }
 
   @override

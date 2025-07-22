@@ -41,12 +41,19 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
             // Loading Dots (only for non-last questions)
             _buildLoadingDots(),
+            Obx(() {
+              final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
+              final allQuestionsAnswered =
+                  controller.answers.length >= controller.questions.length;
 
-            // Bottom Input Area (only for questions 1-5)
-            _buildBottomInputArea(),
-
-            // Next Steps Button (only show when completed)
-            _buildBottomButton(),
+              if (allQuestionsAnswered) {
+                return _buildBottomButton();
+              }
+              if (isLastTwoQuestions) {
+                return const SizedBox.shrink();
+              }
+              return _buildBottomInputArea();
+            }),
           ],
         ),
       ),
