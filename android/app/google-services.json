@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "311073432007",
+    "project_id": "atelia-d3aaf",
+    "storage_bucket": "atelia-d3aaf.firebasestorage.app"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:311073432007:android:ec741ca8058b348cd0f9e2",
+        "android_client_info": {
+          "package_name": "com.example.atella"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCRYe3TQXpmzjNVImXK-LlrmbY0dBxquQg"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

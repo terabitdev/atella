@@ -6,7 +6,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../controllers/login_controller.dart';
+import 'package:atella/Modules/Auth/Controllers/login_controller.dart';
 import '../widgets/auth_textfield.dart';
 
 class LoginScreen extends StatelessWidget {
@@ -26,6 +26,23 @@ class LoginScreen extends StatelessWidget {
                   label: 'Email',
                   controller: controller.emailController,
                 ),
+                Obx(
+                  () => controller.emailError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.emailError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 SizedBox(height: 20.h),
 
                 /// Password Field
@@ -33,6 +50,23 @@ class LoginScreen extends StatelessWidget {
                   label: 'Password',
                   controller: controller.passwordController,
                   isPassword: true,
+                ),
+                Obx(
+                  () => controller.passwordError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.passwordError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
                 ),
                 SizedBox(height: 12.h),
 
@@ -49,11 +83,17 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 10.h),
 
                 /// Round Login Button (Global)
-                RoundButton(
-                  title: "Log in",
-                  onTap: controller.login,
-                  color: AppColors.buttonColor,
-                  isloading: false,
+                Obx(
+                  () => RoundButton(
+                    title: "Log in",
+                    onTap: controller.isLoading.value
+                        ? null
+                        : () {
+                            controller.login();
+                          },
+                    color: AppColors.buttonColor,
+                    isloading: controller.isLoading.value,
+                  ),
                 ),
                 const SizedBox(height: 30),
 

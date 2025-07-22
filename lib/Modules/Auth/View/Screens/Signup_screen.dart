@@ -7,13 +7,10 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
 import '../widgets/add_profile_picture.dart';
+import 'package:atella/Modules/Auth/Controllers/signup_controller.dart';
 
 class SignUpscreen extends StatelessWidget {
-  final TextEditingController nameController = TextEditingController();
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
-  final TextEditingController confirmPasswordController =
-      TextEditingController();
+  final SignupController controller = Get.put(SignupController());
 
   SignUpscreen({super.key});
 
@@ -30,32 +27,110 @@ class SignUpscreen extends StatelessWidget {
                 const AuthHeader(title: "Create your account"),
                 AddProfilePicture(
                   onTap: () {
-                    // Implement image picker
+                    // Implement image picker (not required for now)
                   },
                 ),
-                AuthTextField(label: "Full Name", controller: nameController),
+                AuthTextField(
+                  label: "Full Name",
+                  controller: controller.nameController,
+                ),
+                Obx(
+                  () => controller.nameError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.nameError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 SizedBox(height: 16.h),
-                AuthTextField(label: "Email", controller: emailController),
+                AuthTextField(
+                  label: "Email",
+                  controller: controller.emailController,
+                ),
+                Obx(
+                  () => controller.emailError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.emailError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
                 SizedBox(height: 16.h),
                 AuthTextField(
                   label: "Password",
-                  controller: passwordController,
+                  controller: controller.passwordController,
                   isPassword: true,
+                ),
+                Obx(
+                  () => controller.passwordError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.passwordError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
                 ),
                 SizedBox(height: 16.h),
                 AuthTextField(
                   label: "Confirm Password",
-                  controller: confirmPasswordController,
+                  controller: controller.confirmPasswordController,
                   isPassword: true,
                 ),
-                SizedBox(height: 24.h),
-                RoundButton(
-                  title: "Sign Up",
-                  onTap: () {
-                    // Signup logic
-                  },
-                  color: AppColors.buttonColor,
-                  isloading: false,
+                Obx(
+                  () => controller.confirmPasswordError.value.isNotEmpty
+                      ? Padding(
+                          padding: EdgeInsets.only(left: 8.w, top: 2.h),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text(
+                              controller.confirmPasswordError.value,
+                              style: TextStyle(
+                                color: Colors.red,
+                                fontSize: 12.sp,
+                              ),
+                            ),
+                          ),
+                        )
+                      : SizedBox.shrink(),
+                ),
+                SizedBox(height: 12.h),
+                Obx(
+                  () => RoundButton(
+                    title: "Sign Up",
+                    onTap: controller.isLoading.value
+                        ? null
+                        : () {
+                            controller.signUp();
+                          },
+                    color: AppColors.buttonColor,
+                    isloading: controller.isLoading.value,
+                  ),
                 ),
                 SizedBox(height: 20.h),
                 Row(
