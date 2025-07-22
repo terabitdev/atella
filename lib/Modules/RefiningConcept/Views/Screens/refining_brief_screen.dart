@@ -3,6 +3,7 @@ import 'package:atella/Modules/RefiningConcept/controllers/refining_concept_cont
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -88,7 +89,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     width: 40,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5FE6),
+                      color: AppColors.buttonColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -161,7 +162,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-              color: const Color.fromARGB(129, 247, 247, 247),
+              color: Colors.black,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4.r),
                 topRight: Radius.circular(24.r),
@@ -218,7 +219,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Color.fromRGBO(139, 134, 254, 1)
+                      ? AppColors.buttonColor
                       : const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(20),
                   border: isSelected
@@ -401,9 +402,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               return Container(
                 width: 8,
                 height: 8,
-                margin: const EdgeInsets.symmetric(horizontal: 4),
+                margin: EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5FE6),
+                  color: AppColors.buttonColor,
                   shape: BoxShape.circle,
                 ),
               );
@@ -460,7 +461,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   '/final_detail_onboard',
                 ); // Update this route as needed
               },
-              color: const Color(0xFF8B5FE6),
+              color: AppColors.buttonColor,
               isloading: false,
             ),
           );

@@ -6,31 +6,31 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 final TextStyle SSTextStyle42900 = GoogleFonts.outfit(
   fontSize: 42.sp,
   fontWeight: FontWeight.w900,
-  color: Colors.white,
+  color: const Color.fromRGBO(9, 11, 12, 1),
 );
 
-final TextStyle OSTextStyle22700 = GoogleFonts.outfit(
+final TextStyle OSTextStyle18600 = GoogleFonts.outfit(
   fontSize: 22.sp,
   fontWeight: FontWeight.w700,
   color: Colors.black,
 );
 
-final TextStyle OSTextStyle165002 = GoogleFonts.outfit(
+final TextStyle OSTextStyle165002 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w500,
   color: Colors.grey[700],
 );
 
-final TextStyle OSTextStyle165003 = GoogleFonts.outfit(
+final TextStyle OSTextStyle165003 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w500,
   color: Colors.black,
 );
 
-final TextStyle OSTextStyle165004 = GoogleFonts.outfit(
+final TextStyle OSTextStyle167004 = GoogleFonts.manrope(
   fontSize: 16.sp,
-  fontWeight: FontWeight.w500,
-  color: const Color(0xFF8C82FF),
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
 );
 
 final TextStyle ButtonTextStyle16600 = GoogleFonts.outfit(
@@ -41,7 +41,7 @@ final TextStyle ButtonTextStyle16600 = GoogleFonts.outfit(
 final TextStyle GButtonTextStyle166001 = GoogleFonts.outfit(
   fontSize: 16.sp,
   fontWeight: FontWeight.w600,
-  color: AppColors.splashcolor,
+  color: AppColors.buttonColor,
 );
 
 final TextStyle GoogleButtonTextStyle16600 = GoogleFonts.inter(
@@ -50,13 +50,13 @@ final TextStyle GoogleButtonTextStyle16600 = GoogleFonts.inter(
   color: Color.fromRGBO(51, 51, 51, 1),
 );
 
-final TextStyle LoginTextTextStyle22700 = GoogleFonts.outfit(
+final TextStyle LoginTextTextStyle22700 = GoogleFonts.manrope(
   fontSize: 22.sp,
   fontWeight: FontWeight.w700,
   color: Color.fromRGBO(51, 51, 51, 1),
 );
 
-final TextStyle AuthLableTextTextStyle14400 = GoogleFonts.outfit(
+final TextStyle AuthLableTextTextStyle14400 = GoogleFonts.manrope(
   fontSize: 14.sp,
   fontWeight: FontWeight.w400,
   color: Color.fromRGBO(51, 51, 51, 1),
@@ -68,55 +68,55 @@ final TextStyle ForgotTextTextStyle16500 = GoogleFonts.outfit(
   color: Color(0xFF8C82FF),
 );
 
-final TextStyle LLastTextStyle14400 = GoogleFonts.outfit(
-  fontSize: 14.sp,
-  fontWeight: FontWeight.w400,
+final TextStyle LLastTextStyle16500 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w500,
   color: Colors.black,
 );
 
-final TextStyle LLastTextStyle144002 = GoogleFonts.outfit(
-  fontSize: 14.sp,
-  fontWeight: FontWeight.w400,
-  color: Color(0xFF8C82FF),
+final TextStyle LLastTextStyle16700 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
 );
 
-final TextStyle ContinuewithTextTextStyle13400 = GoogleFonts.plusJakartaSans(
+final TextStyle ContinuewithTextTextStyle13400 = GoogleFonts.manrope(
   fontSize: 13.sp,
   fontWeight: FontWeight.w600,
   color: Color.fromRGBO(100, 100, 110, 1),
 );
 
-final TextStyle AuthLableTextTextStyle144002 = GoogleFonts.outfit(
+final TextStyle AuthLableTextTextStyle144002 = GoogleFonts.manrope(
   fontSize: 14.sp,
   fontWeight: FontWeight.w400,
   color: Color.fromRGBO(132, 131, 134, 1),
 );
 
-final TextStyle VSTextStyle20600 = GoogleFonts.outfit(
+final TextStyle VSTextStyle20600 = GoogleFonts.manrope(
   fontSize: 20.sp,
   fontWeight: FontWeight.w600,
   color: Colors.black,
 );
 
-final TextStyle VSTextStyle145002 = GoogleFonts.plusJakartaSans(
+final TextStyle VSTextStyle145002 = GoogleFonts.manrope(
   fontSize: 14.sp,
   fontWeight: FontWeight.w500,
   color: Colors.black,
 );
 
-final TextStyle QTextStyle16400 = GoogleFonts.outfit(
+final TextStyle QTextStyle16400 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w400,
-  color: const Color.fromRGBO(44, 44, 44, 1),
+  color: Colors.white,
 );
 
-final TextStyle QTextStyle14600 = GoogleFonts.outfit(
+final TextStyle QTextStyle14600 = GoogleFonts.manrope(
   fontSize: 14.sp,
-  fontWeight: FontWeight.w600,
-  color: Color(0xFF8B5FE6),
+  fontWeight: FontWeight.w800,
+  color: AppColors.buttonColor,
 );
 
-final TextStyle GSTextStyle16600 = GoogleFonts.outfit(
+final TextStyle GSTextStyle16600 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w600,
   color: Colors.black,
@@ -128,10 +128,10 @@ final TextStyle CBTextStyle12400 = GoogleFonts.outfit(
   color: Color.fromRGBO(44, 44, 44, 1),
 );
 
-final TextStyle GSTextStyle16400 = GoogleFonts.outfit(
+final TextStyle GSTextStyle16400 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w400,
-  color: Colors.white,
+  color: Colors.black,
 );
 
 final TextStyle GSTextStyle17400 = GoogleFonts.outfit(
@@ -140,22 +140,22 @@ final TextStyle GSTextStyle17400 = GoogleFonts.outfit(
   color: Colors.grey[700]!,
 );
 
-final TextStyle TPCTextStyle16400 = GoogleFonts.outfit(
+final TextStyle TPCTextStyle16400 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.white,
+);
+
+final TextStyle TPLTextStyle12400 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w400,
   color: const Color.fromRGBO(44, 44, 44, 1),
 );
 
-final TextStyle TPLTextStyle12400 = GoogleFonts.outfit(
+final TextStyle TPLTextStyle124001 = GoogleFonts.manrope(
   fontSize: 16.sp,
   fontWeight: FontWeight.w400,
-  color: const Color.fromRGBO(44, 44, 44, 1),
-);
-
-final TextStyle TPLTextStyle124001 = GoogleFonts.outfit(
-  fontSize: 16.sp,
-  fontWeight: FontWeight.w400,
-  color: AppColors.splashcolor,
+  color: AppColors.buttonColor,
 );
 
 final TextStyle TPTextStyle20600 = GoogleFonts.outfit(
@@ -168,4 +168,93 @@ final TextStyle UITextTextStyle13500 = GoogleFonts.urbanist(
   fontSize: 13.sp,
   fontWeight: FontWeight.w500,
   color: Colors.grey[700]!,
+);
+
+final TextStyle TPRTTextTextStyle28700 = GoogleFonts.outfit(
+  fontSize: 28.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle TPRTTextTextStyle184001 = GoogleFonts.outfit(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.grey[700]!,
+);
+
+final TextStyle TPRTTextTextStyle164002 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+);
+
+final TextStyle RSTTextTextStyle14600 = GoogleFonts.outfit(
+  fontSize: 41.sp,
+  fontWeight: FontWeight.bold,
+);
+
+final TextStyle MSTTextTextStyle26700 = GoogleFonts.outfit(
+  fontSize: 26.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle MSTTextTextStyle184001 = GoogleFonts.outfit(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle CSTTextTextStyle16500 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+);
+
+final TextStyle PTTextTextStyle18700 = GoogleFonts.outfit(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle PTTextTextStyle16400 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle DDTextTextStyle14400 = GoogleFonts.outfit(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle DDTextTextStyle16500 = GoogleFonts.outfit(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+);
+
+final TextStyle imageUploadTextTextStyle14500 = GoogleFonts.inter(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+);
+
+final TextStyle imageUploadTextTextStyle13300 = GoogleFonts.inter(
+  fontSize: 13.sp,
+  fontWeight: FontWeight.w300,
+  color: Colors.black,
+);
+
+final TextStyle imageUploadButtonTextTextStyle12400 = GoogleFonts.inter(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle ESTitleTextTextStyle12400 = GoogleFonts.manrope(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.w800,
+  color: Colors.black,
 );

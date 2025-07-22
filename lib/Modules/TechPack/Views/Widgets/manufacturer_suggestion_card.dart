@@ -73,13 +73,13 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    side: const BorderSide(color: Color(0xFF8B88F8), width: 1),
+                    side: const BorderSide(color: Colors.black, width: 1),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: const Text(
                     'View Profile',
                     style: TextStyle(
-                      color: Color(0xFF8B88F8),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),
@@ -93,13 +93,13 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8),
                     ),
-                    side: const BorderSide(color: Color(0xFF8B88F8), width: 1),
+                    side: const BorderSide(color: Colors.black, width: 1),
                     padding: const EdgeInsets.symmetric(vertical: 12),
                   ),
                   child: const Text(
                     'Contact',
                     style: TextStyle(
-                      color: Color(0xFF8B88F8),
+                      color: Colors.black,
                       fontWeight: FontWeight.w600,
                     ),
                   ),

@@ -1,3 +1,4 @@
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -37,10 +38,7 @@ class AuthTextField extends StatelessWidget {
             ),
             focusedBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.r),
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(139, 134, 254, 1), // Purple
-                width: 1.5,
-              ),
+              borderSide: BorderSide(color: AppColors.buttonColor, width: 1.5),
             ),
             contentPadding: EdgeInsets.symmetric(
               vertical: 16.h,

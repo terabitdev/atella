@@ -1,4 +1,6 @@
+import 'package:atella/Modules/TechPack/Views/Screens/edit_project_screen.dart';
 import 'package:atella/Modules/TechPack/Views/Screens/recommended_manufacture_screen.dart';
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -23,27 +25,26 @@ class TechPackReadyScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  const Text(
+                  Text(
                     'Your Tech Pack Is \nReady',
-                    style: TextStyle(
-                      fontSize: 28,
-                      fontWeight: FontWeight.w700,
-                      color: Color(0xFF222222),
-                    ),
+                    style: TPRTTextTextStyle28700,
                   ),
-                  Image.asset(
-                    'assets/images/edit.png',
-                    width: 36.w,
-                    height: 36.h,
+                  InkWell(
+                    onTap: () => Get.to(EditProjectScreen()),
+                    child: Image.asset(
+                      'assets/images/edit.png',
+                      width: 36.w,
+                      height: 36.h,
+                    ),
                   ),
                 ],
               ),
-              const SizedBox(height: 8),
-              const Text(
+              SizedBox(height: 13.h),
+              Text(
                 'Garment: Short-sleeve Shirt',
-                style: TextStyle(fontSize: 18, color: Color(0xFF444444)),
+                style: TPRTTextTextStyle184001,
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 30.h),
               Row(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
@@ -61,12 +62,9 @@ class TechPackReadyScreen extends StatelessWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
-                        const Text(
+                        Text(
                           'Key Measurements',
-                          style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            fontSize: 18,
-                          ),
+                          style: TPRTTextTextStyle164002,
                         ),
                         const SizedBox(height: 4),
                         const Text(
@@ -83,7 +81,7 @@ class TechPackReadyScreen extends StatelessWidget {
                               child: RoundButton(
                                 title: 'Export',
                                 onTap: () {},
-                                color: AppColors.splashcolor,
+                                color: AppColors.buttonColor,
                                 isloading: false,
                               ),
                             ),
@@ -109,9 +107,9 @@ class TechPackReadyScreen extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              Icons.check_box_outlined,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              Icons.check_box_outline_blank_outlined,
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -127,9 +125,9 @@ class TechPackReadyScreen extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              Icons.check_box_outlined,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              Icons.check_box_outline_blank_outlined,
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -145,9 +143,9 @@ class TechPackReadyScreen extends StatelessWidget {
                         Row(
                           children: [
                             Icon(
-                              Icons.check_box_outlined,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              Icons.check_box_outline_blank_outlined,
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -185,8 +183,8 @@ class TechPackReadyScreen extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.check_box_outline_blank,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -202,8 +200,8 @@ class TechPackReadyScreen extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.check_box_outline_blank,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -219,8 +217,8 @@ class TechPackReadyScreen extends StatelessWidget {
                           children: [
                             Icon(
                               Icons.check_box_outline_blank,
-                              size: 18,
-                              color: Color(0xFF8B88F8),
+                              size: 7,
+                              color: Colors.black,
                             ),
                             SizedBox(width: 6),
                             Text(
@@ -303,8 +301,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('Embroidered logo'),
@@ -314,8 +312,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('Size: care label'),
@@ -325,8 +323,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('QR code for product authenticity'),
@@ -343,8 +341,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('Target Cost: €38'),
@@ -354,8 +352,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('Quantity: 1,000 Units'),
@@ -365,8 +363,8 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Icon(
                     Icons.check_box_outline_blank,
-                    size: 18,
-                    color: Color(0xFF8B88F8),
+                    size: 7,
+                    color: Colors.black,
                   ),
                   SizedBox(width: 6),
                   Text('Delivery Deadline: Sept 30, 2025'),
@@ -379,7 +377,7 @@ class TechPackReadyScreen extends StatelessWidget {
                   // Get.toNamed('/recommended_tech_pack');
                   Get.to(() => const RecommendedManufactureScreen());
                 },
-                color: AppColors.splashcolor,
+                color: AppColors.buttonColor,
                 isloading: false,
               ),
               const SizedBox(height: 16),

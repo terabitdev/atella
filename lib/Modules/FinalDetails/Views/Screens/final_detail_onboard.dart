@@ -1,5 +1,6 @@
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,7 +34,7 @@ class FinalDetailOnboard extends StatelessWidget {
                   Text(
                     "Final Details to Provide ",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle22700,
+                    style: OSTextStyle18600,
                   ),
                   SizedBox(height: 70.h),
                   RoundButton(
@@ -41,7 +42,7 @@ class FinalDetailOnboard extends StatelessWidget {
                     onTap: () {
                       Get.toNamed('/final_details');
                     },
-                    color: const Color(0xFF8C82FF),
+                    color: AppColors.buttonColor,
                     isloading: false,
                   ),
                 ],

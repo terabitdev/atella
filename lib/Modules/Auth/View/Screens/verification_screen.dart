@@ -55,7 +55,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               RoundButton(
                 title: 'Send Verification Link',
                 onTap: controller.sendVerificationLink,
-                color: AppColors.splashcolor,
+                color: AppColors.buttonColor,
                 isloading: false,
               ),
 

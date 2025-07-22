@@ -4,6 +4,7 @@ import 'package:atella/Modules/CreativeBrief/Views/Widgets/selection_chip_widget
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -63,18 +64,10 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               // Back Button
               GestureDetector(
                 onTap: Get.back,
-                child: Container(
-                  width: 34.w,
-                  height: 34.w,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 20.sp,
-                    color: Colors.black,
-                  ),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20.sp,
+                  color: Colors.black,
                 ),
               ),
 
@@ -89,7 +82,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     width: 40,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5FE6),
+                      color: AppColors.buttonColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -161,8 +154,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           Container(
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
+              color: Colors.black,
               border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-              color: const Color.fromARGB(129, 247, 247, 247),
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4.r),
                 topRight: Radius.circular(24.r),
@@ -226,7 +219,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 ),
                 decoration: BoxDecoration(
                   color: isSelected
-                      ? Color.fromRGBO(139, 134, 254, 1)
+                      ? AppColors.buttonColor
                       : const Color(0xFFF5F5F5),
                   borderRadius: BorderRadius.circular(20),
                   border: isSelected
@@ -411,7 +404,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 height: 8,
                 margin: const EdgeInsets.symmetric(horizontal: 4),
                 decoration: BoxDecoration(
-                  color: const Color(0xFF8B5FE6),
+                  color: AppColors.buttonColor,
                   shape: BoxShape.circle,
                 ),
               );
@@ -472,7 +465,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               onTap: () {
                 Get.toNamed('/refine_concept');
               },
-              color: const Color(0xFF8B5FE6),
+              color: AppColors.buttonColor,
               isloading: false,
             ),
           );

@@ -1,4 +1,5 @@
 import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -16,7 +17,7 @@ class AddProfilePicture extends StatelessWidget {
       children: [
         DottedBorder(
           borderType: BorderType.Circle,
-          color: const Color.fromRGBO(246, 121, 82, 1),
+          color: AppColors.buttonColor,
           dashPattern: [5, 5], // 5 is dash length, 5 is space length
           strokeWidth: 2,
           child: GestureDetector(

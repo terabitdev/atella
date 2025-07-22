@@ -1,6 +1,7 @@
 import 'package:atella/Modules/Auth/View/Widgets/auth_header.dart';
 import 'package:atella/Modules/Auth/View/Widgets/google_signin_button.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -42,10 +43,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Get.toNamed('/verification');
                     },
-                    child: Text(
-                      "Forgot Password?",
-                      style: ForgotTextTextStyle16500,
-                    ),
+                    child: Text("Forgot Password?", style: LLastTextStyle16700),
                   ),
                 ),
                 SizedBox(height: 10.h),
@@ -54,24 +52,17 @@ class LoginScreen extends StatelessWidget {
                 RoundButton(
                   title: "Log in",
                   onTap: controller.login,
-                  color: const Color(0xFF8C82FF),
+                  color: AppColors.buttonColor,
                   isloading: false,
                 ),
                 const SizedBox(height: 30),
 
                 /// Divider
-                Row(
-                  children: [
-                    Expanded(child: Divider()),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 10),
-                      child: Text(
-                        "Or continue with",
-                        style: ContinuewithTextTextStyle13400,
-                      ),
-                    ),
-                    Expanded(child: Divider()),
-                  ],
+                Center(
+                  child: Text(
+                    "Or continue with",
+                    style: ContinuewithTextTextStyle13400,
+                  ),
                 ),
                 const SizedBox(height: 20),
 
@@ -89,10 +80,10 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don’t have an account? ", style: LLastTextStyle14400),
+                    Text("Don’t have an account? ", style: LLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.toNamed('/signup'),
-                      child: Text("Sign Up", style: LLastTextStyle144002),
+                      child: Text("Sign Up", style: LLastTextStyle16700),
                     ),
                   ],
                 ),

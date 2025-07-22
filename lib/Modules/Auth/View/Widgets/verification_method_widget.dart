@@ -28,7 +28,7 @@ class VerificationMethodWidget extends StatelessWidget {
         padding: EdgeInsets.all(16.w),
         decoration: BoxDecoration(
           color: Colors.white,
-          borderRadius: BorderRadius.circular(6.r),
+          borderRadius: BorderRadius.circular(16.r),
           border: Border.all(
             color: Color.fromRGBO(233, 233, 233, 1), // Light gray
             width: 1.5,
@@ -66,7 +66,7 @@ class VerificationMethodWidget extends StatelessWidget {
                 shape: BoxShape.circle,
                 border: Border.all(
                   color: isSelected
-                      ? AppColors.splashcolor
+                      ? AppColors.buttonColor
                       : Colors.grey.shade400,
                   width: 2,
                 ),
@@ -75,7 +75,7 @@ class VerificationMethodWidget extends StatelessWidget {
                   ? Container(
                       margin: EdgeInsets.all(4.w),
                       decoration: BoxDecoration(
-                        color: AppColors.splashcolor,
+                        color: AppColors.buttonColor,
                         shape: BoxShape.circle,
                       ),
                     )

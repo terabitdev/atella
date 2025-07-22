@@ -1,7 +1,9 @@
+import 'package:atella/Modules/TechPack/Views/Screens/view_profile_tech_pack_screen.dart';
+import 'package:atella/Modules/TechPack/Views/Widgets/segmented_tab_switcher.dart';
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../Widgets/manufacturer_suggestion_card.dart';
-import '../Widgets/save_export_button_row.dart';
 import '../../controllers/manufacturer_suggestion_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -18,68 +20,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
         child: Obx(
           () => Column(
             children: [
-              // Tab Bar
-              Padding(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 18,
-                  vertical: 18,
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.tabIndex.value = 0,
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: controller.tabIndex.value == 0
-                                ? const Color(0xFF8B88F8)
-                                : const Color(0xFFE3E1FB),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Recommended Manufacturers',
-                            style: TextStyle(
-                              color: controller.tabIndex.value == 0
-                                  ? Colors.white
-                                  : const Color(0xFF8B88F8),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 8),
-                    Expanded(
-                      child: GestureDetector(
-                        onTap: () => controller.tabIndex.value = 1,
-                        child: Container(
-                          height: 48,
-                          decoration: BoxDecoration(
-                            color: controller.tabIndex.value == 1
-                                ? const Color(0xFF8B88F8)
-                                : const Color(0xFFE3E1FB),
-                            borderRadius: BorderRadius.circular(24),
-                          ),
-                          alignment: Alignment.center,
-                          child: Text(
-                            'Custom',
-                            style: TextStyle(
-                              color: controller.tabIndex.value == 1
-                                  ? Colors.white
-                                  : const Color(0xFF8B88F8),
-                              fontWeight: FontWeight.w600,
-                              fontSize: 16,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
+              SegmentedTabSwitcher(controller: controller),
               Expanded(
                 child: controller.tabIndex.value == 0
                     ? _RecommendedTab(controller)
@@ -100,14 +41,11 @@ Widget _RecommendedTab(ManufacturerSuggestionController controller) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        const Text(
-          'Manufacturer Suggestions',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28),
-        ),
+        Text('Manufacturer Suggestions', style: MSTTextTextStyle26700),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'We found 3 potential manufacturers that fit your product needs.',
-          style: TextStyle(fontSize: 17, color: Color(0xFF222222)),
+          style: MSTTextTextStyle184001,
         ),
         const SizedBox(height: 18),
         ...controller.recommendedManufacturers.map(
@@ -133,20 +71,14 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        const Text(
-          'Filter Manufacturers Manually',
-          style: TextStyle(fontWeight: FontWeight.w800, fontSize: 28),
-        ),
+        Text('Filter Manufacturers Manually', style: MSTTextTextStyle26700),
         const SizedBox(height: 8),
-        const Text(
+        Text(
           'Use filters below to search our full manufacturer directory:',
-          style: TextStyle(fontSize: 17, color: Color(0xFF222222)),
+          style: MSTTextTextStyle184001,
         ),
         const SizedBox(height: 18),
-        const Text(
-          'Country or Region',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-        ),
+        Text('Country or Region', style: CSTTextTextStyle16500),
         const SizedBox(height: 8),
         Obx(
           () => DropdownButtonFormField<String>(
@@ -157,7 +89,7 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
             onChanged: (v) => controller.selectedCountry.value = v!,
             decoration: InputDecoration(
               filled: true,
-              fillColor: const Color(0xFFE3E1FB),
+              fillColor: const Color.fromARGB(255, 227, 225, 251),
               border: OutlineInputBorder(
                 borderRadius: BorderRadius.circular(12),
                 borderSide: BorderSide.none,
@@ -170,10 +102,7 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
           ),
         ),
         const SizedBox(height: 18),
-        const Text(
-          'Minimum Order Quantity (MOQ)',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
-        ),
+        Text('Minimum Order Quantity (MOQ)', style: CSTTextTextStyle16500),
         const SizedBox(height: 8),
         Obx(
           () => Row(
@@ -185,7 +114,7 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
                   max: 500,
                   divisions: 50,
                   label: '${controller.moq.value} pcs',
-                  activeColor: const Color(0xFF8B88F8),
+                  activeColor: Colors.black,
                   inactiveColor: const Color(0xFFE3E1FB),
                   onChanged: (v) => controller.moq.value = v.round(),
                 ),
@@ -232,7 +161,9 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
             location: m['location']!,
             moq: m['moq']!,
             description: m['description']!,
-            onViewProfile: () {},
+            onViewProfile: () {
+              Get.to(ViewProfileTechPackScreen());
+            },
             onContact: () {},
           ),
         ),
@@ -240,7 +171,7 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
         RoundButton(
           title: 'Search',
           onTap: () {},
-          color: AppColors.splashcolor,
+          color: AppColors.buttonColor,
           isloading: false,
         ),
         const SizedBox(height: 18),

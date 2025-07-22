@@ -12,7 +12,7 @@ class TechPackController extends GetxController {
   @override
   void onInit() {
     super.onInit();
-    Future.delayed(const Duration(seconds: 2), () {
+    Future.delayed(const Duration(seconds: 3), () {
       isLoading.value = false;
     });
   }

@@ -36,7 +36,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Image.asset(
                     logo,
                     height: 60.h,
-                    width: 60.w,
+                    width: 37.w,
                     fit: BoxFit.cover,
                   ),
                 ),
@@ -84,7 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 RoundButton(
                   title: 'Start New Project',
                   onTap: controller.startNewProject,
-                  color: AppColors.splashcolor,
+                  color: AppColors.buttonColor,
                   isloading: false,
                 ),
               ],

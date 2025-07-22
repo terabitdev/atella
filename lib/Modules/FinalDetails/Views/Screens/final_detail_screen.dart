@@ -7,6 +7,7 @@ import 'package:atella/Modules/FinalDetails/Views/Widgets/custom_generate_round_
 import 'package:atella/Modules/FinalDetails/controllers/final_detail_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -66,18 +67,10 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
               // Back Button
               GestureDetector(
                 onTap: Get.back,
-                child: Container(
-                  width: 34.w,
-                  height: 34.w,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 20.sp,
-                    color: Colors.black,
-                  ),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20.sp,
+                  color: Colors.black,
                 ),
               ),
 
@@ -89,7 +82,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
                   Text(
                     'Final Details',
                     style: QTextStyle14600.copyWith(
-                      color: const Color(0xFF8B5FE6),
+                      color: AppColors.buttonColor,
                     ),
                   ),
                   const SizedBox(height: 4),
@@ -97,7 +90,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
                     width: 40,
                     height: 3,
                     decoration: BoxDecoration(
-                      color: const Color(0xFF8B5FE6),
+                      color: AppColors.buttonColor,
                       borderRadius: BorderRadius.circular(2),
                     ),
                   ),
@@ -169,7 +162,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
             padding: const EdgeInsets.all(20),
             decoration: BoxDecoration(
               border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-              color: const Color.fromARGB(129, 247, 247, 247),
+              color: Colors.black,
               borderRadius: BorderRadius.only(
                 topLeft: Radius.circular(4.r),
                 topRight: Radius.circular(24.r),
@@ -220,7 +213,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
       margin: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
-        style: QTextStyle14600.copyWith(color: const Color(0xFF8B5FE6)),
+        style: QTextStyle14600.copyWith(color: AppColors.buttonColor),
       ),
     );
   }
@@ -448,7 +441,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
             child: GenerateRoundButton(
               title: 'Generate',
               onTap: controller.generateDesign,
-              color: const Color(0xFF8B5FE6),
+              color: AppColors.buttonColor,
               imagePath: generateIcon,
               loading: controller.isLoading,
             ),

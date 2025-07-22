@@ -26,14 +26,7 @@ class TechPackActionContainer extends StatelessWidget {
           padding: const EdgeInsets.symmetric(vertical: 18, horizontal: 16),
           decoration: BoxDecoration(
             borderRadius: BorderRadius.circular(16),
-            gradient: const LinearGradient(
-              colors: [
-                Color.fromRGBO(240, 151, 143, 1),
-                Color.fromRGBO(139, 134, 254, 1),
-              ],
-              begin: Alignment.topLeft,
-              end: Alignment.bottomRight,
-            ),
+            color: Color.fromRGBO(211, 213, 223, 1),
           ),
           child: Text(
             'Would you like to make any changes before I create the final tech pack?',
@@ -44,14 +37,14 @@ class TechPackActionContainer extends StatelessWidget {
         RoundButton(
           title: "Yes, I'd like to make changes",
           onTap: onMakeChanges,
-          color: AppColors.splashcolor,
+          color: AppColors.buttonColor,
           isloading: isLoading,
         ),
         const SizedBox(height: 12),
         OutlineGenerateRoundButton(
           title: 'No, continue as is',
           onTap: onContinue,
-          color: AppColors.splashcolor,
+          color: AppColors.buttonColor,
           loading: isLoading,
           imagePath: generateTechPackIcon,
         ),

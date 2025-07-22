@@ -30,9 +30,10 @@ class TechPackDetailsScreen extends StatelessWidget {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               const SizedBox(height: 8),
-              GlobalHeader(title: 'Design Assistant', onBack: () => Get.back()),
-              const SizedBox(height: 12),
-              Center(child: Text('Tech Pack', style: TPTextStyle20600)),
+              GlobalHeader(
+                title: 'Final Design Validated',
+                onBack: () => Get.back(),
+              ),
               const SizedBox(height: 18),
               // Materials & Fabrics Block
               Container(
@@ -178,6 +179,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                     ),
                                   ),
                                 ),
+                                const SizedBox(height: 10),
                                 TechPackImageUploadContainer(
                                   onTap: () {
                                     // TODO: Implement image picker/camera
@@ -419,7 +421,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onTap: () {
                                     Get.toNamed('/tech_pack_ready_screen');
                                   },
-                                  color: AppColors.splashcolor,
+                                  color: AppColors.buttonColor,
                                   loading: false,
                                   imagePath: generateTechPackIcon,
                                 ),

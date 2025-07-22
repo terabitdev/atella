@@ -18,18 +18,10 @@ class GlobalHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onBack ?? () => Get.back(),
-            child: Container(
-              width: 34.w,
-              height: 34.w,
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(8.r),
-              ),
-              child: Icon(
-                Icons.arrow_back_ios_new,
-                size: 20.sp,
-                color: Colors.black,
-              ),
+            child: Icon(
+              Icons.arrow_back_ios_new,
+              size: 20.sp,
+              color: Colors.black,
             ),
           ),
           SizedBox(width: 16.w),

@@ -27,7 +27,7 @@ class TechPackImageCard extends StatelessWidget {
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(generateTechPackIcon, height: 50, width: 50),
+                Image.asset(generateIcon, height: 50, width: 50),
                 const SizedBox(height: 12),
                 Text('Generating..', style: GSTextStyle17400),
               ],

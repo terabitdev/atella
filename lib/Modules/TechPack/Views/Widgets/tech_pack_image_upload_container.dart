@@ -2,12 +2,12 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
-
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TechPackImageUploadContainer extends StatelessWidget {
   final VoidCallback onTap;
   final String? imagePath;
+
   const TechPackImageUploadContainer({
     Key? key,
     required this.onTap,
@@ -16,26 +16,20 @@ class TechPackImageUploadContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DottedBorder(
-      borderType: BorderType.RRect,
-      color: const Color.fromRGBO(246, 121, 82, 1),
-      dashPattern: [5, 5], // 5 is dash length, 5 is space length
-      strokeWidth: 2,
-      radius: Radius.circular(18.r),
-      child: GestureDetector(
-        onTap: onTap,
+    return GestureDetector(
+      onTap: onTap,
+      child: DottedBorder(
+        color: Colors.black, // ✅ Set dotted border color to black
+        strokeWidth: 1.5,
+        borderType: BorderType.RRect,
+        radius: const Radius.circular(18),
+        dashPattern: [6, 3], // ✅ Customizes the dot size and gap
         child: Container(
           width: double.infinity,
           height: 120,
-          margin: const EdgeInsets.symmetric(vertical: 10),
           decoration: BoxDecoration(
             color: Colors.transparent,
             borderRadius: BorderRadius.circular(18),
-            border: Border.all(
-              color: const Color(0xFFB6B6F6),
-              width: 2,
-              style: BorderStyle.solid,
-            ),
           ),
           child: imagePath == null
               ? Column(

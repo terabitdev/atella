@@ -1,8 +1,9 @@
+import 'package:atella/core/constants/app_iamges.dart';
 import 'package:atella/core/services/splash_services.dart';
-import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SplashScreen extends StatefulWidget {
   const SplashScreen({Key? key}) : super(key: key);
@@ -34,17 +35,18 @@ class _SplashScreenState extends State<SplashScreen> {
       body: Container(
         width: double.infinity,
         height: double.infinity,
-        color: AppColors.splashcolor,
+        color: Colors.white,
         child: SafeArea(
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            crossAxisAlignment: CrossAxisAlignment.center,
-            children: [
-              // Main content area with Atella text
-              Expanded(
-                child: Center(child: Text('Atella', style: SSTextStyle42900)),
-              ),
-            ],
+          child: Center(
+            // 👈 Center the Row vertically and horizontally
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Image.asset(logo, width: 34.w, height: 54.h),
+                SizedBox(width: 12.w), // 👈 Space between logo and text
+                Text('Atella', style: SSTextStyle42900),
+              ],
+            ),
           ),
         ),
       ),

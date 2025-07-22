@@ -1,5 +1,6 @@
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -33,7 +34,7 @@ class GatheringBriefScreen extends StatelessWidget {
                   Text(
                     "Gathering the Creative Brief ",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle22700,
+                    style: OSTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
@@ -53,7 +54,7 @@ class GatheringBriefScreen extends StatelessWidget {
                     onTap: () {
                       Get.toNamed('/creative_brief');
                     },
-                    color: const Color(0xFF8C82FF),
+                    color: AppColors.buttonColor,
                     isloading: false,
                   ),
                 ],

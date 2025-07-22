@@ -94,7 +94,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 () => RoundButton(
                   title: 'Update',
                   onTap: controller.updateProfile,
-                  color: AppColors.splashcolor,
+                  color: AppColors.buttonColor,
                   loading: controller.isLoading.value,
                   isloading: controller.isLoading.value,
                 ),

@@ -1,5 +1,6 @@
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_iamges.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,9 +26,9 @@ class OnboardingScreen extends StatelessWidget {
             child: Container(
               width: double.infinity,
               padding: EdgeInsets.symmetric(horizontal: 24.w),
-              decoration: const BoxDecoration(
+              decoration: BoxDecoration(
                 color: Colors.white,
-                borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
+                borderRadius: BorderRadius.vertical(top: Radius.circular(60.r)),
               ),
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
@@ -35,7 +36,7 @@ class OnboardingScreen extends StatelessWidget {
                   Text(
                     "Welcome to StudioWear — Your\nFashion Brand Starts Here.\"",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle22700,
+                    style: OSTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
@@ -49,7 +50,7 @@ class OnboardingScreen extends StatelessWidget {
                     onTap: () {
                       Get.toNamed('/login');
                     },
-                    color: const Color(0xFF8C82FF),
+                    color: AppColors.buttonColor,
                     isloading: false,
                   ),
                   SizedBox(height: 33.h),
@@ -65,7 +66,7 @@ class OnboardingScreen extends StatelessWidget {
                           onTap: () {
                             Get.toNamed('/login');
                           },
-                          child: Text("Sign In", style: OSTextStyle165004),
+                          child: Text("Sign In", style: OSTextStyle167004),
                         ),
                       ),
                     ],

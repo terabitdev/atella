@@ -20,7 +20,7 @@ class SaveExportButtonRow extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              side: const BorderSide(color: Color(0xFF8B88F8), width: 1),
+              side: const BorderSide(color: Colors.black, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             child: const Text(
@@ -41,7 +41,7 @@ class SaveExportButtonRow extends StatelessWidget {
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(12),
               ),
-              side: const BorderSide(color: Color(0xFF8B88F8), width: 1),
+              side: const BorderSide(color: Colors.black, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
             child: const Text(

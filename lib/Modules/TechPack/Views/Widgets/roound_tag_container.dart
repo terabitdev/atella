@@ -12,7 +12,7 @@ class RoundedTagContainer extends StatelessWidget {
     Key? key,
     required this.text,
     this.textStyle,
-    this.backgroundColor = const Color.fromRGBO(247, 247, 247, 1),
+    this.backgroundColor = Colors.black,
     this.padding = const EdgeInsets.all(12),
   }) : super(key: key);
 

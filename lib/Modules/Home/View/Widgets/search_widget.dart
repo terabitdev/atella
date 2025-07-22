@@ -45,10 +45,10 @@ class _SearchWidgetState extends State<SearchWidget> {
     return Container(
       height: 56.h,
       decoration: BoxDecoration(
-        color: const Color.fromRGBO(246, 246, 246, 1),
+        color: const Color.fromRGBO(236, 239, 246, 1),
         borderRadius: BorderRadius.circular(6.r),
         border: Border.all(
-          color: isFocused ? AppColors.splashcolor : Colors.transparent,
+          color: isFocused ? AppColors.buttonColor : Colors.transparent,
           width: 2.w,
         ),
       ),

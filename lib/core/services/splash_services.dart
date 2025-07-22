@@ -5,7 +5,7 @@ import 'package:get/utils.dart';
 
 class SplashServices {
   void navigateToHome(BuildContext context) {
-    Timer(const Duration(seconds: 3), () {
+    Timer(const Duration(seconds: 5), () {
       Get.offNamed('/onboarding');
     });
   }

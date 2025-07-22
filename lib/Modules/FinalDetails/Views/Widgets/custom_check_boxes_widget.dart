@@ -1,3 +1,4 @@
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 
@@ -30,12 +31,10 @@ class CustomCheckboxWidget extends StatelessWidget {
               width: 20,
               height: 20,
               decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color.fromRGBO(139, 134, 254, 1)
-                    : Colors.transparent,
+                color: isSelected ? AppColors.buttonColor : Colors.transparent,
                 border: Border.all(
                   color: isSelected
-                      ? const Color.fromRGBO(139, 134, 254, 1)
+                      ? AppColors.buttonColor
                       : const Color.fromRGBO(204, 204, 204, 1),
                   width: 2,
                 ),

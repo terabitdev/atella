@@ -1,5 +1,7 @@
 import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -52,30 +54,17 @@ class SignUpscreen extends StatelessWidget {
                   onTap: () {
                     // Signup logic
                   },
-                  color: const Color(0xFF8C82FF),
+                  color: AppColors.buttonColor,
                   isloading: false,
                 ),
                 SizedBox(height: 20.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text(
-                      "Already have an account? ",
-                      style: TextStyle(
-                        color: Colors.grey.shade600,
-                        fontSize: 14.sp,
-                      ),
-                    ),
+                    Text("Already Joined? ", style: LLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.toNamed('/login'),
-                      child: Text(
-                        "Log In",
-                        style: TextStyle(
-                          color: const Color(0xFF8C82FF),
-                          fontWeight: FontWeight.w600,
-                          fontSize: 14.sp,
-                        ),
-                      ),
+                      child: Text("Sign In", style: LLastTextStyle16700),
                     ),
                   ],
                 ),
