@@ -344,7 +344,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           children: [
             TextInputWithSend(
               controller: textController,
-              placeholder: 'Lorem Ipsum',
+              placeholder: 'Enter your answer here...',
               onSend: () {
                 print(
                   'TextInputWithSend onSend called for question: ${question.id}',
@@ -436,7 +436,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               controller: currentQuestion.id == 'colors'
                   ? controller.colorController
                   : controller.fabricController,
-              placeholder: 'Lorem Ipsum',
+              placeholder: 'Type something... ',
               onSend: () => controller.submitTextAnswer(
                 currentQuestion.id,
                 currentQuestion.id == 'colors'

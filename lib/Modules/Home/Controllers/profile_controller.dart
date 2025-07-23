@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:atella/core/services/auth_service.dart';
 
 class ProfileController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
@@ -10,6 +11,7 @@ class ProfileController extends GetxController {
 
   final RxString profileImageUrl = ''.obs;
   final RxBool isLoading = false.obs;
+  final AuthService _authService = AuthService();
 
   @override
   void onInit() {
@@ -75,6 +77,11 @@ class ProfileController extends GetxController {
     }
 
     return true;
+  }
+
+  Future<void> logout() async {
+    await _authService.signOut();
+    Get.offAllNamed('/login');
   }
 
   @override

@@ -50,4 +50,12 @@ class AuthService {
       return 'An error occurred';
     }
   }
+
+  // Get the current user (null if not signed in)
+  User? get currentUser => _auth.currentUser;
+
+  // Sign out the current user
+  Future<void> signOut() async {
+    await _auth.signOut();
+  }
 }

@@ -25,7 +25,7 @@ class AuthTextField extends StatelessWidget {
         TextField(
           controller: controller,
           obscureText: isPassword,
-          style: AuthLableTextTextStyle144002,
+          style: AuthLableTextTextStyle144001,
           decoration: InputDecoration(
             hintText: label,
             hintStyle: AuthLableTextTextStyle144002,

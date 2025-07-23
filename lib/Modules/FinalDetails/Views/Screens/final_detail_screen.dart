@@ -391,7 +391,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           children: [
             TextInputWithSend(
               controller: controller.customInputController,
-              placeholder: 'Lorem Ipsum',
+              placeholder: 'Type something...',
               onSend: () => controller.submitTextAnswer(
                 question.id,
                 controller.customInputController,

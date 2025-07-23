@@ -99,6 +99,15 @@ class _ProfileScreenState extends State<ProfileScreen> {
               ),
 
               SizedBox(height: 20.h),
+
+              // Logout Button
+              RoundButton(
+                title: 'Logout',
+                onTap: controller.logout,
+                color: Colors.red,
+                isloading: false,
+              ),
+              SizedBox(height: 20.h),
             ],
           ),
         ),

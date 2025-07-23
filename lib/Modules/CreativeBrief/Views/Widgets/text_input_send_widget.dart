@@ -31,7 +31,7 @@ class TextInputWithSend extends StatelessWidget {
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: placeholder,
-                  hintStyle: const TextStyle(color: Colors.black, fontSize: 16),
+                  hintStyle: const TextStyle(color: Color.fromRGBO(132, 131, 134, 1), fontSize: 16),
                   border: InputBorder.none,
                   contentPadding: const EdgeInsets.symmetric(
                     horizontal: 16,

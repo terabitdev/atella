@@ -86,6 +86,12 @@ final TextStyle ContinuewithTextTextStyle13400 = GoogleFonts.manrope(
   color: Color.fromRGBO(100, 100, 110, 1),
 );
 
+final TextStyle AuthLableTextTextStyle144001 = GoogleFonts.manrope(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
 final TextStyle AuthLableTextTextStyle144002 = GoogleFonts.manrope(
   fontSize: 14.sp,
   fontWeight: FontWeight.w400,

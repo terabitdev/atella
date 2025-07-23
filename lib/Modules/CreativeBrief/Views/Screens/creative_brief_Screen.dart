@@ -213,7 +213,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         : controller.fabricController;
     return TextInputWithSend(
       controller: textController,
-      placeholder: 'Lorem Ipsum',
+      placeholder: 'Enter your answer here...',
       onSend: () {
         if (textController.text.trim().isNotEmpty) {
           controller.submitTextAnswer(question.id, textController);
@@ -246,7 +246,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         controller: currentQuestion.id == 'colors'
             ? controller.colorController
             : controller.fabricController,
-        placeholder: 'Lorem Ipsum',
+        placeholder: 'Type something...',
         onSend: () {
           final answer = controller.getAnswer(currentQuestion.id);
           if (!controller.isOptionSelected('') &&

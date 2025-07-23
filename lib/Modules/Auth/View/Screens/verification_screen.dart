@@ -1,3 +1,4 @@
+import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Widgets/app_header.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:flutter/material.dart';
@@ -34,27 +35,21 @@ class _VerificationScreenState extends State<VerificationScreen> {
 
               // Description text
               Text(
-                'Select verification method and we will send verification link',
+                "Enter your email address and we’ll send you a verification link to reset your password.",
                 style: VSTextStyle145002,
               ),
 
               SizedBox(height: 24.h),
 
-              // Verification method selection
-              Obx(
-                () => VerificationMethodWidget(
-                  method: 'Email',
-                  maskedValue: controller.maskedEmail.value,
-                  icon: Icons.email_outlined,
-                  isSelected: controller.isEmailSelected,
-                  onTap: () => controller.selectVerificationMethod('email'),
+              AuthTextField(
+                  label: 'Email',
+                  controller: controller.emailController,
                 ),
-              ),
 
               const Spacer(),
               RoundButton(
                 title: 'Send Verification Link',
-                onTap: controller.sendVerificationLink,
+                onTap: () => controller.sendVerificationLink(controller.emailController.text),
                 color: AppColors.buttonColor,
                 isloading: false,
               ),
