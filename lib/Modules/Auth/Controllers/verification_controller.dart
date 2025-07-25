@@ -1,5 +1,4 @@
 import 'dart:ui';
-
 import 'package:atella/core/services/auth_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -27,7 +26,7 @@ class VerificationController extends GetxController {
           'A password reset link has been sent to $email.',
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.black,
-        colorText: Colors.white,
+          colorText: Colors.white,
         );
       } catch (e) {
         print('Failed to send verification link: $e');
