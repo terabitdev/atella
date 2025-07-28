@@ -264,3 +264,75 @@ final TextStyle ESTitleTextTextStyle12400 = GoogleFonts.manrope(
   fontWeight: FontWeight.w800,
   color: Colors.black,
 );
+
+final TextStyle SSTitleTextTextStyle208001 = GoogleFonts.manrope(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.w800,
+  color: Colors.white,
+);
+
+final TextStyle SSTitleTextTextStyle327002 = GoogleFonts.inter(
+  fontSize: 32.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle SSTitleTextTextStyle124003 = GoogleFonts.inter(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle SSTitleTextTextStyle186004 = GoogleFonts.inter(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w600,
+  color: Colors.black,
+);
+final TextStyle SSTitleTextTextStyle144005 = GoogleFonts.inter(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle SSTitleTextTextStyle124006 = GoogleFonts.manrope(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+
+final TextStyle HSTitleTextTextStyle18800 = GoogleFonts.manrope(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w800,
+  color: Colors.black,
+);
+
+
+final TextStyle SSTitleTextTextStyle14400 = GoogleFonts.manrope(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.grey[700]!,
+);
+
+final TextStyle DBTitleTextTextStyle14400 = GoogleFonts.instrumentSans(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.black,
+);
+
+final TextStyle RHSTitleTextTextStyle20700 = GoogleFonts.manrope(
+  fontSize: 20.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle RHSTitleTextTextStyle16400 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w400,
+  color: Color.fromRGBO(9, 10, 12, 1),
+);
+final TextStyle RHSTitleTextTextStyle12500 = GoogleFonts.manrope(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w500,
+  color: Color.fromRGBO(9, 10, 12, 1),
+);

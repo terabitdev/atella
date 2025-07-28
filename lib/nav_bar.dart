@@ -53,6 +53,16 @@ class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
               NavigationDestination(
                 icon: SvgPicture.asset(
                   controller.selectedindex.value == 2
+                      ? favouriteColorIcon
+                      : favouriteIcon,
+                  height: 30.h,
+                  width: 30.w,
+                ),
+                label: 'Favourite',
+              ),
+              NavigationDestination(
+                icon: SvgPicture.asset(
+                  controller.selectedindex.value == 3
                       ? profileColorIcon
                       : profileIcon,
                   height: 30.h,

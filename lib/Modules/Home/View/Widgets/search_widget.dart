@@ -58,7 +58,7 @@ class _SearchWidgetState extends State<SearchWidget> {
         onChanged: widget.onChanged,
         style: OSTextStyle165002,
         decoration: InputDecoration(
-          hintText: 'Search Product',
+          hintText: 'Search Designs',
           hintStyle: OSTextStyle165002,
           prefixIcon: Padding(
             padding: EdgeInsets.all(12.w),

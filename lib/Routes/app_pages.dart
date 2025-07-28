@@ -10,8 +10,12 @@ import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_onboard.d
 import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_screen.dart';
 import 'package:atella/Modules/FinalDetails/bindings/final_detail_binding.dart';
 import 'package:atella/Modules/Home/View/Screens/create_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/favourite_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/my_collection_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/my_design_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refining_brief_screen.dart';
 import 'package:atella/Modules/RefiningConcept/bindings/refining_concept_binding.dart';
@@ -40,6 +44,10 @@ class AppPages {
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileScreen()),
     GetPage(name: AppRoutes.create, page: () => const CreateScreen()),
+    GetPage(
+      name: AppRoutes.favourite,
+      page: () => const FavouriteScreen(),
+    ),
     GetPage(name: AppRoutes.navBar, page: () => const Custom_NavigationBar()),
     GetPage(
       name: AppRoutes.creativeBrief,
@@ -91,6 +99,18 @@ class AppPages {
     GetPage(
       name: AppRoutes.editProjectScreen,
       page: () => const EditProjectScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.subscribe,
+      page: () => const SubscribeScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.myDesigns,
+      page: () => const MyDesignScreen()
+    ),
+    GetPage(
+      name: AppRoutes.collections,
+      page: () => const MyCollectionScreen(),
     ),
     // Add more routes here
   ];

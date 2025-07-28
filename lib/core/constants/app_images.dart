@@ -18,3 +18,6 @@ const String refineIcon = 'assets/images/refineimage.png';
 const String finalimageIcon = 'assets/images/finalimage.png';
 const String generateIcon = 'assets/images/generate.png';
 const String generateTechPackIcon = 'assets/images/techpackgenerate.png';
+const String homeLogo = 'assets/images/home_logo.png';
+const String favouriteIcon = 'assets/images/fav.svg';
+const String favouriteColorIcon = 'assets/images/Heart.svg';

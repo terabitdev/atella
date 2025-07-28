@@ -7,6 +7,7 @@ class AppRoutes {
   static const String home = '/home';
   static const String profile = '/profile';
   static const String create = '/create';
+  static const String favourite = '/favourite';
   static const String navBar = '/nav_bar';
   static const String creativeBrief = '/creative_brief';
   static const String gatheringBrief = '/gathering_brief';
@@ -20,4 +21,7 @@ class AppRoutes {
   static const String recommendedTechPack = '/recommended_tech_pack';
   static const String viewprofileTechPack = '/view_profile_tech_pack';
   static const String editProjectScreen = '/edit_project_screen';
+  static const String subscribe = '/subscribe';
+  static const String myDesigns = '/my_designs';
+  static const String collections = '/collections';
 }
