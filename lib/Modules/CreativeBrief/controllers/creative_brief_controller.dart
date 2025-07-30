@@ -8,6 +8,10 @@ class CreativeBriefController extends GetxController {
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
 
+  // Show last two questions together flag
+  final RxBool _showLastTwoQuestions = false.obs;
+  bool get showLastTwoQuestions => _showLastTwoQuestions.value;
+
   // Real-time timestamp
   final RxString _currentTime = ''.obs;
   String get currentTime => _currentTime.value;
@@ -207,6 +211,15 @@ class CreativeBriefController extends GetxController {
     print('Current question index: $currentQuestionIndex');
     print('Total questions: ${questions.length}');
 
+    // Special case: if we just answered question 5 (index 4), show last two questions
+    if (currentQuestionIndex == 4) {
+      print('Just answered question 5, showing last two questions');
+      _showLastTwoQuestions.value = true;
+      _currentQuestionIndex.value = 5; // Move to first text question
+      update();
+      return;
+    }
+
     if (currentQuestionIndex < questions.length - 1) {
       print('Advancing to next question');
       _currentQuestionIndex.value++;
@@ -277,5 +290,26 @@ class CreativeBriefController extends GetxController {
 
   BriefAnswer? getAnswer(String questionId) {
     return _answers[questionId];
+  }
+
+  // Method to get number of questions to show in the list
+  int get questionsToShow {
+    if (_showLastTwoQuestions.value) {
+      return questions.length; // Show all questions
+    }
+    return currentQuestionIndex + 1; // Show up to current question
+  }
+
+  // Check if we should show the bottom input area
+  bool get shouldShowBottomInput {
+    if (_showLastTwoQuestions.value) {
+      return false; // Don't show bottom input when showing last two questions
+    }
+    return currentQuestionIndex < 5; // Show for first 5 questions
+  }
+
+  // Check if we should show the button
+  bool get shouldShowButton {
+    return _showLastTwoQuestions.value || isAllQuestionsCompleted;
   }
 }

@@ -125,7 +125,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                     left: 8.w,
                                     child: GestureDetector(
                                       onTap: () {
-                                        // Handle favorite toggle
                                         print('Favorite tapped for ${project['name']}');
                                       },
                                       child: Container(

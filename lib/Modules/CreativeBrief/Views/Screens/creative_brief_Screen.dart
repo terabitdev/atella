@@ -42,33 +42,41 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           ),
           _buildLoadingDots(),
           Obx(() {
-            final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
-            final allQuestionsAnswered =
-                controller.answers.length >= controller.questions.length;
-      
-            if (allQuestionsAnswered) {
+            // Show button if we're showing last two questions or all questions are answered
+            if (controller.shouldShowButton) {
               return _buildBottomButton();
             }
-            if (isLastTwoQuestions) {
-              return const SizedBox.shrink();
+            // Show bottom input area for first 5 questions
+            if (controller.shouldShowBottomInput) {
+              return _buildBottomInputArea();
             }
-            return _buildBottomInputArea();
+            // For last two questions, show individual input areas in the list
+            return const SizedBox.shrink();
           }),
         ],
       ),
     );
   }
+
   Widget _buildQuestionsList() {
     return Obx(
       () => ListView.builder(
         padding: const EdgeInsets.only(top: 32, bottom: 20),
-        itemCount: controller.currentQuestionIndex + 1,
+        itemCount: controller.questionsToShow,
         itemBuilder: (context, index) {
           final question = controller.questions[index];
           final isAnswered = controller.isQuestionAnswered(question.id);
           final isCurrentQuestion = index == controller.currentQuestionIndex;
+          final shouldShowInput = controller.showLastTwoQuestions && 
+                                 question.type == 'text' && 
+                                 !isAnswered;
 
-          return _buildQuestionItem(question, isAnswered, isCurrentQuestion);
+          return _buildQuestionItem(
+            question, 
+            isAnswered, 
+            isCurrentQuestion, 
+            shouldShowInput
+          );
         },
       ),
     );
@@ -78,6 +86,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     BriefQuestion question,
     bool isAnswered,
     bool isCurrentQuestion,
+    bool shouldShowInput,
   ) {
     return Container(
       margin: const EdgeInsets.only(bottom: 32),
@@ -111,7 +120,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           const SizedBox(height: 16),
           if (question.type == 'chips')
             _buildChipOptions(question, isAnswered)
-          else if (question.type == 'text' && isCurrentQuestion)
+          else if (question.type == 'text' && isCurrentQuestion && !controller.showLastTwoQuestions)
+            _buildTextInputForQuestion(question)
+          else if (shouldShowInput)
             _buildTextInputForQuestion(question),
           if (isAnswered && question.type == 'text')
             _buildAnsweredText(question),
@@ -164,44 +175,44 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     final textController = question.id == 'colors'
         ? controller.colorController
         : controller.fabricController;
-    // return TextInputWithSend(
-    //   controller: textController,
-    //   placeholder: 'Enter your answer here...',
-    //   onSend: () {
-    //     if (textController.text.trim().isNotEmpty) {
-    //       controller.submitTextAnswer(question.id, textController);
-    //     }
-    //   },
-    //   isLoading: controller.isTextLoading,
-    // );
+        
+    String hintText = 'Lorem';
+    if (controller.showLastTwoQuestions) {
+      hintText = question.id == 'colors' 
+          ? 'Enter preferred colors...' 
+          : 'Enter fabric preferences...';
+    }
+        
     return SizedBox(
       height: 45.h,
       child: TextField(
-            controller: textController,
-            style: AuthLableTextTextStyle144001,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: Color.fromRGBO(236, 239, 246, 1),
-              hintText:'Lorem',
-              hintStyle: AuthLableTextTextStyle144002,
-              enabledBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: const BorderSide(
-                  color: Color.fromRGBO(233, 233, 233, 1), // Light gray
-                  width: 1.2,
-                ),
-              ),
-              focusedBorder: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 16.h,
-                horizontal: 12.w,
-              ),
+        controller: textController,
+        style: AuthLableTextTextStyle144001,
+        decoration: InputDecoration(
+          filled: true,
+          fillColor: Color.fromRGBO(236, 239, 246, 1),
+          hintText: hintText,
+          hintStyle: AuthLableTextTextStyle144002,
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+            borderSide: const BorderSide(
+              color: Color.fromRGBO(233, 233, 233, 1), // Light gray
+              width: 1.2,
             ),
           ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12.r),
+          ),
+          contentPadding: EdgeInsets.symmetric(
+            vertical: 16.h,
+            horizontal: 12.w,
+          ),
+        ),
+      ),
     );
   }
+
+
 
   Widget _buildAnsweredText(BriefQuestion question) {
     final answer = controller.getAnswer(question.id);
@@ -247,14 +258,32 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildBottomButton() {
-    return RoundButton(
-      title: 'Next Steps',
-      onTap: () {
-        // Add any validation if needed before navigating
-        Get.toNamed('/refine_concept');
-      },
-      color: AppColors.buttonColor,
-      isloading: false,
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: RoundButton(
+        title: 'Next Steps',
+        onTap: () async {
+          // Submit any pending text answers before proceeding
+          if (controller.showLastTwoQuestions) {
+            // Submit colors answer if entered and not already saved
+            if (controller.colorController.text.trim().isNotEmpty && 
+                !controller.isQuestionAnswered('colors')) {
+              // await controller.submitTextAnswerWithoutAdvancing('colors', controller.colorController);
+            }
+            
+            // Submit fabrics answer if entered and not already saved
+            if (controller.fabricController.text.trim().isNotEmpty && 
+                !controller.isQuestionAnswered('fabrics')) {
+              // await controller.submitTextAnswerWithoutAdvancing('fabrics', controller.fabricController);
+            }
+          }
+          
+          // Navigate to next screen
+          Get.toNamed('/refine_concept');
+        },
+        color: AppColors.buttonColor,
+        isloading: false,
+      ),
     );
   }
 }
@@ -262,8 +291,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 Widget _buildLoadingDots() {
   return GetBuilder<CreativeBriefController>(
     builder: (controller) {
-      // Don't show dots after question 5 (when all questions are visible)
-      if (controller.currentQuestionIndex >= 5) {
+      // Don't show dots when showing last two questions
+      if (controller.showLastTwoQuestions) {
         return const SizedBox.shrink();
       }
 
