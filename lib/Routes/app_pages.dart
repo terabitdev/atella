@@ -15,7 +15,10 @@ import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_collection_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_design_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
+import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/RefiningConcept/Views/Screens/refining_brief_screen.dart';
 import 'package:atella/Modules/RefiningConcept/bindings/refining_concept_binding.dart';
@@ -112,6 +115,9 @@ class AppPages {
       name: AppRoutes.collections,
       page: () => const MyCollectionScreen(),
     ),
+    GetPage(name: AppRoutes.subscribeFree, page: () => const SubscribeFreePlan()),
+    GetPage(name: AppRoutes.subscribeStarter, page: () => const SubscribeStarterPlan()),
+    GetPage(name: AppRoutes.subscribePro, page: () => const SubscribeProPlan()),
     // Add more routes here
   ];
 }

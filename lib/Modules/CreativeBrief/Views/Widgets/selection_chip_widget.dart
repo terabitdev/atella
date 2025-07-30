@@ -31,15 +31,6 @@ class SelectionChipWidget extends StatelessWidget {
             color: isSelected ? Colors.transparent : const Color(0xFFE0E0E0),
             width: 1,
           ),
-          // boxShadow: isSelected
-          //     ? [
-          //         BoxShadow(
-          //           color: const Color(0xFF8B5FE6).withOpacity(0.3),
-          //           blurRadius: 8,
-          //           offset: const Offset(0, 2),
-          //         ),
-          //       ]
-          //     : null,
         ),
         child: Row(
           mainAxisSize: MainAxisSize.min,
@@ -52,10 +43,6 @@ class SelectionChipWidget extends StatelessWidget {
                 color: isSelected ? Colors.white : const Color(0xFF333333),
               ),
             ),
-            if (isSelected) ...[
-              const SizedBox(width: 8),
-              const Icon(Icons.check, color: Colors.white, size: 16),
-            ],
           ],
         ),
       ),

@@ -6,7 +6,6 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../core/themes/app_fonts.dart';
-import '../Widgets/verification_method_widget.dart';
 import '../../Controllers/verification_controller.dart';
 
 class VerificationScreen extends StatefulWidget {
@@ -30,22 +29,17 @@ class _VerificationScreenState extends State<VerificationScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               GlobalHeader(title: 'Verification', onBack: () => Get.back()),
-
               SizedBox(height: 32.h),
-
               // Description text
               Text(
                 "Enter your email address and we’ll send you a verification link to reset your password.",
                 style: VSTextStyle145002,
               ),
-
               SizedBox(height: 24.h),
-
               AuthTextField(
                   label: 'Email',
                   controller: controller.emailController,
                 ),
-
               const Spacer(),
               RoundButton(
                 title: 'Send Verification Link',
@@ -53,7 +47,6 @@ class _VerificationScreenState extends State<VerificationScreen> {
                 color: AppColors.buttonColor,
                 isloading: false,
               ),
-
               SizedBox(height: 90.h),
             ],
           ),

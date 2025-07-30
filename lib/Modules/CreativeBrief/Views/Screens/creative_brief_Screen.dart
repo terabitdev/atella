@@ -3,6 +3,7 @@ import 'package:atella/Modules/CreativeBrief/controllers/creative_brief_controll
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
@@ -25,86 +26,38 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _buildQuestionsList(),
-              ),
-            ),
-            _buildLoadingDots(),
-            Obx(() {
-              final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
-              final allQuestionsAnswered =
-                  controller.answers.length >= controller.questions.length;
-
-              if (allQuestionsAnswered) {
-                return _buildBottomButton();
-              }
-              if (isLastTwoQuestions) {
-                return const SizedBox.shrink();
-              }
-              return _buildBottomInputArea();
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
+      body: Column(
         children: [
-          Row(
-            children: [
-              GestureDetector(
-                onTap: Get.back,
-                child: Icon(
-                  Icons.arrow_back_ios_new,
-                  size: 20.sp,
-                  color: Colors.black,
-                ),
-              ),
-              const Spacer(),
-              Column(
-                children: [
-                  Text('Creative Brief', style: QTextStyle14600),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 40,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              const SizedBox(width: 40),
-            ],
+          AppHeader(
+            title: 'Creative Brief',
+            timeTextGetter: () => controller.currentTime,
+            titleStyle: QTextStyle14600,
+            onBack: () => Get.back(),
           ),
-          const SizedBox(height: 24),
-          Obx(
-            () => Text(
-              controller.currentTime,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF999999),
-              ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: _buildQuestionsList(),
             ),
           ),
+          _buildLoadingDots(),
+          Obx(() {
+            final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
+            final allQuestionsAnswered =
+                controller.answers.length >= controller.questions.length;
+      
+            if (allQuestionsAnswered) {
+              return _buildBottomButton();
+            }
+            if (isLastTwoQuestions) {
+              return const SizedBox.shrink();
+            }
+            return _buildBottomInputArea();
+          }),
         ],
       ),
     );
   }
-
   Widget _buildQuestionsList() {
     return Obx(
       () => ListView.builder(
@@ -211,15 +164,42 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     final textController = question.id == 'colors'
         ? controller.colorController
         : controller.fabricController;
-    return TextInputWithSend(
-      controller: textController,
-      placeholder: 'Enter your answer here...',
-      onSend: () {
-        if (textController.text.trim().isNotEmpty) {
-          controller.submitTextAnswer(question.id, textController);
-        }
-      },
-      isLoading: controller.isTextLoading,
+    // return TextInputWithSend(
+    //   controller: textController,
+    //   placeholder: 'Enter your answer here...',
+    //   onSend: () {
+    //     if (textController.text.trim().isNotEmpty) {
+    //       controller.submitTextAnswer(question.id, textController);
+    //     }
+    //   },
+    //   isLoading: controller.isTextLoading,
+    // );
+    return SizedBox(
+      height: 45.h,
+      child: TextField(
+            controller: textController,
+            style: AuthLableTextTextStyle144001,
+            decoration: InputDecoration(
+              filled: true,
+              fillColor: Color.fromRGBO(236, 239, 246, 1),
+              hintText:'Lorem',
+              hintStyle: AuthLableTextTextStyle144002,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+                borderSide: const BorderSide(
+                  color: Color.fromRGBO(233, 233, 233, 1), // Light gray
+                  width: 1.2,
+                ),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12.r),
+              ),
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 16.h,
+                horizontal: 12.w,
+              ),
+            ),
+          ),
     );
   }
 
@@ -267,17 +247,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildBottomButton() {
-    return Padding(
-      padding: const EdgeInsets.all(24),
-      child: RoundButton(
-        title: 'Next Steps',
-        onTap: () {
-          // Add any validation if needed before navigating
-          Get.toNamed('/refine_concept');
-        },
-        color: AppColors.buttonColor,
-        isloading: false,
-      ),
+    return RoundButton(
+      title: 'Next Steps',
+      onTap: () {
+        // Add any validation if needed before navigating
+        Get.toNamed('/refine_concept');
+      },
+      color: AppColors.buttonColor,
+      isloading: false,
     );
   }
 }

@@ -1,5 +1,3 @@
-import 'package:atella/Modules/Home/Controllers/subscribe_controller.dart';
-import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -10,7 +8,6 @@ class SubscribeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.put(SubscribeController());
 
     return Scaffold(
       backgroundColor: Colors.black,
@@ -51,37 +48,26 @@ class SubscribeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 16.h),
-                      Text("Get Premium", style: SSTitleTextTextStyle327002),
+                      Text("Choose Your Plan", style: SSTitleTextTextStyle327002),
                       SizedBox(height: 12.h),
                       Text(
-                        "Unlock full access to AtellaAI fashion assistant\n"
-                        "generate tech packs, get manufacturer suggestions,\n"
-                        "and bring your designs to life faster than ever!",
-                        textAlign: TextAlign.center,
+                        'Start for free. Upgrade anytime.',
                         style: SSTitleTextTextStyle124003,
                       ),
                       SizedBox(height: 20.h),
                       Image.asset('assets/images/subscribe.png', height: 180.h),
                       SizedBox(height: 20.h),
-                      Obx(
-                        () => Column(
+                    Column(
                           children: [
                             GestureDetector(
-                              onTap: () => controller.selectPlan('annual'),
+                              onTap: () => Get.toNamed("/subscribe_free"),
                               child: Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(16.h),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color:
-                                        controller.selectedPlan.value ==
-                                            'annual'
-                                        ? Colors.black
-                                        : Color.fromRGBO(236, 239, 246, 1),
-                                    width: 2,
-                                  ),
+                              
                                 ),
                                 child: Row(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -92,12 +78,12 @@ class SubscribeScreen extends StatelessWidget {
                                             CrossAxisAlignment.start,
                                         children: [
                                           Text(
-                                            "Annual",
+                                            "Free/Month",
                                             style: SSTitleTextTextStyle186004,
                                           ),
                                           SizedBox(height: 4.h),
                                           Text(
-                                            "First 30 days free - Then \$999/Year",
+                                            "Features include:",
                                             style: SSTitleTextTextStyle144005,
                                           ),
                                         ],
@@ -131,21 +117,39 @@ class SubscribeScreen extends StatelessWidget {
                             ),
                             SizedBox(height: 12.h),
                             GestureDetector(
-                              onTap: () => controller.selectPlan('monthly'),
+                              onTap: () => Get.toNamed("/subscribe_starter"),
                               child: Container(
                                 width: double.infinity,
                                 padding: EdgeInsets.all(16.h),
                                 decoration: BoxDecoration(
                                   color: Colors.grey.shade100,
                                   borderRadius: BorderRadius.circular(12.r),
-                                  border: Border.all(
-                                    color:
-                                        controller.selectedPlan.value ==
-                                            'monthly'
-                                        ? Colors.black
-                                        : Colors.transparent,
-                                    width: 2,
-                                  ),
+                                ),
+                                child: Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      "Starter €9.99/Month",
+                                      style: SSTitleTextTextStyle186004,
+                                    ),
+                                    Text(
+                                      "Features include:",
+                                      style: SSTitleTextTextStyle144005,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SizedBox(height:12.h),
+                             GestureDetector(
+                              onTap: () => Get.toNamed("/subscribe_pro"),
+                              child: Container(
+                                width: double.infinity,
+                                padding: EdgeInsets.all(16.h),
+                                decoration: BoxDecoration(
+                                  color: Colors.grey.shade100,
+                                  borderRadius: BorderRadius.circular(12.r),
+                                  
                                 ),
                                 child: Column(
                                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -155,7 +159,7 @@ class SubscribeScreen extends StatelessWidget {
                                       style: SSTitleTextTextStyle186004,
                                     ),
                                     Text(
-                                      "First 7 days free - Then \$99/Month",
+                                      "Features include:",
                                       style: SSTitleTextTextStyle144005,
                                     ),
                                   ],
@@ -164,38 +168,7 @@ class SubscribeScreen extends StatelessWidget {
                             ),
                           ],
                         ),
-                      ),
-                      SizedBox(height: 30.h),
-                      RoundButton(
-                        title: 'Start 30-day free trial',
-                        onTap: () {},
-                        color: Colors.black,
-                        isloading: false,
-                      ),
-                      SizedBox(height: 20.h),
-                      Text.rich(
-                        TextSpan(
-                          text: "By placing this order, you agree to the ",
-                          style: SSTitleTextTextStyle124006,
-                          children: [
-                            TextSpan(
-                              text: "Terms of Service",
-                              style: SSTitleTextTextStyle124006.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                            TextSpan(text: " and ", style: SSTitleTextTextStyle124006),
-                            TextSpan(
-                              text: "Privacy Policy.",
-                              style: SSTitleTextTextStyle124006.copyWith(
-                                fontWeight: FontWeight.bold,
-                              ),
-                            ),
-                          ],
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                      SizedBox(height: 30.h),
+                      SizedBox(height: 12.h),
                     ],
                   ),
                 ),

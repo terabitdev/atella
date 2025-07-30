@@ -336,3 +336,23 @@ final TextStyle RHSTitleTextTextStyle12500 = GoogleFonts.manrope(
   fontWeight: FontWeight.w500,
   color: Color.fromRGBO(9, 10, 12, 1),
 );
+
+final TextStyle SFPSTitleTextTextStyle14500 = GoogleFonts.manrope(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+  height: 1.3,
+
+);
+
+final TextStyle SFPSTitleTextTextStyle18600 = GoogleFonts.inter(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w600,
+  color: Colors.white,
+);
+
+final TextStyle SFPSTitleTextTextStyle14400 = GoogleFonts.inter(
+  fontSize: 14.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.white,
+);

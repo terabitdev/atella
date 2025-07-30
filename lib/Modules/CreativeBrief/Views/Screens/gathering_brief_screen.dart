@@ -14,7 +14,6 @@ class GatheringBriefScreen extends StatelessWidget {
     return Scaffold(
       body: Column(
         children: [
-          // Top Image Section
           SizedBox(
             height: 450.h,
             width: double.infinity,

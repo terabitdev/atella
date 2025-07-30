@@ -35,7 +35,7 @@ class CreativeBriefController extends GetxController {
       id: 'garment_type',
       question: 'What type of garment would you like to create?',
       type: 'chips',
-      options: ['Jacket', 'Dress', 'Pants', 'Pants', 'Custom'],
+      options: ['Jacket', 'Dress', 'Pants', 'New pants', 'Custom'],
     ),
     BriefQuestion(
       id: 'style',

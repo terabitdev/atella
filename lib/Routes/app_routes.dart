@@ -24,4 +24,7 @@ class AppRoutes {
   static const String subscribe = '/subscribe';
   static const String myDesigns = '/my_designs';
   static const String collections = '/collections';
+  static const String subscribeFree = '/subscribe_free';
+  static const String subscribeStarter = '/subscribe_starter';
+  static const String subscribePro = '/subscribe_pro';
 }

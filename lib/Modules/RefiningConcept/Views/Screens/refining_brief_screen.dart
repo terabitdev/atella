@@ -28,10 +28,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       body: SafeArea(
         child: Column(
           children: [
-            // Header
             _buildHeader(),
-
-            // Main Content - Scrollable Questions List
             Expanded(
               child: Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 24),
@@ -84,10 +81,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                 ),
               ),
-
               const Spacer(),
-
-              // Title with underline
               Column(
                 children: [
                   Text('Refining the Concept', style: QTextStyle14600),
@@ -102,15 +96,11 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                 ],
               ),
-
               const Spacer(),
-
               const SizedBox(width: 40), // Balance the back button
             ],
           ),
-
           const SizedBox(height: 24),
-
           // Timestamp
           Obx(
             () => Text(

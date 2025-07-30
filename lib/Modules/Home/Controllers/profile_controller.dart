@@ -27,6 +27,7 @@ class ProfileController extends GetxController {
     // Handle profile picture editing
     // This could open image picker or camera
     print('Edit profile picture tapped');
+    Get.toNamed("/subscribe");
   }
 
   void updateProfile() {
