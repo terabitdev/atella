@@ -3,6 +3,7 @@ import 'package:atella/Modules/RefiningConcept/controllers/refining_concept_cont
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
@@ -25,93 +26,36 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFAFAFA),
-      body: SafeArea(
-        child: Column(
-          children: [
-            _buildHeader(),
-            Expanded(
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 24),
-                child: _buildQuestionsList(),
-              ),
-            ),
-
-            // Loading Dots (only for non-last questions)
-            _buildLoadingDots(),
-            Obx(() {
-              final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
-              final allQuestionsAnswered =
-                  controller.answers.length >= controller.questions.length;
-
-              if (allQuestionsAnswered) {
-                return _buildBottomButton();
-              }
-              if (isLastTwoQuestions) {
-                return const SizedBox.shrink();
-              }
-              return _buildBottomInputArea();
-            }),
-          ],
-        ),
-      ),
-    );
-  }
-
-  Widget _buildHeader() {
-    return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
-      child: Column(
+      body: Column(
         children: [
-          Row(
-            children: [
-              // Back Button
-              GestureDetector(
-                onTap: Get.back,
-                child: Container(
-                  width: 34.w,
-                  height: 34.w,
-                  decoration: BoxDecoration(
-                    color: Colors.grey.shade100,
-                    borderRadius: BorderRadius.circular(8.r),
-                  ),
-                  child: Icon(
-                    Icons.arrow_back_ios_new,
-                    size: 20.sp,
-                    color: Colors.black,
-                  ),
-                ),
-              ),
-              const Spacer(),
-              Column(
-                children: [
-                  Text('Refining the Concept', style: QTextStyle14600),
-                  const SizedBox(height: 4),
-                  Container(
-                    width: 40,
-                    height: 3,
-                    decoration: BoxDecoration(
-                      color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(2),
-                    ),
-                  ),
-                ],
-              ),
-              const Spacer(),
-              const SizedBox(width: 40), // Balance the back button
-            ],
+         AppHeader(
+            title: 'Refining the Concept',
+            timeTextGetter: () => controller.currentTime,
+            titleStyle: QTextStyle14600,
+            onBack: () => Get.back()
           ),
-          const SizedBox(height: 24),
-          // Timestamp
-          Obx(
-            () => Text(
-              controller.currentTime,
-              style: const TextStyle(
-                fontSize: 14,
-                fontWeight: FontWeight.w400,
-                color: Color(0xFF999999),
-              ),
+          Expanded(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: _buildQuestionsList(),
             ),
           ),
+      
+          // Loading Dots (only for non-last questions)
+          _buildLoadingDots(),
+          Obx(() {
+            final isLastTwoQuestions = controller.currentQuestionIndex >= 5;
+            final allQuestionsAnswered =
+                controller.answers.length >= controller.questions.length;
+      
+            if (allQuestionsAnswered) {
+              return _buildBottomButton();
+            }
+            if (isLastTwoQuestions) {
+              return const SizedBox.shrink();
+            }
+            return _buildBottomInputArea();
+          }),
         ],
       ),
     );
@@ -420,21 +364,18 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
         // Show bottom input for all questions except the last two (index 5 and 6)
         if (controller.currentQuestionIndex < 5 &&
             !controller.isQuestionAnswered(currentQuestion.id)) {
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: TextInputWithSend(
-              controller: currentQuestion.id == 'colors'
+          return TextInputWithSend(
+            controller: currentQuestion.id == 'colors'
+                ? controller.colorController
+                : controller.fabricController,
+            placeholder: 'Type something... ',
+            onSend: () => controller.submitTextAnswer(
+              currentQuestion.id,
+              currentQuestion.id == 'colors'
                   ? controller.colorController
                   : controller.fabricController,
-              placeholder: 'Type something... ',
-              onSend: () => controller.submitTextAnswer(
-                currentQuestion.id,
-                currentQuestion.id == 'colors'
-                    ? controller.colorController
-                    : controller.fabricController,
-              ),
-              isLoading: controller.isTextLoading,
             ),
+            isLoading: controller.isTextLoading,
           );
         }
         return const SizedBox.shrink();
@@ -443,28 +384,10 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildBottomButton() {
-    return GetBuilder<RefiningConceptController>(
-      builder: (controller) {
-        // Show button when all questions are visible (after question 5) and first 5 questions are answered
-        if (controller.currentQuestionIndex >= 5 &&
-            controller.answers.length >= 5) {
-          return Padding(
-            padding: const EdgeInsets.all(24),
-            child: RoundButton(
-              title: 'Next Steps',
-              onTap: () {
-                // Navigate to next screen
-                Get.toNamed(
+    return RoundButton(title: 'Next Steps', onTap: (){
+       Get.toNamed(
                   '/final_detail_onboard',
-                ); // Update this route as needed
-              },
-              color: AppColors.buttonColor,
-              isloading: false,
-            ),
-          );
-        }
-        return const SizedBox.shrink();
-      },
-    );
+                ); 
+    }, color: AppColors.buttonColor, isloading: false);
   }
 }
