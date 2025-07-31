@@ -85,20 +85,7 @@ class RefiningConceptController extends GetxController {
         'Quick-Dry',
         'Wrinkle-Free',
         'Custom',
-      ],
-    ),
-    BriefQuestion(
-      id: 'colors',
-      question: 'Are there any dominant colors or a preferred color palette?',
-      type: 'text',
-      options: [],
-    ),
-    BriefQuestion(
-      id: 'fabrics',
-      question: 'Are there any fabrics you prefer or absolutely want to avoid?',
-      type: 'text',
-      options: [],
-    ),
+      ],)
   ];
 
   @override

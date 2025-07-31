@@ -130,9 +130,6 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           // Answer Options
           if (question.type == 'chips')
             _buildChipOptions(question, isAnswered, isCurrentQuestion)
-          else if (question.type == 'text' &&
-              index >= 5) // Questions 6 and 7 (index 5 and 6)
-            _buildTextInputForQuestion(question, isAnswered, isCurrentQuestion),
         ],
       ),
     );
@@ -193,140 +190,6 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       },
     );
   }
-
-  Widget buildAnsweredTextContent(BriefQuestion question) {
-    final answer = controller.getAnswer(question.id);
-    if (answer?.textInput != null) {
-      return Container(
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(
-          color: const Color(0xFFF0F0F0),
-          borderRadius: BorderRadius.circular(12),
-        ),
-        child: Text(
-          answer!.textInput!,
-          style: const TextStyle(fontSize: 14, color: Color(0xFF333333)),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
-  }
-
-  Widget _buildTextInputForQuestion(
-    BriefQuestion question,
-    bool isAnswered,
-    bool isCurrentQuestion,
-  ) {
-    return GetBuilder<RefiningConceptController>(
-      builder: (controller) {
-        final textController = question.id == 'colors'
-            ? controller.colorController
-            : controller.fabricController;
-
-        // If question is answered and not being edited, show the answer with option to edit
-        if (isAnswered && !controller.isEditing(question.id)) {
-          final answer = controller.getAnswer(question.id);
-          return Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Show the answered text
-              Container(
-                padding: const EdgeInsets.all(16),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF0F0F0),
-                  borderRadius: BorderRadius.circular(12),
-                ),
-                child: Text(
-                  answer?.textInput ?? '',
-                  style: const TextStyle(
-                    fontSize: 14,
-                    color: Color(0xFF333333),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 12),
-              // Show edit button
-              GestureDetector(
-                onTap: () => controller.enableEditing(question.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFF8B5FE6).withOpacity(0.1),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFF8B5FE6)),
-                  ),
-                  child: const Text(
-                    'Edit Answer',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF8B5FE6),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          );
-        }
-
-        // Show text input for current questions, future questions, or when editing
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            TextInputWithSend(
-              controller: textController,
-              placeholder: 'Enter your answer here...',
-              onSend: () {
-                print(
-                  'TextInputWithSend onSend called for question: ${question.id}',
-                );
-                print('Text content: "${textController.text.trim()}"');
-                if (textController.text.trim().isNotEmpty) {
-                  print(
-                    'Calling submitTextAnswer for question: ${question.id}',
-                  );
-                  controller.submitTextAnswer(question.id, textController);
-                } else {
-                  print('Text is empty, not submitting');
-                }
-              },
-              isLoading: controller.isTextLoading,
-            ),
-            // Show cancel button if editing
-            if (controller.isEditing(question.id)) ...[
-              const SizedBox(height: 8),
-              GestureDetector(
-                onTap: () => controller.cancelEditing(question.id),
-                child: Container(
-                  padding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 8,
-                  ),
-                  decoration: BoxDecoration(
-                    color: const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(8),
-                    border: Border.all(color: const Color(0xFFE0E0E0)),
-                  ),
-                  child: const Text(
-                    'Cancel',
-                    style: TextStyle(
-                      fontSize: 12,
-                      color: Color(0xFF666666),
-                      fontWeight: FontWeight.w500,
-                    ),
-                  ),
-                ),
-              ),
-            ],
-          ],
-        );
-      },
-    );
-  }
-
   Widget _buildLoadingDots() {
     return GetBuilder<RefiningConceptController>(
       builder: (controller) {
@@ -355,7 +218,6 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       },
     );
   }
-
   Widget _buildBottomInputArea() {
     return GetBuilder<RefiningConceptController>(
       builder: (controller) {
@@ -382,12 +244,14 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       },
     );
   }
-
   Widget _buildBottomButton() {
-    return RoundButton(title: 'Next Steps', onTap: (){
-       Get.toNamed(
-                  '/final_detail_onboard',
-                ); 
-    }, color: AppColors.buttonColor, isloading: false);
+    return Padding(
+      padding: const EdgeInsets.all(24.0),
+      child: RoundButton(title: 'Next Steps', onTap: (){
+         Get.toNamed(
+                    '/final_detail_onboard',
+                  ); 
+      }, color: AppColors.buttonColor, isloading: false),
+    );
   }
 }

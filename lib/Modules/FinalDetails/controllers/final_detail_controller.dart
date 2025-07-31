@@ -312,4 +312,12 @@ class FinalDetailsController extends GetxController {
     // Navigate to design preview or results screen
     // Get.toNamed('/design-preview');
   }
+
+ bool isOtherSelectedForCurrentQuestion() {
+  // Check if current question is desired_features and "Other: ?" is selected
+  if (currentQuestion.id == 'desired_features') {
+    return isOptionSelected('desired_features', 'Other: ?');
+  }
+  return false;
+}
 }
