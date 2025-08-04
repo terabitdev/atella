@@ -381,7 +381,9 @@ class TechPackReadyScreen extends StatelessWidget {
                 isloading: false,
               ),
               const SizedBox(height: 16),
-              SaveExportButtonRow(onSave: () {}, onExport: () {}),
+              SaveExportButtonRow(onSave: () {
+                Get.toNamed('/nav_bar');
+              }, onExport: () {}),
               const SizedBox(height: 30),
             ],
           ),

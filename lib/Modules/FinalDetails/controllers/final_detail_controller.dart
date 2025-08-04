@@ -69,8 +69,9 @@ class FinalDetailsController extends GetxController {
         'Wrinkle-Free',
         'Other: ?',
       ],
-      allowMultiple: true,
+      allowMultiple: false,
     ),
+    
     BriefQuestion(
       id: 'additional_details',
       question: 'Cool — feel free to type in anything else you have in mind!',

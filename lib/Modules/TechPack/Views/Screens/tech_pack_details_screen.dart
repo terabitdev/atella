@@ -181,25 +181,27 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 const SizedBox(height: 10),
-                                TechPackImageUploadContainer(
-                                  onTap: () {
-                                    // TODO: Implement image picker/camera
-                                  },
-                                  imagePath:
-                                      controller
-                                          .measurementImagePath
-                                          .value
-                                          .isEmpty
-                                      ? null
-                                      : controller.measurementImagePath.value,
+                                Obx(
+                                  () => TechPackImageUploadContainer(
+                                    onTap: () {
+                                      controller.openCameraForMeasurement();
+                                    },
+                                    imagePath:
+                                        controller
+                                            .measurementImagePath
+                                            .value
+                                            .isEmpty
+                                        ? null
+                                        : controller.measurementImagePath.value,
+                                  ),
                                 ),
                                 const SizedBox(height: 10),
                                 TechPackQuestionField(
                                   label:
                                       'Or should the AI auto-generate one from the 3D model?',
                                   hint: '',
-                                  controller: TextEditingController(),
-                                  enabled: false,
+                                  controller: controller.measurementChartController,
+                                  
                                 ),
                               ],
                             ),

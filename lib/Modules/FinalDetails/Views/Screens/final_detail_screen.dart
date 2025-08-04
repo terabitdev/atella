@@ -18,15 +18,9 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-    );
 
     return Scaffold(
+      resizeToAvoidBottomInset: false,
       backgroundColor: const Color(0xFFFAFAFA),
       body: Column(
         children: [
@@ -52,17 +46,35 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
   Widget _buildBottomSection() {
     return GetBuilder<FinalDetailsController>(
       builder: (controller) {
-        // Check if "Other: ?" is selected in current question
-        final isOtherSelected =
-            controller.currentQuestion.id == 'desired_features' &&
-            controller.isOptionSelected('desired_features', 'Other: ?');
-
-        // Check if we're on the last question (question 3, index 2)
+        // Check if we're on the last question (additional_details text question)
         final isLastQuestion =
             controller.currentQuestionIndex >= controller.questions.length - 1;
 
-        if (isOtherSelected || isLastQuestion) {
-          // Show bottom button when "Other" is selected OR on last question
+        // Check if current question is answered (for desired_features)
+        final isCurrentQuestionAnswered = 
+            controller.isQuestionAnswered(controller.currentQuestion.id);
+
+        if (isLastQuestion) {
+          // Show text input and generate button for the last question (additional_details)
+          return Column(
+            children: [
+              _buildCustomTextField(),
+              const SizedBox(height: 16),
+              Padding(
+                padding: const EdgeInsets.all(24),
+                child: GenerateRoundButton(
+                  title: 'Generate',
+                  onTap: controller.generateDesign,
+                  color: AppColors.buttonColor,
+                  imagePath: generateIcon,
+                  loading: controller.isLoading,
+                ),
+              ),
+            ],
+          );
+        } else if (isCurrentQuestionAnswered && 
+                   controller.currentQuestion.id == 'desired_features') {
+          // Show generate button when desired_features is answered (but not "Other")
           return Padding(
             padding: const EdgeInsets.all(24),
             child: GenerateRoundButton(
@@ -74,7 +86,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
             ),
           );
         } else {
-          // Show custom text field for all other cases
+          // Show text input for other cases
           return _buildTextInput();
         } 
       },
@@ -184,8 +196,6 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           const SizedBox(height: 16),
           if (question.type == 'checkbox')
             _buildCheckboxOptions(question, isAnswered, isCurrentQuestion),
-          // else if (question.type == 'text')
-          //   _buildTextInput(question, isAnswered, isCurrentQuestion),
         ],
       ),
     );
@@ -244,82 +254,15 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
   Widget _buildOtherOption(BriefQuestion question, String option) {
     return GetBuilder<FinalDetailsController>(
       builder: (controller) {
-        final isSelected =
-            controller.isOptionSelected(question.id, option) ||
-            controller.answers[question.id]?.selectedOptions.any(
-                  (opt) => opt.startsWith('Other:'),
-                ) ==
-                true;
+        final isSelected = controller.isOptionSelected(question.id, option);
 
-        return Column(
-          children: [
-            CustomCheckboxWidget(
-              text: option,
-              isSelected: isSelected,
-              onTap: () {
-                controller.toggleOption(question.id, option);
-              },
-              allowMultiple: question.allowMultiple,
-            ),
-            // Only show the specific "Other" text input when selected and currently on this question
-            if (isSelected && controller.currentQuestion.id == question.id) ...[
-              const SizedBox(height: 8),
-              Container(
-                padding: const EdgeInsets.symmetric(
-                  horizontal: 16,
-                  vertical: 8,
-                ),
-                decoration: BoxDecoration(
-                  color: const Color(0xFFF8F8F8),
-                  borderRadius: BorderRadius.circular(12),
-                  border: Border.all(color: const Color(0xFFE0E0E0)),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: TextField(
-                        controller: controller.otherFeaturesController,
-                        decoration: const InputDecoration(
-                          hintText: 'Type your custom feature...',
-                          hintStyle: TextStyle(
-                            color: Color(0xFF999999),
-                            fontSize: 14,
-                          ),
-                          border: InputBorder.none,
-                          contentPadding: EdgeInsets.symmetric(vertical: 8),
-                        ),
-                        style: const TextStyle(
-                          fontSize: 14,
-                          color: Color(0xFF333333),
-                        ),
-                      ),
-                    ),
-                    const SizedBox(width: 12),
-                    GestureDetector(
-                      onTap: () => controller.submitOtherFeature(
-                        controller.otherFeaturesController.text,
-                      ),
-                      child: Container(
-                        width: 32,
-                        height: 32,
-                        decoration: const BoxDecoration(
-                          gradient: LinearGradient(
-                            colors: [Color(0xFF8B5FE6), Color(0xFF7B5AC7)],
-                          ),
-                          shape: BoxShape.circle,
-                        ),
-                        child: const Icon(
-                          Icons.send_rounded,
-                          color: Colors.white,
-                          size: 16,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ],
+        return CustomCheckboxWidget(
+          text: option,
+          isSelected: isSelected,
+          onTap: () {
+            controller.toggleOption(question.id, option);
+          },
+          allowMultiple: question.allowMultiple,
         );
       },
     );
