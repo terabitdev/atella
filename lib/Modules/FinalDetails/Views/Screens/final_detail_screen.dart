@@ -165,12 +165,11 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
 
   Widget _buildLottieAnimation() {
     return Container(
-      padding: const EdgeInsets.symmetric(vertical: 20),
       child: Center(
         child: Lottie.asset(
           'assets/lottie/Loading_dots.json', // Replace with your Lottie file path
-          width: 60,
-          height: 60,
+          width: 100.h,
+          height: 100.h,
           fit: BoxFit.contain,
           repeat: true,
           animate: true,
