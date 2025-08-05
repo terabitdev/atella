@@ -10,13 +10,13 @@ class OutlineGenerateRoundButton extends StatelessWidget {
   final String? imagePath;
 
   const OutlineGenerateRoundButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.onTap,
     required this.color,
     this.loading = false,
     this.imagePath,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

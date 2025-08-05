@@ -9,13 +9,13 @@ class TechPackQuestionField extends StatelessWidget {
   final ValueChanged<String>? onChanged;
   final bool enabled;
   const TechPackQuestionField({
-    Key? key,
+    super.key,
     required this.label,
     required this.hint,
     required this.controller,
     this.onChanged,
     this.enabled = true,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -12,7 +12,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class CreativeBriefScreen extends GetView<CreativeBriefController> {
-  const CreativeBriefScreen({Key? key}) : super(key: key);
+  const CreativeBriefScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

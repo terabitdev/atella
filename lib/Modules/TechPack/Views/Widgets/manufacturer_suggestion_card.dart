@@ -1,3 +1,4 @@
+// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
 
 class ManufacturerSuggestionCard extends StatelessWidget {
@@ -8,15 +9,14 @@ class ManufacturerSuggestionCard extends StatelessWidget {
   final VoidCallback onViewProfile;
   final VoidCallback onContact;
   const ManufacturerSuggestionCard({
-    Key? key,
+    super.key,
     required this.name,
     required this.location,
     required this.moq,
     required this.description,
     required this.onViewProfile,
     required this.onContact,
-  }) : super(key: key);
-
+  });
   @override
   Widget build(BuildContext context) {
     return Container(
@@ -27,7 +27,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
         borderRadius: BorderRadius.circular(18),
         boxShadow: [
           BoxShadow(
-            color: Colors.black.withOpacity(0.04),
+            color: Colors.black,
             blurRadius: 8,
             offset: const Offset(0, 2),
           ),

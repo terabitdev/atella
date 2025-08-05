@@ -33,7 +33,7 @@ import 'package:atella/nav_bar.dart';
 import 'package:get/get.dart';
 
 class AppPages {
-  static const INITIAL = AppRoutes.splash;
+  static const initial = AppRoutes.splash;
 
   static final routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
@@ -51,7 +51,7 @@ class AppPages {
       name: AppRoutes.favourite,
       page: () => const FavouriteScreen(),
     ),
-    GetPage(name: AppRoutes.navBar, page: () => const Custom_NavigationBar()),
+    GetPage(name: AppRoutes.navBar, page: () => const CustomNavigationBar()),
     GetPage(
       name: AppRoutes.creativeBrief,
       page: () => const CreativeBriefScreen(),

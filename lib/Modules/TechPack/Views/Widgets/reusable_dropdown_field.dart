@@ -10,14 +10,14 @@ class ReusableDropdownField<T> extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const ReusableDropdownField({
-    Key? key,
+    super.key,
     required this.label,
     required this.value,
     required this.items,
     required this.onChanged,
     required this.itemLabel,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

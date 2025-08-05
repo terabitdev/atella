@@ -9,7 +9,7 @@ import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
-  const RecommendedManufactureScreen({Key? key}) : super(key: key);
+  const RecommendedManufactureScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -23,8 +23,8 @@ class RecommendedManufactureScreen extends StatelessWidget {
               SegmentedTabSwitcher(controller: controller),
               Expanded(
                 child: controller.tabIndex.value == 0
-                    ? _RecommendedTab(controller)
-                    : _CustomTab(controller),
+                    ? recommendedTab(controller)
+                    : customTab(controller),
               ),
             ],
           ),
@@ -34,7 +34,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
   }
 }
 
-Widget _RecommendedTab(ManufacturerSuggestionController controller) {
+Widget recommendedTab(ManufacturerSuggestionController controller) {
   return SingleChildScrollView(
     padding: const EdgeInsets.symmetric(horizontal: 18),
     child: Column(
@@ -64,7 +64,7 @@ Widget _RecommendedTab(ManufacturerSuggestionController controller) {
   );
 }
 
-Widget _CustomTab(ManufacturerSuggestionController controller) {
+Widget customTab(ManufacturerSuggestionController controller) {
   return SingleChildScrollView(
     padding: const EdgeInsets.symmetric(horizontal: 18),
     child: Column(

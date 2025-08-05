@@ -5,14 +5,14 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:get/get.dart';
 
-class Custom_NavigationBar extends StatefulWidget {
-  const Custom_NavigationBar({super.key});
+class CustomNavigationBar extends StatefulWidget {
+  const CustomNavigationBar({super.key});
 
   @override
-  State<Custom_NavigationBar> createState() => _Custom_NavigationBarState();
+  State<CustomNavigationBar> createState() => _CustomNavigationBarState();
 }
 
-class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
+class _CustomNavigationBarState extends State<CustomNavigationBar> {
   final controller = Get.put(NavBarController());
 
   @override
@@ -35,8 +35,8 @@ class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
               NavigationDestination(
                 icon: SvgPicture.asset(
                   controller.selectedindex.value == 0 ? homeColorIcon : home,
-                  height: 30.h,
-                  width: 30.w,
+                  height: 25.h,
+                  width: 25.w,
                 ),
                 label: 'Home',
               ),
@@ -45,8 +45,8 @@ class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
                   controller.selectedindex.value == 1
                       ? createColorIcon
                       : createIcon,
-                  height: 30.h,
-                  width: 30.w,
+                  height: 25.h,
+                  width: 25.w,
                 ),
                 label: 'Create',
               ),
@@ -55,20 +55,20 @@ class _Custom_NavigationBarState extends State<Custom_NavigationBar> {
                   controller.selectedindex.value == 2
                       ? favouriteColorIcon
                       : favouriteIcon,
-                  height: 30.h,
-                  width: 30.w,
+                  height: 25.h,
+                  width: 25.w,
                 ),
                 label: 'Favourite',
               ),
               NavigationDestination(
                 icon: SvgPicture.asset(
                   controller.selectedindex.value == 3
-                      ? profileColorIcon
-                      : profileIcon,
-                  height: 30.h,
-                  width: 30.w,
+                      ? settingsFill
+                      : settings,
+                  height: 25.h,
+                  width: 25.w,
                 ),
-                label: 'Profile',
+                label: 'Settings',
               ),
             ],
           ),

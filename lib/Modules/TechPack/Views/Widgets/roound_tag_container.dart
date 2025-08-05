@@ -9,12 +9,12 @@ class RoundedTagContainer extends StatelessWidget {
   final EdgeInsetsGeometry padding;
 
   const RoundedTagContainer({
-    Key? key,
+    super.key,
     required this.text,
     this.textStyle,
     this.backgroundColor = Colors.black,
     this.padding = const EdgeInsets.all(12),
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

@@ -10,11 +10,11 @@ class TechPackActionContainer extends StatelessWidget {
   final VoidCallback onContinue;
   final bool isLoading;
   const TechPackActionContainer({
-    Key? key,
+    super.key,
     required this.onMakeChanges,
     required this.onContinue,
     this.isLoading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

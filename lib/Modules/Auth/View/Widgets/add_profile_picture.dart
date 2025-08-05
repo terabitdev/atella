@@ -8,8 +8,7 @@ class AddProfilePicture extends StatelessWidget {
   final VoidCallback onTap;
   final String? imagePath;
 
-  const AddProfilePicture({Key? key, required this.onTap, this.imagePath})
-    : super(key: key);
+  const AddProfilePicture({super.key, required this.onTap, this.imagePath});
 
   @override
   Widget build(BuildContext context) {

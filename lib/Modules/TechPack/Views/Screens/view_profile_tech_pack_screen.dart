@@ -4,7 +4,7 @@ import 'package:get/get.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 
 class ViewProfileTechPackScreen extends StatelessWidget {
-  const ViewProfileTechPackScreen({Key? key}) : super(key: key);
+  const ViewProfileTechPackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {

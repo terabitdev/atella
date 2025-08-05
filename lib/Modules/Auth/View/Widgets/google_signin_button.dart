@@ -10,12 +10,12 @@ class GoogleRoundButton extends StatelessWidget {
   final Color color;
 
   const GoogleRoundButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.onTap,
     required this.color,
     this.loading = false,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

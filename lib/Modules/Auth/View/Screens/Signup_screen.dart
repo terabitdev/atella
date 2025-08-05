@@ -6,7 +6,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
-import '../widgets/add_profile_picture.dart';
 import 'package:atella/Modules/Auth/Controllers/signup_controller.dart';
 
 class SignUpscreen extends StatelessWidget {
@@ -26,11 +25,7 @@ class SignUpscreen extends StatelessWidget {
               children: [
                 SizedBox(height: 24.h),
                 const AuthHeader(title: "Create your account"),
-                AddProfilePicture(
-                  onTap: () {
-                    // Implement image picker (not required for now)
-                  },
-                ),
+                SizedBox(height: 24.h),
                 AuthTextField(
                   label: "Full Name",
                   controller: controller.nameController,
@@ -120,7 +115,7 @@ class SignUpscreen extends StatelessWidget {
                         )
                       : SizedBox.shrink(),
                 ),
-                SizedBox(height: 12.h),
+                SizedBox(height: 45.h),
                 Obx(
                   () => RoundButton(
                     title: "Sign Up",

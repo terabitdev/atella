@@ -7,11 +7,11 @@ class TechPackImageCard extends StatelessWidget {
   final String? imagePath;
   final VoidCallback? onTap;
   const TechPackImageCard({
-    Key? key,
+    super.key,
     this.isLoading = false,
     this.imagePath,
     this.onTap,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

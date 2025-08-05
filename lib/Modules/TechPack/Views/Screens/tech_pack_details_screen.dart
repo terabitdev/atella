@@ -10,15 +10,10 @@ import 'package:atella/Modules/TechPack/Views/Widgets/outline_genrate_round_butt
 import 'package:atella/core/themes/app_colors.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
-  TechPackDetailsScreen({Key? key}) : super(key: key);
+  TechPackDetailsScreen({super.key});
   final controller = Get.put(TechPackDetailsController());
 
-  void onContinue() {
-    // TODO: Implement continue logic
-    // Example: Use ScreenUtil to set a responsive width
-    // double responsiveWidth = 100.w;
-    // You can use .w, .h, .sp, etc. for responsive sizing throughout the screen.
-  }
+  void onContinue() {}
 
   @override
   Widget build(BuildContext context) {

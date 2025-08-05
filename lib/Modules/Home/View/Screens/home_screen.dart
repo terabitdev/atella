@@ -50,6 +50,7 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
       body: SingleChildScrollView(
         child: Column(
@@ -95,24 +96,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           fit: BoxFit.cover,
                         ),
                       ),
-                      SizedBox(height: 12.h),
-                      // Profile Icon
-                      Container(
-                        width: 48.w,
-                        height: 48.w,
-                        decoration: BoxDecoration(
-                          shape: BoxShape.circle,
-                          color: Colors.grey.shade200,
-                        ),
-                        child: Image.asset(
-                          imageUrlIcon,
-                          fit: BoxFit.cover,
-                          height: 35.w,
-                          width: 35.w,
-                        ),
-                      ),
-                      SizedBox(height: 20.h),
-                      // Welcome Text
+                      SizedBox(height: 40.h),
                       Text(
                         'Welcome to ATELIA!',
                         style: TextStyle(
@@ -121,7 +105,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white,
                         ),
                       ),
-                      SizedBox(height: 16.h),
+                      SizedBox(height: 60.h),
                       SearchWidget(
                         controller: controller.searchController,
                         onChanged: controller.onSearchChanged,

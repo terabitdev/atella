@@ -9,10 +9,10 @@ class TechPackImageUploadContainer extends StatelessWidget {
   final String? imagePath;
 
   const TechPackImageUploadContainer({
-    Key? key,
+    super.key,
     required this.onTap,
     this.imagePath,
-  }) : super(key: key);
+  }) ;
 
   @override
   Widget build(BuildContext context) {

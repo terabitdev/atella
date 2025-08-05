@@ -8,13 +8,13 @@ class RoundButton extends StatelessWidget {
   final bool loading;
   final Color color;
   const RoundButton({
-    Key? key,
+    super.key,
     required this.title,
     required this.onTap,
     required this.color,
     this.loading = false,
     required bool isloading,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

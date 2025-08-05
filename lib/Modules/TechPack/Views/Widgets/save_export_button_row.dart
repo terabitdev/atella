@@ -4,10 +4,10 @@ class SaveExportButtonRow extends StatelessWidget {
   final VoidCallback onSave;
   final VoidCallback onExport;
   const SaveExportButtonRow({
-    Key? key,
+    super.key,
     required this.onSave,
     required this.onExport,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

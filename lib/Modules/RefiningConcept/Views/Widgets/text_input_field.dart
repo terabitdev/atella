@@ -7,12 +7,12 @@ class TextInputWithSend extends StatelessWidget {
   final bool isLoading;
 
   const TextInputWithSend({
-    Key? key,
+    super.key,
     required this.controller,
     required this.placeholder,
     required this.onSend,
     this.isLoading = false,
-  }) : super(key: key);
+  }) ;
 
   @override
   Widget build(BuildContext context) {

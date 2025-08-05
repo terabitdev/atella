@@ -5,7 +5,6 @@ import '../../../../core/themes/app_colors.dart';
 import '../../../../Widgets/app_header.dart';
 import '../../../../Widgets/custom_roundbutton.dart';
 import '../../../Auth/View/Widgets/auth_textfield.dart';
-import '../Widgets/profile_picture_widget.dart';
 import '../../Controllers/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget {
@@ -22,24 +21,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       body: SafeArea(
-        child: SingleChildScrollView(
+        child: Padding(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
               GlobalHeader(title: 'Edit Profile', onBack: () => Get.back()),
-              SizedBox(height: 32.h),
-              // Profile Picture Section
-              Center(
-                child: ProfilePictureWidget(
-                  imageUrl: controller.profileImageUrl.value.isNotEmpty
-                      ? controller.profileImageUrl.value
-                      : null,
-                  onEditTap: controller.editProfilePicture,
-                  size: 120,
-                ),
-              ),
 
               SizedBox(height: 40.h),
 
@@ -76,7 +64,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 isPassword: true,
               ),
 
-              SizedBox(height: 40.h),
+              Spacer(),
 
               // Update Button
               Obx(
@@ -88,17 +76,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                   isloading: controller.isLoading.value,
                 ),
               ),
-
-              SizedBox(height: 20.h),
-
-              // Logout Button
-              RoundButton(
-                title: 'Logout',
-                onTap: controller.logout,
-                color: Colors.red,
-                isloading: false,
-              ),
-              SizedBox(height: 20.h),
+              SizedBox(height: 40.h),
             ],
           ),
         ),

@@ -63,8 +63,9 @@ class SignupController extends GetxController {
     if (nameErr != null) nameError.value = nameErr;
     if (emailErr != null) emailError.value = emailErr;
     if (passwordErr != null) passwordError.value = passwordErr;
-    if (confirmPasswordErr != null)
+    if (confirmPasswordErr != null) {
       confirmPasswordError.value = confirmPasswordErr;
+    }
 
     // If any error, don't proceed
     if ([

@@ -11,7 +11,7 @@ class ImageUploadField extends StatelessWidget {
   final EdgeInsetsGeometry? margin;
 
   const ImageUploadField({
-    Key? key,
+    super.key,
     required this.imageUrl,
     required this.title,
     required this.subtitle,
@@ -19,7 +19,7 @@ class ImageUploadField extends StatelessWidget {
     required this.buttonIcon,
     required this.onTap,
     this.margin,
-  }) : super(key: key);
+  });
 
   @override
   Widget build(BuildContext context) {

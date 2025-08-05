@@ -141,16 +141,16 @@ class CreativeBriefController extends GetxController {
     String questionId,
     TextEditingController controller,
   ) async {
-    print('submitTextAnswer called for question: $questionId');
-    print('Text content: "${controller.text.trim()}"');
-    print('Current question index before submission: $currentQuestionIndex');
+    // print('submitTextAnswer called for question: $questionId');
+    // print('Text content: "${controller.text.trim()}"');
+    // print('Current question index before submission: $currentQuestionIndex');
 
     if (controller.text.trim().isEmpty) {
-      print('Text is empty, returning');
+      // print('Text is empty, returning');
       return;
     }
 
-    print('Starting text submission process');
+    // print('Starting text submission process');
     _isTextLoading.value = true;
     update();
 
@@ -162,9 +162,9 @@ class CreativeBriefController extends GetxController {
       textInput: controller.text.trim(),
     );
 
-    print('Answer saved for question: $questionId');
-    print('Total answers after saving: ${_answers.length}');
-    print('All answers: ${_answers.keys.toList()}');
+    // print('Answer saved for question: $questionId');
+    // print('Total answers after saving: ${_answers.length}');
+    // print('All answers: ${_answers.keys.toList()}');
 
     // Clear the text controller
     controller.clear();
@@ -172,7 +172,7 @@ class CreativeBriefController extends GetxController {
     _isTextLoading.value = false;
     update();
 
-    print('About to call _nextQuestion');
+    // print('About to call _nextQuestion');
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
@@ -185,11 +185,11 @@ class CreativeBriefController extends GetxController {
 
   // Manual method to check completion status
   void checkCompletionStatus() {
-    print('Current question index: ${currentQuestionIndex}');
-    print('Total questions: ${questions.length}');
-    print('Answers count: ${_answers.length}');
-    print('Is last question: ${isLastQuestion}');
-    print('Is all completed: ${isAllQuestionsCompleted}');
+    // print('Current question index: ${currentQuestionIndex}');
+    // print('Total questions: ${questions.length}');
+    // print('Answers count: ${_answers.length}');
+    // print('Is last question: ${isLastQuestion}');
+    // print('Is all completed: ${isAllQuestionsCompleted}');
   }
 
   void enableEditing(String questionId) {
@@ -207,13 +207,13 @@ class CreativeBriefController extends GetxController {
   }
 
   void _nextQuestion() {
-    print('_nextQuestion called');
-    print('Current question index: $currentQuestionIndex');
-    print('Total questions: ${questions.length}');
+    // print('_nextQuestion called');
+    // print('Current question index: $currentQuestionIndex');
+    // print('Total questions: ${questions.length}');
 
     // Special case: if we just answered question 5 (index 4), show last two questions
     if (currentQuestionIndex == 4) {
-      print('Just answered question 5, showing last two questions');
+      // print('Just answered question 5, showing last two questions');
       _showLastTwoQuestions.value = true;
       _currentQuestionIndex.value = 5; // Move to first text question
       update();
@@ -221,19 +221,19 @@ class CreativeBriefController extends GetxController {
     }
 
     if (currentQuestionIndex < questions.length - 1) {
-      print('Advancing to next question');
+      // print('Advancing to next question');
       _currentQuestionIndex.value++;
-      print('New question index: ${_currentQuestionIndex.value}');
+      // print('New question index: ${_currentQuestionIndex.value}');
       update();
     } else {
-      print('Reached last question - checking if all are completed');
+      // print('Reached last question - checking if all are completed');
       // Check if all questions are actually answered
       if (isAllQuestionsCompleted) {
-        print('All questions completed - showing next steps');
+        // print('All questions completed - showing next steps');
         update(); // Update UI to show Next Steps button
         _showCompletionScreen();
       } else {
-        print('On last question but not all answered yet');
+        // print('On last question but not all answered yet');
         update();
       }
     }

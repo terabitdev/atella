@@ -18,7 +18,7 @@ class VerificationController extends GetxController {
     if (email.isNotEmpty) {
       try {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
-        print('Sending email verification to: $email');
+        // print('Sending email verification to: $email');
         Get.snackbar(
           'Verification Link Sent',
           'A password reset link has been sent to $email.',
@@ -27,7 +27,7 @@ class VerificationController extends GetxController {
           colorText: Colors.white,
         );
       } catch (e) {
-        print('Failed to send verification link: $e');
+        // print('Failed to send verification link: $e');
         Get.snackbar(
           'Error',
           'Failed to send verification link. Please try again.',

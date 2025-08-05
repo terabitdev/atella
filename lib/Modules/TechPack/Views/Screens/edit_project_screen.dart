@@ -4,7 +4,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 
 class EditProjectScreen extends StatelessWidget {
-  const EditProjectScreen({Key? key}) : super(key: key);
+  const EditProjectScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
