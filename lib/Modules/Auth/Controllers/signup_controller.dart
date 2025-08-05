@@ -113,6 +113,7 @@ class SignupController extends GetxController {
 
   @override
   void onClose() {
+    // print('SignupController disposed');
     nameController.dispose();
     emailController.dispose();
     passwordController.dispose();

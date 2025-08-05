@@ -9,9 +9,10 @@ import 'package:get/get.dart';
 import 'package:atella/Modules/Auth/Controllers/login_controller.dart';
 import '../widgets/auth_textfield.dart';
 
-class LoginScreen extends GetView<LoginController> {
-  const LoginScreen({super.key});
+class LoginScreen extends StatelessWidget {
+  LoginScreen({super.key});
 
+  final LoginController controller = Get.find<LoginController>();
 
   @override
   Widget build(BuildContext context) {
@@ -115,7 +116,7 @@ class LoginScreen extends GetView<LoginController> {
                   children: [
                     Text("Don't have an account? ", style: lLastTextStyle16500),
                     GestureDetector(
-                      onTap: () => Get.toNamed('/signup'),
+                      onTap: () => Get.offNamed('/signup'),
                       child: Text("Sign Up", style: lLastTextStyle16700),
                     ),
                   ],

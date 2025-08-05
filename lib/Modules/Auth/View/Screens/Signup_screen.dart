@@ -133,7 +133,7 @@ class SignUpscreen extends GetView<SignupController> {
                   children: [
                     Text("Already Joined? ", style: lLastTextStyle16500),
                     GestureDetector(
-                      onTap: () => Get.toNamed('/login'),
+                      onTap: () => Get.offNamed('/login'),
                       child: Text("Sign In", style: lLastTextStyle16700),
                     ),
                   ],
