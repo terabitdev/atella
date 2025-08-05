@@ -314,11 +314,31 @@ class FinalDetailsController extends GetxController {
     // Get.toNamed('/design-preview');
   }
 
- bool isOtherSelectedForCurrentQuestion() {
-  // Check if current question is desired_features and "Other: ?" is selected
-  if (currentQuestion.id == 'desired_features') {
-    return isOptionSelected('desired_features', 'Other: ?');
+  bool isOtherSelectedForCurrentQuestion() {
+    // Check if current question is desired_features and "Other: ?" is selected
+    if (currentQuestion.id == 'desired_features') {
+      return isOptionSelected('desired_features', 'Other: ?');
+    }
+    return false;
   }
-  return false;
-}
+
+  // NEW: Check if we should show animation after a specific question
+  bool shouldShowAnimationAfterQuestion(int questionIndex) {
+    // Don't show animation if all questions are completed
+    if (isAllQuestionsCompleted) {
+      return false;
+    }
+    
+    // Show animation below the current unanswered question
+    // This means animation shows below current question's answers, not after answering
+    bool isCurrentQuestion = questionIndex == currentQuestionIndex;
+    bool isNotLastQuestion = questionIndex < questions.length - 1;
+    
+    return isCurrentQuestion && isNotLastQuestion;
+  }
+
+  // Method to get number of questions to show in the list
+  int get questionsToShow {
+    return currentQuestionIndex + 1; // Show progressive questions
+  }
 }

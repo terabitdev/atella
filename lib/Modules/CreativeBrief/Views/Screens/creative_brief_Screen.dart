@@ -7,25 +7,16 @@ import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 
 class CreativeBriefScreen extends GetView<CreativeBriefController> {
   const CreativeBriefScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-    SystemChrome.setSystemUIOverlayStyle(
-      const SystemUiOverlayStyle(
-        statusBarColor: Colors.transparent,
-        statusBarIconBrightness: Brightness.dark,
-        statusBarBrightness: Brightness.light,
-      ),
-    );
-
     return Scaffold(
-      backgroundColor: const Color(0xFFFAFAFA),
       body: Column(
         children: [
           AppHeader(
@@ -40,14 +31,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               child: _buildQuestionsList(),
             ),
           ),
-          _buildLoadingDots(),
           Obx(() {
             // Show button if we're showing last two questions or all questions are answered
             if (controller.shouldShowButton) {
               return _buildBottomButton();
             }
-            // Show bottom input area for first 5 questions
-            if (controller.shouldShowBottomInput) {
+            // Show bottom input area only for text questions (not chip questions)
+            if (controller.shouldShowBottomInput && controller.currentQuestion.type == 'text') {
               return _buildBottomInputArea();
             }
             // For last two questions, show individual input areas in the list
@@ -71,13 +61,62 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                                  question.type == 'text' && 
                                  !isAnswered;
 
-          return _buildQuestionItem(
-            question, 
-            isAnswered, 
-            isCurrentQuestion, 
-            shouldShowInput
+          // Debug prints
+          if (isCurrentQuestion) {
+            print('Current question: ${question.id}');
+            print('Is Custom Selected: ${controller.isCustomSelectedForCurrentQuestion()}');
+            print('Is Answered: $isAnswered');
+            print('Question Type: ${question.type}');
+          }
+
+          return Column(
+            children: [
+              _buildQuestionItem(
+                question, 
+                isAnswered, 
+                isCurrentQuestion, 
+                shouldShowInput
+              ),
+              // FIXED: Direct check of RxString for better reactivity
+              Obx(() {
+                final customSelected = controller.customSelectedForQuestion == question.id;
+                final shouldShowCustomInput = customSelected && isCurrentQuestion && question.type == 'chips';
+                
+                print('Custom selected for ${question.id}: $customSelected, Should show input: $shouldShowCustomInput'); // Debug
+                
+                if (shouldShowCustomInput) {
+                  print('Showing custom text input for: ${question.id}'); // Debug
+                  return Column(
+                    children: [
+                      const SizedBox(height: 8),
+                      _buildCustomTextInput(),
+                    ],
+                  );
+                }
+                return const SizedBox.shrink();
+              }),
+              // Show animation below current unanswered question's answers
+              if (controller.shouldShowAnimationAfterQuestion(index))
+                _buildLottieAnimation(),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildLottieAnimation() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Lottie.asset(
+          'assets/lottie/Loading_dots.json',
+          width: 100.w,
+          height: 100.h,
+          fit: BoxFit.contain,
+          repeat: true,
+          animate: true,
+        ),
       ),
     );
   }
@@ -126,9 +165,53 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             _buildTextInputForQuestion(question),
           if (isAnswered && question.type == 'text')
             _buildAnsweredText(question),
+          // Show custom answer if answered with custom text
+          if (isAnswered && question.type == 'chips')
+            _buildCustomAnswerDisplay(question),
         ],
       ),
     );
+  }
+
+  // Custom text input widget
+  Widget _buildCustomTextInput() {
+    print('Building custom text input'); // Debug
+    return Container(
+      margin: const EdgeInsets.only(top: 8),
+      child: TextInputWithSend(
+        controller: controller.customController,
+        placeholder: 'Enter your custom answer...',
+        onSend: () {
+          print('Custom send button pressed'); // Debug
+          controller.submitCustomAnswer();
+        },
+        isLoading: controller.isTextLoading,
+      ),
+    );
+  }
+
+  // Display custom answer
+  Widget _buildCustomAnswerDisplay(BriefQuestion question) {
+    final answer = controller.getAnswer(question.id);
+    if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
+      return Container(
+        margin: const EdgeInsets.only(top: 8),
+        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        decoration: BoxDecoration(
+          color: AppColors.buttonColor,
+          borderRadius: BorderRadius.circular(20),
+        ),
+        child: Text(
+          answer.textInput!,
+          style: const TextStyle(
+            fontSize: 14, 
+            color: Colors.white,
+            fontWeight: FontWeight.w500,
+          ),
+        ),
+      );
+    }
+    return const SizedBox.shrink();
   }
 
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
@@ -136,34 +219,46 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       final answer = controller.getAnswer(question.id);
       return Wrap(
         children: question.options.map((option) {
-          final isSelected = answer?.selectedOptions.contains(option) ?? false;
+          final isSelected = controller.isOptionSelected(option);
+          
+          // Debug for Custom option
+          if (option == 'Custom') {
+            print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
+          }
+          
           if (isAnswered) {
+            // Show answered state
+            final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
             return Container(
               margin: const EdgeInsets.only(right: 12, bottom: 8),
               padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
               decoration: BoxDecoration(
-                color: isSelected
+                color: isAnswerSelected
                     ? AppColors.buttonColor
                     : const Color(0xFFF5F5F5),
                 borderRadius: BorderRadius.circular(20),
-                border: isSelected
+                border: isAnswerSelected
                     ? null
                     : Border.all(color: const Color(0xFFE0E0E0)),
               ),
               child: Text(
                 option,
                 style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF999999),
+                  color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
                   fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                  fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
                 ),
               ),
             );
           } else {
+            // Show interactive chips
             return SelectionChipWidget(
               text: option,
-              isSelected: controller.isOptionSelected(option),
-              onTap: () => controller.selectOption(option),
+              isSelected: isSelected,
+              onTap: () {
+                print('Chip tapped: $option'); // Debug
+                controller.selectOption(option);
+              },
             );
           }
         }).toList(),
@@ -196,7 +291,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: const BorderSide(
-              color: Color.fromRGBO(233, 233, 233, 1), // Light gray
+              color: Color.fromRGBO(233, 233, 233, 1),
               width: 1.2,
             ),
           ),
@@ -211,8 +306,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       ),
     );
   }
-
-
 
   Widget _buildAnsweredText(BriefQuestion question) {
     final answer = controller.getAnswer(question.id);
@@ -286,33 +379,4 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       ),
     );
   }
-}
-
-Widget _buildLoadingDots() {
-  return GetBuilder<CreativeBriefController>(
-    builder: (controller) {
-      // Don't show dots when showing last two questions
-      if (controller.showLastTwoQuestions) {
-        return const SizedBox.shrink();
-      }
-
-      return Container(
-        padding: const EdgeInsets.symmetric(vertical: 20),
-        child: Row(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: List.generate(3, (index) {
-            return Container(
-              width: 8,
-              height: 8,
-              margin: EdgeInsets.symmetric(horizontal: 4),
-              decoration: BoxDecoration(
-                color: AppColors.buttonColor,
-                shape: BoxShape.circle,
-              ),
-            );
-          }),
-        ),
-      );
-    },
-  );
 }

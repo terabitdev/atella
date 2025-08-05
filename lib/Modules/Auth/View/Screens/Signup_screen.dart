@@ -8,8 +8,7 @@ import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
 import 'package:atella/Modules/Auth/Controllers/signup_controller.dart';
 
-class SignUpscreen extends StatelessWidget {
-  final SignupController controller = Get.put(SignupController());
+class SignUpscreen extends GetView<SignupController> {
 
   SignUpscreen({super.key});
 
@@ -118,7 +117,7 @@ class SignUpscreen extends StatelessWidget {
                 SizedBox(height: 45.h),
                 Obx(
                   () => RoundButton(
-                    title: "Sign Up",
+                    title: controller.isLoading.value ? "Signing Up..." : "Sign Up",
                     onTap: controller.isLoading.value
                         ? null
                         : () {

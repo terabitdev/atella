@@ -92,6 +92,8 @@ class SignupController extends GetxController {
         backgroundColor: Colors.black,
         colorText: Colors.white,
       );
+      FocusScope.of(Get.context!).unfocus(); // Unfocus text fields
+await Future.delayed(const Duration(milliseconds: 300)); // Let UI settle
       Get.offAllNamed('/login');
     } else {
       // Check for duplicate email error

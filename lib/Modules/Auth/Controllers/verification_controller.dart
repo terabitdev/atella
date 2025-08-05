@@ -19,10 +19,11 @@ class VerificationController extends GetxController {
       try {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         // print('Sending email verification to: $email');
+        Get.back(); // Close the verification screen
         Get.snackbar(
           'Verification Link Sent',
           'A password reset link has been sent to $email.',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );

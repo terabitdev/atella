@@ -24,10 +24,15 @@ class CreativeBriefController extends GetxController {
   // Text controllers for text input questions
   final colorController = TextEditingController();
   final fabricController = TextEditingController();
+  final customController = TextEditingController(); // For custom answers
 
   // Loading state for text input
   final RxBool _isTextLoading = false.obs;
   bool get isTextLoading => _isTextLoading.value;
+
+  // Track which question has custom selected - FIXED: Now properly observable
+  final RxString _customSelectedForQuestion = ''.obs;
+  String get customSelectedForQuestion => _customSelectedForQuestion.value;
 
   // Editing state for text questions
   final RxSet<String> _editingQuestions = <String>{}.obs;
@@ -39,7 +44,7 @@ class CreativeBriefController extends GetxController {
       id: 'garment_type',
       question: 'What type of garment would you like to create?',
       type: 'chips',
-      options: ['Jacket', 'Dress', 'Pants', 'New pants', 'Custom'],
+      options: ['Jacket', 'Dress', 'Pants', 'Set', 'Custom'],
     ),
     BriefQuestion(
       id: 'style',
@@ -58,10 +63,8 @@ class CreativeBriefController extends GetxController {
       question: 'What is the intended occasion or use?',
       type: 'chips',
       options: [
-        'Everyday',
-        'Wear',
-        'Special',
-        'Event',
+        'Everyday wear',
+        'Special event',
         'Sports',
         'Activity',
         'Custom',
@@ -99,6 +102,7 @@ class CreativeBriefController extends GetxController {
     _timeTimer?.cancel();
     colorController.dispose();
     fabricController.dispose();
+    customController.dispose();
     super.onClose();
   }
 
@@ -117,17 +121,54 @@ class CreativeBriefController extends GetxController {
 
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
 
+  // FIXED: Check if option is selected including custom selection
   bool isOptionSelected(String option) {
+    // Special handling for Custom option
+    if (option == 'Custom') {
+      // Check if custom is currently selected for this question (not answered yet)
+      if (_customSelectedForQuestion.value == currentQuestion.id) {
+        return true;
+      }
+      // Check if custom answer is already submitted
+      final answer = _answers[currentQuestion.id];
+      return answer?.selectedOptions.contains(option) ?? false;
+    }
+    
+    // For non-custom options
     final answer = _answers[currentQuestion.id];
     return answer?.selectedOptions.contains(option) ?? false;
   }
 
+  // Check if custom is selected for current question
+  bool isCustomSelectedForCurrentQuestion() {
+    return _customSelectedForQuestion.value == currentQuestion.id;
+  }
+
   void selectOption(String option) async {
-    // Create or update answer
+    print('Selecting option: $option'); // Debug
+    
+    // If "Custom" is selected, show text field
+    if (option == 'Custom') {
+      print('Custom selected for question: ${currentQuestion.id}'); // Debug
+      _customSelectedForQuestion.value = currentQuestion.id;
+      
+      // Remove any existing answer for this question
+      _answers.remove(currentQuestion.id);
+      
+      update();
+      return; // Don't advance to next question yet
+    }
+
+    // Create or update answer for non-custom options
     _answers[currentQuestion.id] = BriefAnswer(
       questionId: currentQuestion.id,
       selectedOptions: [option], // Single selection
     );
+
+    // Clear custom selection if user selects a different option
+    if (_customSelectedForQuestion.value == currentQuestion.id) {
+      _customSelectedForQuestion.value = '';
+    }
 
     // Update the UI
     update();
@@ -137,20 +178,47 @@ class CreativeBriefController extends GetxController {
     _nextQuestion();
   }
 
+  // Submit custom answer
+  void submitCustomAnswer() async {
+    print('Submitting custom answer: ${customController.text}'); // Debug
+    
+    if (customController.text.trim().isEmpty) {
+      return;
+    }
+
+    _isTextLoading.value = true;
+    update();
+
+    // Simulate processing
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // Store custom answer with "Custom" as selected option and custom text
+    _answers[currentQuestion.id] = BriefAnswer(
+      questionId: currentQuestion.id,
+      selectedOptions: ['Custom'],
+      textInput: customController.text.trim(), // Store custom text
+    );
+
+    // Clear custom selection and controller
+    _customSelectedForQuestion.value = '';
+    customController.clear();
+
+    _isTextLoading.value = false;
+    update();
+
+    // Auto-advance to next question
+    await Future.delayed(const Duration(milliseconds: 400));
+    _nextQuestion();
+  }
+
   void submitTextAnswer(
     String questionId,
     TextEditingController controller,
   ) async {
-    // print('submitTextAnswer called for question: $questionId');
-    // print('Text content: "${controller.text.trim()}"');
-    // print('Current question index before submission: $currentQuestionIndex');
-
     if (controller.text.trim().isEmpty) {
-      // print('Text is empty, returning');
       return;
     }
 
-    // print('Starting text submission process');
     _isTextLoading.value = true;
     update();
 
@@ -162,58 +230,23 @@ class CreativeBriefController extends GetxController {
       textInput: controller.text.trim(),
     );
 
-    // print('Answer saved for question: $questionId');
-    // print('Total answers after saving: ${_answers.length}');
-    // print('All answers: ${_answers.keys.toList()}');
-
     // Clear the text controller
     controller.clear();
 
     _isTextLoading.value = false;
     update();
 
-    // print('About to call _nextQuestion');
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
   }
 
-  // Manual method to advance to next question (for debugging)
-  void manualNextQuestion() {
-    _nextQuestion();
-  }
-
-  // Manual method to check completion status
-  void checkCompletionStatus() {
-    // print('Current question index: ${currentQuestionIndex}');
-    // print('Total questions: ${questions.length}');
-    // print('Answers count: ${_answers.length}');
-    // print('Is last question: ${isLastQuestion}');
-    // print('Is all completed: ${isAllQuestionsCompleted}');
-  }
-
-  void enableEditing(String questionId) {
-    _editingQuestions.add(questionId);
-    update();
-  }
-
-  void cancelEditing(String questionId) {
-    _editingQuestions.remove(questionId);
-    update();
-  }
-
-  bool isEditing(String questionId) {
-    return _editingQuestions.contains(questionId);
-  }
-
   void _nextQuestion() {
-    // print('_nextQuestion called');
-    // print('Current question index: $currentQuestionIndex');
-    // print('Total questions: ${questions.length}');
-
+    // Clear custom selection when moving to next question
+    _customSelectedForQuestion.value = '';
+    
     // Special case: if we just answered question 5 (index 4), show last two questions
     if (currentQuestionIndex == 4) {
-      // print('Just answered question 5, showing last two questions');
       _showLastTwoQuestions.value = true;
       _currentQuestionIndex.value = 5; // Move to first text question
       update();
@@ -221,19 +254,14 @@ class CreativeBriefController extends GetxController {
     }
 
     if (currentQuestionIndex < questions.length - 1) {
-      // print('Advancing to next question');
       _currentQuestionIndex.value++;
-      // print('New question index: ${_currentQuestionIndex.value}');
       update();
     } else {
-      // print('Reached last question - checking if all are completed');
       // Check if all questions are actually answered
       if (isAllQuestionsCompleted) {
-        // print('All questions completed - showing next steps');
         update(); // Update UI to show Next Steps button
         _showCompletionScreen();
       } else {
-        // print('On last question but not all answered yet');
         update();
       }
     }
@@ -305,11 +333,75 @@ class CreativeBriefController extends GetxController {
     if (_showLastTwoQuestions.value) {
       return false; // Don't show bottom input when showing last two questions
     }
-    return currentQuestionIndex < 5; // Show for first 5 questions
+    
+    // Don't show bottom input for chip questions
+    if (currentQuestion.type == 'chips') {
+      return false;
+    }
+    
+    // Don't show custom input if custom is selected for current question
+    if (isCustomSelectedForCurrentQuestion()) {
+      return false; // Custom input will be shown inline
+    }
+    
+    // Only show bottom input for text type questions when not showing last two questions together
+    return currentQuestion.type == 'text' && !_showLastTwoQuestions.value;
   }
 
   // Check if we should show the button
   bool get shouldShowButton {
     return _showLastTwoQuestions.value || isAllQuestionsCompleted;
+  }
+
+  // Check if we should show animation after a specific question
+  bool shouldShowAnimationAfterQuestion(int questionIndex) {
+    // Don't show animation when custom is selected for current question
+    if (isCustomSelectedForCurrentQuestion() && questionIndex == currentQuestionIndex) {
+      return false;
+    }
+    
+    // Don't show animation when showing last two questions together
+    if (_showLastTwoQuestions.value) {
+      return false;
+    }
+    
+    // Don't show animation if all questions are completed
+    if (isAllQuestionsCompleted) {
+      return false;
+    }
+    
+    // Show animation below the current unanswered question
+    // This means animation shows below current question's answers, not after answering
+    bool isCurrentQuestion = questionIndex == currentQuestionIndex;
+    bool isNotLastQuestion = questionIndex < questions.length - 1;
+    
+    return isCurrentQuestion && isNotLastQuestion;
+  }
+
+  // Manual methods for debugging
+  void manualNextQuestion() {
+    _nextQuestion();
+  }
+
+  void checkCompletionStatus() {
+    print('Current question index: ${currentQuestionIndex}');
+    print('Total questions: ${questions.length}');
+    print('Answers count: ${_answers.length}');
+    print('Is last question: ${isLastQuestion}');
+    print('Is all completed: ${isAllQuestionsCompleted}');
+  }
+
+  void enableEditing(String questionId) {
+    _editingQuestions.add(questionId);
+    update();
+  }
+
+  void cancelEditing(String questionId) {
+    _editingQuestions.remove(questionId);
+    update();
+  }
+
+  bool isEditing(String questionId) {
+    return _editingQuestions.contains(questionId);
   }
 }

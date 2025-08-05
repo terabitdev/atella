@@ -9,8 +9,9 @@ import 'package:get/get.dart';
 import 'package:atella/Modules/Auth/Controllers/login_controller.dart';
 import '../widgets/auth_textfield.dart';
 
-class LoginScreen extends StatelessWidget {
-  final controller = Get.put(LoginController());
+class LoginScreen extends GetView<LoginController> {
+  const LoginScreen({super.key});
+
 
   @override
   Widget build(BuildContext context) {
@@ -69,8 +70,6 @@ class LoginScreen extends StatelessWidget {
                       : SizedBox.shrink(),
                 ),
                 SizedBox(height: 12.h),
-
-                /// Forgot Password
                 Align(
                   alignment: Alignment.centerRight,
                   child: TextButton(
@@ -81,11 +80,9 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 10.h),
-
-                /// Round Login Button (Global)
                 Obx(
                   () => RoundButton(
-                    title: "Log in",
+                    title: controller.isLoading.value ? "Logging In..." : "Log In",
                     onTap: controller.isLoading.value
                         ? null
                         : () {
@@ -96,8 +93,6 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 const SizedBox(height: 30),
-
-                /// Divider
                 Center(
                   child: Text(
                     "Or continue with",
@@ -115,8 +110,6 @@ class LoginScreen extends StatelessWidget {
                   color: const Color.fromRGBO(255, 255, 255, 1), // Google Blue
                 ),
                 SizedBox(height: 80.h),
-
-                /// Sign up navigation
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [

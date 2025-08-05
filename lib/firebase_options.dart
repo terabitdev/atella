@@ -41,48 +41,48 @@ class DefaultFirebaseOptions {
   }
 
   static const FirebaseOptions web = FirebaseOptions(
-    apiKey: 'AIzaSyANFudCPxf0xUN4cw77qKWMU_PXTToRD80',
-    appId: '1:311073432007:web:af6828bc6ccc757ed0f9e2',
-    messagingSenderId: '311073432007',
-    projectId: 'atelia-d3aaf',
-    authDomain: 'atelia-d3aaf.firebaseapp.com',
-    storageBucket: 'atelia-d3aaf.firebasestorage.app',
-    measurementId: 'G-RF2ZDY8W2Q',
+    apiKey: 'AIzaSyCUd9-xZu-Dm_7agsdzl7dypm4wu_vN9Fo',
+    appId: '1:1097482533368:web:fbaee85d14347023dafe0d',
+    messagingSenderId: '1097482533368',
+    projectId: 'atelia-123',
+    authDomain: 'atelia-123.firebaseapp.com',
+    storageBucket: 'atelia-123.firebasestorage.app',
+    measurementId: 'G-WQQ3R7L3C2',
   );
 
   static const FirebaseOptions android = FirebaseOptions(
-    apiKey: 'AIzaSyCRYe3TQXpmzjNVImXK-LlrmbY0dBxquQg',
-    appId: '1:311073432007:android:ec741ca8058b348cd0f9e2',
-    messagingSenderId: '311073432007',
-    projectId: 'atelia-d3aaf',
-    storageBucket: 'atelia-d3aaf.firebasestorage.app',
+    apiKey: 'AIzaSyBA-Lam4AKlAzn2A52nvKnTJVs3nmqytDs',
+    appId: '1:1097482533368:android:181994ea31245a91dafe0d',
+    messagingSenderId: '1097482533368',
+    projectId: 'atelia-123',
+    storageBucket: 'atelia-123.firebasestorage.app',
   );
 
   static const FirebaseOptions ios = FirebaseOptions(
-    apiKey: 'AIzaSyD5275v3q3Wtb7qqqhJ9nPSY0mKrLrYDEY',
-    appId: '1:311073432007:ios:95c7b33d0409a765d0f9e2',
-    messagingSenderId: '311073432007',
-    projectId: 'atelia-d3aaf',
-    storageBucket: 'atelia-d3aaf.firebasestorage.app',
+    apiKey: 'AIzaSyCHBgFN9CuXKe6YMzJu4gbF0imhhsylOnY',
+    appId: '1:1097482533368:ios:d13f0e3e3a40273adafe0d',
+    messagingSenderId: '1097482533368',
+    projectId: 'atelia-123',
+    storageBucket: 'atelia-123.firebasestorage.app',
     iosBundleId: 'com.example.atella',
   );
 
   static const FirebaseOptions macos = FirebaseOptions(
-    apiKey: 'AIzaSyD5275v3q3Wtb7qqqhJ9nPSY0mKrLrYDEY',
-    appId: '1:311073432007:ios:95c7b33d0409a765d0f9e2',
-    messagingSenderId: '311073432007',
-    projectId: 'atelia-d3aaf',
-    storageBucket: 'atelia-d3aaf.firebasestorage.app',
+    apiKey: 'AIzaSyCHBgFN9CuXKe6YMzJu4gbF0imhhsylOnY',
+    appId: '1:1097482533368:ios:d13f0e3e3a40273adafe0d',
+    messagingSenderId: '1097482533368',
+    projectId: 'atelia-123',
+    storageBucket: 'atelia-123.firebasestorage.app',
     iosBundleId: 'com.example.atella',
   );
 
   static const FirebaseOptions windows = FirebaseOptions(
-    apiKey: 'AIzaSyANFudCPxf0xUN4cw77qKWMU_PXTToRD80',
-    appId: '1:311073432007:web:dc654a85c98ecfacd0f9e2',
-    messagingSenderId: '311073432007',
-    projectId: 'atelia-d3aaf',
-    authDomain: 'atelia-d3aaf.firebaseapp.com',
-    storageBucket: 'atelia-d3aaf.firebasestorage.app',
-    measurementId: 'G-SKEXFXMGVJ',
+    apiKey: 'AIzaSyCUd9-xZu-Dm_7agsdzl7dypm4wu_vN9Fo',
+    appId: '1:1097482533368:web:21651127b6c63624dafe0d',
+    messagingSenderId: '1097482533368',
+    projectId: 'atelia-123',
+    authDomain: 'atelia-123.firebaseapp.com',
+    storageBucket: 'atelia-123.firebasestorage.app',
+    measurementId: 'G-D3FVN1L8RX',
   );
 }

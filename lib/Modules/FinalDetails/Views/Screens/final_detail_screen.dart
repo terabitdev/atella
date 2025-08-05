@@ -1,4 +1,4 @@
-// Modified FinalDetailsScreen with custom text field behavior
+// Modified FinalDetailsScreen with custom text field behavior and Lottie animation
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/CreativeBrief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Modules/FinalDetails/Views/Widgets/custom_check_boxes_widget.dart';
@@ -12,6 +12,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart'; // Add this import
 
 class FinalDetailsScreen extends GetView<FinalDetailsController> {
   const FinalDetailsScreen({Key? key}) : super(key: key);
@@ -44,8 +45,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
   }
 
   Widget _buildBottomSection() {
-    return GetBuilder<FinalDetailsController>(
-      builder: (controller) {
+    return Obx(() {
         // Check if we're on the last question (additional_details text question)
         final isLastQuestion =
             controller.currentQuestionIndex >= controller.questions.length - 1;
@@ -89,8 +89,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           // Show text input for other cases
           return _buildTextInput();
         } 
-      },
-    );
+    });
   }
 
   Widget _buildCustomTextField() {
@@ -137,22 +136,45 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
   }
 
   Widget _buildQuestionsList() {
-    return GetBuilder<FinalDetailsController>(
-      builder: (controller) => ListView.builder(
+    return Obx(
+      () => ListView.builder(
         padding: const EdgeInsets.only(top: 32, bottom: 20),
-        itemCount: controller.currentQuestionIndex + 1,
+        itemCount: controller.questionsToShow,
         itemBuilder: (context, index) {
           final question = controller.questions[index];
           final isAnswered = controller.isQuestionAnswered(question.id);
           final isCurrentQuestion = index == controller.currentQuestionIndex;
 
-          return _buildQuestionItem(
-            question,
-            isAnswered,
-            isCurrentQuestion,
-            index,
+          return Column(
+            children: [
+              _buildQuestionItem(
+                question,
+                isAnswered,
+                isCurrentQuestion,
+                index,
+              ),
+              // Show animation below current unanswered question's answers
+              if (controller.shouldShowAnimationAfterQuestion(index))
+                _buildLottieAnimation(),
+            ],
           );
         },
+      ),
+    );
+  }
+
+  Widget _buildLottieAnimation() {
+    return Container(
+      padding: const EdgeInsets.symmetric(vertical: 20),
+      child: Center(
+        child: Lottie.asset(
+          'assets/lottie/Loading_dots.json', // Replace with your Lottie file path
+          width: 60,
+          height: 60,
+          fit: BoxFit.contain,
+          repeat: true,
+          animate: true,
+        ),
       ),
     );
   }
@@ -229,8 +251,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     bool isAnswered,
     bool isCurrentQuestion,
   ) {
-    return GetBuilder<FinalDetailsController>(
-      builder: (controller) {
+    return Obx(() {
         return Column(
           children: [
             ...question.options.map((option) {
@@ -247,13 +268,11 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
             }).toList(),
           ],
         );
-      },
-    );
+    });
   }
 
   Widget _buildOtherOption(BriefQuestion question, String option) {
-    return GetBuilder<FinalDetailsController>(
-      builder: (controller) {
+    return Obx(() {
         final isSelected = controller.isOptionSelected(question.id, option);
 
         return CustomCheckboxWidget(
@@ -264,8 +283,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           },
           allowMultiple: question.allowMultiple,
         );
-      },
-    );
+    });
   }
 
   Widget _buildTextInput() {

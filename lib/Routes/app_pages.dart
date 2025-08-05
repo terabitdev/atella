@@ -1,3 +1,4 @@
+import 'package:atella/Modules/Auth/Bindings/auth_bindings.dart';
 import 'package:atella/Modules/Auth/View/Screens/Signup_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/login_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/onboarding_screen.dart';
@@ -38,8 +39,10 @@ class AppPages {
   static final routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
     GetPage(name: AppRoutes.onboarding, page: () => const OnboardingScreen()),
-    GetPage(name: AppRoutes.login, page: () => LoginScreen()),
-    GetPage(name: AppRoutes.signup, page: () => SignUpscreen()),
+    GetPage(name: AppRoutes.login, page: () => LoginScreen(),
+    binding: AuthBindings(),
+    ),
+    GetPage(name: AppRoutes.signup, page: () => SignUpscreen(), binding: AuthBindings()),
     GetPage(
       name: AppRoutes.verification,
       page: () => const VerificationScreen(),
