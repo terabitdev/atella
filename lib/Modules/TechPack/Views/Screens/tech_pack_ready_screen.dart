@@ -27,7 +27,7 @@ class TechPackReadyScreen extends StatelessWidget {
                 children: [
                   Text(
                     'Your Tech Pack Is \nReady',
-                    style: TPRTTextTextStyle28700,
+                    style: tprtTextTextStyle28700,
                   ),
                   InkWell(
                     onTap: () => Get.to(EditProjectScreen()),
@@ -42,7 +42,7 @@ class TechPackReadyScreen extends StatelessWidget {
               SizedBox(height: 13.h),
               Text(
                 'Garment: Short-sleeve Shirt',
-                style: TPRTTextTextStyle184001,
+                style: tprtTextTextStyle184001,
               ),
               SizedBox(height: 30.h),
               Row(
@@ -64,7 +64,7 @@ class TechPackReadyScreen extends StatelessWidget {
                       children: [
                         Text(
                           'Key Measurements',
-                          style: TPRTTextTextStyle164002,
+                          style: tprtTextTextStyle164002,
                         ),
                         const SizedBox(height: 4),
                         const Text(

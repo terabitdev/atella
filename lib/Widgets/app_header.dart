@@ -25,7 +25,7 @@ class GlobalHeader extends StatelessWidget {
             ),
           ),
           SizedBox(width: 16.w),
-          Text(title, style: VSTextStyle20600),
+          Text(title, style: vsTextStyle20600),
         ],
       ),
     );

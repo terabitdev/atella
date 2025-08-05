@@ -111,12 +111,12 @@ class _RevisionHistoryScreenState extends State<RevisionHistoryScreen> {
                                 SizedBox(height: 4.h),
                                 Text(
                                   revision['title']!,
-                                  style: RHSTitleTextTextStyle20700,
+                                  style: rhsTitleTextTextStyle20700,
                                 ),
                                 SizedBox(height: 4.h),
                                 Text(
                                   revision['date']!,
-                                  style: RHSTitleTextTextStyle16400,
+                                  style: rhsTitleTextTextStyle16400,
                                 ),
                                 SizedBox(height: 12.h),
                                 Row(
@@ -130,7 +130,7 @@ class _RevisionHistoryScreenState extends State<RevisionHistoryScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                                           padding: EdgeInsets.symmetric(vertical: 0),
                                         ),
-                                        child: Text('Restore', style: RHSTitleTextTextStyle12500),
+                                        child: Text('Restore', style: rhsTitleTextTextStyle12500),
                                       ),
                                     ),
                                     SizedBox(width: 12.w),
@@ -143,7 +143,7 @@ class _RevisionHistoryScreenState extends State<RevisionHistoryScreen> {
                                           shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(7)),
                                           padding: EdgeInsets.symmetric(vertical: 0),
                                         ),
-                                        child: Text('Preview', style: RHSTitleTextTextStyle12500),
+                                        child: Text('Preview', style: rhsTitleTextTextStyle12500),
                                       ),
                                     ),
                                   ],

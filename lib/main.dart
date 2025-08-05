@@ -1,4 +1,5 @@
 import 'package:atella/Routes/app_pages.dart';
+import 'package:atella/core/themes/app_theme.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -22,7 +23,8 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       builder: (context, child) => GetMaterialApp(
         title: 'Atella',
-        theme: ThemeData(primaryColor: Colors.deepPurpleAccent),
+        theme: AppTheme.lightTheme,
+        themeMode: ThemeMode.light,
         debugShowCheckedModeBanner: false,
         initialRoute: AppPages.INITIAL,
         getPages: AppPages.routes,

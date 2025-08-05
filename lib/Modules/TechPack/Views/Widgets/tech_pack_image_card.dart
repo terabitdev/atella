@@ -29,7 +29,7 @@ class TechPackImageCard extends StatelessWidget {
               children: [
                 Image.asset(generateIcon, height: 50, width: 50),
                 const SizedBox(height: 12),
-                Text('Generating..', style: GSTextStyle17400),
+                Text('Generating..', style: gsTextStyle17400),
               ],
             )
           : imagePath != null

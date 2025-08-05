@@ -26,7 +26,7 @@ class ReusableDropdownField<T> extends StatelessWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(label, style: DDTextTextStyle16500),
+          Text(label, style: ddTextTextStyle16500),
           const SizedBox(height: 8),
           DropdownButtonFormField<T>(
             value: value,
@@ -49,7 +49,7 @@ class ReusableDropdownField<T> extends StatelessWidget {
                 horizontal: 16,
               ),
             ),
-            style: DDTextTextStyle14400,
+            style: ddTextTextStyle14400,
             icon: const Icon(Icons.keyboard_arrow_down_rounded),
           ),
         ],

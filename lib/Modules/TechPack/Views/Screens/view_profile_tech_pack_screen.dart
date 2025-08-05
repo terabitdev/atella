@@ -56,7 +56,7 @@ class ViewProfileTechPackScreen extends StatelessWidget {
                           children: [
                             Text(
                               'Manufacturer Profile',
-                              style: MSTTextTextStyle26700,
+                              style: mstTextTextStyle26700,
                             ),
                             SizedBox(height: 24),
                             _ProfileSection(
@@ -130,9 +130,9 @@ class _ProfileSection extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(title, style: PTTextTextStyle18700),
+        Text(title, style: ptTextTextStyle18700),
         const SizedBox(height: 4),
-        Text(value, style: PTTextTextStyle16400),
+        Text(value, style: ptTextTextStyle16400),
       ],
     );
   }

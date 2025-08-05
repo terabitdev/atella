@@ -15,10 +15,9 @@ class LoginScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.white,
       body: SafeArea(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 24),
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
           child: SingleChildScrollView(
             child: Column(
               children: [
@@ -78,7 +77,7 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Get.toNamed('/verification');
                     },
-                    child: Text("Forgot Password?", style: LLastTextStyle16700),
+                    child: Text("Forgot Password?", style: lLastTextStyle16700),
                   ),
                 ),
                 SizedBox(height: 10.h),
@@ -102,7 +101,7 @@ class LoginScreen extends StatelessWidget {
                 Center(
                   child: Text(
                     "Or continue with",
-                    style: ContinuewithTextTextStyle13400,
+                    style: continuewithTextTextStyle13400,
                   ),
                 ),
                 const SizedBox(height: 20),
@@ -121,10 +120,10 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don’t have an account? ", style: LLastTextStyle16500),
+                    Text("Don't have an account? ", style: lLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.toNamed('/signup'),
-                      child: Text("Sign Up", style: LLastTextStyle16700),
+                      child: Text("Sign Up", style: lLastTextStyle16700),
                     ),
                   ],
                 ),

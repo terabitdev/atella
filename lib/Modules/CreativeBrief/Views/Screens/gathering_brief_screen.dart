@@ -33,19 +33,19 @@ class GatheringBriefScreen extends StatelessWidget {
                   Text(
                     "Gathering the Creative Brief ",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle18600,
+                    style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
                     "As your expert virtual fashion designer.",
                     textAlign: TextAlign.center,
-                    style: GSTextStyle16600,
+                    style: gsTextStyle16600,
                   ),
                   SizedBox(height: 18.h),
                   Text(
                     "I’m here to help you create a custom garment or collection.",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle165002,
+                    style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(

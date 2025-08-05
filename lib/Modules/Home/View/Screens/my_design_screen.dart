@@ -69,7 +69,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                   SizedBox(width: 8.w),
                   Text(
                     'My Designs',
-                    style: SSTitleTextTextStyle208001.copyWith(
+                    style: ssTitleTextTextStyle208001.copyWith(
                       color: Colors.black,
                     ),
                   ),
@@ -127,7 +127,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                                       children: [
                                         Text(
                                           project['name']!,
-                                          style: SSTitleTextTextStyle186004,
+                                          style: ssTitleTextTextStyle186004,
                                         ),
                                         Image.asset('assets/images/pen.png', height: 15.h, width: 15.w),
                                       ],

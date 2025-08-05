@@ -70,7 +70,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   SizedBox(width: 8.w),
                   Text(
                     'Favorites',
-                    style: SSTitleTextTextStyle208001.copyWith(
+                    style: ssTitleTextTextStyle208001.copyWith(
                       color: Colors.black,
                     ),
                   ),
@@ -149,7 +149,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                                       children: [
                                         Text(
                                           project['name']!,
-                                          style: SSTitleTextTextStyle186004,
+                                          style: ssTitleTextTextStyle186004,
                                         ),
                                         Image.asset('assets/images/pen.png', height: 15.h, width: 15.w),
                                       ],

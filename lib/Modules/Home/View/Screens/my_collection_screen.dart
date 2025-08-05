@@ -62,7 +62,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                   SizedBox(width: 8.w),
                   Text(
                     'My Collections',
-                    style: SSTitleTextTextStyle208001.copyWith(
+                    style: ssTitleTextTextStyle208001.copyWith(
                       color: Colors.black,
                     ),
                   ),
@@ -82,12 +82,12 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Winter collection', style: HSTitleTextTextStyle18800),
+                        Text('Winter collection', style: hsTitleTextTextStyle18800),
                         GestureDetector(
                           onTap: (){
                             Get.toNamed('/my_designs');
                           },
-                          child: Text('See All', style: SSTitleTextTextStyle14400),
+                          child: Text('See All', style: ssTitleTextTextStyle14400),
                         ),
                       ],
                     ),
@@ -162,12 +162,12 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('Summer collection', style:HSTitleTextTextStyle18800),
+                        Text('Summer collection', style: hsTitleTextTextStyle18800),
                         GestureDetector(
                           onTap: (){
                             Get.toNamed('/my_designs');
                           },
-                          child: Text('See All', style: SSTitleTextTextStyle14400),
+                          child: Text('See All', style: ssTitleTextTextStyle14400),
                         ),
                       ],
                     ),

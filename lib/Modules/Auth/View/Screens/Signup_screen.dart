@@ -137,10 +137,10 @@ class SignUpscreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already Joined? ", style: LLastTextStyle16500),
+                    Text("Already Joined? ", style: lLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.toNamed('/login'),
-                      child: Text("Sign In", style: LLastTextStyle16700),
+                      child: Text("Sign In", style: lLastTextStyle16700),
                     ),
                   ],
                 ),

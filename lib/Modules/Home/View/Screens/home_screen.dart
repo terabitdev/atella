@@ -51,7 +51,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: true,
-      backgroundColor: Colors.white,
       body: SingleChildScrollView(
         child: Column(
           children: [
@@ -142,12 +141,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
                     children: [
-                      Text('My Designs', style: HSTitleTextTextStyle18800),
+                      Text('My Designs', style: hsTitleTextTextStyle18800),
                       GestureDetector(
                         onTap: (){
                           Get.toNamed('/my_designs');
                         },
-                        child: Text('See All', style: SSTitleTextTextStyle14400),
+                        child: Text('See All', style: ssTitleTextTextStyle14400),
                       ),
                     ],
                   ),

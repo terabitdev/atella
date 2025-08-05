@@ -27,7 +27,7 @@ class RoundButton extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Center(child: Text(title, style: ButtonTextStyle16600)),
+        child: Center(child: Text(title, style: buttonTextStyle16600)),
       ),
     );
   }

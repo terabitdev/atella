@@ -32,7 +32,7 @@ class RoundedTagContainer extends StatelessWidget {
       ),
       child: Padding(
         padding: padding,
-        child: Text(text, style: TPCTextStyle16400),
+        child: Text(text, style: tpcTextStyle16400),
       ),
     );
   }

@@ -11,7 +11,7 @@ class EditProjectScreen extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         leading: const BackButton(color: Colors.black),
-        title: Text('Edit Project', style: ESTitleTextTextStyle12400),
+        title: Text('Edit Project', style: esTitleTextTextStyle12400),
         backgroundColor: Colors.transparent,
         elevation: 0,
       ),
@@ -21,7 +21,7 @@ class EditProjectScreen extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Project Name
-            Text('Project Name', style: DDTextTextStyle16500),
+            Text('Project Name', style: ddTextTextStyle16500),
             const SizedBox(height: 8),
             TextFormField(
               initialValue: 'Abc',

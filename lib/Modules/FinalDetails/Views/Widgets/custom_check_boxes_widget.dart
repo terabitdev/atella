@@ -48,7 +48,7 @@ class CustomCheckboxWidget extends StatelessWidget {
             const SizedBox(width: 12),
 
             // Text
-            Expanded(child: Text(text, style: CBTextStyle12400)),
+            Expanded(child: Text(text, style: cbTextStyle12400)),
           ],
         ),
       ),

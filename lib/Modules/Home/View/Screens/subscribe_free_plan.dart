@@ -27,7 +27,7 @@ class SubscribeFreePlan extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Free', style: SSTitleTextTextStyle208001),
+                  Text('Free', style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -68,12 +68,12 @@ class SubscribeFreePlan extends StatelessWidget {
                                       children: [
                                         Text(
                                           "Free/Month",
-                                          style: SFPSTitleTextTextStyle18600,
+                                          style: sfpsTitleTextTextStyle18600,
                                         ),
                                         SizedBox(height: 4.h),
                                         Text(
                                           "Features include:",
-                                          style: SFPSTitleTextTextStyle14400,
+                                          style: sfpsTitleTextTextStyle14400,
                                         ),
                                       ],
                                     ),
@@ -113,7 +113,7 @@ class SubscribeFreePlan extends StatelessWidget {
                               ),
                               child: Text(
                                 "Perfect to test, imagine, and create freely.",
-                                style: SFPSTitleTextTextStyle14500,
+                                style: sfpsTitleTextTextStyle14500,
                                 textAlign: TextAlign.center,
                               ),
                             ),
@@ -149,17 +149,17 @@ class SubscribeFreePlan extends StatelessWidget {
                               height: 1.4,
                             ),
                             children: [
-                              TextSpan(text: "By placing this order, you agree to the ",style: SSTitleTextTextStyle124006),
+                              TextSpan(text: "By placing this order, you agree to the ",style: ssTitleTextTextStyle124006),
                               TextSpan(
                                 text: "Terms of Service",
-                                style: SSTitleTextTextStyle124006.copyWith(
+                                style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(text: " and\n", style: SSTitleTextTextStyle124006),
+                              TextSpan(text: " and\n", style: ssTitleTextTextStyle124006),
                               TextSpan(
                                 text: "Privacy Policy",
-                                style: SSTitleTextTextStyle124006.copyWith(
+                                style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
@@ -201,7 +201,7 @@ class SubscribeFreePlan extends StatelessWidget {
         Expanded(
           child: Text(
             feature,
-            style: SFPSTitleTextTextStyle14500,
+            style: sfpsTitleTextTextStyle14500,
           ),
         ),
       ],

@@ -43,7 +43,7 @@ class TechPackImageUploadContainer extends StatelessWidget {
                     const SizedBox(height: 8),
                     Text(
                       'Open Camera & Take Photo',
-                      style: UITextTextStyle13500,
+                      style: uiTextTextStyle13500,
                     ),
                   ],
                 )

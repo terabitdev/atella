@@ -50,7 +50,7 @@ class GoogleRoundButton extends StatelessWidget {
                     ),
                     SizedBox(width: 10.h),
                     // Button Text
-                    Text(title, style: GoogleButtonTextStyle16600),
+                    Text(title, style: googleButtonTextStyle16600),
                   ],
                 ),
         ),

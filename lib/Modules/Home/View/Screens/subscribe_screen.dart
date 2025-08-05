@@ -27,7 +27,7 @@ class SubscribeScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Subscribe', style: SSTitleTextTextStyle208001),
+                  Text('Subscribe', style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -48,11 +48,11 @@ class SubscribeScreen extends StatelessWidget {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 16.h),
-                      Text("Choose Your Plan", style: SSTitleTextTextStyle327002),
+                      Text("Choose Your Plan", style: ssTitleTextTextStyle327002),
                       SizedBox(height: 12.h),
                       Text(
                         'Start for free. Upgrade anytime.',
-                        style: SSTitleTextTextStyle124003,
+                        style: ssTitleTextTextStyle124003,
                       ),
                       SizedBox(height: 20.h),
                       Image.asset('assets/images/subscribe.png', height: 180.h),
@@ -79,12 +79,12 @@ class SubscribeScreen extends StatelessWidget {
                                         children: [
                                           Text(
                                             "Free/Month",
-                                            style: SSTitleTextTextStyle186004,
+                                            style: ssTitleTextTextStyle186004,
                                           ),
                                           SizedBox(height: 4.h),
                                           Text(
                                             "Features include:",
-                                            style: SSTitleTextTextStyle144005,
+                                            style: ssTitleTextTextStyle144005,
                                           ),
                                         ],
                                       ),
@@ -130,11 +130,11 @@ class SubscribeScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       "Starter €9.99/Month",
-                                      style: SSTitleTextTextStyle186004,
+                                      style: ssTitleTextTextStyle186004,
                                     ),
                                     Text(
                                       "Features include:",
-                                      style: SSTitleTextTextStyle144005,
+                                      style: ssTitleTextTextStyle144005,
                                     ),
                                   ],
                                 ),
@@ -156,11 +156,11 @@ class SubscribeScreen extends StatelessWidget {
                                   children: [
                                     Text(
                                       "Monthly",
-                                      style: SSTitleTextTextStyle186004,
+                                      style: ssTitleTextTextStyle186004,
                                     ),
                                     Text(
                                       "Features include:",
-                                      style: SSTitleTextTextStyle144005,
+                                      style: ssTitleTextTextStyle144005,
                                     ),
                                   ],
                                 ),

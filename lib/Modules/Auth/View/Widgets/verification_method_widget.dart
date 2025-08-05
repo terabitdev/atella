@@ -52,9 +52,9 @@ class VerificationMethodWidget extends StatelessWidget {
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Text(method, style: OSTextStyle165003),
+                  Text(method, style: osTextStyle165003),
                   SizedBox(height: 2.h),
-                  Text(maskedValue, style: OSTextStyle165002),
+                  Text(maskedValue, style: osTextStyle165002),
                 ],
               ),
             ),

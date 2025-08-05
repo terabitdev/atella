@@ -33,7 +33,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
               // Description text
               Text(
                 "Enter your email address and we’ll send you a verification link to reset your password.",
-                style: VSTextStyle145002,
+                style: vsTextStyle145002,
               ),
               SizedBox(height: 24.h),
               AuthTextField(

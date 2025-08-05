@@ -22,13 +22,13 @@ class TechPackQuestionField extends StatelessWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: TPLTextStyle12400),
+        Text(label, style: tplTextStyle12400),
         const SizedBox(height: 6),
         TextField(
           controller: controller,
           enabled: enabled,
           onChanged: onChanged,
-          style: TPLTextStyle124001,
+          style: tplTextStyle124001,
           decoration: InputDecoration(
             hintText: hint,
             filled: true,

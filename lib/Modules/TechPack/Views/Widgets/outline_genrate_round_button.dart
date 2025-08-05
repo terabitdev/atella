@@ -46,7 +46,7 @@ class OutlineGenerateRoundButton extends StatelessWidget {
                           SizedBox(width: 10.w),
                         ],
                       ),
-                    Text(title, style: GButtonTextStyle166001),
+                    Text(title, style: gButtonTextStyle166001),
                   ],
                 ),
         ),

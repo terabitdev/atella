@@ -34,19 +34,19 @@ class RefineConceptScreen extends StatelessWidget {
                   Text(
                     "Refining the Concept ",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle18600,
+                    style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
                     "Now, to help me refine the 3D design",
                     textAlign: TextAlign.center,
-                    style: GSTextStyle16600,
+                    style: gsTextStyle16600,
                   ),
                   SizedBox(height: 18.h),
                   Text(
                     "And propose 3 concept options, I need a few more details.",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle165002,
+                    style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(

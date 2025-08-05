@@ -14,7 +14,7 @@ class AuthHeader extends StatelessWidget {
       children: [
         Image.asset(logo, height: 61.h, width: 63.w),
         SizedBox(height: 35.h),
-        Text(title, style: LoginTextTextStyle22700),
+        Text(title, style: loginTextTextStyle22700),
         SizedBox(height: 40.h),
       ],
     );

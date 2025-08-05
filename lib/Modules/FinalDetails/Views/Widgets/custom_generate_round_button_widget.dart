@@ -46,7 +46,7 @@ class GenerateRoundButton extends StatelessWidget {
                           SizedBox(width: 10.w),
                         ],
                       ),
-                    Text(title, style: ButtonTextStyle16600),
+                    Text(title, style: buttonTextStyle16600),
                   ],
                 ),
         ),

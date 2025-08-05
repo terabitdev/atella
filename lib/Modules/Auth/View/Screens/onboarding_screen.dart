@@ -36,13 +36,13 @@ class OnboardingScreen extends StatelessWidget {
                   Text(
                     "Welcome to AtellA — Your\nFashion Brand Starts Here.\"",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle18600,
+                    style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
                     "Turn your ideas into real clothing — with AI-powered design tools and manufacturer support.",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle165002,
+                    style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(
@@ -57,7 +57,7 @@ class OnboardingScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Already joined? ", style: OSTextStyle165003),
+                      Text("Already joined? ", style: osTextStyle165003),
                       GestureDetector(
                         onTap: () {
                           // Navigate to sign-in
@@ -66,7 +66,7 @@ class OnboardingScreen extends StatelessWidget {
                           onTap: () {
                             Get.toNamed('/login');
                           },
-                          child: Text("Sign In", style: OSTextStyle167004),
+                          child: Text("Sign In", style: osTextStyle167004),
                         ),
                       ),
                     ],

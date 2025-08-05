@@ -56,10 +56,10 @@ class _SearchWidgetState extends State<SearchWidget> {
         controller: widget.controller,
         focusNode: _focusNode,
         onChanged: widget.onChanged,
-        style: OSTextStyle165002,
+        style: osTextStyle165002,
         decoration: InputDecoration(
           hintText: 'Search Designs',
-          hintStyle: OSTextStyle165002,
+          hintStyle: osTextStyle165002,
           prefixIcon: Padding(
             padding: EdgeInsets.all(12.w),
             child: Image.asset(

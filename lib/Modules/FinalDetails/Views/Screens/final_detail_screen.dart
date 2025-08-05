@@ -27,7 +27,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           AppHeader(
             title: 'Final Details',
             timeTextGetter: () => controller.currentTime,
-            titleStyle: QTextStyle14600,
+            titleStyle: qTextStyle14600,
             onBack: () => Get.back(),
           ),
           Expanded(
@@ -101,12 +101,12 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
         child: TextField(
           controller: controller
               .customInputController, // Use the controller from your existing code
-          style: AuthLableTextTextStyle144001,
+          style: authLableTextTextStyle144001,
           decoration: InputDecoration(
             filled: true,
             fillColor: const Color.fromRGBO(236, 239, 246, 1),
             hintText: "Add any additional details...", // You can customize this
-            hintStyle: AuthLableTextTextStyle144002,
+            hintStyle: authLableTextTextStyle144002,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
               borderSide: const BorderSide(
@@ -185,7 +185,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(question.question, style: QTextStyle16400),
+                  child: Text(question.question, style: qTextStyle16400),
                 ),
                 const SizedBox(width: 12),
                 if (isAnswered)
@@ -219,7 +219,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
       margin: const EdgeInsets.only(bottom: 16),
       child: Text(
         title,
-        style: QTextStyle14600.copyWith(color: AppColors.buttonColor),
+        style: qTextStyle14600.copyWith(color: AppColors.buttonColor),
       ),
     );
   }

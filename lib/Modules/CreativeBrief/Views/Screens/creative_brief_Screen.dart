@@ -31,7 +31,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           AppHeader(
             title: 'Creative Brief',
             timeTextGetter: () => controller.currentTime,
-            titleStyle: QTextStyle14600,
+            titleStyle: qTextStyle14600,
             onBack: () => Get.back(),
           ),
           Expanded(
@@ -109,7 +109,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(question.question, style: QTextStyle16400),
+                  child: Text(question.question, style: qTextStyle16400),
                 ),
                 const SizedBox(width: 12),
                 if (isAnswered)
@@ -187,12 +187,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       height: 45.h,
       child: TextField(
         controller: textController,
-        style: AuthLableTextTextStyle144001,
+        style: authLableTextTextStyle144001,
         decoration: InputDecoration(
           filled: true,
           fillColor: Color.fromRGBO(236, 239, 246, 1),
           hintText: hintText,
-          hintStyle: AuthLableTextTextStyle144002,
+          hintStyle: authLableTextTextStyle144002,
           enabledBorder: OutlineInputBorder(
             borderRadius: BorderRadius.circular(12.r),
             borderSide: const BorderSide(

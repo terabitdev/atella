@@ -31,7 +31,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
          AppHeader(
             title: 'Refining the Concept',
             timeTextGetter: () => controller.currentTime,
-            titleStyle: QTextStyle14600,
+            titleStyle: qTextStyle14600,
             onBack: () => Get.back()
           ),
           Expanded(
@@ -115,7 +115,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(question.question, style: QTextStyle16400),
+                  child: Text(question.question, style: qTextStyle16400),
                 ),
                 const SizedBox(width: 12),
                 // Checkmark for answered questions

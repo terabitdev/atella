@@ -46,7 +46,7 @@ void showpopup() {
                     child: Center(
                       child: Text(
                         'Edit',
-                        style: DBTitleTextTextStyle14400,
+                        style: dbTitleTextTextStyle14400,
                       ),
                     ),
                   ),
@@ -64,7 +64,7 @@ void showpopup() {
                     child: Center(
                       child: Text(
                         'View Revision History',
-                        style: DBTitleTextTextStyle14400,
+                        style: dbTitleTextTextStyle14400,
                       ),
                     ),
                   ),
@@ -81,7 +81,7 @@ void showpopup() {
                     child: Center(
                       child: Text(
                         'Download',
-                        style: DBTitleTextTextStyle14400,
+                        style: dbTitleTextTextStyle14400,
                       ),
                     ),
                   ),

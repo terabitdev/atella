@@ -34,7 +34,7 @@ class FinalDetailOnboard extends StatelessWidget {
                   Text(
                     "Final Details to Provide ",
                     textAlign: TextAlign.center,
-                    style: OSTextStyle18600,
+                    style: osTextStyle18600,
                   ),
                   SizedBox(height: 70.h),
                   RoundButton(

@@ -41,11 +41,11 @@ Widget _RecommendedTab(ManufacturerSuggestionController controller) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        Text('Manufacturer Suggestions', style: MSTTextTextStyle26700),
+        Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
         const SizedBox(height: 8),
         Text(
           'We found 3 potential manufacturers that fit your product needs.',
-          style: MSTTextTextStyle184001,
+          style: mstTextTextStyle184001,
         ),
         const SizedBox(height: 18),
         ...controller.recommendedManufacturers.map(
@@ -71,14 +71,14 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const SizedBox(height: 8),
-        Text('Filter Manufacturers Manually', style: MSTTextTextStyle26700),
+        Text('Filter Manufacturers Manually', style: mstTextTextStyle26700),
         const SizedBox(height: 8),
         Text(
           'Use filters below to search our full manufacturer directory:',
-          style: MSTTextTextStyle184001,
+          style: mstTextTextStyle184001,
         ),
         const SizedBox(height: 18),
-        Text('Country or Region', style: CSTTextTextStyle16500),
+        Text('Country or Region', style: cstTextTextStyle16500),
         const SizedBox(height: 8),
         Obx(
           () => DropdownButtonFormField<String>(
@@ -102,7 +102,7 @@ Widget _CustomTab(ManufacturerSuggestionController controller) {
           ),
         ),
         const SizedBox(height: 18),
-        Text('Minimum Order Quantity (MOQ)', style: CSTTextTextStyle16500),
+        Text('Minimum Order Quantity (MOQ)', style: cstTextTextStyle16500),
         const SizedBox(height: 8),
         Obx(
           () => Row(

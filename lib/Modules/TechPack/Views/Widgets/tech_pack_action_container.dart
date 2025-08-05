@@ -30,7 +30,7 @@ class TechPackActionContainer extends StatelessWidget {
           child: Text(
             'Would you like to make any changes before I create the final tech pack?',
             textAlign: TextAlign.center,
-            style: GSTextStyle16400,
+            style: gsTextStyle16400,
           ),
         ),
         RoundButton(
