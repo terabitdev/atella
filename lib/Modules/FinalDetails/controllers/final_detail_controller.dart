@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/firebase/services/design_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FinalDetailsController extends GetxController {
+  final DesignDataService _dataService = Get.find<DesignDataService>();
+  
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
@@ -301,17 +304,52 @@ class FinalDetailsController extends GetxController {
 
   // Generate final design
   void generateDesign() {
+    // Store final details data in the design data service
+    _saveFinalDetailsData();
+    
+    // Navigate to tech pack generation screen
     Get.toNamed('/generate_tech_pack');
+    
     Get.snackbar(
-      'Design Generated!',
-      'Your custom design is being created...',
+      'Generating Designs!',
+      'Creating 3 unique designs based on your preferences...',
       snackPosition: SnackPosition.TOP,
       backgroundColor: const Color(0xFF8B5FE6),
       colorText: Colors.white,
     );
-
-    // Navigate to design preview or results screen
-    // Get.toNamed('/design-preview');
+  }
+  
+  void _saveFinalDetailsData() {
+    // Convert answers to a format suitable for design generation
+    Map<String, dynamic> finalDetailsData = {};
+    
+    for (var entry in _answers.entries) {
+      String questionId = entry.key;
+      BriefAnswer answer = entry.value;
+      
+      switch (questionId) {
+        case 'target_season':
+          finalDetailsData['season'] = answer.selectedOptions.join(', ');
+          break;
+        case 'target_budget':
+          finalDetailsData['budget'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          break;
+        case 'desired_features':
+          finalDetailsData['features'] = answer.selectedOptions.join(', ');
+          if (answer.textInput?.isNotEmpty == true) {
+            finalDetailsData['customFeatures'] = answer.textInput;
+          }
+          break;
+        case 'additional_details':
+          finalDetailsData['additionalDetails'] = answer.textInput ?? '';
+          break;
+      }
+    }
+    
+    // Save to design data service
+    _dataService.setFinalDetailsData(finalDetailsData);
   }
 
   bool isOtherSelectedForCurrentQuestion() {

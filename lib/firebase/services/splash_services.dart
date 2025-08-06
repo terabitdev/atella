@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:atella/core/services/auth_service.dart';
+import 'package:atella/firebase/services/auth_service.dart';
 
 class SplashServices {
   void navigateToHome(BuildContext context) {

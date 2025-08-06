@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:atella/core/services/auth_service.dart';
+import 'package:atella/firebase/services/auth_service.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -77,7 +77,7 @@ class LoginController extends GetxController {
 
   @override
   void onClose() {
-    print('LoginController disposed');
+    // print('LoginController disposed');
     emailController.dispose();
     passwordController.dispose();
     super.onClose();
