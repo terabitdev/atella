@@ -275,7 +275,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       child: RoundButton(
         title: 'Next Steps', 
         onTap: (){
-          Get.toNamed('/final_detail_onboard'); 
+          controller.proceedToNextScreen(); 
         }, 
         color: AppColors.buttonColor, 
         isloading: false

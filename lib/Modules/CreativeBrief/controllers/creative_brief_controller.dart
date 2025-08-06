@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/firebase/services/design_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreativeBriefController extends GetxController {
+  final DesignDataService _dataService = Get.find<DesignDataService>();
+  
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
@@ -403,5 +406,76 @@ class CreativeBriefController extends GetxController {
 
   bool isEditing(String questionId) {
     return _editingQuestions.contains(questionId);
+  }
+
+  // Save creative brief data to DesignDataService
+  void _saveCreativeBriefData() {
+    // Convert answers to a format suitable for design generation
+    Map<String, dynamic> creativeBriefData = {};
+    
+    for (var entry in _answers.entries) {
+      String questionId = entry.key;
+      BriefAnswer answer = entry.value;
+      
+      switch (questionId) {
+        case 'garment_type':
+          creativeBriefData['garmentType'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            creativeBriefData['customGarmentType'] = answer.textInput;
+          }
+          break;
+        case 'style':
+          creativeBriefData['style'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            creativeBriefData['customStyle'] = answer.textInput;
+          }
+          break;
+        case 'target_audience':
+          creativeBriefData['targetAudience'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            creativeBriefData['customTargetAudience'] = answer.textInput;
+          }
+          break;
+        case 'occasion':
+          creativeBriefData['occasion'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            creativeBriefData['customOccasion'] = answer.textInput;
+          }
+          break;
+        case 'inspiration':
+          creativeBriefData['inspiration'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            creativeBriefData['customInspiration'] = answer.textInput;
+          }
+          break;
+        case 'colors':
+          creativeBriefData['colors'] = answer.textInput ?? '';
+          break;
+        case 'fabrics':
+          creativeBriefData['fabrics'] = answer.textInput ?? '';
+          break;
+      }
+    }
+    
+    // Save to design data service
+    _dataService.setCreativeBriefData(creativeBriefData);
+    
+    print('Creative Brief data saved: $creativeBriefData');
+  }
+
+  // Method to proceed to next screen with data saving
+  void proceedToNextScreen() {
+    _saveCreativeBriefData();
+    Get.toNamed('/refine_concept');
   }
 }

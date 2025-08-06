@@ -1,9 +1,12 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/firebase/services/design_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
+  final DesignDataService _dataService = Get.find<DesignDataService>();
+  
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
@@ -356,5 +359,70 @@ class RefiningConceptController extends GetxController {
       return questions.length; // Show all questions after question 5
     }
     return currentQuestionIndex + 1; // Show progressive questions for 1-5
+  }
+
+  // Save refined concept data to DesignDataService
+  void _saveRefinedConceptData() {
+    // Convert answers to a format suitable for design generation
+    Map<String, dynamic> refinedConceptData = {};
+    
+    for (var entry in _answers.entries) {
+      String questionId = entry.key;
+      BriefAnswer answer = entry.value;
+      
+      switch (questionId) {
+        case 'garment_type':
+          refinedConceptData['silhouette'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            refinedConceptData['customSilhouette'] = answer.textInput;
+          }
+          break;
+        case 'specific_features':
+          refinedConceptData['features'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            refinedConceptData['customFeatures'] = answer.textInput;
+          }
+          break;
+        case 'seasonal_constraint':
+          refinedConceptData['season'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            refinedConceptData['customSeason'] = answer.textInput;
+          }
+          break;
+        case 'target_budget':
+          refinedConceptData['budget'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            refinedConceptData['customBudget'] = answer.textInput;
+          }
+          break;
+        case 'functionalities_values':
+          refinedConceptData['values'] = answer.selectedOptions.isNotEmpty 
+              ? answer.selectedOptions.first 
+              : '';
+          if (answer.textInput?.isNotEmpty == true) {
+            refinedConceptData['customValues'] = answer.textInput;
+          }
+          break;
+      }
+    }
+    
+    // Save to design data service
+    _dataService.setRefinedConceptData(refinedConceptData);
+    
+    print('Refined Concept data saved: $refinedConceptData');
+  }
+
+  // Method to proceed to next screen with data saving
+  void proceedToNextScreen() {
+    _saveRefinedConceptData();
+    Get.toNamed('/final_detail_onboard');
   }
 }

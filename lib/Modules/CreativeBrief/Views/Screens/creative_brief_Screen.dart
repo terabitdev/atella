@@ -361,18 +361,20 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             // Submit colors answer if entered and not already saved
             if (controller.colorController.text.trim().isNotEmpty && 
                 !controller.isQuestionAnswered('colors')) {
-              // await controller.submitTextAnswerWithoutAdvancing('colors', controller.colorController);
+              controller.submitTextAnswer('colors', controller.colorController);
+              await Future.delayed(const Duration(milliseconds: 500)); // Wait for submission
             }
             
             // Submit fabrics answer if entered and not already saved
             if (controller.fabricController.text.trim().isNotEmpty && 
                 !controller.isQuestionAnswered('fabrics')) {
-              // await controller.submitTextAnswerWithoutAdvancing('fabrics', controller.fabricController);
+              controller.submitTextAnswer('fabrics', controller.fabricController);
+              await Future.delayed(const Duration(milliseconds: 500)); // Wait for submission
             }
           }
           
-          // Navigate to next screen
-          Get.toNamed('/refine_concept');
+          // Navigate to next screen with data saving
+          controller.proceedToNextScreen();
         },
         color: AppColors.buttonColor,
         isloading: false,
