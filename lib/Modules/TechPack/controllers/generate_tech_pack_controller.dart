@@ -1,19 +1,24 @@
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:atella/firebase/api/openai_service.dart';
 import 'package:atella/firebase/services/design_data_service.dart';
+import 'package:atella/firebase/services/designs_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
+  final DesignsService _designsService = DesignsService();
   
   var isLoading = false.obs;
+  var isSaving = false.obs; // Separate loading state for saving to Firebase
   var isInitialized = false.obs;
   // Stores generated images as base64 strings
   var generatedImages = <String>[].obs;
   var currentPrompt = ''.obs;
   var errorMessage = ''.obs;
   var hasError = false.obs;
+  var selectedDesignIndex = (-1).obs; // Track selected design index
 
   @override
   void onInit() {
@@ -119,7 +124,8 @@ class TechPackController extends GetxController {
   void _showEditOptionsDialog() {
     Get.dialog(
       AlertDialog(
-        title: const Text('Edit Your Answers'),
+        backgroundColor: Colors.white,
+        title: Text('Edit Your Answers', style: gtpadTitleTextTextStyle18),
         content: const Text('Which stage would you like to edit?'),
         actions: [
           TextButton(
@@ -127,25 +133,25 @@ class TechPackController extends GetxController {
               Get.back(); // Close dialog
               Get.offNamedUntil('/creative_brief', (route) => route.isFirst);
             },
-            child: const Text('Creative Brief'),
+            child: Text('Creative Brief',style: gtpadTitleTextTextStyle14600),
           ),
           TextButton(
             onPressed: () {
               Get.back(); // Close dialog
               Get.offNamedUntil('/refining_concept', (route) => route.isFirst);
             },
-            child: const Text('Refine Concept'),
+            child: Text('Refine Concept',style: gtpadTitleTextTextStyle14600),
           ),
           TextButton(
             onPressed: () {
               Get.back(); // Close dialog
               Get.offNamedUntil('/final_details', (route) => route.isFirst);
             },
-            child: const Text('Final Details'),
+            child: Text('Final Details',style: gtpadTitleTextTextStyle14600),
           ),
           TextButton(
             onPressed: () => Get.back(),
-            child: const Text('Cancel'),
+            child: Text('Cancel',style: gtpadTitleTextTextStyle16800),
           ),
         ],
       ),
@@ -165,6 +171,68 @@ class TechPackController extends GetxController {
         },
 
       );
+    }
+  }
+  
+  void selectDesign(int index) {
+    if (index >= 0 && index < generatedImages.length) {
+      selectedDesignIndex.value = index;
+    }
+  }
+  
+  Future<void> onContinueWithSelectedDesign() async {
+    if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
+      try {
+        // Show saving state (not loading state)
+        isSaving.value = true;
+        hasError.value = false;
+        errorMessage.value = '';
+        
+        print('=== STARTING FIREBASE SAVE ===');
+        print('Selected design index: ${selectedDesignIndex.value}');
+        print('Total designs to save: ${generatedImages.length}');
+        
+        // Test storage connection first
+        print('Testing Firebase Storage connection...');
+        bool storageConnected = await _designsService.testStorageConnection();
+        if (!storageConnected) {
+          print('Warning: Firebase Storage connection failed, will use fallback');
+        }
+        
+        // Get questionnaire data
+        Map<String, dynamic> questionnaireData = {
+          'creativeBrief': _dataService.getCreativeBriefData(),
+          'refinedConcept': _dataService.getRefinedConceptData(),
+          'finalDetails': _dataService.getFinalDetailsData(),
+          'prompt': currentPrompt.value,
+        };
+        
+        print('Questionnaire data prepared');
+
+        // Save all designs to Firebase with selection status
+        await _designsService.saveMultipleDesigns(
+          base64Images: generatedImages,
+          questionnaireData: questionnaireData,
+          selectedIndex: selectedDesignIndex.value,
+        );
+
+        print('=== DESIGNS SAVED TO FIREBASE SUCCESSFULLY ===');
+        
+        // Continue with the selected design
+        onContinueWithDesign(selectedDesignIndex.value);
+        
+      } catch (e) {
+        print('=== ERROR SAVING DESIGNS TO FIREBASE ===');
+        print('Error: $e');
+        print('Error Type: ${e.runtimeType}');
+        
+        hasError.value = true;
+        errorMessage.value = e.toString().length > 100 
+          ? e.toString().substring(0, 100) + '...' 
+          : e.toString();
+      } finally {
+        isSaving.value = false;
+      }
     }
   }
   

@@ -98,9 +98,9 @@ final TextStyle authLableTextTextStyle144002 = GoogleFonts.manrope(
   color: Color.fromRGBO(132, 131, 134, 1),
 );
 
-final TextStyle vsTextStyle20600 = GoogleFonts.manrope(
+final TextStyle vsTextStyle20800 = GoogleFonts.manrope(
   fontSize: 20.sp,
-  fontWeight: FontWeight.w600,
+  fontWeight: FontWeight.w800,
   color: Colors.black,
 );
 
@@ -144,6 +144,11 @@ final TextStyle gsTextStyle17400 = GoogleFonts.outfit(
   fontSize: 17.sp,
   fontWeight: FontWeight.w400,
   color: Colors.grey[700]!,
+);
+final TextStyle gsTextStyle17500 = GoogleFonts.manrope(
+  fontSize: 17.sp,
+  fontWeight: FontWeight.w500,
+  color: Color.fromRGBO(44, 44, 44, 1),
 );
 
 final TextStyle tpcTextStyle16400 = GoogleFonts.manrope(
@@ -355,4 +360,22 @@ final TextStyle sfpsTitleTextTextStyle14400 = GoogleFonts.inter(
   fontSize: 14.sp,
   fontWeight: FontWeight.w400,
   color: Colors.white,
+);
+
+final TextStyle gtpadTitleTextTextStyle18 = GoogleFonts.manrope(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.bold,
+  color: Colors.black,
+);
+
+final TextStyle gtpadTitleTextTextStyle16800 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w800,
+  color: Colors.black,
+);
+
+final TextStyle gtpadTitleTextTextStyle14600 = GoogleFonts.manrope(
+  fontSize: 16.sp,
+  fontWeight: FontWeight.w600,
+  color: Colors.black,
 );
