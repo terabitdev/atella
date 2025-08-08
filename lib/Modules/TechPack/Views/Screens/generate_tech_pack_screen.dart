@@ -21,7 +21,10 @@ class GenerateTechPackScreen extends StatelessWidget {
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 60),
+          insetPadding: const EdgeInsets.symmetric(
+            horizontal: 12,
+            vertical: 60,
+          ),
           child: Container(
             width: double.infinity,
             height: 500,
@@ -113,7 +116,8 @@ class GenerateTechPackScreen extends StatelessWidget {
                           }
                         }),
                         const SizedBox(height: 20),
-                        if (!controller.isLoading.value && !controller.hasError.value)
+                        if (!controller.isLoading.value &&
+                            !controller.hasError.value)
                           _buildActionButtons(),
                       ],
                     );
@@ -213,7 +217,11 @@ class GenerateTechPackScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset('assets/images/generate.png', width: 60.w, height: 64.h),
+            Image.asset(
+              'assets/images/generate.png',
+              width: 60.w,
+              height: 64.h,
+            ),
             SizedBox(height: 16.h),
             Text('Generating...', style: gsTextStyle17500),
           ],
@@ -235,10 +243,26 @@ class GenerateTechPackScreen extends StatelessWidget {
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Icon(Icons.image_not_supported_outlined, size: 48, color: Colors.grey.shade400),
+            Icon(
+              Icons.image_not_supported_outlined,
+              size: 48,
+              color: Colors.grey.shade400,
+            ),
             const SizedBox(height: 8),
-            Text('Design ${index + 1}', style: GoogleFonts.inter(fontSize: 16, color: Colors.grey.shade600)),
-            Text('Failed to generate', style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade500)),
+            Text(
+              'Design ${index + 1}',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                color: Colors.grey.shade600,
+              ),
+            ),
+            Text(
+              'Failed to generate',
+              style: GoogleFonts.inter(
+                fontSize: 12,
+                color: Colors.grey.shade500,
+              ),
+            ),
           ],
         ),
       ),
@@ -260,14 +284,24 @@ class GenerateTechPackScreen extends StatelessWidget {
           children: [
             Icon(Icons.image_outlined, size: 48, color: Colors.grey.shade300),
             const SizedBox(height: 8),
-            Text('Design ${index + 1}', style: GoogleFonts.inter(fontSize: 16, color: Colors.grey.shade400)),
+            Text(
+              'Design ${index + 1}',
+              style: GoogleFonts.inter(
+                fontSize: 16,
+                color: Colors.grey.shade400,
+              ),
+            ),
           ],
         ),
       ),
     );
   }
 
-  Widget _buildDesignImageCard(String base64Image, int index, BuildContext context) {
+  Widget _buildDesignImageCard(
+    String base64Image,
+    int index,
+    BuildContext context,
+  ) {
     return Obx(() {
       final isSelected = controller.selectedDesignIndex.value == index;
       return GestureDetector(
@@ -307,11 +341,18 @@ class GenerateTechPackScreen extends StatelessWidget {
                               child: Column(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
-                                  Icon(Icons.image_not_supported_outlined, size: 48, color: Colors.grey.shade400),
+                                  Icon(
+                                    Icons.image_not_supported_outlined,
+                                    size: 48,
+                                    color: Colors.grey.shade400,
+                                  ),
                                   const SizedBox(height: 8),
                                   Text(
                                     'Failed to load image',
-                                    style: GoogleFonts.inter(fontSize: 12, color: Colors.grey.shade500),
+                                    style: GoogleFonts.inter(
+                                      fontSize: 12,
+                                      color: Colors.grey.shade500,
+                                    ),
                                   ),
                                 ],
                               ),
@@ -323,13 +364,21 @@ class GenerateTechPackScreen extends StatelessWidget {
                         Positioned(
                           top: 8,
                           right: 8,
-                          child: Image.asset('assets/images/tick.png', width: 20, height: 20),
+                          child: Image.asset(
+                            'assets/images/tick.png',
+                            width: 20,
+                            height: 20,
+                          ),
                         ),
                       if (!isSelected)
                         Positioned(
                           top: 8,
                           right: 8,
-                          child: const Icon(Icons.touch_app, color: Colors.white, size: 20),
+                          child: const Icon(
+                            Icons.touch_app,
+                            color: Colors.white,
+                            size: 20,
+                          ),
                         ),
                     ],
                   ),
@@ -369,64 +418,17 @@ class GenerateTechPackScreen extends StatelessWidget {
         SizedBox(height: 12.h),
         Obx(() {
           final isDesignSelected = controller.selectedDesignIndex.value >= 0;
-          final isSaving = controller.isSaving.value;
-
-          String buttonTitle;
-          if (isSaving) {
-            buttonTitle = 'Saving Design...';
-          } else if (isDesignSelected) {
-            buttonTitle = 'Continue with Selected Design';
-          } else {
-            buttonTitle = 'Please select a design first';
-          }
 
           return OutlineGenerateRoundButton(
-            title: buttonTitle,
-            onTap: (isDesignSelected && !isSaving)
+            title: isDesignSelected
+                ? 'Continue with Selected Design'
+                : 'Please select a design first',
+            onTap: isDesignSelected
                 ? controller.onContinueWithSelectedDesign
                 : () {},
-            color: (isDesignSelected && !isSaving) ? const Color(0xFF1A1A1A) : Colors.grey,
+            color: isDesignSelected ? const Color(0xFF1A1A1A) : Colors.grey,
             imagePath: 'assets/images/techpackgenerate.png',
           );
-        }),
-        SizedBox(height: 24.h),
-        Obx(() {
-          if (controller.isSaving.value) {
-            return Container(
-              color: Colors.black.withOpacity(0.3),
-              child: Center(
-                child: Container(
-                  padding: const EdgeInsets.all(24),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(16),
-                  ),
-                  child: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      const CircularProgressIndicator(color: Color(0xFF1A1A1A)),
-                      const SizedBox(height: 16),
-                      Text(
-                        'Saving your designs...',
-                        style: GoogleFonts.inter(
-                          fontSize: 16,
-                          fontWeight: FontWeight.w600,
-                          color: const Color(0xFF1A1A1A),
-                        ),
-                      ),
-                      const SizedBox(height: 8),
-                      Text(
-                        'Please wait while we save your designs to the cloud.',
-                        textAlign: TextAlign.center,
-                        style: GoogleFonts.inter(fontSize: 14, color: const Color(0xFF666666)),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            );
-          }
-          return const SizedBox.shrink();
         }),
       ],
     );

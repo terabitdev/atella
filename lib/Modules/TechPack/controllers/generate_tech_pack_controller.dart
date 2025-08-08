@@ -179,62 +179,44 @@ class TechPackController extends GetxController {
       selectedDesignIndex.value = index;
     }
   }
-  
   Future<void> onContinueWithSelectedDesign() async {
-    if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
-      try {
-        // Show saving state (not loading state)
-        isSaving.value = true;
-        hasError.value = false;
-        errorMessage.value = '';
-        
-        print('=== STARTING FIREBASE SAVE ===');
-        print('Selected design index: ${selectedDesignIndex.value}');
-        print('Total designs to save: ${generatedImages.length}');
-        
-        // Test storage connection first
-        print('Testing Firebase Storage connection...');
-        bool storageConnected = await _designsService.testStorageConnection();
-        if (!storageConnected) {
-          print('Warning: Firebase Storage connection failed, will use fallback');
-        }
-        
-        // Get questionnaire data
-        Map<String, dynamic> questionnaireData = {
-          'creativeBrief': _dataService.getCreativeBriefData(),
-          'refinedConcept': _dataService.getRefinedConceptData(),
-          'finalDetails': _dataService.getFinalDetailsData(),
-          'prompt': currentPrompt.value,
-        };
-        
-        print('Questionnaire data prepared');
-
-        // Save all designs to Firebase with selection status
-        await _designsService.saveMultipleDesigns(
-          base64Images: generatedImages,
-          questionnaireData: questionnaireData,
-          selectedIndex: selectedDesignIndex.value,
-        );
-
-        print('=== DESIGNS SAVED TO FIREBASE SUCCESSFULLY ===');
-        
-        // Continue with the selected design
-        onContinueWithDesign(selectedDesignIndex.value);
-        
-      } catch (e) {
-        print('=== ERROR SAVING DESIGNS TO FIREBASE ===');
-        print('Error: $e');
-        print('Error Type: ${e.runtimeType}');
-        
-        hasError.value = true;
-        errorMessage.value = e.toString().length > 100 
-          ? e.toString().substring(0, 100) + '...' 
-          : e.toString();
-      } finally {
-        isSaving.value = false;
-      }
-    }
+  if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
+    // Navigate immediately - no waiting
+    onContinueWithDesign(selectedDesignIndex.value);
+    
+    // Save in background
+    _saveDesignsInBackground();
   }
+}
+
+// Background save function
+Future<void> _saveDesignsInBackground() async {
+  try {
+    print('=== STARTING BACKGROUND SAVE ===');
+    
+    // Get questionnaire data
+    Map<String, dynamic> questionnaireData = {
+      'creativeBrief': _dataService.getCreativeBriefData(),
+      'refinedConcept': _dataService.getRefinedConceptData(),
+      'finalDetails': _dataService.getFinalDetailsData(),
+      'prompt': currentPrompt.value,
+    };
+
+    // Save to Firebase in background
+    await _designsService.saveMultipleDesigns(
+      base64Images: generatedImages,
+      questionnaireData: questionnaireData,
+      selectedIndex: selectedDesignIndex.value,
+    );
+
+    print('=== BACKGROUND SAVE COMPLETED ===');
+    
+  } catch (e) {
+    print('=== BACKGROUND SAVE FAILED ===');
+    print('Error: $e');
+    // Data will be lost but user doesn't need to know
+  }
+}
   
   Future<void> regenerateDesigns() async {
     await generateDesigns();

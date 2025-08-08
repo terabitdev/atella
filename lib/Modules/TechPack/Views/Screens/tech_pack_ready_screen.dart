@@ -255,9 +255,16 @@ class TechPackReadyScreen extends StatelessWidget {
                 isloading: false,
               ),
               const SizedBox(height: 16),
-              SaveExportButtonRow(onSave: () {
-                Get.toNamed('/nav_bar');
-              }, onExport: () {}),
+              Obx(() => SaveExportButtonRow(
+                onSave: controller.isSaving.value 
+                  ? null 
+                  : () => controller.saveTechPack(),
+                onExport: controller.isExporting.value 
+                  ? null 
+                  : () => controller.exportTechPackPDF(),
+                isSaving: controller.isSaving.value,
+                isExporting: controller.isExporting.value,
+              )),
               const SizedBox(height: 30),
             ],
           ),

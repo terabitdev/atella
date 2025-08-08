@@ -1,12 +1,17 @@
 import 'package:flutter/material.dart';
 
 class SaveExportButtonRow extends StatelessWidget {
-  final VoidCallback onSave;
-  final VoidCallback onExport;
+  final VoidCallback? onSave;
+  final VoidCallback? onExport;
+  final bool isSaving;
+  final bool isExporting;
+  
   const SaveExportButtonRow({
     super.key,
     required this.onSave,
     required this.onExport,
+    this.isSaving = false,
+    this.isExporting = false,
   });
 
   @override
@@ -23,14 +28,23 @@ class SaveExportButtonRow extends StatelessWidget {
               side: const BorderSide(color: Colors.black, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: const Text(
-              'Save',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF222222),
-                fontSize: 16,
-              ),
-            ),
+            child: isSaving 
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF222222)),
+                  ),
+                )
+              : const Text(
+                  'Save',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF222222),
+                    fontSize: 16,
+                  ),
+                ),
           ),
         ),
         const SizedBox(width: 16),
@@ -44,14 +58,23 @@ class SaveExportButtonRow extends StatelessWidget {
               side: const BorderSide(color: Colors.black, width: 1),
               padding: const EdgeInsets.symmetric(vertical: 16),
             ),
-            child: const Text(
-              'Export',
-              style: TextStyle(
-                fontWeight: FontWeight.w600,
-                color: Color(0xFF222222),
-                fontSize: 16,
-              ),
-            ),
+            child: isExporting 
+              ? const SizedBox(
+                  width: 20,
+                  height: 20,
+                  child: CircularProgressIndicator(
+                    strokeWidth: 2,
+                    valueColor: AlwaysStoppedAnimation<Color>(Color(0xFF222222)),
+                  ),
+                )
+              : const Text(
+                  'Export',
+                  style: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF222222),
+                    fontSize: 16,
+                  ),
+                ),
           ),
         ),
       ],
