@@ -1,6 +1,6 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
-import 'package:atella/firebase/services/design_data_service.dart';
+import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

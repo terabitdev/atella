@@ -1,7 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:atella/firebase/models/design_model.dart';
+import 'package:atella/Data/Models/design_model.dart';
 import 'dart:convert';
 import 'dart:typed_data';
 

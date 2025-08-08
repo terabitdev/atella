@@ -38,6 +38,20 @@ Delivery: ${_detailsController.deliveryDateController.text}
     ''';
   }
 
+  String _getProjectName() {
+    // Extract garment type for project name
+    String garmentType = 'Fashion';
+    
+    if (_detailsController.designData.isNotEmpty) {
+      final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
+      if (creativeBrief != null && creativeBrief['garmentType'] != null) {
+        garmentType = creativeBrief['garmentType'].toString();
+      }
+    }
+    
+    return '$garmentType Tech Pack';
+  }
+
   // Loading states
   RxBool isSaving = false.obs;
   RxBool isExporting = false.obs;
@@ -105,11 +119,12 @@ Delivery: ${_detailsController.deliveryDateController.text}
     try {
       isExporting.value = true;
 
-      // Generate PDF
+      // Generate PDF with dynamic project name
+      final projectName = _getProjectName();
       final pdfPath = await TechPackService.generateTechPackPDF(
         base64Images: generatedImages,
         techPackSummary: techPackSummary,
-        projectName: 'Fashion Tech Pack', // You can make this dynamic
+        projectName: projectName,
       );
 
       // Download PDF to Downloads folder

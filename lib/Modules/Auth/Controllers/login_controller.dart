@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:atella/firebase/services/auth_service.dart';
+import 'package:atella/services/firebase/services/auth_service.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();

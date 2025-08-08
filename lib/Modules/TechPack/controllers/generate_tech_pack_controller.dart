@@ -2,9 +2,9 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
-import 'package:atella/firebase/api/openai_service.dart';
-import 'package:atella/firebase/services/design_data_service.dart';
-import 'package:atella/firebase/services/designs_service.dart';
+import 'package:atella/Data/api/openai_service.dart';
+import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/services/designservices/designs_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;

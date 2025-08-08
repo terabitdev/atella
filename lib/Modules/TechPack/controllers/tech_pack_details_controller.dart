@@ -2,7 +2,7 @@ import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
-import '../../../firebase/api/openai_service.dart';
+import '../../../Data/api/openai_service.dart';
 
 class TechPackDetailsController extends GetxController {
   // Materials & Fabrics
@@ -56,6 +56,61 @@ class TechPackDetailsController extends GetxController {
   final RxBool isGeneratingTechPack = false.obs;
   final RxList<String> generatedTechPackImages = <String>[].obs;
   final RxString selectedDesignImagePath = ''.obs;
+  final RxString selectedDesignPrompt = ''.obs;
+  Map<String, dynamic> designData = {};
+
+  @override
+  void onInit() {
+    super.onInit();
+    _initializeWithArguments();
+  }
+
+  void _initializeWithArguments() {
+    // Get arguments passed from generate tech pack screen
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null) {
+      selectedDesignImagePath.value = arguments['selectedDesignUrl'] ?? '';
+      selectedDesignPrompt.value = arguments['designPrompt'] ?? '';
+      designData = arguments['designData'] ?? {};
+      
+      print('Tech Pack Details initialized with:');
+      print('Design Image: ${selectedDesignImagePath.value.substring(0, 50)}...');
+      print('Design Prompt: ${selectedDesignPrompt.value}');
+      print('Design Data: $designData');
+    }
+  }
+
+  String _extractGarmentType() {
+    // Extract garment type from the design prompt and data
+    String garmentType = 'garment';
+    
+    if (designData.isNotEmpty) {
+      final creativeBrief = designData['creativeBrief'] as Map<String, dynamic>?;
+      if (creativeBrief != null && creativeBrief['garmentType'] != null) {
+        garmentType = creativeBrief['garmentType'].toString().toLowerCase();
+      }
+    }
+    
+    // Fallback to analyzing the prompt
+    if (garmentType == 'garment' && selectedDesignPrompt.value.isNotEmpty) {
+      final prompt = selectedDesignPrompt.value.toLowerCase();
+      if (prompt.contains('jacket') || prompt.contains('coat')) {
+        garmentType = 'jacket';
+      } else if (prompt.contains('dress')) {
+        garmentType = 'dress';
+      } else if (prompt.contains('shirt') || prompt.contains('blouse')) {
+        garmentType = 'shirt';
+      } else if (prompt.contains('pants') || prompt.contains('trousers')) {
+        garmentType = 'pants';
+      } else if (prompt.contains('skirt')) {
+        garmentType = 'skirt';
+      } else if (prompt.contains('hoodie') || prompt.contains('sweatshirt')) {
+        garmentType = 'hoodie';
+      }
+    }
+    
+    return garmentType;
+  }
 
   void checkMaterialsBlockComplete() {
     if (mainFabricController.text.isNotEmpty &&
@@ -108,41 +163,115 @@ class TechPackDetailsController extends GetxController {
     // No further block, but could trigger a summary or enable submit
   }
 
-  String _generateTechPackPrompt() {
-    return '''
-Analyze the garment image and generate a full manufacturing tech pack. Include: materials, Pantone-referenced colors, size chart (${sizeRangeController.text.isNotEmpty ? sizeRangeController.text : 'XS–XXL'}), construction, hardware, labeling, packaging, and production costs. Use the details below:
+String _generateTechPackPrompt() {
+  final garmentType = _extractGarmentType();
 
-🧶 Materials: ${mainFabricController.text.isNotEmpty ? mainFabricController.text : 'Organic cotton'} / ${secondaryMaterialsController.text.isNotEmpty ? secondaryMaterialsController.text : 'Polyester blend'}; ${fabricPropertiesController.text.isNotEmpty ? fabricPropertiesController.text : 'pre-shrunk, brushed interior'}.
+  return '''
+Create a clean, professional manufacturing tech pack layout image for a ${garmentType}, 
+styled exactly like the attached example. 
+The tech pack should visually include all sections with icons, Pantone color swatches, 
+line art drawing of the garment, and organized information blocks.  
 
-🎨 Colors: ${primaryColorController.text.isNotEmpty ? primaryColorController.text : 'Primary color'} (${pantoneController.text.isNotEmpty ? pantoneController.text : 'Pantone reference needed'}); alternates: ${alternateColorwaysController.text.isNotEmpty ? alternateColorwaysController.text : 'Alternative colors'}.
+Sections and details to include (use data provided below, or defaults if not given):  
 
-📏 Sizes: ${sizeRangeController.text.isNotEmpty ? sizeRangeController.text : 'XS–XXL'}, ${measurementChartController.text.isNotEmpty ? measurementChartController.text : 'standard fit chart'}.
+🧶 **MATERIALS**  
+${mainFabricController.text.isNotEmpty ? mainFabricController.text : 'Main fabric composition and weight'};  
+${secondaryMaterialsController.text.isNotEmpty ? secondaryMaterialsController.text : 'Secondary fabric composition (rib, trims)'};  
+${fabricPropertiesController.text.isNotEmpty ? fabricPropertiesController.text : 'Special treatments or certifications (e.g., OEKO-TEX, pre-shrunk, brushed interior)'}.
 
-🪡 Details: ${accessoriesController.text.isNotEmpty ? accessoriesController.text : 'Standard hardware'}, ${stitchingController.text.isNotEmpty ? stitchingController.text : 'reinforced seams'}, ${decorativeStitchingController.text.isNotEmpty ? decorativeStitchingController.text : 'standard stitching'}.
+🎨 **COLORS**  
+Primary: ${primaryColorController.text.isNotEmpty ? primaryColorController.text : 'Main color name'} (Pantone ${pantoneController.text.isNotEmpty ? pantoneController.text : 'TBD'}, HEX code if available).  
+Alternates: ${alternateColorwaysController.text.isNotEmpty ? alternateColorwaysController.text : 'List alternate colors with Pantone refs'}.  
+Include white or other drawcord color if applicable.
 
-🏷️ Labels: ${logoPlacementController.text.isNotEmpty ? logoPlacementController.text : 'Logo placement'}, ${labelsNeededController.text.isNotEmpty ? labelsNeededController.text : 'standard labels'}, ${qrCodeController.text.isNotEmpty ? qrCodeController.text : 'product tracking'}.
+📏 **SIZES**  
+Size range: ${sizeRangeController.text.isNotEmpty ? sizeRangeController.text : 'XS–XXL'}  
+Measurements chart: ${measurementChartController.text.isNotEmpty ? measurementChartController.text : 'Include chest & length for each size'}.
 
-📦 Packaging: ${packagingTypeController.text.isNotEmpty ? packagingTypeController.text : 'Standard packaging'}, ${foldingInstructionsController.text.isNotEmpty ? foldingInstructionsController.text : 'fold instructions'}, ${insertsController.text.isNotEmpty ? insertsController.text : 'product inserts'}.
+🪡 **CONSTRUCTION & HARDWARE**  
+${accessoriesController.text.isNotEmpty ? accessoriesController.text : 'List key features such as pockets, eyelets, zippers, buttons'};  
+${stitchingController.text.isNotEmpty ? stitchingController.text : 'Main stitching type (double-needle, flatlock, cover-stitch)'};  
+${decorativeStitchingController.text.isNotEmpty ? decorativeStitchingController.text : 'Any decorative stitching details'}.
 
-💸 Costs: ${costPerPieceController.text.isNotEmpty ? costPerPieceController.text : 'Cost estimate'}, ${quantityController.text.isNotEmpty ? quantityController.text : 'production quantity'}, ${deliveryDateController.text.isNotEmpty ? deliveryDateController.text : 'delivery timeline'}.
-    '''.trim();
-  }
+🏷 **LABELING**  
+${logoPlacementController.text.isNotEmpty ? logoPlacementController.text : 'Logo placement (e.g., embroidered chest logo)'};  
+${labelsNeededController.text.isNotEmpty ? labelsNeededController.text : 'Type of labels (woven, care, size)'};  
+${qrCodeController.text.isNotEmpty ? qrCodeController.text : 'QR code or authenticity tag'}.
 
-  String _generateTechnicalFlatPrompt() {
-    return '''
-Create a technical fashion flat drawing tech pack for the garment. Generate professional black and white line drawings showing:
+📦 **PACKAGING**  
+${packagingTypeController.text.isNotEmpty ? packagingTypeController.text : 'Packaging material (e.g., compostable mailer, polybag)'};  
+${foldingInstructionsController.text.isNotEmpty ? foldingInstructionsController.text : 'Folding and presentation instructions'};  
+${insertsController.text.isNotEmpty ? insertsController.text : 'Insert card, tissue, brand booklet'}.
+
+💸 **PRODUCTION COSTS & LEAD TIMES**  
+${costPerPieceController.text.isNotEmpty ? costPerPieceController.text : 'FOB cost range'};  
+${quantityController.text.isNotEmpty ? quantityController.text : 'Production quantity & MOQ'};  
+${deliveryDateController.text.isNotEmpty ? deliveryDateController.text : 'Lead time in weeks'}.
+
+Make sure the output is **visually structured** exactly like the example, with:  
+
+- Color swatches with Pantone refs and HEX codes  
+- Organized sections with headings and icons  
+- Table for sizes  
+- Clean typography  
+- Minimal modern aesthetic.
+''';
+}
+
+
+
+String _generateTechnicalFlatPrompt() {
+  final garmentType = _extractGarmentType();
+
+  return '''
+DESIGN REFERENCE: ${selectedDesignPrompt.value.isNotEmpty ? selectedDesignPrompt.value.substring(0, 150) : 'Fashion design'} — Create technical flats that match this ${garmentType} design exactly.
+
+Create a technical fashion flat drawing tech pack for the ${garmentType}. Generate professional black and white line drawings showing:
+
+VIEWS: Front and back technical flats of ${garmentType} with construction callouts and features.
+
+ANNOTATIONS with leader lines:
+- Construction Details: ${stitchingController.text.isNotEmpty ? stitchingController.text : 'Professional seam construction'}
+- Hardware: ${accessoriesController.text.isNotEmpty ? accessoriesController.text : 'Quality hardware placement'}
+- Decorative Elements: ${decorativeStitchingController.text.isNotEmpty ? decorativeStitchingController.text : 'Aesthetic finishing details'}
+
+SPECIFICATIONS:
+- All measurements in cm of the ${garmentType}.
+- Seam types and finishing details of ${garmentType}.
+- Stitch types (single/double needle) and specifications of ${garmentType}.
+- Pocket/button construction specifications if available of ${garmentType}.
+
+TEXT REQUIREMENTS:
+- Large, bold, clear sans-serif font
+- High contrast black text on white background
+- No text cut off or truncated
+- Minimum 1cm spacing between labels and drawing edges
+
+STYLE:
+- Professional apparel manufacturing tech pack aesthetic
+- Clean technical line work with annotation callouts and leader lines
+- Avoid photorealistic rendering; focus on technical sketch style
+
+LAYOUT:
+- Prominent front/back views with detailed callouts
+- All annotations fit completely within image boundaries
+''';
+}
+
+/*
+Create a technical fashion flat drawing tech pack for the sage green jacket. Generate professional black and white line drawings showing:
 
 VIEWS: Front/back technical flats with construction callouts, side view showing pockets
-ANNOTATIONS with leader lines: Measurements, ${accessoriesController.text.isNotEmpty ? accessoriesController.text : 'hardware'} spacing, pocket placement, sleeve/cuff details, seam construction, hem details, ${stitchingController.text.isNotEmpty ? stitchingController.text : 'topstitching'} specs, stitch types
-SPECIFICATIONS: All measurements in cm, stitch types (single/double needle), seam details, ${decorativeStitchingController.text.isNotEmpty ? decorativeStitchingController.text : 'construction'} methods
+ANNOTATIONS with leader lines: Cuban collar measurements, button spacing, chest pocket placement, patch pocket dimensions, sleeve/cuff details, seam construction, hem details, topstitching specs, stitch types
+SPECIFICATIONS: All measurements in cm, stitch types (single/double needle), seam details, button specifications, pocket construction methods
 
 TEXT REQUIREMENTS: Use large, bold, clear sans-serif font. High contrast black text on white background. Ensure ALL text labels are complete words, fully visible, and positioned with adequate spacing from image edges. No text should be cut off or truncated. Maintain minimum 1cm spacing between labels.
 
 STYLE: Professional apparel manufacturing tech pack aesthetic - clean technical line work with annotation callouts and leader lines. Avoid photorealistic rendering, focus on technical sketch style used in garment production.
 
-LAYOUT: Prominent front/back views with detailed technical callouts surrounding flats, similar to professional manufacturing tech pack layouts. Ensure all annotations fit completely within image boundaries.
-    '''.trim();
-  }
+LAYOUT: Prominent front/back views with detailed technical callouts surrounding flats, similar to professional manufacturing tech pack layouts. Ensure all annotations fit completely within image boundaries.*/
+
+
 
   Future<void> generateTechPackImages() async {
     try {
