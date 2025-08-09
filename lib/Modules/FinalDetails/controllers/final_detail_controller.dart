@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/Modules/TechPack/controllers/generate_tech_pack_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -147,16 +148,24 @@ class FinalDetailsController extends GetxController {
       textInput: currentAnswer?.textInput,
     );
 
-    update();
-
-    // Special case: If "Other: ?" is selected in question 3 (desired_features), advance immediately
-    if (questionId == 'desired_features' &&
-        option == 'Other: ?' &&
-        selectedOptions.contains(option)) {
-      await Future.delayed(const Duration(milliseconds: 400));
-      _nextQuestion();
+    // Special handling for desired_features question
+    if (questionId == 'desired_features') {
+      if (option == 'Other: ?' && selectedOptions.contains(option)) {
+        // If "Other: ?" is selected, advance to show question 4
+        _currentQuestionIndex.value = 3; // Move to question 4
+      } else if (option != 'Other: ?' && !selectedOptions.contains('Other: ?')) {
+        // If any other option is selected (and "Other: ?" is not selected)
+        // Stay on question 3 to show the Generate button
+        _currentQuestionIndex.value = 2; // Stay on question 3
+      } else if (!selectedOptions.contains('Other: ?') && selectedOptions.isNotEmpty) {
+        // If "Other: ?" was deselected but other options remain
+        _currentQuestionIndex.value = 2; // Go back to question 3
+      }
+      update();
       return;
     }
+
+    update();
 
     // Auto-advance for single selection questions (budget)
     if (!question.allowMultiple && selectedOptions.isNotEmpty) {
@@ -164,16 +173,12 @@ class FinalDetailsController extends GetxController {
       _nextQuestion();
     } else if (question.allowMultiple && selectedOptions.isNotEmpty) {
       // For multiple selection, auto-advance after a longer delay to allow more selections
-      // But not for question 3 when "Other" is selected (handled above)
-      if (!(questionId == 'desired_features' &&
-          selectedOptions.contains('Other: ?'))) {
-        await Future.delayed(const Duration(milliseconds: 2000));
-        // Only advance if user hasn't made more selections in the meantime
-        final currentAnswerAfterDelay = _answers[questionId];
-        if (currentAnswerAfterDelay?.selectedOptions.length ==
-            selectedOptions.length) {
-          _nextQuestion();
-        }
+      await Future.delayed(const Duration(milliseconds: 2000));
+      // Only advance if user hasn't made more selections in the meantime
+      final currentAnswerAfterDelay = _answers[questionId];
+      if (currentAnswerAfterDelay?.selectedOptions.length ==
+          selectedOptions.length) {
+        _nextQuestion();
       }
     }
   }
@@ -231,6 +236,15 @@ class FinalDetailsController extends GetxController {
 
   void _nextQuestion() {
     if (currentQuestionIndex < questions.length - 1) {
+      // Check if we should skip question 4
+      if (currentQuestionIndex == 2) { // Moving from question 3
+        final answer = _answers['desired_features'];
+        if (answer != null && !answer.selectedOptions.contains('Other: ?')) {
+          // Skip question 4 if "Other: ?" is not selected
+          // Don't advance automatically, user should click Generate button
+          return;
+        }
+      }
       _currentQuestionIndex.value++;
       update();
     } else {
@@ -307,6 +321,11 @@ class FinalDetailsController extends GetxController {
     // Store final details data in the design data service
     _saveFinalDetailsData();
     
+    // Delete existing TechPackController to ensure fresh generation
+    if (Get.isRegistered<TechPackController>()) {
+      Get.delete<TechPackController>();
+    }
+    
     // Navigate to tech pack generation screen
     Get.toNamed('/generate_tech_pack');
     
@@ -367,16 +386,57 @@ class FinalDetailsController extends GetxController {
       return false;
     }
     
+    // Check if "Other: ?" is selected in desired_features
+    final answer = _answers['desired_features'];
+    bool hasSelectedOther = answer?.selectedOptions.contains('Other: ?') ?? false;
+    
+    // If we're on question 3 and "Other" is NOT selected, this is the last question - no animation
+    if (questionIndex == 2 && !hasSelectedOther && answer?.selectedOptions.isNotEmpty == true) {
+      return false;
+    }
+    
     // Show animation below the current unanswered question
     // This means animation shows below current question's answers, not after answering
     bool isCurrentQuestion = questionIndex == currentQuestionIndex;
     bool isNotLastQuestion = questionIndex < questions.length - 1;
+    
+    // Additional check: if on question 3 without "Other", it's effectively the last question
+    if (isCurrentQuestion && questionIndex == 2 && !hasSelectedOther) {
+      return false;
+    }
     
     return isCurrentQuestion && isNotLastQuestion;
   }
 
   // Method to get number of questions to show in the list
   int get questionsToShow {
-    return currentQuestionIndex + 1; // Show progressive questions
+    // Always show questions up to the current one
+    int baseQuestions = currentQuestionIndex >= 2 ? 3 : currentQuestionIndex + 1;
+    
+    // Check if we should show question 4
+    final answer = _answers['desired_features'];
+    bool showQuestion4 = answer?.selectedOptions.contains('Other: ?') ?? false;
+    
+    if (showQuestion4 && currentQuestionIndex >= 2) {
+      return 4; // Show all 4 questions
+    }
+    
+    return baseQuestions;
+  }
+  
+  // Check if the 4th question should be shown based on 3rd question answer
+  bool shouldShowFourthQuestion() {
+    final answer = _answers['desired_features'];
+    return answer?.selectedOptions.contains('Other: ?') ?? false;
+  }
+  
+  // Reset all answers and go back to the first question
+  void resetAllAnswers() {
+    _answers.clear();
+    _editingQuestions.clear();
+    _currentQuestionIndex.value = 0;
+    otherFeaturesController.clear();
+    customInputController.clear();
+    update();
   }
 }

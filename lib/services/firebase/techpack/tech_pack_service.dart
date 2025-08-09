@@ -7,6 +7,7 @@ import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
+import 'package:flutter/services.dart' show rootBundle;
 
 class TechPackService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -114,71 +115,73 @@ class TechPackService {
         }
       }
 
-      // Add cover page
-      pdf.addPage(
-        pw.Page(
-          pageFormat: PdfPageFormat.a4,
-          margin: const pw.EdgeInsets.all(32),
-          build: (context) {
-            return pw.Column(
-              crossAxisAlignment: pw.CrossAxisAlignment.start,
-              children: [
-                // Top row with title image (left) and logo image (right)
-                pw.Row(
-                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-                  children: [
-                    pw.Image(
-                      pw.MemoryImage(
-                        File('assets/images/title.png').readAsBytesSync(),
-                      ),
-                      height: 40, // adjust size
-                      width: 120,
-                    ),
-                    pw.Image(
-                      pw.MemoryImage(
-                        File('assets/images/logo.png').readAsBytesSync(),
-                      ),
-                      height: 40, // adjust size
-                      width: 40,
-                    ),
-                  ],
-                ),
+// Load images before adding the page
+final titleImage = pw.MemoryImage(
+  (await rootBundle.load('assets/images/title.png')).buffer.asUint8List(),
+);
 
-                pw.SizedBox(height: 20),
+final logoImage = pw.MemoryImage(
+  (await rootBundle.load('assets/images/logo.png')).buffer.asUint8List(),
+);
 
-                pw.Center(
-                  child: pw.Text(
-                    projectName.isNotEmpty ? projectName : 'Fashion Project',
-                    style: const pw.TextStyle(fontSize: 24),
-                  ),
-                ),
-                pw.SizedBox(height: 40),
-                pw.Divider(thickness: 2),
-                pw.SizedBox(height: 20),
-                pw.Text(
-                  'Project Specifications',
-                  style: const pw.TextStyle(fontSize: 18),
-                ),
-                pw.SizedBox(height: 16),
-                pw.Text(
-                  techPackSummary,
-                  style: const pw.TextStyle(fontSize: 14, lineSpacing: 1.5),
-                ),
-                pw.Spacer(),
-                pw.Center(
-                  child: pw.Text(
-                    'Generated on ${DateTime.now().toString().split(' ')[0]}',
-                    style: const pw.TextStyle(
-                      fontSize: 12,
-                      color: PdfColors.grey700,
-                    ),
-                  ),
-                ),
-              ],
-            );
-          },
-        ),
+// Add cover page
+pdf.addPage(
+  pw.Page(
+    pageFormat: PdfPageFormat.a4,
+    margin: const pw.EdgeInsets.all(32),
+    build: (context) {
+      return pw.Column(
+        crossAxisAlignment: pw.CrossAxisAlignment.start,
+        children: [
+          // Top row with title image (left) and logo image (right)
+          pw.Row(
+            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+            children: [
+              pw.Image(titleImage, height: 40, width: 120),
+              pw.Image(logoImage, height: 40, width: 40),
+            ],
+          ),
+
+          pw.SizedBox(height: 20),
+
+          pw.Center(
+            child: pw.Text(
+              projectName.isNotEmpty ? projectName : 'Fashion Project',
+              style: const pw.TextStyle(fontSize: 24),
+            ),
+          ),
+          pw.SizedBox(height: 40),
+          pw.Divider(thickness: 2),
+          pw.SizedBox(height: 20),
+
+          pw.Text(
+            'Project Specifications',
+            style: const pw.TextStyle(fontSize: 18),
+          ),
+          pw.SizedBox(height: 16),
+
+          pw.Text(
+            techPackSummary,
+            style: const pw.TextStyle(fontSize: 14, lineSpacing: 1.5),
+          ),
+
+          pw.Spacer(),
+
+          pw.Center(
+            child: pw.Text(
+              'Generated on ${DateTime.now().toString().split(' ')[0]}',
+              style: const pw.TextStyle(
+                fontSize: 12,
+                color: PdfColors.grey700,
+              ),
+            ),
+          ),
+        ],
       );
+    },
+  ),
+);
+
 
       // Add image pages
       for (int i = 0; i < pdfImages.length; i++) {

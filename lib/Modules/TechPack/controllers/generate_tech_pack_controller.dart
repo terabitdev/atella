@@ -116,47 +116,6 @@ class TechPackController extends GetxController {
     });
   }
   
-  void onGoBackAndEdit() {
-    // Show dialog to let user choose which stage to edit
-    _showEditOptionsDialog();
-  }
-  
-  void _showEditOptionsDialog() {
-    Get.dialog(
-      AlertDialog(
-        backgroundColor: Colors.white,
-        title: Text('Edit Your Answers', style: gtpadTitleTextTextStyle18),
-        content: const Text('Which stage would you like to edit?'),
-        actions: [
-          TextButton(
-            onPressed: () {
-              Get.back(); // Close dialog
-              Get.offNamedUntil('/creative_brief', (route) => route.isFirst);
-            },
-            child: Text('Creative Brief',style: gtpadTitleTextTextStyle14600),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back(); // Close dialog
-              Get.offNamedUntil('/refining_concept', (route) => route.isFirst);
-            },
-            child: Text('Refine Concept',style: gtpadTitleTextTextStyle14600),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back(); // Close dialog
-              Get.offNamedUntil('/final_details', (route) => route.isFirst);
-            },
-            child: Text('Final Details',style: gtpadTitleTextTextStyle14600),
-          ),
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel',style: gtpadTitleTextTextStyle16800),
-          ),
-        ],
-      ),
-    );
-  }
   
   void onContinueWithDesign(int selectedIndex) {
     // Continue with the selected design
@@ -223,6 +182,20 @@ Future<void> _saveDesignsInBackground() async {
   }
   
   void retryGeneration() {
+    generateDesigns();
+  }
+  
+  // Reset controller state and regenerate designs
+  void resetAndRegenerate() {
+    // Clear all existing data
+    generatedImages.clear();
+    selectedDesignIndex.value = -1;
+    currentPrompt.value = '';
+    errorMessage.value = '';
+    hasError.value = false;
+    isLoading.value = false;
+    
+    // Trigger new design generation
     generateDesigns();
   }
 }

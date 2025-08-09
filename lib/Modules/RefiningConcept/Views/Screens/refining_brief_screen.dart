@@ -45,10 +45,11 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             final allQuestionsAnswered =
                 controller.answers.length >= controller.questions.length;
       
+            // Show button when all questions are answered (temporary selections will auto-confirm)
             if (allQuestionsAnswered) {
               return _buildBottomButton();
             }
-            // FIXED: Only show bottom input if custom is selected
+            // Show custom input if custom is selected
             if (controller.isCustomSelectedForCurrentQuestion()) {
               return _buildBottomInputArea();
             }
@@ -68,6 +69,13 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           final question = controller.questions[index];
           final isAnswered = controller.isQuestionAnswered(question.id);
           final isCurrentQuestion = index == controller.currentQuestionIndex;
+          
+          // Debug prints
+          if (index == 0) { // Only debug first question to avoid spam
+            print('Question ${question.id}: isAnswered=$isAnswered, isCurrentQuestion=$isCurrentQuestion');
+            print('Answer count: ${controller.answers.length}');
+            print('Temp selections: ${controller.tempSelections}');
+          }
 
           // Debug prints
           if (isCurrentQuestion) {
@@ -193,49 +201,62 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     bool isCurrentQuestion,
   ) {
     return Obx(() {
-      if (isAnswered) {
-        // Show answered options with selected one highlighted
-        final answer = controller.getAnswer(question.id);
-        return Wrap(
-          children: question.options.map((option) {
-            final isSelected = answer?.selectedOptions.contains(option) ?? false;
-            return Container(
-              margin: const EdgeInsets.only(right: 12, bottom: 8),
-              padding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 8,
-              ),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? AppColors.buttonColor
-                    : const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(20),
-                border: isSelected
-                    ? null
-                    : Border.all(color: const Color(0xFFE0E0E0)),
-              ),
-              child: Text(
-                option,
-                style: TextStyle(
-                  color: isSelected ? Colors.white : const Color(0xFF999999),
-                  fontSize: 14,
-                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+      final answer = controller.getAnswer(question.id);
+      
+      return Wrap(
+        children: question.options.map((option) {
+          final isSelected = controller.isOptionSelected(option);
+          
+          // Debug for Custom option
+          if (option == 'Custom') {
+            print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
+          }
+          
+          if (isAnswered) {
+            // Show final answered state for answered questions (with edit capability)
+            final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
+            return GestureDetector(
+              onTap: isAnswerSelected ? () {
+                // Allow editing of answered questions
+                controller.editAnswer(question.id);
+              } : null,
+              child: Container(
+                margin: const EdgeInsets.only(right: 12, bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isAnswerSelected
+                      ? AppColors.buttonColor
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: isAnswerSelected
+                      ? null
+                      : Border.all(color: const Color(0xFFE0E0E0)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      option,
+                      style: TextStyle(
+                        color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
+                        fontSize: 14,
+                        fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+                      ),
+                    ),
+                    if (isAnswerSelected) ...[
+                      SizedBox(width: 4.w),
+                      Icon(
+                        Icons.edit,
+                        size: 14.0, // Fixed size instead of .w
+                        color: Colors.white,
+                      ),
+                    ],
+                  ],
                 ),
               ),
             );
-          }).toList(),
-        );
-      } else {
-        // Show interactive options for current question
-        return Wrap(
-          children: question.options.map((option) {
-            final isSelected = controller.isOptionSelected(option);
-            
-            // Debug for Custom option
-            if (option == 'Custom') {
-              print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
-            }
-            
+          } else {
+            // Show interactive chips for unanswered questions
             return SelectionChipWidget(
               text: option,
               isSelected: isSelected,
@@ -244,9 +265,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 controller.selectOption(option);
               },
             );
-          }).toList(),
-        );
-      }
+          }
+        }).toList(),
+      );
     });
   }
 
@@ -282,4 +303,5 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       ),
     );
   }
+
 }

@@ -46,35 +46,22 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
 
   Widget _buildBottomSection() {
     return Obx(() {
-        // Check if we're on the last question (additional_details text question)
-        final isLastQuestion =
-            controller.currentQuestionIndex >= controller.questions.length - 1;
+        final currentQuestionId = controller.currentQuestion.id;
+        final currentQuestionIndex = controller.currentQuestionIndex;
+        
+        // Check if "Other: ?" is selected in desired_features
+        final answer = controller.getAnswer('desired_features');
+        final hasSelectedOther = answer?.selectedOptions.contains('Other: ?') ?? false;
+        final hasAnyFeatureSelected = answer?.selectedOptions.isNotEmpty ?? false;
+        
+        // Check if we're on question 4 (additional_details)
+        final isOnQuestion4 = currentQuestionId == 'additional_details';
+        
+        // Check if we're on question 3 (desired_features) - index 2
+        final isOnQuestion3 = currentQuestionIndex == 2;
 
-        // Check if current question is answered (for desired_features)
-        final isCurrentQuestionAnswered = 
-            controller.isQuestionAnswered(controller.currentQuestion.id);
-
-        if (isLastQuestion) {
-          // Show text input and generate button for the last question (additional_details)
-          return Column(
-            children: [
-              _buildCustomTextField(),
-              const SizedBox(height: 16),
-              Padding(
-                padding: const EdgeInsets.all(24),
-                child: GenerateRoundButton(
-                  title: 'Generate',
-                  onTap: controller.generateDesign,
-                  color: AppColors.buttonColor,
-                  imagePath: generateIcon,
-                  loading: controller.isLoading,
-                ),
-              ),
-            ],
-          );
-        } else if (isCurrentQuestionAnswered && 
-                   controller.currentQuestion.id == 'desired_features') {
-          // Show generate button when desired_features is answered (but not "Other")
+        if (isOnQuestion4 && hasSelectedOther) {
+          // Only show generate button for question 4 (no duplicate text field since it's inline)
           return Padding(
             padding: const EdgeInsets.all(24),
             child: GenerateRoundButton(
@@ -85,9 +72,24 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
               loading: controller.isLoading,
             ),
           );
-        } else {
-          // Show text input for other cases
+        } else if (isOnQuestion3 && hasAnyFeatureSelected && !hasSelectedOther) {
+          // Show generate button when desired_features is answered with any option except "Other"
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: GenerateRoundButton(
+              title: 'Generate',
+              onTap: controller.generateDesign,
+              color: AppColors.buttonColor,
+              imagePath: generateIcon,
+              loading: controller.isLoading,
+            ),
+          );
+        } else if (currentQuestionIndex < 2) {
+          // Show text input only for questions 1 and 2
           return _buildTextInput();
+        } else {
+          // Don't show anything for question 3 when nothing is selected
+          return const SizedBox.shrink();
         } 
     });
   }
@@ -217,6 +219,9 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           const SizedBox(height: 16),
           if (question.type == 'checkbox')
             _buildCheckboxOptions(question, isAnswered, isCurrentQuestion),
+          // Add inline text field for question 4 when it's shown
+          if (question.id == 'additional_details' && isCurrentQuestion)
+            _buildInlineTextField(),
         ],
       ),
     );
@@ -303,6 +308,51 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           isLoading: controller.isLoading,
         ),
       ],
+    );
+  }
+  
+  Widget _buildInlineTextField() {
+    return Container(
+      padding: EdgeInsets.symmetric(horizontal: 4.w),
+      child: SizedBox(
+        height: 45.h,
+        child: TextField(
+          controller: controller.customInputController,
+          style: authLableTextTextStyle144001,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: const Color.fromRGBO(236, 239, 246, 1),
+            hintText: "Type your custom features here...",
+            hintStyle: authLableTextTextStyle144002,
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(
+                color: Color.fromRGBO(233, 233, 233, 1),
+                width: 1.2,
+              ),
+            ),
+            focusedBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: const BorderSide(
+                color: AppColors.buttonColor,
+                width: 1.2,
+              ),
+            ),
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 12.h,
+              horizontal: 12.w,
+            ),
+          ),
+          onSubmitted: (value) {
+            if (value.trim().isNotEmpty) {
+              controller.submitTextAnswer(
+                'additional_details',
+                controller.customInputController,
+              );
+            }
+          },
+        ),
+      ),
     );
   }
 }

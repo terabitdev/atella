@@ -185,11 +185,10 @@ class TechPackReadyScreen extends StatelessWidget {
                           width: double.infinity,
                           margin: const EdgeInsets.only(bottom: 16),
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(0),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(0),
                             child: _buildImageFromBase64(controller.generatedImages[0]),
                           ),
                         ),
@@ -201,11 +200,10 @@ class TechPackReadyScreen extends StatelessWidget {
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12),
-                            border: Border.all(color: Colors.grey[300]!),
+                            borderRadius: BorderRadius.circular(0),
                           ),
                           child: ClipRRect(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(0),
                             child: _buildImageFromBase64(controller.generatedImages[1]),
                           ),
                         ),
@@ -257,7 +255,10 @@ class TechPackReadyScreen extends StatelessWidget {
               const SizedBox(height: 16),
               SaveExportButtonRow(onSave: () {
                 Get.toNamed('/nav_bar');
-              }, onExport: () {}),
+                controller.saveTechPack();
+              }, onExport: () {
+                controller.exportTechPackPDF();
+              }),
               const SizedBox(height: 30),
             ],
           ),

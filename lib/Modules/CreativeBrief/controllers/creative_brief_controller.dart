@@ -374,6 +374,20 @@ class CreativeBriefController extends GetxController {
 
   double get progressPercentage =>
       (currentQuestionIndex + 1) / questions.length;
+  
+  // Reset all answers and go back to the first question
+  void resetAllAnswers() {
+    _answers.clear();
+    _tempSelections.clear();
+    _customSelectedForQuestion.value = '';
+    _currentQuestionIndex.value = 0;
+    _showLastTwoQuestions.value = false;
+    _editingQuestions.clear();
+    colorController.clear();
+    fabricController.clear();
+    customController.clear();
+    update();
+  }
 
   // New methods for the updated UI
   bool isQuestionAnswered(String questionId) {

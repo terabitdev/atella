@@ -1,3 +1,6 @@
+import 'package:atella/Modules/CreativeBrief/controllers/creative_brief_controller.dart';
+import 'package:atella/Modules/FinalDetails/controllers/final_detail_controller.dart';
+import 'package:atella/Modules/RefiningConcept/controllers/refining_concept_controller.dart';
 import 'package:atella/Modules/TechPack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/Modules/TechPack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -411,9 +414,25 @@ class GenerateTechPackScreen extends StatelessWidget {
         SizedBox(height: 44.h),
         RoundButton(
           title: 'Yes, I\'d like to make changes',
-          onTap: controller.onGoBackAndEdit,
+          onTap: (){
+            // Reset all questionnaire answers before going back
+            if (Get.isRegistered<CreativeBriefController>()) {
+              Get.find<CreativeBriefController>().resetAllAnswers();
+            }
+            if (Get.isRegistered<RefiningConceptController>()) {
+              Get.find<RefiningConceptController>().resetAllAnswers();
+            }
+            if (Get.isRegistered<FinalDetailsController>()) {
+              Get.find<FinalDetailsController>().resetAllAnswers();
+            }
+            // Delete the TechPackController so it will be recreated fresh next time
+            if (Get.isRegistered<TechPackController>()) {
+              Get.delete<TechPackController>();
+            }
+            Get.toNamed('/creative_brief');
+          },
           color: const Color(0xFF1A1A1A),
-          isloading: true,
+          isloading: false,
         ),
         SizedBox(height: 12.h),
         Obx(() {
@@ -430,6 +449,7 @@ class GenerateTechPackScreen extends StatelessWidget {
             imagePath: 'assets/images/techpackgenerate.png',
           );
         }),
+        SizedBox(height: 24.h),
       ],
     );
   }

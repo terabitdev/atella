@@ -138,7 +138,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   child: Text(question.question, style: qTextStyle16400),
                 ),
                 const SizedBox(width: 12),
-                if (isAnswered && !isCurrentQuestion)
+                if (isAnswered)
                   Image.asset('assets/images/tick.png', height: 16, width: 16),
               ],
             ),
@@ -215,8 +215,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
           }
           
-          if (isAnswered && !isCurrentQuestion) {
-            // Show final answered state for non-current questions
+          if (isAnswered) {
+            // Show final answered state for answered questions (with edit capability)
             final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
             return GestureDetector(
               onTap: isAnswerSelected ? () {
@@ -251,7 +251,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         SizedBox(width: 4.w),
                         Icon(
                           Icons.edit,
-                          size: 12.w,
+                          size: 14.0, // Fixed size instead of .w
                           color: Colors.white,
                         ),
                       ],
@@ -260,7 +260,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               ),
             );
           } else {
-            // Show interactive chips (for current question or unanswered questions)
+            // Show interactive chips for unanswered questions
             return SelectionChipWidget(
               text: option,
               isSelected: isSelected,
@@ -390,4 +390,5 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       ),
     );
   }
+
 }
