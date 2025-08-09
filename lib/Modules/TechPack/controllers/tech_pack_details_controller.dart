@@ -275,35 +275,62 @@ LAYOUT: Prominent front/back views with detailed technical callouts surrounding 
 
   Future<void> generateTechPackImages() async {
     try {
+      print('=== STARTING TECH PACK GENERATION ===');
       isGeneratingTechPack.value = true;
       generatedTechPackImages.clear();
 
-      final techPackPrompt = _generateTechPackPrompt();
-      final technicalFlatPrompt = _generateTechnicalFlatPrompt();
+      // Collect all tech pack details from form inputs
+      final techPackDetails = _collectTechPackDetails();
+      
+      print('Tech Pack Details: $techPackDetails');
+      print('Design Data: $designData');
+      print('Selected Design Prompt: ${selectedDesignPrompt.value}');
 
+      // Generate dynamic prompts using GPT based on all questionnaire data + tech pack details
+      print('Generating dynamic prompts with GPT-4...');
+      final dynamicPrompts = await OpenAIService.generateTechPackPrompts(
+        creativeBrief: designData['creativeBrief'] ?? {},
+        refinedConcept: designData['refinedConcept'] ?? {},
+        finalDetails: designData['finalDetails'] ?? {},
+        techPackDetails: techPackDetails,
+        selectedDesignPrompt: selectedDesignPrompt.value,
+      );
+      
+      print('Generated Manufacturing Prompt: ${dynamicPrompts['manufacturing_prompt']?.substring(0, 150)}...');
+      print('Generated Technical Flat Prompt: ${dynamicPrompts['technical_flat_prompt']?.substring(0, 150)}...');
+
+      // Generate images using the dynamic prompts
+      print('Generating manufacturing layout image...');
       final techPackImages = await OpenAIService.generateDesignImages(
-        prompt: techPackPrompt,
+        prompt: dynamicPrompts['manufacturing_prompt'] ?? _generateTechPackPrompt(),
         numberOfImages: 1,
         size: '1024x1024',
       );
 
+      print('Generating technical flat drawing image...');
       final technicalImages = await OpenAIService.generateDesignImages(
-        prompt: technicalFlatPrompt,
+        prompt: dynamicPrompts['technical_flat_prompt'] ?? _generateTechnicalFlatPrompt(),
         numberOfImages: 1,
         size: '1024x1024',
       );
 
       generatedTechPackImages.addAll(techPackImages);
       generatedTechPackImages.addAll(technicalImages);
+      
+      print('=== TECH PACK GENERATION COMPLETED ===');
+      print('Generated ${generatedTechPackImages.length} tech pack images');
 
       Get.snackbar(
         'Success',
-        'Tech pack images generated successfully!',
+        'Tech pack images generated successfully with your specifications!',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
     } catch (e) {
+      print('=== TECH PACK GENERATION ERROR ===');
+      print('Error: $e');
+      
       Get.snackbar(
         'Error',
         'Failed to generate tech pack images: ${e.toString()}',
@@ -387,6 +414,47 @@ LAYOUT: Prominent front/back views with detailed technical callouts surrounding 
         colorText: Colors.white,
       );
     }
+  }
+
+  // Collect all current tech pack details from form inputs
+  Map<String, dynamic> _collectTechPackDetails() {
+    return {
+      'materials': {
+        'mainFabric': mainFabricController.text,
+        'secondaryMaterials': secondaryMaterialsController.text,
+        'fabricProperties': fabricPropertiesController.text,
+      },
+      'colors': {
+        'primaryColor': primaryColorController.text,
+        'alternateColorways': alternateColorwaysController.text,
+        'pantone': pantoneController.text,
+      },
+      'sizes': {
+        'sizeRange': sizeRangeController.text,
+        'measurementChart': measurementChartController.text,
+        'measurementImage': measurementImagePath.value,
+      },
+      'technical': {
+        'accessories': accessoriesController.text,
+        'stitching': stitchingController.text,
+        'decorativeStitching': decorativeStitchingController.text,
+      },
+      'labeling': {
+        'logoPlacement': logoPlacementController.text,
+        'labelsNeeded': labelsNeededController.text,
+        'qrCode': qrCodeController.text,
+      },
+      'packaging': {
+        'packagingType': packagingTypeController.text,
+        'foldingInstructions': foldingInstructionsController.text,
+        'inserts': insertsController.text,
+      },
+      'production': {
+        'costPerPiece': costPerPieceController.text,
+        'quantity': quantityController.text,
+        'deliveryDate': deliveryDateController.text,
+      },
+    };
   }
 
   @override

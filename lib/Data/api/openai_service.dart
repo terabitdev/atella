@@ -145,4 +145,123 @@ Generate a comprehensive visual prompt that captures all the key design elements
       throw Exception('Failed to generate visual prompt: $e');
     }
   }
+  
+  static Future<Map<String, String>> generateTechPackPrompts({
+    required Map<String, dynamic> creativeBrief,
+    required Map<String, dynamic> refinedConcept,
+    required Map<String, dynamic> finalDetails,
+    required Map<String, dynamic> techPackDetails,
+    required String selectedDesignPrompt,
+  }) async {
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) {
+        throw Exception('OpenAI API key not found');
+      }
+
+      final systemPrompt = '''
+You are a fashion tech pack expert. Based on user inputs from their questionnaire answers, selected design, and tech pack details, create two separate detailed prompts for generating tech pack images:
+
+1. MANUFACTURING LAYOUT PROMPT - for a comprehensive tech pack layout with all specifications
+2. TECHNICAL FLAT DRAWING PROMPT - for detailed technical flat drawings with annotations
+
+Both prompts should be highly specific, professional, and suitable for DALL-E 3 image generation.
+The images should be based on the selected design and incorporate all user-provided information.
+''';
+
+      final userMessage = '''
+Please create two detailed prompts for tech pack image generation based on these inputs:
+
+SELECTED DESIGN PROMPT: $selectedDesignPrompt
+
+QUESTIONNAIRE DATA:
+Creative Brief: ${jsonEncode(creativeBrief)}
+Refined Concept: ${jsonEncode(refinedConcept)}
+Final Details: ${jsonEncode(finalDetails)}
+
+TECH PACK SPECIFICATIONS:
+${jsonEncode(techPackDetails)}
+
+Generate two separate prompts:
+1. "manufacturing_prompt" - for a professional manufacturing tech pack layout image with all sections, color swatches, specifications, and organized information blocks
+2. "technical_flat_prompt" - for technical flat drawings with detailed annotations, measurements, and construction details
+
+Format your response as JSON with these two keys. Make sure both prompts reference the selected design and incorporate all the user's specifications for accurate, pixel-clear results.
+''';
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiKey',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4',
+          'messages': [
+            {'role': 'system', 'content': systemPrompt},
+            {'role': 'user', 'content': userMessage},
+          ],
+          'max_tokens': 1500,
+          'temperature': 0.7,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final content = data['choices'][0]['message']['content'];
+        
+        // Try to parse as JSON, fallback to manual extraction if needed
+        try {
+          final promptsJson = jsonDecode(content);
+          return {
+            'manufacturing_prompt': promptsJson['manufacturing_prompt'] ?? '',
+            'technical_flat_prompt': promptsJson['technical_flat_prompt'] ?? '',
+          };
+        } catch (e) {
+          // Fallback parsing if JSON parsing fails
+          return _extractPromptsFromText(content);
+        }
+      } else {
+        final errorData = jsonDecode(response.body);
+        throw Exception('OpenAI API Error: ${errorData['error']['message']}');
+      }
+    } catch (e) {
+      throw Exception('Failed to generate tech pack prompts: $e');
+    }
+  }
+  
+  static Map<String, String> _extractPromptsFromText(String text) {
+    // Fallback method to extract prompts if JSON parsing fails
+    final lines = text.split('\n');
+    String manufacturingPrompt = '';
+    String technicalFlatPrompt = '';
+    
+    bool inManufacturing = false;
+    bool inTechnical = false;
+    
+    for (String line in lines) {
+      if (line.toLowerCase().contains('manufacturing_prompt') || 
+          line.toLowerCase().contains('manufacturing layout')) {
+        inManufacturing = true;
+        inTechnical = false;
+        continue;
+      } else if (line.toLowerCase().contains('technical_flat_prompt') || 
+                 line.toLowerCase().contains('technical flat')) {
+        inManufacturing = false;
+        inTechnical = true;
+        continue;
+      }
+      
+      if (inManufacturing && line.trim().isNotEmpty) {
+        manufacturingPrompt += line.trim() + ' ';
+      } else if (inTechnical && line.trim().isNotEmpty) {
+        technicalFlatPrompt += line.trim() + ' ';
+      }
+    }
+    
+    return {
+      'manufacturing_prompt': manufacturingPrompt.trim(),
+      'technical_flat_prompt': technicalFlatPrompt.trim(),
+    };
+  }
 }
