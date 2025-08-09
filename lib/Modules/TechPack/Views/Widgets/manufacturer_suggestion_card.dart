@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ManufacturerSuggestionCard extends StatelessWidget {
   final String name;
@@ -20,11 +21,11 @@ class ManufacturerSuggestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      margin: const EdgeInsets.symmetric(vertical: 10),
-      padding: const EdgeInsets.all(18),
+      margin: EdgeInsets.symmetric(vertical: 10.h),
+      padding: EdgeInsets.all(18.r),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(18),
+        borderRadius: BorderRadius.circular(18.r),
         boxShadow: [
           BoxShadow(
             color: Colors.black,
@@ -39,31 +40,31 @@ class ManufacturerSuggestionCard extends StatelessWidget {
         children: [
           Text(
             name,
-            style: const TextStyle(fontWeight: FontWeight.w700, fontSize: 20),
+            style: TextStyle(fontWeight: FontWeight.w700, fontSize: 20.sp),
           ),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           Row(
             children: [
-              const Icon(Icons.location_on, color: Color(0xFFFF2D55), size: 20),
-              const SizedBox(width: 4),
+              Icon(Icons.location_on, color: Color(0xFFFF2D55), size: 20.w),
+              SizedBox(width: 4.w),
               Expanded(
-                child: Text(location, style: const TextStyle(fontSize: 15)),
+                child: Text(location, style: TextStyle(fontSize: 15.sp)),
               ),
               Text(
                 moq,
-                style: const TextStyle(
+                style: TextStyle(
                   fontWeight: FontWeight.w500,
-                  fontSize: 15,
+                  fontSize: 15.sp,
                 ),
               ),
             ],
           ),
-          const SizedBox(height: 10),
+          SizedBox(height: 10.h),
           Text(
             description,
-            style: const TextStyle(fontSize: 15, color: Color(0xFF222222)),
+            style: TextStyle(fontSize: 15.sp, color: Color(0xFF222222)),
           ),
-          const SizedBox(height: 16),
+          SizedBox(height: 16.h),
           Row(
             children: [
               Expanded(
@@ -71,10 +72,10 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                   onPressed: onViewProfile,
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     side: const BorderSide(color: Colors.black, width: 1),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
                   ),
                   child: const Text(
                     'View Profile',
@@ -85,16 +86,16 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                   ),
                 ),
               ),
-              const SizedBox(width: 12),
+              SizedBox(width: 12.w),
               Expanded(
                 child: OutlinedButton(
                   onPressed: onContact,
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(8),
+                      borderRadius: BorderRadius.circular(8.r),
                     ),
                     side: const BorderSide(color: Colors.black, width: 1),
-                    padding: const EdgeInsets.symmetric(vertical: 12),
+                    padding: EdgeInsets.symmetric(vertical: 12.h),
                   ),
                   child: const Text(
                     'Contact',

@@ -2,6 +2,7 @@ import 'package:atella/Modules/TechPack/Views/Widgets/image_upload_field.dart';
 import 'package:atella/Modules/TechPack/Views/Widgets/reusable_dropdown_field.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class EditProjectScreen extends StatelessWidget {
   const EditProjectScreen({super.key});
@@ -16,29 +17,29 @@ class EditProjectScreen extends StatelessWidget {
         elevation: 0,
       ),
       body: SingleChildScrollView(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             // Project Name
             Text('Project Name', style: ddTextTextStyle16500),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             TextFormField(
               initialValue: 'Abc',
               decoration: InputDecoration(
                 filled: true,
                 fillColor: Color.fromRGBO(236, 239, 246, 1),
                 border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide.none,
                 ),
-                contentPadding: const EdgeInsets.symmetric(
-                  vertical: 14,
-                  horizontal: 16,
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 14.h,
+                  horizontal: 16.w,
                 ),
               ),
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             // Dropdown Fields
             ReusableDropdownField(
@@ -48,7 +49,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'What is the style or vibe?',
@@ -57,7 +58,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'Who is your target audience?',
@@ -66,7 +67,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'Which season is this for?',
@@ -75,13 +76,13 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
-            const Text(
+            Text(
               'Upload any inspiration images or moodboards?',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ImageUploadField(
               imageUrl:
                   'https://cdn.pixabay.com/photo/2017/03/27/14/56/fashion-2179283_1280.jpg',
@@ -91,7 +92,7 @@ class EditProjectScreen extends StatelessWidget {
               buttonIcon: Icons.refresh,
               onTap: () {},
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'What kind of materials or fabrics do you want to use?"',
@@ -100,7 +101,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'Any functional elements to include?',
@@ -109,13 +110,13 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
-            const Text(
+            Text(
               'Any specific colors or color palette?',
-              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+              style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
             ),
-            const SizedBox(height: 8),
+            SizedBox(height: 8.h),
             ImageUploadField(
               imageUrl:
                   'https://cdn.pixabay.com/photo/2016/11/29/03/53/beige-1867430_1280.jpg',
@@ -125,7 +126,7 @@ class EditProjectScreen extends StatelessWidget {
               buttonIcon: Icons.refresh,
               onTap: () {},
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'What size range do you want to offer?',
@@ -134,7 +135,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'What is your preferred stitching or finish?',
@@ -147,7 +148,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'Do you need labels or tags?',
@@ -156,7 +157,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'How should each item be packed?',
@@ -169,7 +170,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'What’s your estimated quantity (MOQ)?',
@@ -178,7 +179,7 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
 
             ReusableDropdownField(
               label: 'Do you have a deadline or preferred delivery time?',
@@ -187,23 +188,23 @@ class EditProjectScreen extends StatelessWidget {
               onChanged: (_) {},
               itemLabel: (item) => item,
             ),
-            const SizedBox(height: 24),
+            SizedBox(height: 24.h),
 
             SizedBox(
               width: double.infinity,
-              height: 48,
+              height: 48.h,
               child: ElevatedButton(
                 onPressed: () {},
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.black,
                   shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
+                    borderRadius: BorderRadius.circular(12.r),
                   ),
                 ),
-                child: const Text(
+                child: Text(
                   'Update',
                   style: TextStyle(
-                    fontSize: 16,
+                    fontSize: 16.sp,
                     fontWeight: FontWeight.w600,
                     color: Colors.white,
                   ),

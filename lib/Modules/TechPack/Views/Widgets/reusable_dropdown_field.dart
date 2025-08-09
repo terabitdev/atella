@@ -1,5 +1,6 @@
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class ReusableDropdownField<T> extends StatelessWidget {
   final String label;
@@ -27,7 +28,7 @@ class ReusableDropdownField<T> extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Text(label, style: ddTextTextStyle16500),
-          const SizedBox(height: 8),
+          SizedBox(height: 8.h),
           DropdownButtonFormField<T>(
             value: value,
             items: items
@@ -41,12 +42,12 @@ class ReusableDropdownField<T> extends StatelessWidget {
               filled: true,
               fillColor: Color.fromRGBO(236, 239, 246, 1),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 16,
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 16.w,
               ),
             ),
             style: ddTextTextStyle14400,

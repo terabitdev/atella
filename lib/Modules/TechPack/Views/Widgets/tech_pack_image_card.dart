@@ -1,6 +1,7 @@
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TechPackImageCard extends StatelessWidget {
   final bool isLoading;
@@ -16,30 +17,30 @@ class TechPackImageCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget card = Container(
-      margin: const EdgeInsets.symmetric(vertical: 12),
+      margin: EdgeInsets.symmetric(vertical: 12.h),
       decoration: BoxDecoration(
         color: const Color(0xFFE3E1FB),
-        borderRadius: BorderRadius.circular(24),
+        borderRadius: BorderRadius.circular(24.r),
       ),
       width: double.infinity,
-      height: 180,
+      height: 180.h,
       child: isLoading
           ? Column(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Image.asset(generateIcon, height: 50, width: 50),
-                const SizedBox(height: 12),
+                Image.asset(generateIcon, height: 50.h, width: 50.w),
+                SizedBox(height: 12.h),
                 Text('Generating..', style: gsTextStyle17400),
               ],
             )
           : imagePath != null
           ? ClipRRect(
-              borderRadius: BorderRadius.circular(24),
+              borderRadius: BorderRadius.circular(24.r),
               child: Image.asset(
                 imagePath!,
                 fit: BoxFit.cover,
                 width: double.infinity,
-                height: 180,
+                height: 180.h,
               ),
             )
           : SizedBox.shrink(),

@@ -2,6 +2,7 @@ import 'package:atella/Modules/TechPack/Views/Widgets/roound_tag_container.dart'
 import 'package:atella/Widgets/app_header.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 import '../Widgets/tech_pack_question_field.dart';
@@ -21,32 +22,32 @@ class TechPackDetailsScreen extends StatelessWidget {
       backgroundColor: const Color(0xFFFDFDFD),
       body: SafeArea(
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 18, vertical: 8),
+          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const SizedBox(height: 8),
+              SizedBox(height: 8.h),
               GlobalHeader(
                 title: 'Final Design Validated',
                 onBack: () => Get.back(),
               ),
-              const SizedBox(height: 18),
+              SizedBox(height: 18.h),
               // Materials & Fabrics Block
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.symmetric(
-                  vertical: 18,
-                  horizontal: 14,
+                padding: EdgeInsets.symmetric(
+                  vertical: 18.h,
+                  horizontal: 14.w,
                 ),
                 decoration: BoxDecoration(
                   color: Colors.white,
-                  borderRadius: BorderRadius.circular(18),
+                  borderRadius: BorderRadius.circular(18.r),
                 ),
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
                     RoundedTagContainer(text: 'Materials & Fabrics'),
-                    const SizedBox(height: 10),
+                    SizedBox(height: 10.h),
                     TechPackQuestionField(
                       label: 'What is the main fabric used?',
                       hint: 'Main Fabric: Organic cotton twill',
@@ -77,7 +78,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showColorsBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -86,13 +87,13 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 const RoundedTagContainer(text: 'Colors'),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
                                       'What is the primary color of the garment?',
@@ -130,7 +131,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showSizesBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -139,7 +140,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -147,7 +148,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const RoundedTagContainer(
                                   text: 'Sizes & Measurements',
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
                                       'What size range do you plan to produce? (e.g. XS–XL)',
@@ -165,17 +166,17 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkSizesBlockComplete(),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 Center(
                                   child: Text(
                                     'or',
                                     style: TextStyle(
                                       color: Colors.grey,
-                                      fontSize: 15,
+                                      fontSize: 15.sp,
                                     ),
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 Obx(
                                   () => TechPackImageUploadContainer(
                                     onTap: () {
@@ -190,7 +191,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                         : controller.measurementImagePath.value,
                                   ),
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
                                       'Or should the AI auto-generate one from the 3D model?',
@@ -210,7 +211,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showTechnicalBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -219,7 +220,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -227,7 +228,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const RoundedTagContainer(
                                   text: 'Technical Details',
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label: 'Are there any accessories?',
                                   hint: 'Zipper, buttons, drawcord',
@@ -264,7 +265,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showLabelingBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -273,7 +274,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,7 +282,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const RoundedTagContainer(
                                   text: 'Labeling & Branding',
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
                                       'Where should the logo or brand name appear?',
@@ -318,7 +319,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showPackagingBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -327,7 +328,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -335,7 +336,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const RoundedTagContainer(
                                   text: 'Packaging & Shipping',
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label: 'What type of packaging is required?',
                                   hint: 'Kraft box + polybag',
@@ -373,7 +374,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                 () => controller.showProductionBlock.value
                     ? Column(
                         children: [
-                          const SizedBox(height: 18),
+                          SizedBox(height: 18.h),
                           Container(
                             width: double.infinity,
                             padding: const EdgeInsets.symmetric(
@@ -382,7 +383,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                             ),
                             decoration: BoxDecoration(
                               color: Colors.white,
-                              borderRadius: BorderRadius.circular(18),
+                              borderRadius: BorderRadius.circular(18.r),
                             ),
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
@@ -390,7 +391,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 const RoundedTagContainer(
                                   text: 'Production Details',
                                 ),
-                                const SizedBox(height: 10),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label: 'What is the target cost per piece?',
                                   hint: 'Cost per Piece: €3.8',
@@ -413,7 +414,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkProductionBlockComplete(),
                                 ),
-                                const SizedBox(height: 20),
+                                SizedBox(height: 20.h),
                                 OutlineGenerateRoundButton(
                                   title: 'Generate Tech Pack',
                                   onTap: () {
@@ -431,7 +432,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                       )
                     : const SizedBox.shrink(),
               ),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
             ],
           ),
         ),

@@ -22,14 +22,14 @@ class TechPackImageUploadContainer extends StatelessWidget {
         color: Colors.black, // ✅ Set dotted border color to black
         strokeWidth: 1.5,
         borderType: BorderType.RRect,
-        radius: const Radius.circular(18),
+        radius: Radius.circular(18.r),
         dashPattern: [6, 3], // ✅ Customizes the dot size and gap
         child: Container(
           width: double.infinity,
-          height: 120,
+          height: 120.h,
           decoration: BoxDecoration(
             color: Colors.transparent,
-            borderRadius: BorderRadius.circular(18),
+            borderRadius: BorderRadius.circular(18.r),
           ),
           child: imagePath == null
               ? Column(
@@ -40,7 +40,7 @@ class TechPackImageUploadContainer extends StatelessWidget {
                       height: 24.h,
                       width: 24.w,
                     ),
-                    const SizedBox(height: 8),
+                    SizedBox(height: 8.h),
                     Text(
                       'Open Camera & Take Photo',
                       style: uiTextTextStyle13500,
@@ -48,12 +48,12 @@ class TechPackImageUploadContainer extends StatelessWidget {
                   ],
                 )
               : ClipRRect(
-                  borderRadius: BorderRadius.circular(16),
+                  borderRadius: BorderRadius.circular(16.r),
                   child: Image.file(
                     File(imagePath!),
                     fit: BoxFit.cover,
                     width: double.infinity,
-                    height: 120,
+                    height: 120.h,
                   ),
                 ),
         ),

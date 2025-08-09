@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SelectionChipWidget extends StatelessWidget {
   final String text;
@@ -19,14 +20,14 @@ class SelectionChipWidget extends StatelessWidget {
       child: AnimatedContainer(
         duration: const Duration(milliseconds: 300),
         curve: Curves.easeInOut,
-        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 12),
-        margin: const EdgeInsets.only(right: 12, bottom: 12),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+        margin: EdgeInsets.only(right: 12.w, bottom: 12.h),
         decoration: BoxDecoration(
           gradient: isSelected
               ? const LinearGradient(colors: [Colors.black, Colors.black])
               : null,
           color: isSelected ? null : const Color(0xFFF5F5F5),
-          borderRadius: BorderRadius.circular(25),
+          borderRadius: BorderRadius.circular(25.r),
           border: Border.all(
             color: isSelected ? Colors.transparent : const Color(0xFFE0E0E0),
             width: 1,
@@ -38,7 +39,7 @@ class SelectionChipWidget extends StatelessWidget {
             Text(
               text,
               style: TextStyle(
-                fontSize: 14,
+                fontSize: 14.sp,
                 fontWeight: FontWeight.w500,
                 color: isSelected ? Colors.white : const Color(0xFF333333),
               ),

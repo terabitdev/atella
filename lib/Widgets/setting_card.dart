@@ -4,7 +4,6 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class SettingCard extends StatelessWidget {
   final String title;
-  final Widget leadingIcon;
   final VoidCallback onTap;
   final Color? iconColor;
   final Color? textColor;
@@ -12,7 +11,6 @@ class SettingCard extends StatelessWidget {
   const SettingCard({
     super.key,
     required this.title,
-    required this.leadingIcon,
     required this.onTap,
     this.iconColor,
     this.textColor,
@@ -25,10 +23,6 @@ class SettingCard extends StatelessWidget {
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(
-          color: const Color(0xFFE9E9E9), // Light gray border
-          width: 1.5,
-        ),
         
       ),
       child: Material(
@@ -40,8 +34,6 @@ class SettingCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
             child: Row(
               children: [
-                leadingIcon,
-                SizedBox(width: 16.w),
                 Expanded(
                   child: Text(
                     title,

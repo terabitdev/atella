@@ -8,7 +8,6 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 
-
 class TechPackService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
@@ -28,10 +27,12 @@ class TechPackService {
       for (int i = 0; i < base64Images.length; i++) {
         // Convert base64 to bytes
         final bytes = base64Decode(base64Images[i]);
-        
+
         // Create reference in Firebase Storage
-        final fileName = 'tech_pack_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.png';
-        final ref = _storage.ref()
+        final fileName =
+            'tech_pack_${i + 1}_${DateTime.now().millisecondsSinceEpoch}.png';
+        final ref = _storage
+            .ref()
             .child('users')
             .child(user.uid)
             .child('tech_packs')
@@ -63,10 +64,10 @@ class TechPackService {
           .collection('tech_packs')
           .doc(techPackId)
           .set({
-        'images': uploadedUrls,
-        'created_at': FieldValue.serverTimestamp(),
-        'updated_at': FieldValue.serverTimestamp(),
-      }, SetOptions(merge: true));
+            'images': uploadedUrls,
+            'created_at': FieldValue.serverTimestamp(),
+            'updated_at': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
 
       return uploadedUrls;
     } catch (e) {
@@ -97,9 +98,9 @@ class TechPackService {
       }
 
       final pdf = pw.Document();
-      
+
       // Use simple text styling without problematic fonts
-      
+
       // Convert base64 images to PDF images
       List<pw.ImageProvider> pdfImages = [];
       for (String base64Image in base64Images) {
@@ -122,21 +123,33 @@ class TechPackService {
             return pw.Column(
               crossAxisAlignment: pw.CrossAxisAlignment.start,
               children: [
-                pw.Center(
-                  child: pw.Text(
-                    'TECH PACK',
-                    style: const pw.TextStyle(
-                      fontSize: 32,
+                // Top row with title image (left) and logo image (right)
+                pw.Row(
+                  mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+                  children: [
+                    pw.Image(
+                      pw.MemoryImage(
+                        File('assets/images/title.png').readAsBytesSync(),
+                      ),
+                      height: 40, // adjust size
+                      width: 120,
                     ),
-                  ),
+                    pw.Image(
+                      pw.MemoryImage(
+                        File('assets/images/logo.png').readAsBytesSync(),
+                      ),
+                      height: 40, // adjust size
+                      width: 40,
+                    ),
+                  ],
                 ),
+
                 pw.SizedBox(height: 20),
+
                 pw.Center(
                   child: pw.Text(
                     projectName.isNotEmpty ? projectName : 'Fashion Project',
-                    style: const pw.TextStyle(
-                      fontSize: 24,
-                    ),
+                    style: const pw.TextStyle(fontSize: 24),
                   ),
                 ),
                 pw.SizedBox(height: 40),
@@ -144,17 +157,12 @@ class TechPackService {
                 pw.SizedBox(height: 20),
                 pw.Text(
                   'Project Specifications',
-                  style: const pw.TextStyle(
-                    fontSize: 18,
-                  ),
+                  style: const pw.TextStyle(fontSize: 18),
                 ),
                 pw.SizedBox(height: 16),
                 pw.Text(
                   techPackSummary,
-                  style: const pw.TextStyle(
-                    fontSize: 14,
-                    lineSpacing: 1.5,
-                  ),
+                  style: const pw.TextStyle(fontSize: 14, lineSpacing: 1.5),
                 ),
                 pw.Spacer(),
                 pw.Center(
@@ -183,17 +191,12 @@ class TechPackService {
                 children: [
                   pw.Text(
                     i == 0 ? 'Tech Pack Details' : 'Technical Flat Drawing',
-                    style: const pw.TextStyle(
-                      fontSize: 18,
-                    ),
+                    style: const pw.TextStyle(fontSize: 18),
                   ),
                   pw.SizedBox(height: 16),
                   pw.Expanded(
                     child: pw.Center(
-                      child: pw.Image(
-                        pdfImages[i],
-                        fit: pw.BoxFit.contain,
-                      ),
+                      child: pw.Image(pdfImages[i], fit: pw.BoxFit.contain),
                     ),
                   ),
                 ],
@@ -206,34 +209,36 @@ class TechPackService {
       // Get appropriate directory for saving PDF
       Directory directory;
       String folderName;
-      
+
       if (Platform.isAndroid) {
         // Use external storage directory for Android
-        directory = await getExternalStorageDirectory() ?? await getApplicationDocumentsDirectory();
+        directory =
+            await getExternalStorageDirectory() ??
+            await getApplicationDocumentsDirectory();
         folderName = 'TechPack Downloads';
       } else {
         // Use documents directory for iOS
         directory = await getApplicationDocumentsDirectory();
         folderName = 'TechPack';
       }
-      
+
       // Create TechPack folder inside the directory
       final techPackDir = Directory('${directory.path}/$folderName');
       if (!await techPackDir.exists()) {
         await techPackDir.create(recursive: true);
       }
-      
+
       final fileName = 'TechPack_${DateTime.now().millisecondsSinceEpoch}.pdf';
       final file = File('${techPackDir.path}/$fileName');
-      
+
       final pdfBytes = await pdf.save();
       await file.writeAsBytes(pdfBytes);
-      
+
       // Verify file was created
       if (!await file.exists()) {
         throw Exception('PDF file was not created successfully');
       }
-      
+
       print('PDF saved to: ${file.path}');
       return file.path;
     } catch (e) {
@@ -246,23 +251,22 @@ class TechPackService {
   static Future<String> downloadPDF(String filePath) async {
     try {
       final file = File(filePath);
-      
+
       // Verify file exists
       if (!await file.exists()) {
         throw Exception('PDF file not found at path: $filePath');
       }
-      
+
       // Get file size to ensure it's valid
       final fileSize = await file.length();
       if (fileSize == 0) {
         throw Exception('PDF file is empty');
       }
-      
+
       print('PDF downloaded successfully: $filePath (${fileSize} bytes)');
-      
+
       // Return the file path for success message
       return filePath;
-      
     } catch (e) {
       print('Error downloading PDF: $e');
       throw Exception('Failed to download PDF: $e');

@@ -2,6 +2,7 @@ import 'package:atella/Modules/TechPack/Views/Screens/view_profile_tech_pack_scr
 import 'package:atella/Modules/TechPack/Views/Widgets/segmented_tab_switcher.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../Widgets/manufacturer_suggestion_card.dart';
 import '../../controllers/manufacturer_suggestion_controller.dart';
@@ -36,18 +37,18 @@ class RecommendedManufactureScreen extends StatelessWidget {
 
 Widget recommendedTab(ManufacturerSuggestionController controller) {
   return SingleChildScrollView(
-    padding: const EdgeInsets.symmetric(horizontal: 18),
+    padding: EdgeInsets.symmetric(horizontal: 18.w),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           'We found 3 potential manufacturers that fit your product needs.',
           style: mstTextTextStyle184001,
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         ...controller.recommendedManufacturers.map(
           (m) => ManufacturerSuggestionCard(
             name: m['name']!,
@@ -58,7 +59,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
             onContact: () {},
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
       ],
     ),
   );
@@ -66,20 +67,20 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
 
 Widget customTab(ManufacturerSuggestionController controller) {
   return SingleChildScrollView(
-    padding: const EdgeInsets.symmetric(horizontal: 18),
+    padding: EdgeInsets.symmetric(horizontal: 18.w),
     child: Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text('Filter Manufacturers Manually', style: mstTextTextStyle26700),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Text(
           'Use filters below to search our full manufacturer directory:',
           style: mstTextTextStyle184001,
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         Text('Country or Region', style: cstTextTextStyle16500),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Obx(
           () => DropdownButtonFormField<String>(
             value: controller.selectedCountry.value,
@@ -91,19 +92,19 @@ Widget customTab(ManufacturerSuggestionController controller) {
               filled: true,
               fillColor: const Color.fromARGB(255, 227, 225, 251),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 16,
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 16.w,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         Text('Minimum Order Quantity (MOQ)', style: cstTextTextStyle16500),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Obx(
           () => Row(
             children: [
@@ -119,7 +120,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                   onChanged: (v) => controller.moq.value = v.round(),
                 ),
               ),
-              const SizedBox(width: 8),
+              SizedBox(width: 8.w),
               Text(
                 '${controller.moq.value} pcs',
                 style: const TextStyle(fontWeight: FontWeight.w600),
@@ -127,12 +128,12 @@ Widget customTab(ManufacturerSuggestionController controller) {
             ],
           ),
         ),
-        const SizedBox(height: 18),
-        const Text(
+        SizedBox(height: 18.h),
+        Text(
           'Lead Time',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
         ),
-        const SizedBox(height: 8),
+        SizedBox(height: 8.h),
         Obx(
           () => DropdownButtonFormField<String>(
             value: controller.leadTime.value,
@@ -144,17 +145,17 @@ Widget customTab(ManufacturerSuggestionController controller) {
               filled: true,
               fillColor: const Color(0xFFE3E1FB),
               border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
                 borderSide: BorderSide.none,
               ),
-              contentPadding: const EdgeInsets.symmetric(
-                vertical: 14,
-                horizontal: 16,
+              contentPadding: EdgeInsets.symmetric(
+                vertical: 14.h,
+                horizontal: 16.w,
               ),
             ),
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         ...controller.filteredManufacturers.map(
           (m) => ManufacturerSuggestionCard(
             name: m['name']!,
@@ -167,14 +168,14 @@ Widget customTab(ManufacturerSuggestionController controller) {
             onContact: () {},
           ),
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
         RoundButton(
           title: 'Search',
           onTap: () {},
           color: AppColors.buttonColor,
           isloading: false,
         ),
-        const SizedBox(height: 18),
+        SizedBox(height: 18.h),
       ],
     ),
   );

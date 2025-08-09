@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class TextInputWithSend extends StatelessWidget {
   final TextEditingController controller;
@@ -17,7 +18,7 @@ class TextInputWithSend extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Container(
-      padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       color: Colors.white,
       child: Row(
         children: [
@@ -25,42 +26,42 @@ class TextInputWithSend extends StatelessWidget {
             child: Container(
               decoration: BoxDecoration(
                 color: const Color.fromRGBO(236, 239, 246, 1),
-                borderRadius: BorderRadius.circular(12),
+                borderRadius: BorderRadius.circular(12.r),
               ),
               child: TextField(
                 controller: controller,
                 decoration: InputDecoration(
                   hintText: placeholder,
-                  hintStyle: const TextStyle(color: Color.fromRGBO(132, 131, 134, 1), fontSize: 16),
+                  hintStyle: TextStyle(color: Color.fromRGBO(132, 131, 134, 1), fontSize: 16.sp),
                   border: InputBorder.none,
-                  contentPadding: const EdgeInsets.symmetric(
-                    horizontal: 16,
-                    vertical: 14,
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 14.h,
                   ),
                   suffixIcon: IconButton(
                     icon: const Icon(Icons.clear, color: Colors.grey),
                     onPressed: () => controller.clear(),
                   ),
                 ),
-                style: const TextStyle(fontSize: 16, color: Colors.black),
+                style: TextStyle(fontSize: 16.sp, color: Colors.black),
               ),
             ),
           ),
-          const SizedBox(width: 16),
+          SizedBox(width: 16.w),
           GestureDetector(
             onTap: onSend,
             child: isLoading
-                ? const Center(
+                ? Center(
                     child: SizedBox(
-                      width: 24,
-                      height: 24,
+                      width: 24.w,
+                      height: 24.h,
                       child: CircularProgressIndicator(
                         color: Colors.white,
                         strokeWidth: 2,
                       ),
                     ),
                   )
-                : Image.asset('assets/images/send.png', width: 48, height: 48),
+                : Image.asset('assets/images/send.png', width: 48.w, height: 48.h),
           ),
         ],
       ),

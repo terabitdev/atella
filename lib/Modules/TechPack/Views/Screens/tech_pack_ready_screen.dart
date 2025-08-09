@@ -41,9 +41,9 @@ class TechPackReadyScreen extends StatelessWidget {
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(horizontal: 12, vertical: 60),
+          insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 60.h),
           child: ClipRRect(
-            borderRadius: BorderRadius.circular(28),
+            borderRadius: BorderRadius.circular(28.r),
             child: Image.memory(
               base64Decode(base64Image),
               fit: BoxFit.cover,
@@ -53,7 +53,7 @@ class TechPackReadyScreen extends StatelessWidget {
                     child: Center(
                       child: Icon(
                         Icons.error_outline,
-                        size: 48,
+                        size: 48.w,
                         color: Colors.grey.shade400,
                       ),
                     ),

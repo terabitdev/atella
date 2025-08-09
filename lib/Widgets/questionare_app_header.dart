@@ -28,7 +28,7 @@ class AppHeader extends StatelessWidget {
     required this.title,
     required this.timeTextGetter,
     this.onBack,
-    this.padding = const EdgeInsets.symmetric(horizontal: 20, vertical: 54),
+    this.padding = const EdgeInsets.symmetric(horizontal: 20.0, vertical: 54.0),
     this.titleStyle,
     this.underlineColor = AppColors.buttonColor,
     this.backIconColor = Colors.black,
@@ -57,30 +57,30 @@ class AppHeader extends StatelessWidget {
                     title,
                     // replace with your QTextStyle14600 if needed
                     style: titleStyle ??
-                        const TextStyle(fontSize: 14, fontWeight: FontWeight.w600),
+                        TextStyle(fontSize: 14.sp, fontWeight: FontWeight.w600),
                   ),
-                  const SizedBox(height: 4),
+                  SizedBox(height: 4.h),
                   Container(
-                    width: 40,
-                    height: 3,
+                    width: 40.w,
+                    height: 3.h,
                     decoration: BoxDecoration(
                       color: underlineColor,
-                      borderRadius: BorderRadius.circular(2),
+                      borderRadius: BorderRadius.circular(2.r),
                     ),
                   ),
                 ],
               ),
               const Spacer(),
               // keeps the center column perfectly centered like your original
-              const SizedBox(width: 40),
+              SizedBox(width: 40.w),
             ],
           ),
-          const SizedBox(height: 24),
+          SizedBox(height: 24.h),
           // Rebuilds when the getter reads an Rx inside the controller
           Obx(() => Text(
                 timeTextGetter(),
-                style: const TextStyle(
-                  fontSize: 14,
+                style: TextStyle(
+                  fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF999999),
                 ),

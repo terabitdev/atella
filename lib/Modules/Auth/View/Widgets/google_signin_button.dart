@@ -48,7 +48,7 @@ class GoogleRoundButton extends StatelessWidget {
                       height: 24.h, // Adjust the size of the Google icon
                       width: 24.w,
                     ),
-                    SizedBox(width: 10.h),
+                    SizedBox(width: 10.w),
                     // Button Text
                     Text(title, style: googleButtonTextStyle16600),
                   ],

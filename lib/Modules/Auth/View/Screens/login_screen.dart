@@ -93,14 +93,14 @@ class LoginScreen extends StatelessWidget {
                     isloading: controller.isLoading.value,
                   ),
                 ),
-                const SizedBox(height: 30),
+                SizedBox(height: 30.h),
                 Center(
                   child: Text(
                     "Or continue with",
                     style: continuewithTextTextStyle13400,
                   ),
                 ),
-                const SizedBox(height: 20),
+                SizedBox(height: 20.h),
 
                 /// Google Button (module widget)
                 GoogleRoundButton(

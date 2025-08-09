@@ -23,7 +23,7 @@ class TechPackQuestionField extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Text(label, style: tplTextStyle12400),
-        const SizedBox(height: 6),
+        SizedBox(height: 6.h),
         TextField(
           controller: controller,
           enabled: enabled,
@@ -33,9 +33,9 @@ class TechPackQuestionField extends StatelessWidget {
             hintText: hint,
             filled: true,
             fillColor: Color(0xFFE3E1FB),
-            contentPadding: const EdgeInsets.symmetric(
-              vertical: 14,
-              horizontal: 16,
+            contentPadding: EdgeInsets.symmetric(
+              vertical: 14.h,
+              horizontal: 16.w,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
@@ -43,7 +43,7 @@ class TechPackQuestionField extends StatelessWidget {
             ),
           ),
         ),
-        const SizedBox(height: 14),
+        SizedBox(height: 14.h),
       ],
     );
   }
