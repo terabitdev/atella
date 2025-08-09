@@ -36,6 +36,10 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             if (controller.shouldShowButton) {
               return _buildBottomButton();
             }
+            // Show custom text input at bottom when custom is selected
+            if (controller.isCustomSelectedForCurrentQuestion() && controller.currentQuestion.type == 'chips') {
+              return _buildBottomCustomInput();
+            }
             // Show bottom input area only for text questions (not chip questions)
             if (controller.shouldShowBottomInput && controller.currentQuestion.type == 'text') {
               return _buildBottomInputArea();
@@ -77,24 +81,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 isCurrentQuestion, 
                 shouldShowInput
               ),
-              // FIXED: Direct check of RxString for better reactivity
-              Obx(() {
-                final customSelected = controller.customSelectedForQuestion == question.id;
-                final shouldShowCustomInput = customSelected && isCurrentQuestion && question.type == 'chips';
-                
-                print('Custom selected for ${question.id}: $customSelected, Should show input: $shouldShowCustomInput'); // Debug
-                
-                if (shouldShowCustomInput) {
-                  print('Showing custom text input for: ${question.id}'); // Debug
-                  return Column(
-                    children: [
-                      const SizedBox(height: 8),
-                      _buildCustomTextInput(),
-                    ],
-                  );
-                }
-                return const SizedBox.shrink();
-              }),
+              // Custom input is now moved to bottom, so this section is removed
               // Show animation below current unanswered question's answers
               if (controller.shouldShowAnimationAfterQuestion(index))
                 _buildLottieAnimation(),
@@ -151,7 +138,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   child: Text(question.question, style: qTextStyle16400),
                 ),
                 const SizedBox(width: 12),
-                if (isAnswered)
+                if (isAnswered && !isCurrentQuestion)
                   Image.asset('assets/images/tick.png', height: 16, width: 16),
               ],
             ),
@@ -173,11 +160,11 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     );
   }
 
-  // Custom text input widget
-  Widget _buildCustomTextInput() {
-    print('Building custom text input'); // Debug
+  // Custom text input widget at bottom of screen
+  Widget _buildBottomCustomInput() {
+    print('Building bottom custom text input'); // Debug
     return Container(
-      margin: const EdgeInsets.only(top: 8),
+      padding: const EdgeInsets.all(24),
       child: TextInputWithSend(
         controller: controller.customController,
         placeholder: 'Enter your custom answer...',
@@ -217,6 +204,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
     return Obx(() {
       final answer = controller.getAnswer(question.id);
+      final isCurrentQuestion = question.id == controller.currentQuestion.id;
+      
       return Wrap(
         children: question.options.map((option) {
           final isSelected = controller.isOptionSelected(option);
@@ -226,32 +215,52 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
           }
           
-          if (isAnswered) {
-            // Show answered state
+          if (isAnswered && !isCurrentQuestion) {
+            // Show final answered state for non-current questions
             final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
-            return Container(
-              margin: const EdgeInsets.only(right: 12, bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isAnswerSelected
-                    ? AppColors.buttonColor
-                    : const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(20),
-                border: isAnswerSelected
-                    ? null
-                    : Border.all(color: const Color(0xFFE0E0E0)),
-              ),
-              child: Text(
-                option,
-                style: TextStyle(
-                  color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
-                  fontSize: 14,
-                  fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+            return GestureDetector(
+              onTap: isAnswerSelected ? () {
+                // Allow editing of answered questions
+                controller.editAnswer(question.id);
+              } : null,
+              child: Container(
+                margin: const EdgeInsets.only(right: 12, bottom: 8),
+                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                decoration: BoxDecoration(
+                  color: isAnswerSelected
+                      ? AppColors.buttonColor
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(20),
+                  border: isAnswerSelected
+                      ? null
+                      : Border.all(color: const Color(0xFFE0E0E0)),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Text(
+                      option,
+                      style: TextStyle(
+                        color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
+                        fontSize: 14,
+                        fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+                      ),
+                    ),
+                    if (isAnswerSelected)
+                      ...[
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.edit,
+                          size: 12.w,
+                          color: Colors.white,
+                        ),
+                      ],
+                  ],
                 ),
               ),
             );
           } else {
-            // Show interactive chips
+            // Show interactive chips (for current question or unanswered questions)
             return SelectionChipWidget(
               text: option,
               isSelected: isSelected,

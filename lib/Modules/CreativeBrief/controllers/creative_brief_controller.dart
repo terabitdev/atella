@@ -37,6 +37,10 @@ class CreativeBriefController extends GetxController {
   final RxString _customSelectedForQuestion = ''.obs;
   String get customSelectedForQuestion => _customSelectedForQuestion.value;
 
+  // Track temporary selections before they are confirmed
+  final RxMap<String, String> _tempSelections = <String, String>{}.obs;
+  Map<String, String> get tempSelections => _tempSelections;
+
   // Editing state for text questions
   final RxSet<String> _editingQuestions = <String>{}.obs;
   Set<String> get editingQuestions => _editingQuestions;
@@ -124,7 +128,7 @@ class CreativeBriefController extends GetxController {
 
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
 
-  // FIXED: Check if option is selected including custom selection
+  // FIXED: Check if option is selected including custom selection and temporary selections
   bool isOptionSelected(String option) {
     // Special handling for Custom option
     if (option == 'Custom') {
@@ -137,7 +141,12 @@ class CreativeBriefController extends GetxController {
       return answer?.selectedOptions.contains(option) ?? false;
     }
     
-    // For non-custom options
+    // Check temporary selection first (for current question)
+    if (!isQuestionAnswered(currentQuestion.id)) {
+      return _tempSelections[currentQuestion.id] == option;
+    }
+    
+    // For answered questions, check final answer
     final answer = _answers[currentQuestion.id];
     return answer?.selectedOptions.contains(option) ?? false;
   }
@@ -155,18 +164,15 @@ class CreativeBriefController extends GetxController {
       print('Custom selected for question: ${currentQuestion.id}'); // Debug
       _customSelectedForQuestion.value = currentQuestion.id;
       
-      // Remove any existing answer for this question
-      _answers.remove(currentQuestion.id);
+      // Clear any temporary selection
+      _tempSelections.remove(currentQuestion.id);
       
       update();
       return; // Don't advance to next question yet
     }
 
-    // Create or update answer for non-custom options
-    _answers[currentQuestion.id] = BriefAnswer(
-      questionId: currentQuestion.id,
-      selectedOptions: [option], // Single selection
-    );
+    // For non-custom options, store as temporary selection
+    _tempSelections[currentQuestion.id] = option;
 
     // Clear custom selection if user selects a different option
     if (_customSelectedForQuestion.value == currentQuestion.id) {
@@ -176,9 +182,61 @@ class CreativeBriefController extends GetxController {
     // Update the UI
     update();
 
-    // Auto-advance to next question after short delay
-    await Future.delayed(const Duration(milliseconds: 600));
-    _nextQuestion();
+    // Auto-advance to next question after delay, but only if no answer exists yet
+    if (!isQuestionAnswered(currentQuestion.id)) {
+      await Future.delayed(const Duration(milliseconds: 2000)); // Increased delay to 2 seconds
+      // Check if the selection is still the same (user hasn't changed it)
+      if (_tempSelections[currentQuestion.id] == option) {
+        _confirmCurrentSelection();
+      }
+    }
+  }
+
+  // Method to confirm current selection and advance
+  void _confirmCurrentSelection() {
+    final tempSelection = _tempSelections[currentQuestion.id];
+    if (tempSelection != null) {
+      // Create final answer
+      _answers[currentQuestion.id] = BriefAnswer(
+        questionId: currentQuestion.id,
+        selectedOptions: [tempSelection],
+      );
+      
+      // Clear temporary selection
+      _tempSelections.remove(currentQuestion.id);
+      
+      update();
+      
+      // Advance to next question
+      _nextQuestion();
+    }
+  }
+
+  // Method to manually confirm selection (if we want to add a confirm button later)
+  void confirmSelection() {
+    _confirmCurrentSelection();
+  }
+
+  // Method to allow editing of previously answered questions
+  void editAnswer(String questionId) {
+    if (_answers.containsKey(questionId)) {
+      // Convert final answer back to temporary selection
+      final answer = _answers[questionId]!;
+      if (answer.selectedOptions.isNotEmpty) {
+        _tempSelections[questionId] = answer.selectedOptions.first;
+      }
+      
+      // Remove the final answer
+      _answers.remove(questionId);
+      
+      // Jump to that question if needed
+      final questionIndex = questions.indexWhere((q) => q.id == questionId);
+      if (questionIndex != -1 && questionIndex != currentQuestionIndex) {
+        _currentQuestionIndex.value = questionIndex;
+      }
+      
+      update();
+    }
   }
 
   // Submit custom answer
@@ -248,6 +306,9 @@ class CreativeBriefController extends GetxController {
     // Clear custom selection when moving to next question
     _customSelectedForQuestion.value = '';
     
+    // Clear any temporary selections for the current question
+    _tempSelections.remove(currentQuestion.id);
+    
     // Special case: if we just answered question 5 (index 4), show last two questions
     if (currentQuestionIndex == 4) {
       _showLastTwoQuestions.value = true;
@@ -284,7 +345,7 @@ class CreativeBriefController extends GetxController {
         'Brief Complete!',
         'Your creative brief has been completed successfully.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF8B5FE6),
+        backgroundColor: Colors.black,
         colorText: Colors.white,
       );
     }
