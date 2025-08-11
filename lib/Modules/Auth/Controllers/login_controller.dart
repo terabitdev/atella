@@ -52,6 +52,7 @@ class LoginController extends GetxController {
         'User successfully logged in',
         backgroundColor: Colors.black,
         colorText: Colors.white,
+        
       );
       // Success
       Get.offAllNamed('/nav_bar');
@@ -71,12 +72,12 @@ class LoginController extends GetxController {
       }
     }
   }
-
+//sign with Google
   Future<void> loginWithGoogle() async {
     isGoogleLoading.value = true;
     final result = await _authService.signInWithGoogle();
     isGoogleLoading.value = false;
-    
+
     if (result == null) {
       Get.snackbar(
         'Success',

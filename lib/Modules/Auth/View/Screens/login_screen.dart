@@ -101,20 +101,18 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 20.h),
-
-                /// Google Button (module widget)
-                // Obx(
-                //   () => GoogleRoundButton(
-                //     title: "Continue with Google",
-                //     onTap: controller.isGoogleLoading.value
-                //         ? () {}
-                //         : () {
-                //             controller.loginWithGoogle();
-                //           },
-                //     color: const Color.fromRGBO(255, 255, 255, 1),
-                //     loading: controller.isGoogleLoading.value,
-                //   ),
-                // ),
+                Obx(
+                  () => GoogleRoundButton(
+                    title: "Continue with Google",
+                    onTap: controller.isGoogleLoading.value
+                        ? () {}
+                        : () {
+                            controller.loginWithGoogle();
+                          },
+                    color: const Color.fromRGBO(255, 255, 255, 1),
+                    loading: controller.isGoogleLoading.value,
+                  ),
+                ),
                 SizedBox(height: 80.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
