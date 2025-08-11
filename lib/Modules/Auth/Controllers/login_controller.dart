@@ -7,6 +7,7 @@ class LoginController extends GetxController {
   final passwordController = TextEditingController();
 
   var isLoading = false.obs;
+  var isGoogleLoading = false.obs;
   var emailError = ''.obs;
   var passwordError = ''.obs;
 
@@ -71,8 +72,28 @@ class LoginController extends GetxController {
     }
   }
 
-  void loginWithGoogle() {
-    // handle Google Sign-In
+  Future<void> loginWithGoogle() async {
+    isGoogleLoading.value = true;
+    final result = await _authService.signInWithGoogle();
+    isGoogleLoading.value = false;
+    
+    if (result == null) {
+      Get.snackbar(
+        'Success',
+        'Google sign-in successful',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+      Get.offAllNamed('/nav_bar');
+    } else {
+      Get.snackbar(
+        'Error',
+        result,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+      print('Google sign-in error details: $result');
+    }
   }
 
   @override

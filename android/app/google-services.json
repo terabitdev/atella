@@ -12,7 +12,20 @@
           "package_name": "com.example.atella"
         }
       },
-      "oauth_client": [],
+      "oauth_client": [
+        {
+          "client_id": "1097482533368-53f3nhms6ngt7rie8t6or0ce0qgo3aaj.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.atella",
+            "certificate_hash": "9978d1b82c82a6dfe118af9af38fedb91844fc4c"
+          }
+        },
+        {
+          "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
       "api_key": [
         {
           "current_key": "AIzaSyBA-Lam4AKlAzn2A52nvKnTJVs3nmqytDs"
@@ -20,7 +33,19 @@
       ],
       "services": {
         "appinvite_service": {
-          "other_platform_oauth_client": []
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.atella"
+              }
+            }
+          ]
         }
       }
     }

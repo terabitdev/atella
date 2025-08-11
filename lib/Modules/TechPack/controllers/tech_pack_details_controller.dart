@@ -273,75 +273,317 @@ LAYOUT: Prominent front/back views with detailed technical callouts surrounding 
 
 
 
-  Future<void> generateTechPackImages() async {
-    try {
-      print('=== STARTING TECH PACK GENERATION ===');
-      isGeneratingTechPack.value = true;
-      generatedTechPackImages.clear();
+  // Future<void> generateTechPackImages() async {
+  //   try {
+  //     print('=== STARTING TECH PACK GENERATION ===');
+  //     isGeneratingTechPack.value = true;
+  //     generatedTechPackImages.clear();
 
-      // Collect all tech pack details from form inputs
-      final techPackDetails = _collectTechPackDetails();
+  //     // Collect all tech pack details from form inputs
+  //     final techPackDetails = _collectTechPackDetails();
       
-      print('Tech Pack Details: $techPackDetails');
-      print('Design Data: $designData');
-      print('Selected Design Prompt: ${selectedDesignPrompt.value}');
+  //     print('Tech Pack Details: $techPackDetails');
+  //     print('Design Data: $designData');
+  //     print('Selected Design Prompt: ${selectedDesignPrompt.value}');
 
-      // Generate dynamic prompts using GPT based on all questionnaire data + tech pack details
-      print('Generating dynamic prompts with GPT-4...');
-      final dynamicPrompts = await OpenAIService.generateTechPackPrompts(
+  //     // Generate dynamic prompts using GPT based on all questionnaire data + tech pack details
+  //     print('Generating dynamic prompts with GPT-4...');
+  //     final dynamicPrompts = await OpenAIService.generateTechPackPrompts(
+  //       creativeBrief: designData['creativeBrief'] ?? {},
+  //       refinedConcept: designData['refinedConcept'] ?? {},
+  //       finalDetails: designData['finalDetails'] ?? {},
+  //       techPackDetails: techPackDetails,
+  //       selectedDesignPrompt: selectedDesignPrompt.value,
+  //     );
+      
+  //     print('Generated Manufacturing Prompt: ${dynamicPrompts['manufacturing_prompt']?.substring(0, 150)}...');
+  //     print('Generated Technical Flat Prompt: ${dynamicPrompts['technical_flat_prompt']?.substring(0, 150)}...');
+
+  //     // Generate images using the dynamic prompts
+  //     print('Generating manufacturing layout image...');
+  //     final techPackImages = await OpenAIService.generateDesignImages(
+  //       prompt: dynamicPrompts['manufacturing_prompt'] ?? _generateTechPackPrompt(),
+  //       numberOfImages: 1,
+  //       size: '1024x1024',
+  //     );
+
+  //     print('Generating technical flat drawing image...');
+  //     final technicalImages = await OpenAIService.generateDesignImages(
+  //       prompt: dynamicPrompts['technical_flat_prompt'] ?? _generateTechnicalFlatPrompt(),
+  //       numberOfImages: 1,
+  //       size: '1024x1024',
+  //     );
+
+  //     generatedTechPackImages.addAll(techPackImages);
+  //     generatedTechPackImages.addAll(technicalImages);
+      
+  //     print('=== TECH PACK GENERATION COMPLETED ===');
+  //     print('Generated ${generatedTechPackImages.length} tech pack images');
+
+  //     Get.snackbar(
+  //       'Success',
+  //       'Tech pack images generated successfully with your specifications!',
+  //       snackPosition: SnackPosition.TOP,
+  //       backgroundColor: Colors.green,
+  //       colorText: Colors.white,
+  //     );
+  //   } catch (e) {
+  //     print('=== TECH PACK GENERATION ERROR ===');
+  //     print('Error: $e');
+      
+  //     Get.snackbar(
+  //       'Error',
+  //       'Failed to generate tech pack images: ${e.toString()}',
+  //       snackPosition: SnackPosition.TOP,
+  //       backgroundColor: Colors.red,
+  //       colorText: Colors.white,
+  //     );
+  //   } finally {
+  //     isGeneratingTechPack.value = false;
+  //   }
+  // }
+
+  // REPLACE YOUR EXISTING generateTechPackImages FUNCTION WITH THIS:
+// Future<void> generateTechPackImages() async {
+//   try {
+//     print('=== STARTING ENHANCED TECH PACK GENERATION ===');
+//     isGeneratingTechPack.value = true;
+//     generatedTechPackImages.clear();
+
+//     // Collect all tech pack details from form inputs
+//     final techPackDetails = _collectTechPackDetails();
+    
+//     print('Tech Pack Details: $techPackDetails');
+//     print('Design Data: $designData');
+//     print('Selected Design Prompt: ${selectedDesignPrompt.value}');
+
+//     // Generate optimized prompts directly (no GPT-4 API call)
+//     print('Generating optimized prompts...');
+//     final prompts = await OpenAIService.generateTechPackPrompts(
+//       creativeBrief: designData['creativeBrief'] ?? {},
+//       refinedConcept: designData['refinedConcept'] ?? {},
+//       finalDetails: designData['finalDetails'] ?? {},
+//       techPackDetails: techPackDetails,
+//       selectedDesignPrompt: selectedDesignPrompt.value,
+//     );
+    
+//     // Verify prompt lengths
+//     print('Generated Manufacturing Prompt length: ${prompts['manufacturing_prompt']?.length ?? 0}');
+//     print('Generated Technical Flat Prompt length: ${prompts['technical_flat_prompt']?.length ?? 0}');
+
+//     // Generate manufacturing layout image
+//     print('Generating manufacturing layout image...');
+//     final manufacturingImages = await OpenAIService.generateDesignImages(
+//       prompt: prompts['manufacturing_prompt'] ?? _generateFallbackManufacturingPrompt(),
+//       numberOfImages: 1,
+//       size: '1024x1024',
+//     );
+
+//     // Generate technical flat drawing image
+//     print('Generating technical flat drawing image...');
+//     final technicalImages = await OpenAIService.generateDesignImages(
+//       prompt: prompts['technical_flat_prompt'] ?? _generateFallbackTechnicalPrompt(),
+//       numberOfImages: 1,
+//       size: '1024x1024',
+//     );
+
+//     generatedTechPackImages.addAll(manufacturingImages);
+//     generatedTechPackImages.addAll(technicalImages);
+    
+//     print('=== ENHANCED TECH PACK GENERATION COMPLETED ===');
+//     print('Generated ${generatedTechPackImages.length} tech pack images');
+
+//     Get.snackbar(
+//       'Success',
+//       'Enhanced tech pack images generated successfully!',
+//       snackPosition: SnackPosition.TOP,
+//       backgroundColor: Colors.green,
+//       colorText: Colors.white,
+//     );
+//   } catch (e) {
+//     print('=== TECH PACK GENERATION ERROR ===');
+//     print('Error: $e');
+    
+//     Get.snackbar(
+//       'Error',
+//       'Failed to generate tech pack images: ${e.toString()}',
+//       snackPosition: SnackPosition.TOP,
+//       backgroundColor: Colors.red,
+//       colorText: Colors.white,
+//     );
+//   } finally {
+//     isGeneratingTechPack.value = false;
+//   }
+// }
+
+// // ADD THESE FALLBACK FUNCTIONS TO YOUR CLASS:
+// String _generateFallbackManufacturingPrompt() {
+//   final techPackDetails = _collectTechPackDetails();
+//   final garmentType = designData['creativeBrief']?['garmentType'] ?? 'Jacket';
+//   final primaryColor = techPackDetails['colors']?['primaryColor'] ?? 'cyan green';
+//   final mainFabric = techPackDetails['materials']?['mainFabric'] ?? 'cotton';
+  
+//   return '''Professional tech pack specification sheet for ${garmentType.toLowerCase()}. Organized sections: MATERIALS (${mainFabric} with swatches), COLORS (${primaryColor} with color swatch), SIZES table, LABELS, PACKAGING, PRODUCTION details. White background, professional layout.''';
+// }
+
+// String _generateFallbackTechnicalPrompt() {
+//   final techPackDetails = _collectTechPackDetails();
+//   final garmentType = designData['creativeBrief']?['garmentType'] ?? 'Jacket';
+//   final features = designData['refinedConcept']?['features'] ?? 'collar';
+  
+//   return '''Technical flat drawing ${garmentType.toLowerCase()} with ${features}. Black line art on white background. Front/back views with measurements, construction notes, dimension lines. Professional fashion flat drawing.''';
+// }
+
+
+Future<void> generateTechPackImages() async {
+  try {
+    print('=== STARTING DETAILED TECH PACK GENERATION ===');
+    isGeneratingTechPack.value = true;
+    generatedTechPackImages.clear();
+
+    final techPackDetails = _collectTechPackDetails();
+    
+    print('Tech Pack Details: $techPackDetails');
+    print('Design Data: $designData');
+
+    // Try different prompt approaches in order of preference
+    Map<String, String> prompts;
+    String approach = '';
+
+    try {
+      // First attempt: Full detailed prompts with three views
+      approach = 'Detailed Three Views';
+      prompts = await OpenAIService.generateTechPackPrompts(
         creativeBrief: designData['creativeBrief'] ?? {},
         refinedConcept: designData['refinedConcept'] ?? {},
         finalDetails: designData['finalDetails'] ?? {},
         techPackDetails: techPackDetails,
         selectedDesignPrompt: selectedDesignPrompt.value,
       );
-      
-      print('Generated Manufacturing Prompt: ${dynamicPrompts['manufacturing_prompt']?.substring(0, 150)}...');
-      print('Generated Technical Flat Prompt: ${dynamicPrompts['technical_flat_prompt']?.substring(0, 150)}...');
+    } catch (e) {
+      try {
+        // Second attempt: Advanced detailed with explicit positioning
+        approach = 'Advanced Detailed Layout';
+        print('Trying advanced detailed prompts...');
+        prompts = OpenAIService.getAdvancedDetailedPrompts(techPackDetails, designData['creativeBrief'] ?? {});
+      } catch (e2) {
+        try {
+          // Third attempt: Detailed single view
+          approach = 'Detailed Single View';
+          print('Trying detailed single view prompts...');
+          prompts = OpenAIService.getDetailedSingleViewPrompts(techPackDetails, designData['creativeBrief'] ?? {});
+        } catch (e3) {
+          // Final fallback: Simplified but detailed
+          approach = 'Simplified Detailed';
+          print('Using simplified detailed prompts...');
+          prompts = OpenAIService.getSimplifiedDetailedPrompts(techPackDetails, designData['creativeBrief'] ?? {});
+        }
+      }
+    }
+    
+    print('Using approach: $approach');
+    print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
+    print('Technical Prompt: ${prompts['technical_flat_prompt']}');
 
-      // Generate images using the dynamic prompts
-      print('Generating manufacturing layout image...');
-      final techPackImages = await OpenAIService.generateDesignImages(
-        prompt: dynamicPrompts['manufacturing_prompt'] ?? _generateTechPackPrompt(),
+    // Generate manufacturing layout image
+    print('Generating manufacturing layout image...');
+    List<String> manufacturingImages = [];
+    try {
+      manufacturingImages = await OpenAIService.generateDesignImages(
+        prompt: prompts['manufacturing_prompt'] ?? '',
         numberOfImages: 1,
         size: '1024x1024',
       );
+      print('✅ Manufacturing image generated successfully');
+    } catch (e) {
+      print('❌ Manufacturing image generation failed: $e');
+      throw Exception('Failed to generate manufacturing image');
+    }
 
-      print('Generating technical flat drawing image...');
-      final technicalImages = await OpenAIService.generateDesignImages(
-        prompt: dynamicPrompts['technical_flat_prompt'] ?? _generateTechnicalFlatPrompt(),
+    // Generate technical flat drawing with detailed approach
+    print('Generating detailed technical flat drawing...');
+    List<String> technicalImages = [];
+    try {
+      technicalImages = await OpenAIService.generateDesignImages(
+        prompt: prompts['technical_flat_prompt'] ?? '',
+        numberOfImages: 1,
+        size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
+      );
+      print('✅ Technical flat drawing generated successfully');
+    } catch (e) {
+      print('❌ Technical image generation failed, trying fallback: $e');
+      
+      // Fallback with even simpler prompt
+      final fallbackPrompt = 'Technical flat drawing of garment, front view, black lines on white background. Include measurement labels A, B, C, D and construction details. Complete drawing centered with margins.';
+      technicalImages = await OpenAIService.generateDesignImages(
+        prompt: fallbackPrompt,
         numberOfImages: 1,
         size: '1024x1024',
       );
+    }
 
-      generatedTechPackImages.addAll(techPackImages);
-      generatedTechPackImages.addAll(technicalImages);
-      
-      print('=== TECH PACK GENERATION COMPLETED ===');
-      print('Generated ${generatedTechPackImages.length} tech pack images');
+    // Add images to the list
+    generatedTechPackImages.addAll(manufacturingImages);
+    generatedTechPackImages.addAll(technicalImages);
+    
+    print('=== DETAILED TECH PACK GENERATION COMPLETED ===');
+    print('Generated ${generatedTechPackImages.length} tech pack images using: $approach');
 
+    // Validate and provide feedback
+    if (generatedTechPackImages.length >= 2) {
+      print('✅ Both manufacturing and detailed technical images generated successfully');
       Get.snackbar(
         'Success',
-        'Tech pack images generated successfully with your specifications!',
+        'Detailed tech pack images generated with professional labeling!',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.green,
         colorText: Colors.white,
       );
-    } catch (e) {
-      print('=== TECH PACK GENERATION ERROR ===');
-      print('Error: $e');
-      
+    } else {
+      print('⚠️ Warning: Only ${generatedTechPackImages.length} images generated');
       Get.snackbar(
-        'Error',
-        'Failed to generate tech pack images: ${e.toString()}',
+        'Partial Success',
+        'Some tech pack images generated. Check results.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
+        backgroundColor: Colors.orange,
         colorText: Colors.white,
       );
-    } finally {
-      isGeneratingTechPack.value = false;
     }
+  } catch (e) {
+    print('=== TECH PACK GENERATION ERROR ===');
+    print('Error: $e');
+    
+    Get.snackbar(
+      'Error',
+      'Failed to generate detailed tech pack images: ${e.toString()}',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+    );
+  } finally {
+    isGeneratingTechPack.value = false;
   }
+}
+
+// Add this function to test different technical drawing approaches
+void testTechnicalDrawingPrompts() {
+  final techPackDetails = _collectTechPackDetails();
+  final creativeBrief = designData['creativeBrief'] ?? {};
+  
+  print('=== TESTING TECHNICAL DRAWING PROMPTS ===');
+  
+  // Test detailed three views
+  final detailed = OpenAIService.getAdvancedDetailedPrompts(techPackDetails, creativeBrief);
+  print('Advanced Detailed: ${detailed['technical_flat_prompt']}');
+  
+  // Test single detailed view
+  final singleView = OpenAIService.getDetailedSingleViewPrompts(techPackDetails, creativeBrief);
+  print('Single Detailed: ${singleView['technical_flat_prompt']}');
+  
+  // Test simplified detailed
+  final simplified = OpenAIService.getSimplifiedDetailedPrompts(techPackDetails, creativeBrief);
+  print('Simplified Detailed: ${simplified['technical_flat_prompt']}');
+}
 
   // Camera functionality
   Future<void> openCameraForMeasurement() async {
