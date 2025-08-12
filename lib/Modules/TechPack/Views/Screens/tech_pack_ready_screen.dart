@@ -18,7 +18,7 @@ class TechPackReadyScreen extends StatelessWidget {
       final bytes = base64Decode(base64String);
       return Image.memory(
         bytes,
-        fit: BoxFit.fill,
+        fit: BoxFit.contain,
         errorBuilder: (context, error, stackTrace) {
           return Container(
             color: Colors.grey[300],

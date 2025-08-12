@@ -19,7 +19,7 @@ class OpenAIService {
   static Future<List<String>> generateDesignImages({
     required String prompt,
     int numberOfImages = 3,
-    String size = '1792x1024',
+    String size = '1024x1024',
   }) async {
     try {
       print('OpenAI: Starting image generation...');
@@ -340,10 +340,60 @@ static Future<Map<String, String>> generateTechPackPrompts({
   final features = refinedConcept['features'] ?? 'standard collar';
 
   // Manufacturing prompt - clean and organized
-  final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} with fabric swatches), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching}), LABELS (${logoPlacement} placement), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}pc, delivery). White background, professional typography, complete layout visible.''';
+  final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible.''';
 
   // DETAILED Technical flat prompt - with proper framing instructions
-  final technicalFlatPrompt = '''Professional technical flat drawing layout for ${garmentType} on white background. Layout: FRONT view (left), BACK view (center), SIDE view (right) arranged horizontally with space between each view. Black line art with detailed annotations. Show: ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}. Include measurement arrows labeled A-F, seam allowances (1.3cm), construction callouts, topstitching details in circles. Add dimension lines and professional labels. All three views completely visible within image boundaries with proper margins. Fashion industry technical drawing standard.''';
+//   final technicalFlatPrompt = '''Professional technical flat drawing layout for ${garmentType} on white background. Layout: FRONT view (left 40% of image), BACK view (right 40% of image) with  1% spacing each and enusre .. Black line art with detailed annotations. Show: ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}. Include measurement arrows labeled, seam allowances (1.3cm), construction callouts, Topstitching details shown in magnified circles, labeled with type (single, double) and stitch spacing in mm.
+// .  Include dimension arrows with measurement text in centimeters (cm) for *all garment parts*.
+// . All Two views completely visible within image boundaries with proper margins And not cutoff the image Ensure to show complete image in image boundaries. Fashion industry technical drawing standard.''';
+final technicalFlatPrompt = '''
+Professional technical flat drawing layout for ${garmentType} on a clean white background.
+
+Layout:
+- FRONT view (left) and BACK view (right) arranged horizontally with equal spacing and proper margins.
+- All views completely visible within image boundaries.
+
+Style:
+- Black line art, precise vector quality, professional apparel technical drawing standard.
+- Crisp, uniform outlines with slightly thicker exterior contour.
+- Clear sans-serif font for all annotations and labels.
+- Measurement text fully visible and not cut off.
+
+Annotations & Measurements:
+- Show ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}.
+- Include dimension arrows with measurement text in centimeters (cm) for *all garment parts*:
+  - Shoulder width:
+  - Chest width:
+  - Front length: 
+  - Back length: 
+  - Sleeve length: 
+  - Armhole depth:
+  - Pocket width: 
+  - Pocket height: 
+  - Cuff width: 
+  - Collar height:
+  - Collar spread: 
+  - Any other relevant measurements provided by the user
+- Seam allowances (1.3 cm) shown as dashed lines with labels.
+- Topstitching details shown in magnified circles, labeled with type (single, double) and stitch spacing in mm.
+- Reinforcement points labeled with callouts (e.g., bartack length and more: mm).
+- All arrows connect precisely to their measurement points.
+
+Labeling Style:
+- Labels positioned clearly with leader lines (callout lines) avoiding overlaps.
+- Every major component of garment construction labeled in detail:
+  - Stitch types and spacing
+  - Fabric grainline
+  - Accessory dimensions and placement
+  - Functional openings (zippers, button plackets) with length
+- All text in cm or mm as appropriate.
+
+Output:
+- White background, clean margins.
+- Fully annotated, measurement-rich technical flat drawing ready for inclusion in a production tech pack.
+- Black-and-white only, no shading or colors.
+- Complete sheet layout with 10% margin border
+''';
 
   print('Manufacturing prompt (${manufacturingPrompt.length} chars)');
   print('Technical prompt (${technicalFlatPrompt.length} chars)');

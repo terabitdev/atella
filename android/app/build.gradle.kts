@@ -48,7 +48,7 @@ android {
                 storePassword = keystoreProperties["storePassword"] as String?
             }
             getByName("debug") {
-                storeFile = file("D:\atella\android\app\debug.keystore")
+                //
                 storePassword = "android"
                 keyAlias = "androiddebugkey"
                 keyPassword = "android"
