@@ -36,159 +36,145 @@ class RecommendedManufactureScreen extends StatelessWidget {
 }
 
 Widget recommendedTab(ManufacturerSuggestionController controller) {
-  return SingleChildScrollView(
-    padding: EdgeInsets.symmetric(horizontal: 18.w),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 8.h),
-        Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
-        SizedBox(height: 8.h),
-        Obx(() => Text(
-          controller.isLoading.value 
-            ? 'Loading manufacturers...'
-            : 'We found ${controller.recommendedManufacturers.length} manufacturers from around the world.',
-          style: mstTextTextStyle184001,
-        )),
-        SizedBox(height: 8.h),
-        // Expand database button
-        Obx(() => controller.isLoading.value 
-          ? const SizedBox.shrink()
-          : ElevatedButton.icon(
-              onPressed: controller.expandManufacturerDatabase,
-              icon: const Icon(Icons.add_location, size: 18),
-              label: const Text('Expand Global Database'),
-              style: ElevatedButton.styleFrom(
-                backgroundColor: const Color(0xFF6C63FF),
-                foregroundColor: Colors.white,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(8.r),
-                ),
-              ),
-            ),
-        ),
-        SizedBox(height: 8.h),
-        // Database statistics
-        Obx(() => controller.isLoading.value 
-          ? const SizedBox.shrink()
-          : FutureBuilder<Map<String, dynamic>>(
-              future: controller.getDatabaseStats(),
-              builder: (context, snapshot) {
-                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
-                  final stats = snapshot.data!;
-                  return Container(
-                    padding: EdgeInsets.all(12.r),
-                    decoration: BoxDecoration(
-                      color: Colors.blue.shade50,
-                      borderRadius: BorderRadius.circular(8.r),
-                      border: Border.all(color: Colors.blue.shade200),
+  return RefreshIndicator(
+    onRefresh: controller.refreshManufacturers,
+    child: SingleChildScrollView(
+      controller: controller.scrollController,
+      padding: EdgeInsets.symmetric(horizontal: 18.w),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 8.h),
+          Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
+          SizedBox(height: 8.h),
+          Obx(() => Text(
+            controller.isLoading.value 
+              ? 'Loading manufacturers...'
+              : 'We found ${controller.allManufacturersCache.length} manufacturers from around the world.',
+            style: mstTextTextStyle184001,
+          )),
+          SizedBox(height: 8.h),
+          SizedBox(height: 18.h),
+          Obx(() {
+            if (controller.isLoading.value) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/Loading_dots.json',
+                      width: 100.w,
+                      height: 100.h,
+                      fit: BoxFit.cover,
                     ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Database Statistics',
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Loading manufacturers...',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF666666),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if (controller.error.value.isNotEmpty) {
+              return Container(
+                padding: EdgeInsets.all(16.r),
+                margin: EdgeInsets.symmetric(vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: Colors.red.shade50,
+                  borderRadius: BorderRadius.circular(8.r),
+                  border: Border.all(color: Colors.red.shade200),
+                ),
+                child: Text(
+                  controller.error.value,
+                  style: TextStyle(color: Colors.red.shade700),
+                ),
+              );
+            } else if (controller.displayedManufacturers.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Icon(
+                      Icons.inventory_2_outlined,
+                      size: 64.sp,
+                      color: Colors.grey,
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'No manufacturers available',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: Colors.grey,
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else {
+              return Column(
+                children: [
+                  ...controller.displayedManufacturers.map(
+                    (manufacturer) => ManufacturerSuggestionCard(
+                      manufacturer: manufacturer,
+                      onViewProfile: () {},
+                    ),
+                  ).toList(),
+                  if (controller.isLoadingMore.value)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: Center(
+                        child: Lottie.asset(
+                          'assets/lottie/Loading_dots.json',
+                          width: 60.w,
+                          height: 60.h,
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                    ),
+                  if (!controller.hasMoreData && controller.displayedManufacturers.isNotEmpty)
+                    Padding(
+                      padding: EdgeInsets.symmetric(vertical: 20.h),
+                      child: Center(
+                        child: Text(
+                          'All manufacturers loaded',
                           style: TextStyle(
                             fontSize: 14.sp,
-                            fontWeight: FontWeight.w600,
-                            color: Colors.blue.shade700,
+                            color: Colors.grey,
                           ),
                         ),
-                        SizedBox(height: 8.h),
-                        Row(
-                          children: [
-                            Expanded(
-                              child: Text(
-                                'Total: ${stats['totalManufacturers']}',
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                            ),
-                            Expanded(
-                              child: Text(
-                                'Countries: ${stats['countriesCovered']}',
-                                style: TextStyle(fontSize: 12.sp),
-                              ),
-                            ),
-                          ],
-                        ),
-                      ],
+                      ),
                     ),
-                  );
-                }
-                return const SizedBox.shrink();
-              },
-            ),
-        ),
-        SizedBox(height: 18.h),
-        Obx(() {
-          if (controller.isLoading.value) {
-            return Center(
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Lottie.asset(
-                    'assets/lottie/Loading_dots.json',
-                    width: 100.w,
-                    height: 100.h,
-                    fit: BoxFit.cover,
-                  ),
-                  SizedBox(height: 16.h),
-                  Text(
-                    'Loading manufacturers...',
-                    style: TextStyle(
-                      fontSize: 16.sp,
-                      color: const Color(0xFF666666),
-                    ),
-                  ),
                 ],
-              ),
-            );
-          } else if (controller.error.value.isNotEmpty) {
-            return Container(
-              padding: EdgeInsets.all(16.r),
-              margin: EdgeInsets.symmetric(vertical: 8.h),
-              decoration: BoxDecoration(
-                color: Colors.red.shade50,
-                borderRadius: BorderRadius.circular(8.r),
-                border: Border.all(color: Colors.red.shade200),
-              ),
-              child: Text(
-                controller.error.value,
-                style: TextStyle(color: Colors.red.shade700),
-              ),
-            );
-          } else {
-            return Column(
-              children: controller.recommendedManufacturers.map(
-                (manufacturer) => ManufacturerSuggestionCard(
-                  manufacturer: manufacturer,
-                  onViewProfile: () {},
-                ),
-              ).toList(),
-            );
-          }
-        }),
-        SizedBox(height: 18.h),
-      ],
+              );
+            }
+          }),
+          SizedBox(height: 18.h),
+        ],
+      ),
     ),
   );
 }
 
 Widget customTab(ManufacturerSuggestionController controller) {
-  return SingleChildScrollView(
-    padding: EdgeInsets.symmetric(horizontal: 18.w),
-    child: Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        SizedBox(height: 8.h),
-        Text('Filter Manufacturers Manually', style: mstTextTextStyle26700),
-        SizedBox(height: 8.h),
-        Text(
-          'Use filters below to search our full manufacturer directory:',
-          style: mstTextTextStyle184001,
-        ),
-        SizedBox(height: 18.h),
+  return RefreshIndicator(
+    onRefresh: controller.refreshManufacturers,
+    child: SingleChildScrollView(
+      padding: EdgeInsets.symmetric(horizontal: 18.w),
+      physics: const AlwaysScrollableScrollPhysics(),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          SizedBox(height: 8.h),
+          Text('Filter Manufacturers Manually', style: mstTextTextStyle26700),
+          SizedBox(height: 8.h),
+          Text(
+            'Use filters below to search our full manufacturer directory:',
+            style: mstTextTextStyle184001,
+          ),
+          SizedBox(height: 18.h),
 
         // Country or Region label
         Text('Country or Region', style: cstTextTextStyle16500),
@@ -261,20 +247,82 @@ Widget customTab(ManufacturerSuggestionController controller) {
 
         SizedBox(height: 18.h),
 
-        // Manufacturer list
-        Obx(() => Column(
-              children: controller.filteredManufacturers.map(
-                (manufacturer) => ManufacturerSuggestionCard(
-                  manufacturer: manufacturer,
-                  onViewProfile: () {
-                    Get.to(ViewProfileTechPackScreen());
-                  },
+          // Manufacturer list
+          Obx(() {
+            if (controller.isLoading.value) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/Loading_dots.json',
+                      width: 100.w,
+                      height: 100.h,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      'Loading manufacturers...',
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF666666),
+                      ),
+                    ),
+                  ],
                 ),
-              ).toList(),
-            )),
+              );
+            } else if (controller.filteredManufacturers.isEmpty) {
+              return Center(
+                child: Padding(
+                  padding: EdgeInsets.symmetric(vertical: 40.h),
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Icon(
+                        Icons.search_off,
+                        size: 64.sp,
+                        color: Colors.grey,
+                      ),
+                      SizedBox(height: 16.h),
+                      Text(
+                        'No manufacturers found',
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey,
+                        ),
+                      ),
+                      if (controller.selectedCountry.value != null)
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            'Try clearing the filter',
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              return Column(
+                children: controller.filteredManufacturers.map(
+                  (manufacturer) => ManufacturerSuggestionCard(
+                    manufacturer: manufacturer,
+                    onViewProfile: () {
+                      Get.to(ViewProfileTechPackScreen());
+                    },
+                  ),
+                ).toList(),
+              );
+            }
+          }),
 
-        SizedBox(height: 18.h),
-      ],
+          SizedBox(height: 18.h),
+        ],
+      ),
     ),
   );
 }

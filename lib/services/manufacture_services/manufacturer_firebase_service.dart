@@ -9,8 +9,8 @@ class ManufacturerFirebaseService {
   Future<void> addManufacturer(Manufacturer manufacturer) async {
     try {
       // Validate manufacturer name
-      if (manufacturer.name == null || manufacturer.name.trim().isEmpty) {
-        print('⚠️ Skipping manufacturer with empty name');
+      if (manufacturer.name.trim().isEmpty) {
+        // print('⚠️ Skipping manufacturer with empty name');
         return;
       }
       
@@ -19,7 +19,7 @@ class ManufacturerFirebaseService {
       
       // Double check docId is not empty
       if (docId.isEmpty) {
-        print('⚠️ Could not create valid document ID for: ${manufacturer.name}');
+        // print('⚠️ Could not create valid document ID for: ${manufacturer.name}');
         // Fallback: use timestamp-based ID
         docId = 'manufacturer_${DateTime.now().millisecondsSinceEpoch}';
       }
@@ -40,20 +40,20 @@ class ManufacturerFirebaseService {
           'createdAt': FieldValue.serverTimestamp(),
           'source': 'gpt_api',
         });
-        print('✅ Added new manufacturer: ${manufacturer.name} from ${manufacturer.country}');
+        // print('✅ Added new manufacturer: ${manufacturer.name} from ${manufacturer.country}');
       } else {
-        print('⚠️ Manufacturer already exists: ${manufacturer.name} from ${manufacturer.country}');
+        // print('⚠️ Manufacturer already exists: ${manufacturer.name} from ${manufacturer.country}');
       }
     } catch (e) {
-      print('❌ Error adding manufacturer to Firebase: $e');
-      print('❌ Manufacturer data: name=${manufacturer.name}, country=${manufacturer.country}');
+      // print('❌ Error adding manufacturer to Firebase: $e');
+      // print('❌ Manufacturer data: name=${manufacturer.name}, country=${manufacturer.country}');
       throw Exception('Failed to add manufacturer to database: $e');
     }
   }
   
   // Create a clean document ID from manufacturer name
   String _createDocumentId(String name) {
-    if (name == null || name.trim().isEmpty) {
+    if (name.trim().isEmpty) {
       return '';
     }
     
@@ -83,15 +83,15 @@ class ManufacturerFirebaseService {
   // Add multiple manufacturers to Firestore
   Future<void> addManufacturers(List<Manufacturer> manufacturers) async {
     try {
-      print('🔄 Adding ${manufacturers.length} manufacturers to Firebase...');
+      // print('🔄 Adding ${manufacturers.length} manufacturers to Firebase...');
       
       for (Manufacturer manufacturer in manufacturers) {
         await addManufacturer(manufacturer);
       }
       
-      print('✅ Successfully added ${manufacturers.length} manufacturers to Firebase');
+      // print('✅ Successfully added ${manufacturers.length} manufacturers to Firebase');
     } catch (e) {
-      print('❌ Error adding manufacturers to Firebase: $e');
+      // print('❌ Error adding manufacturers to Firebase: $e');
       throw Exception('Failed to add manufacturers to database: $e');
     }
   }
@@ -109,7 +109,34 @@ class ManufacturerFirebaseService {
         return Manufacturer.fromJson(data);
       }).toList();
     } catch (e) {
-      print('❌ Error getting manufacturers from Firebase: $e');
+      // print('❌ Error getting manufacturers from Firebase: $e');
+      return [];
+    }
+  }
+
+  // Get manufacturers with pagination
+  Future<List<Manufacturer>> getManufacturersPaginated({
+    int limit = 10,
+    DocumentSnapshot? startAfter,
+  }) async {
+    try {
+      Query query = _firestore
+          .collection(_collectionName)
+          .orderBy('createdAt', descending: true)
+          .limit(limit);
+      
+      if (startAfter != null) {
+        query = query.startAfterDocument(startAfter);
+      }
+      
+      final QuerySnapshot snapshot = await query.get();
+      
+      return snapshot.docs.map((doc) {
+        final data = doc.data() as Map<String, dynamic>;
+        return Manufacturer.fromJson(data);
+      }).toList();
+    } catch (e) {
+      // print('❌ Error getting paginated manufacturers from Firebase: $e');
       return [];
     }
   }
@@ -128,7 +155,7 @@ class ManufacturerFirebaseService {
         return Manufacturer.fromJson(data);
       }).toList();
     } catch (e) {
-      print('❌ Error getting manufacturers by country from Firebase: $e');
+      // print('❌ Error getting manufacturers by country from Firebase: $e');
       return [];
     }
   }
@@ -147,7 +174,7 @@ class ManufacturerFirebaseService {
         return Manufacturer.fromJson(data);
       }).toList();
     } catch (e) {
-      print('❌ Error getting manufacturers by countries from Firebase: $e');
+      // print('❌ Error getting manufacturers by countries from Firebase: $e');
       return [];
     }
   }
@@ -169,7 +196,7 @@ class ManufacturerFirebaseService {
       
       return coverage;
     } catch (e) {
-      print('❌ Error checking countries coverage: $e');
+      // print('❌ Error checking countries coverage: $e');
       return {};
     }
   }
@@ -191,7 +218,7 @@ class ManufacturerFirebaseService {
       
       return countByCountry;
     } catch (e) {
-      print('❌ Error getting manufacturer count by country: $e');
+      // print('❌ Error getting manufacturer count by country: $e');
       return {};
     }
   }
@@ -209,9 +236,9 @@ class ManufacturerFirebaseService {
       }
       
       await batch.commit();
-      print('🗑️ Cleared all manufacturers from Firebase');
+      // print('🗑️ Cleared all manufacturers from Firebase');
     } catch (e) {
-      print('❌ Error clearing manufacturers: $e');
+      // print('❌ Error clearing manufacturers: $e');
       throw Exception('Failed to clear manufacturers: $e');
     }
   }

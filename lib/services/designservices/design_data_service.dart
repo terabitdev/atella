@@ -18,6 +18,7 @@ class DesignDataService extends GetxService {
   }
   
   Map<String, dynamic> getCreativeBriefData() {
+    // ignore: invalid_use_of_protected_member
     return Map<String, dynamic>.from(creativeBriefData.value);
   }
   
@@ -31,6 +32,7 @@ class DesignDataService extends GetxService {
   }
   
   Map<String, dynamic> getRefinedConceptData() {
+    // ignore: invalid_use_of_protected_member
     return Map<String, dynamic>.from(refinedConceptData.value);
   }
   
@@ -44,6 +46,7 @@ class DesignDataService extends GetxService {
   }
   
   Map<String, dynamic> getFinalDetailsData() {
+    // ignore: invalid_use_of_protected_member
     return Map<String, dynamic>.from(finalDetailsData.value);
   }
   
@@ -114,7 +117,7 @@ class DesignDataService extends GetxService {
     }
     
     prompt.write('Create a professional fashion illustration showing the complete garment design, high quality, detailed, fashion sketch style.');
-    print('object: ${prompt.toString()}');
+    // print('object: ${prompt.toString()}');
     return prompt.toString();
   }
 }

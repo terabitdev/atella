@@ -1,3 +1,4 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
@@ -12,9 +13,16 @@ class ManufacturerSuggestionController extends GetxController {
 
   // Data
   final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
+  final RxList<Manufacturer> displayedManufacturers = <Manufacturer>[].obs;
   final RxList<Manufacturer> filteredManufacturers = <Manufacturer>[].obs;
+  final RxList<Manufacturer> allManufacturersCache = <Manufacturer>[].obs;
   final RxBool isLoading = false.obs;
+  final RxBool isLoadingMore = false.obs;
   final RxString error = ''.obs;
+
+  // Pagination
+  final ScrollController scrollController = ScrollController();
+  bool hasMoreData = true;
 
   // Filters for custom tab
   final Rx<Country?> selectedCountry = Rx<Country?>(null);
@@ -24,35 +32,93 @@ class ManufacturerSuggestionController extends GetxController {
   void onInit() {
     super.onInit();
     loadRecommendedManufacturers();
-    loadFilteredManufacturers();
+    setupScrollListener();
+  }
+
+  @override
+  void onClose() {
+    scrollController.dispose();
+    super.onClose();
+  }
+
+  void setupScrollListener() {
+    scrollController.addListener(() {
+      if (scrollController.position.pixels >= 
+          scrollController.position.maxScrollExtent - 200 &&
+          !isLoadingMore.value &&
+          hasMoreData &&
+          tabIndex.value == 0) {
+        loadMoreManufacturers();
+      }
+    });
   }
 
   Future<void> loadRecommendedManufacturers() async {
     try {
       isLoading.value = true;
       error.value = '';
-      final manufacturers = await _manufacturerService.getRecommendedManufacturers();
-      recommendedManufacturers.value = manufacturers;
       
-      // Update filtered manufacturers for custom tab with the new GPT data
+      // Load initial manufacturers from Firebase
+      final manufacturers = await _manufacturerService.loadInitialManufacturers();
+      recommendedManufacturers.value = manufacturers;
+      displayedManufacturers.value = manufacturers;
+      
+      // Cache all manufacturers for filtering
+      final allManufacturers = await _manufacturerService.getManufacturersFromFirebase();
+      allManufacturersCache.value = allManufacturers;
+      
+      hasMoreData = _manufacturerService.hasMoreData;
+      
+      // Update filtered manufacturers for custom tab
       loadFilteredManufacturers();
     } catch (e) {
-      error.value = 'Failed to load recommended manufacturers: $e';
+      error.value = 'Failed to load manufacturers: $e';
+      print('Error loading manufacturers: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
+  Future<void> loadMoreManufacturers() async {
+    if (!hasMoreData || isLoadingMore.value) return;
+    
+    try {
+      isLoadingMore.value = true;
+      
+      final moreManufacturers = await _manufacturerService.loadMoreManufacturers();
+      if (moreManufacturers.isNotEmpty) {
+        displayedManufacturers.addAll(moreManufacturers);
+        hasMoreData = _manufacturerService.hasMoreData;
+      } else {
+        hasMoreData = false;
+      }
+    } catch (e) {
+      print('Error loading more manufacturers: $e');
+    } finally {
+      isLoadingMore.value = false;
+    }
+  }
+
   void loadFilteredManufacturers() {
+    if (allManufacturersCache.isEmpty) {
+      filteredManufacturers.value = [];
+      return;
+    }
+    
     final filtered = _manufacturerService.getFilteredManufacturers(
       country: selectedCountryName.value,
-      sourceManufacturers: recommendedManufacturers, // Use Firebase manufacturers for filtering
+      sourceManufacturers: allManufacturersCache,
     );
     filteredManufacturers.value = filtered;
   }
 
   void updateFilters() {
     loadFilteredManufacturers();
+  }
+
+  Future<void> refreshManufacturers() async {
+    displayedManufacturers.clear();
+    await loadRecommendedManufacturers();
   }
 
   void selectCountry(Country country) {
@@ -67,44 +133,17 @@ class ManufacturerSuggestionController extends GetxController {
     updateFilters();
   }
   
-  // Method to manually expand the manufacturer database
-  Future<void> expandManufacturerDatabase() async {
-    try {
-      isLoading.value = true;
-      error.value = '';
-      
-      // This will trigger the smart strategy to add more countries
-      final manufacturers = await _manufacturerService.getRecommendedManufacturers();
-      recommendedManufacturers.value = manufacturers;
-      
-      // Update filtered manufacturers
-      loadFilteredManufacturers();
-      
-      print('🌍 Manufacturer database expanded successfully');
-    } catch (e) {
-      error.value = 'Failed to expand manufacturer database: $e';
-      print('❌ Error expanding manufacturer database: $e');
-    } finally {
-      isLoading.value = false;
-    }
-  }
   
   // Get database statistics
   Future<Map<String, dynamic>> getDatabaseStats() async {
     try {
-      // We'll get stats from the current data since we can't directly access the private service
-      final totalManufacturers = recommendedManufacturers.length;
-      
-      // Count by country from current data
-      Map<String, int> countByCountry = {};
-      for (var manufacturer in recommendedManufacturers) {
-        countByCountry[manufacturer.country] = (countByCountry[manufacturer.country] ?? 0) + 1;
-      }
+      final stats = await _manufacturerService.getManufacturerStatistics();
+      final totalManufacturers = stats.values.fold<int>(0, (sum, count) => sum + count);
       
       return {
         'totalManufacturers': totalManufacturers,
-        'countByCountry': countByCountry,
-        'countriesCovered': countByCountry.keys.length,
+        'countByCountry': stats,
+        'countriesCovered': stats.keys.length,
       };
     } catch (e) {
       print('❌ Error getting database stats: $e');
