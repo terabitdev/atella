@@ -163,7 +163,7 @@ class TechPackDetailsController extends GetxController {
     // No further block, but could trigger a summary or enable submit
   }
 
-Future<void> generateTechPackImages() async {
+  Future<void> generateTechPackImages() async {
   try {
     print('=== STARTING DETAILED TECH PACK GENERATION ===');
     isGeneratingTechPack.value = true;

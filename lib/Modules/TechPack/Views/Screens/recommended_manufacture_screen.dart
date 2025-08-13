@@ -4,10 +4,10 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../Widgets/manufacturer_suggestion_card.dart';
-import '../../controllers/manufacturer_suggestion_controller.dart';
-import 'package:atella/Widgets/custom_roundbutton.dart';
-import 'package:atella/core/themes/app_colors.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:lottie/lottie.dart';
+import 'package:atella/Modules/TechPack/Views/Widgets/manufacturer_suggestion_card.dart';
+import 'package:atella/Modules/TechPack/controllers/manufacturer_suggestion_controller.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
   const RecommendedManufactureScreen({super.key});
@@ -44,21 +44,61 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
         SizedBox(height: 8.h),
         Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
         SizedBox(height: 8.h),
-        Text(
-          'We found 3 potential manufacturers that fit your product needs.',
+        Obx(() => Text(
+          controller.isLoading.value 
+            ? 'Loading manufacturers...'
+            : 'We found ${controller.recommendedManufacturers.length} manufacturers from around the world.',
           style: mstTextTextStyle184001,
-        ),
+        )),
         SizedBox(height: 18.h),
-        ...controller.recommendedManufacturers.map(
-          (m) => ManufacturerSuggestionCard(
-            name: m['name']!,
-            location: m['location']!,
-            moq: m['moq']!,
-            description: m['description']!,
-            onViewProfile: () {},
-            onContact: () {},
-          ),
-        ),
+        Obx(() {
+          if (controller.isLoading.value) {
+            return Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  Lottie.asset(
+                    'assets/lottie/Loading_dots.json',
+                    width: 100.w,
+                    height: 100.h,
+                    fit: BoxFit.cover,
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Loading manufacturers...',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      color: const Color(0xFF666666),
+                    ),
+                  ),
+                ],
+              ),
+            );
+          } else if (controller.error.value.isNotEmpty) {
+            return Container(
+              padding: EdgeInsets.all(16.r),
+              margin: EdgeInsets.symmetric(vertical: 8.h),
+              decoration: BoxDecoration(
+                color: Colors.red.shade50,
+                borderRadius: BorderRadius.circular(8.r),
+                border: Border.all(color: Colors.red.shade200),
+              ),
+              child: Text(
+                controller.error.value,
+                style: TextStyle(color: Colors.red.shade700),
+              ),
+            );
+          } else {
+            return Column(
+              children: controller.recommendedManufacturers.map(
+                (manufacturer) => ManufacturerSuggestionCard(
+                  manufacturer: manufacturer,
+                  onViewProfile: () {},
+                ),
+              ).toList(),
+            );
+          }
+        }),
         SizedBox(height: 18.h),
       ],
     ),
@@ -79,102 +119,90 @@ Widget customTab(ManufacturerSuggestionController controller) {
           style: mstTextTextStyle184001,
         ),
         SizedBox(height: 18.h),
+
+        // Country or Region label
         Text('Country or Region', style: cstTextTextStyle16500),
         SizedBox(height: 8.h),
-        Obx(
-          () => DropdownButtonFormField<String>(
-            value: controller.selectedCountry.value,
-            items: controller.countryList
-                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                .toList(),
-            onChanged: (v) => controller.selectedCountry.value = v!,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color.fromARGB(255, 227, 225, 251),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 14.h,
-                horizontal: 16.w,
-              ),
-            ),
-          ),
-        ),
-        SizedBox(height: 18.h),
-        Text('Minimum Order Quantity (MOQ)', style: cstTextTextStyle16500),
-        SizedBox(height: 8.h),
-        Obx(
-          () => Row(
-            children: [
-              Expanded(
-                child: Slider(
-                  value: controller.moq.value.toDouble(),
-                  min: 1,
-                  max: 500,
-                  divisions: 50,
-                  label: '${controller.moq.value} pcs',
-                  activeColor: Colors.black,
-                  inactiveColor: const Color(0xFFE3E1FB),
-                  onChanged: (v) => controller.moq.value = v.round(),
+
+        // Country Picker
+        Builder(
+          builder: (BuildContext ctx) => Obx(
+            () => InkWell(
+              onTap: () {
+                showCountryPicker(
+                  context: ctx,
+                  showPhoneCode: false,
+                  onSelect: (Country country) {
+                    controller.selectCountry(country);
+                  },
+                  countryListTheme: CountryListThemeData(
+                    backgroundColor: Colors.white,
+                    textStyle: TextStyle(fontSize: 16.sp),
+                    searchTextStyle: TextStyle(fontSize: 16.sp),
+                    inputDecoration: InputDecoration(
+                      labelText: 'Search',
+                      hintText: 'Start typing to search',
+                      prefixIcon: const Icon(Icons.search),
+                      border: OutlineInputBorder(
+                        borderSide: BorderSide(
+                          color: const Color(0xFF8C98A8).withValues(alpha: 0.2),
+                        ),
+                      ),
+                    ),
+                  ),
+                );
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
+                decoration: BoxDecoration(
+                  color: const Color.fromARGB(255, 227, 225, 251),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Text(
+                        controller.selectedCountryName.value,
+                        style: TextStyle(fontSize: 16.sp),
+                      ),
+                    ),
+                    const Icon(Icons.arrow_drop_down),
+                  ],
                 ),
               ),
-              SizedBox(width: 8.w),
-              Text(
-                '${controller.moq.value} pcs',
-                style: const TextStyle(fontWeight: FontWeight.w600),
-              ),
-            ],
-          ),
-        ),
-        SizedBox(height: 18.h),
-        Text(
-          'Lead Time',
-          style: TextStyle(fontWeight: FontWeight.w600, fontSize: 16.sp),
-        ),
-        SizedBox(height: 8.h),
-        Obx(
-          () => DropdownButtonFormField<String>(
-            value: controller.leadTime.value,
-            items: controller.leadTimeList
-                .map((c) => DropdownMenuItem(value: c, child: Text(c)))
-                .toList(),
-            onChanged: (v) => controller.leadTime.value = v!,
-            decoration: InputDecoration(
-              filled: true,
-              fillColor: const Color(0xFFE3E1FB),
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(12.r),
-                borderSide: BorderSide.none,
-              ),
-              contentPadding: EdgeInsets.symmetric(
-                vertical: 14.h,
-                horizontal: 16.w,
-              ),
             ),
           ),
         ),
+
+        SizedBox(height: 8.h),
+
+        // Clear Filter button
+        Obx(() => controller.selectedCountry.value != null
+            ? TextButton(
+                onPressed: controller.clearCountryFilter,
+                child: Text(
+                  'Clear Filter',
+                  style: cstTextTextStyle16500.copyWith(
+                    color: Colors.red,
+                  ),
+                ),
+              )
+            : const SizedBox.shrink()),
+
         SizedBox(height: 18.h),
-        ...controller.filteredManufacturers.map(
-          (m) => ManufacturerSuggestionCard(
-            name: m['name']!,
-            location: m['location']!,
-            moq: m['moq']!,
-            description: m['description']!,
-            onViewProfile: () {
-              Get.to(ViewProfileTechPackScreen());
-            },
-            onContact: () {},
-          ),
-        ),
-        SizedBox(height: 18.h),
-        RoundButton(
-          title: 'Search',
-          onTap: () {},
-          color: AppColors.buttonColor,
-          isloading: false,
-        ),
+
+        // Manufacturer list
+        Obx(() => Column(
+              children: controller.filteredManufacturers.map(
+                (manufacturer) => ManufacturerSuggestionCard(
+                  manufacturer: manufacturer,
+                  onViewProfile: () {
+                    Get.to(ViewProfileTechPackScreen());
+                  },
+                ),
+              ).toList(),
+            )),
+
         SizedBox(height: 18.h),
       ],
     ),

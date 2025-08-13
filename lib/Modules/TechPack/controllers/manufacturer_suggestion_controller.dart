@@ -1,53 +1,69 @@
 import 'package:get/get.dart';
+import 'package:country_picker/country_picker.dart';
+import 'package:atella/Data/Models/manufacturer_model.dart';
+import 'package:atella/services/manufacture_services/manufacturer_service.dart';
 
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
   final RxInt tabIndex = 0.obs;
 
+  // Services
+  final ManufacturerService _manufacturerService = Get.put(ManufacturerService());
+
+  // Data
+  final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
+  final RxList<Manufacturer> filteredManufacturers = <Manufacturer>[].obs;
+  final RxBool isLoading = false.obs;
+  final RxString error = ''.obs;
+
   // Filters for custom tab
-  final RxString selectedCountry = 'United Kingdom'.obs;
-  final RxInt moq = 50.obs;
-  final RxString leadTime = 'Under 15 days'.obs;
+  final Rx<Country?> selectedCountry = Rx<Country?>(null);
+  final RxString selectedCountryName = 'All Countries'.obs;
 
-  final List<String> countryList = [
-    'United Kingdom',
-    'China',
-    'Turkey',
-    'Pakistan',
-    'Bangladesh',
-  ];
+  @override
+  void onInit() {
+    super.onInit();
+    loadRecommendedManufacturers();
+    loadFilteredManufacturers();
+  }
 
-  final List<String> leadTimeList = [
-    'Under 7 days',
-    'Under 15 days',
-    'Under 30 days',
-    'Any',
-  ];
+  Future<void> loadRecommendedManufacturers() async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      final manufacturers = await _manufacturerService.getRecommendedManufacturers();
+      recommendedManufacturers.value = manufacturers;
+      
+      // Update filtered manufacturers for custom tab with the new GPT data
+      loadFilteredManufacturers();
+    } catch (e) {
+      error.value = 'Failed to load recommended manufacturers: $e';
+    } finally {
+      isLoading.value = false;
+    }
+  }
 
-  // Manufacturer data (hardcoded for now)
-  final List<Map<String, String>> recommendedManufacturers = [
-    {
-      'name': 'SkyStitch Apparel Ltd.',
-      'location': 'Guangzhou, China',
-      'moq': 'MOQ: 50 pcs',
-      'description':
-          'Specialized in cotton knitwear. Offers eco-certification.',
-    },
-    {
-      'name': 'StitchLab Studio',
-      'location': 'Istanbul, Turkey',
-      'moq': 'MOQ: 5–20 days',
-      'description': 'Low-MOQ flexible partner, supports custom tags.',
-    },
-    {
-      'name': 'ClassicTailors',
-      'location': 'Sialkot, Pakistan',
-      'moq': 'MOQ: 18 days',
-      'description': 'Specializes in streetwear. Offers sampling & scaling.',
-    },
-  ];
+  void loadFilteredManufacturers() {
+    final filtered = _manufacturerService.getFilteredManufacturers(
+      country: selectedCountryName.value,
+      sourceManufacturers: recommendedManufacturers, // Use GPT manufacturers for filtering
+    );
+    filteredManufacturers.value = filtered;
+  }
 
-  // For custom tab, filter logic can be added later
-  List<Map<String, String>> get filteredManufacturers =>
-      recommendedManufacturers;
+  void updateFilters() {
+    loadFilteredManufacturers();
+  }
+
+  void selectCountry(Country country) {
+    selectedCountry.value = country;
+    selectedCountryName.value = country.name;
+    updateFilters();
+  }
+
+  void clearCountryFilter() {
+    selectedCountry.value = null;
+    selectedCountryName.value = 'All Countries';
+    updateFilters();
+  }
 }
