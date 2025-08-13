@@ -3,6 +3,7 @@ import 'package:http/http.dart' as http;
 import 'package:get/get.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import '../../Data/Models/manufacturer_model.dart';
+import '../firebase/services/manufacturer_firebase_service.dart';
 
 class ManufacturerService extends GetxService {
   static ManufacturerService get instance => Get.find();
@@ -13,9 +14,95 @@ class ManufacturerService extends GetxService {
   final RxBool isLoading = false.obs;
   final RxString error = ''.obs;
   
-  Future<List<Manufacturer>> getRecommendedManufacturers() async {
+  // Firebase service instance
+  final ManufacturerFirebaseService _firebaseService = ManufacturerFirebaseService();
+  
+  // Country groups for batch fetching
+  static const List<String> firstBatchCountries = [
+    'Australia',
+    'Bangladesh',
+    'China',
+    'India',
+    'Italy',
+    'Turkey',
+    'USA',
+    'UK',
+    'Vietnam',
+    'Pakistan'
+  ];
+  
+  static const List<String> secondBatchCountries = [
+    'Canada',
+    'Germany',
+    'France',
+    'Japan',
+    'South Korea',
+    'Brazil',
+    'Mexico',
+    'Spain',
+    'Portugal',
+    'Netherlands'
+  ];
+  
+  static const List<String> thirdBatchCountries = [
+    'Thailand',
+    'Indonesia',
+    'Malaysia',
+    'Singapore',
+    'Philippines',
+    'Egypt',
+    'Morocco',
+    'South Africa',
+    'Poland',
+    'Romania'
+  ];
+  
+  static const List<String> fourthBatchCountries = [
+    'Denmark',
+    'Finland',
+    'Belgium',
+    'Switzerland',
+    'Austria',
+    'Czech Republic',
+    'Hungary',
+    'Greece'
+  ];
+//more countries can be added here
+static const List<String> sixthBatchCountries = [
+  'United Arab Emirates',
+  'Qatar',
+  'Kuwait',
+  'Oman',
+  'Jordan',
+  'Lebanon',
+  'Israel',
+  'Sri Lanka',
+  'Nepal',
+  'Kenya'
+];
+
+  // Get all country groups
+  static List<List<String>> get allCountryBatches => [
+    firstBatchCountries,
+    secondBatchCountries,
+    thirdBatchCountries,
+    fourthBatchCountries,
+  ];
+  
+  // Fetch manufacturers for a specific batch of countries and store in Firebase
+  Future<List<Manufacturer>> fetchManufacturersByBatch(int batchIndex) async {
+    if (batchIndex < 0 || batchIndex >= allCountryBatches.length) {
+      throw Exception('Invalid batch index. Use 0-${allCountryBatches.length - 1}');
+    }
+    
+    final countries = allCountryBatches[batchIndex];
+    return await fetchManufacturersByCountries(countries);
+  }
+  
+  // Fetch manufacturers for specific countries and automatically store in Firebase
+  Future<List<Manufacturer>> fetchManufacturersByCountries(List<String> countries) async {
     try {
-      print('🔄 Starting manufacturer recommendations API call...');
+      print('🔄 Fetching manufacturers for countries: ${countries.join(', ')}');
       isLoading.value = true;
       error.value = '';
       
@@ -23,10 +110,9 @@ class ManufacturerService extends GetxService {
         throw Exception('OpenAI API key not found in environment variables');
       }
       
-      print('✅ API Key found, making request to: $_openAiBaseUrl');
-      
+      final countriesString = countries.join(', ');
       final requestBody = {
-        'model': 'gpt-4.1-2025-04-14',
+        'model': 'gpt-4',
         'messages': [
           {
             'role': 'system',
@@ -34,14 +120,27 @@ class ManufacturerService extends GetxService {
           },
           {
             'role': 'user',
-            'content': 'Can you please provide me a complete list of atleast 40 garments manufacturers from all over the world. I want their location, name, phone number, website url and email. I dont have any preferences. You just need to list them down with complete details regardless of their location or type. Please format the response as a JSON array with objects containing: name, location, country, phoneNumber, email, website fields only.'
+            'content': '''
+Provide exactly 5 garment manufacturers for each of the following countries: 
+$countriesString
+
+For each manufacturer, include:
+- name
+- location
+- country
+- phoneNumber
+- email
+- website
+
+Return ONLY a valid JSON array, without code fences, text, or explanations.
+'''
           }
         ],
         'max_tokens': 4000,
         'temperature': 0.7,
       };
       
-      print('📤 Request payload: ${json.encode(requestBody)}');
+      print('📤 Making API request for ${countries.length} countries...');
       
       final response = await http.post(
         Uri.parse(_openAiBaseUrl),
@@ -52,37 +151,116 @@ class ManufacturerService extends GetxService {
         body: json.encode(requestBody),
       );
       
-      print('📥 Response status code: ${response.statusCode}');
-      print('📥 Response headers: ${response.headers}');
-      print('📥 Response body: ${response.body}');
-      
       if (response.statusCode == 200) {
         final data = json.decode(response.body);
-        print('✅ Successfully parsed response JSON');
         
         if (data['choices'] != null && data['choices'].isNotEmpty) {
           final content = data['choices'][0]['message']['content'];
-          print('📝 GPT Response content: $content');
-          
           final manufacturers = _parseManufacturersFromText(content);
-          print('✅ Successfully parsed ${manufacturers.length} manufacturers');
+          
+          // Automatically store in Firebase
+          if (manufacturers.isNotEmpty) {
+            print('💾 Storing ${manufacturers.length} manufacturers in Firebase...');
+            await _firebaseService.addManufacturers(manufacturers);
+            print('✅ Successfully stored manufacturers in Firebase');
+          }
+          
           return manufacturers;
         } else {
           throw Exception('No choices found in API response');
         }
       } else {
-        final errorMessage = 'API Error ${response.statusCode}: ${response.body}';
-        print('❌ $errorMessage');
-        throw Exception(errorMessage);
+        throw Exception('API Error ${response.statusCode}: ${response.body}');
       }
     } catch (e) {
-      print('❌ Error in getRecommendedManufacturers: $e');
+      print('❌ Error fetching manufacturers: $e');
       error.value = 'Error: $e';
-      return _getDefaultManufacturers(); // Return fallback data
+      return [];
     } finally {
       isLoading.value = false;
-      print('🏁 API call completed, loading state reset');
     }
+  }
+  
+  // Fetch manufacturers from all country batches sequentially
+  Future<Map<String, List<Manufacturer>>> fetchAllManufacturersGlobally() async {
+    Map<String, List<Manufacturer>> allManufacturers = {};
+    
+    try {
+      print('🌍 Starting global manufacturer fetch across all country batches...');
+      
+      for (int i = 0; i < allCountryBatches.length; i++) {
+        print('\n📦 Processing batch ${i + 1} of ${allCountryBatches.length}...');
+        final batchName = 'batch_${i + 1}';
+        
+        // Add delay between API calls to avoid rate limiting
+        if (i > 0) {
+          print('⏳ Waiting 2 seconds before next API call...');
+          await Future.delayed(Duration(seconds: 2));
+        }
+        
+        final manufacturers = await fetchManufacturersByBatch(i);
+        allManufacturers[batchName] = manufacturers;
+        
+        print('✅ Batch ${i + 1} completed: ${manufacturers.length} manufacturers fetched and stored');
+      }
+      
+      print('\n🎉 Global fetch completed! Total batches processed: ${allManufacturers.length}');
+      
+      // Get total count
+      int totalManufacturers = 0;
+      allManufacturers.forEach((key, value) {
+        totalManufacturers += value.length;
+      });
+      
+      print('📊 Total manufacturers fetched and stored: $totalManufacturers');
+      
+      return allManufacturers;
+    } catch (e) {
+      print('❌ Error in global fetch: $e');
+      error.value = 'Error fetching global manufacturers: $e';
+      return allManufacturers;
+    }
+  }
+  
+  // Get manufacturers from Firebase (cached data)
+  Future<List<Manufacturer>> getManufacturersFromFirebase({String? country}) async {
+    try {
+      if (country != null && country != 'All') {
+        return await _firebaseService.getManufacturersByCountry(country);
+      } else {
+        return await _firebaseService.getAllManufacturers();
+      }
+    } catch (e) {
+      print('❌ Error getting manufacturers from Firebase: $e');
+      return [];
+    }
+  }
+  
+  // Check which countries have data in Firebase
+  Future<Map<String, bool>> checkCountryCoverage() async {
+    try {
+      final allCountries = allCountryBatches.expand((batch) => batch).toList();
+      return await _firebaseService.checkCountriesCoverage(allCountries);
+    } catch (e) {
+      print('❌ Error checking country coverage: $e');
+      return {};
+    }
+  }
+  
+  // Get statistics about stored manufacturers
+  Future<Map<String, int>> getManufacturerStatistics() async {
+    try {
+      return await _firebaseService.getManufacturerCountByCountry();
+    } catch (e) {
+      print('❌ Error getting manufacturer statistics: $e');
+      return {};
+    }
+  }
+  
+  // Original method kept for backward compatibility - now uses first batch and stores in Firebase
+  Future<List<Manufacturer>> getRecommendedManufacturers() async {
+    // Use the sixth batch of countries
+    return await fetchManufacturersByCountries(sixthBatchCountries);
   }
   
   List<Manufacturer> _parseManufacturersFromText(String text) {
@@ -102,6 +280,7 @@ class ManufacturerService extends GetxService {
         
         manufacturers = manufacturerList.map((item) {
           print('🏭 Processing manufacturer: ${item['name'] ?? 'Unknown'}');
+          print('📋 Full manufacturer data: $item');
           return Manufacturer.fromJson(item as Map<String, dynamic>);
         }).toList();
         
@@ -190,4 +369,6 @@ class ManufacturerService extends GetxService {
   List<Manufacturer> _getAllManufacturers() {
     return _getDefaultManufacturers();
   }
+
+
 }

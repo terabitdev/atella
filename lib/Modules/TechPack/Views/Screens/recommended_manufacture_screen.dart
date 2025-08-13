@@ -50,6 +50,76 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
             : 'We found ${controller.recommendedManufacturers.length} manufacturers from around the world.',
           style: mstTextTextStyle184001,
         )),
+        SizedBox(height: 8.h),
+        // Expand database button
+        Obx(() => controller.isLoading.value 
+          ? const SizedBox.shrink()
+          : ElevatedButton.icon(
+              onPressed: controller.expandManufacturerDatabase,
+              icon: const Icon(Icons.add_location, size: 18),
+              label: const Text('Expand Global Database'),
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6C63FF),
+                foregroundColor: Colors.white,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(8.r),
+                ),
+              ),
+            ),
+        ),
+        SizedBox(height: 8.h),
+        // Database statistics
+        Obx(() => controller.isLoading.value 
+          ? const SizedBox.shrink()
+          : FutureBuilder<Map<String, dynamic>>(
+              future: controller.getDatabaseStats(),
+              builder: (context, snapshot) {
+                if (snapshot.hasData && snapshot.data!.isNotEmpty) {
+                  final stats = snapshot.data!;
+                  return Container(
+                    padding: EdgeInsets.all(12.r),
+                    decoration: BoxDecoration(
+                      color: Colors.blue.shade50,
+                      borderRadius: BorderRadius.circular(8.r),
+                      border: Border.all(color: Colors.blue.shade200),
+                    ),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Database Statistics',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.blue.shade700,
+                          ),
+                        ),
+                        SizedBox(height: 8.h),
+                        Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                'Total: ${stats['totalManufacturers']}',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                            Expanded(
+                              child: Text(
+                                'Countries: ${stats['countriesCovered']}',
+                                style: TextStyle(fontSize: 12.sp),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return const SizedBox.shrink();
+              },
+            ),
+        ),
         SizedBox(height: 18.h),
         Obx(() {
           if (controller.isLoading.value) {

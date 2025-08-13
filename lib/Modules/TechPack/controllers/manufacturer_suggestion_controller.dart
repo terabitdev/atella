@@ -46,7 +46,7 @@ class ManufacturerSuggestionController extends GetxController {
   void loadFilteredManufacturers() {
     final filtered = _manufacturerService.getFilteredManufacturers(
       country: selectedCountryName.value,
-      sourceManufacturers: recommendedManufacturers, // Use GPT manufacturers for filtering
+      sourceManufacturers: recommendedManufacturers, // Use Firebase manufacturers for filtering
     );
     filteredManufacturers.value = filtered;
   }
@@ -66,4 +66,50 @@ class ManufacturerSuggestionController extends GetxController {
     selectedCountryName.value = 'All Countries';
     updateFilters();
   }
+  
+  // Method to manually expand the manufacturer database
+  Future<void> expandManufacturerDatabase() async {
+    try {
+      isLoading.value = true;
+      error.value = '';
+      
+      // This will trigger the smart strategy to add more countries
+      final manufacturers = await _manufacturerService.getRecommendedManufacturers();
+      recommendedManufacturers.value = manufacturers;
+      
+      // Update filtered manufacturers
+      loadFilteredManufacturers();
+      
+      print('🌍 Manufacturer database expanded successfully');
+    } catch (e) {
+      error.value = 'Failed to expand manufacturer database: $e';
+      print('❌ Error expanding manufacturer database: $e');
+    } finally {
+      isLoading.value = false;
+    }
+  }
+  
+  // Get database statistics
+  Future<Map<String, dynamic>> getDatabaseStats() async {
+    try {
+      // We'll get stats from the current data since we can't directly access the private service
+      final totalManufacturers = recommendedManufacturers.length;
+      
+      // Count by country from current data
+      Map<String, int> countByCountry = {};
+      for (var manufacturer in recommendedManufacturers) {
+        countByCountry[manufacturer.country] = (countByCountry[manufacturer.country] ?? 0) + 1;
+      }
+      
+      return {
+        'totalManufacturers': totalManufacturers,
+        'countByCountry': countByCountry,
+        'countriesCovered': countByCountry.keys.length,
+      };
+    } catch (e) {
+      print('❌ Error getting database stats: $e');
+      return {};
+    }
+  }
 }
+

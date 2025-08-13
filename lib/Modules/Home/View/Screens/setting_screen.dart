@@ -79,7 +79,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SettingCard(
                         title: 'Privacy Policy',
                         onTap: () {
-                          // Get.toNamed('/privacy');
+                          Get.toNamed('/recommended_tech_pack');
                         },
                       ),
                       SettingCard(
