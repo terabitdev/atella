@@ -144,8 +144,14 @@ Delivery: ${_detailsController.deliveryDateController.text}
     try {
       isSaving.value = true;
       
-      // Generate unique tech pack ID
-      final techPackId = DateTime.now().millisecondsSinceEpoch.toString();
+      // Check if we're in edit mode
+      final isEditMode = _detailsController.isEditMode;
+      final editingTechPack = _detailsController.editingTechPack;
+
+      // Use existing tech pack ID in edit mode, or generate new one
+      final techPackId = isEditMode && editingTechPack != null 
+          ? editingTechPack.id 
+          : DateTime.now().millisecondsSinceEpoch.toString();
       
       // Get selected design image URL
       final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
@@ -189,24 +195,52 @@ Delivery: ${_detailsController.deliveryDateController.text}
         },
       };
       
-      // Save images to Firebase Storage with all data
-      await TechPackService.saveTechPackImages(
-        base64Images: generatedImages,
-        techPackId: techPackId,
-        projectName: projectName,
-        collectionName: collectionName,
-        selectedDesignImageUrl: selectedDesignImageUrl,
-        techPackQuestionnaireData: techPackQuestionnaireData,
-        designData: _detailsController.designData,
-      );
-
-      Get.snackbar(
-        'Success',
-        'Tech pack saved successfully!',
-        backgroundColor: Colors.green,
-        colorText: Colors.white,
-        duration: const Duration(seconds: 2),
-      );
+      if (isEditMode && editingTechPack != null) {
+        // EDIT MODE: Update existing tech pack
+        print('=== EDIT MODE: Updating existing tech pack ===');
+        
+        // Update tech pack details and questionnaire data
+        await _collectionsService.addCollection(collectionName); // Ensure collection exists
+        
+        await TechPackService.saveTechPackImages(
+          base64Images: generatedImages,
+          techPackId: techPackId,
+          projectName: projectName,
+          collectionName: collectionName,
+          selectedDesignImageUrl: selectedDesignImageUrl,
+          techPackQuestionnaireData: techPackQuestionnaireData,
+          designData: _detailsController.designData,
+        );
+        
+        Get.snackbar(
+          'Updated!',
+          'Tech pack updated successfully!',
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      } else {
+        // NEW TECH PACK MODE: Create new tech pack
+        print('=== NEW TECH PACK MODE ===');
+        
+        await TechPackService.saveTechPackImages(
+          base64Images: generatedImages,
+          techPackId: techPackId,
+          projectName: projectName,
+          collectionName: collectionName,
+          selectedDesignImageUrl: selectedDesignImageUrl,
+          techPackQuestionnaireData: techPackQuestionnaireData,
+          designData: _detailsController.designData,
+        );
+        
+        Get.snackbar(
+          'Success',
+          'Tech pack saved successfully!',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+      }
 
       // Clear any existing project controller to force refresh
       if (Get.isRegistered<dynamic>(tag: 'projectController')) {

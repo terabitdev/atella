@@ -46,6 +46,21 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
 
   Widget _buildBottomSection() {
     return Obx(() {
+        // In edit mode, always show Generate button if answers exist
+        if (controller.isEditMode) {
+          return Padding(
+            padding: const EdgeInsets.all(24),
+            child: GenerateRoundButton(
+              title: 'Generate',
+              onTap: controller.generateDesign,
+              color: AppColors.buttonColor,
+              imagePath: generateIcon,
+              loading: controller.isLoading,
+            ),
+          );
+        }
+        
+        // Original logic for new questionnaire mode
         final currentQuestionId = controller.currentQuestion.id;
         final currentQuestionIndex = controller.currentQuestionIndex;
         
@@ -282,9 +297,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
         return CustomCheckboxWidget(
           text: option,
           isSelected: isSelected,
-          onTap: () {
-            controller.toggleOption(question.id, option);
-          },
+          onTap: () => controller.toggleOption(question.id, option),
           allowMultiple: question.allowMultiple,
         );
     });
@@ -355,4 +368,5 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
       ),
     );
   }
+
 }

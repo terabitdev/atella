@@ -3,8 +3,16 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:permission_handler/permission_handler.dart';
 import '../../../Data/api/openai_service.dart';
+import '../../../Data/Models/tech_pack_model.dart';
+import '../../../services/firebase/edit/edit_data_service.dart';
 
 class TechPackDetailsController extends GetxController {
+  final EditDataService _editDataService = EditDataService();
+  
+  // Edit mode tracking
+  final RxBool _isEditMode = false.obs;
+  bool get isEditMode => _isEditMode.value;
+  TechPackModel? _editingTechPack;
   // Materials & Fabrics
   final mainFabricController = TextEditingController();
   final secondaryMaterialsController = TextEditingController();
@@ -59,6 +67,8 @@ class TechPackDetailsController extends GetxController {
   final RxString selectedDesignPrompt = ''.obs;
   Map<String, dynamic> designData = {};
 
+  TechPackModel? get editingTechPack => _editingTechPack;
+
   @override
   void onInit() {
     super.onInit();
@@ -73,11 +83,117 @@ class TechPackDetailsController extends GetxController {
       selectedDesignPrompt.value = arguments['designPrompt'] ?? '';
       designData = arguments['designData'] ?? {};
       
+      // Check for edit mode
+      final isEditMode = arguments['editMode'] == true;
+      if (isEditMode) {
+        _isEditMode.value = true;
+        _editingTechPack = arguments['techPackModel'] as TechPackModel?;
+        print('Tech Pack Details: Edit mode detected');
+        _loadExistingTechPackData();
+      }
+      
       print('Tech Pack Details initialized with:');
       print('Design Image: ${selectedDesignImagePath.value.substring(0, 50)}...');
       print('Design Prompt: ${selectedDesignPrompt.value}');
       print('Design Data: $designData');
+      print('Edit Mode: $isEditMode');
     }
+  }
+  
+  Future<void> _loadExistingTechPackData() async {
+    if (_editingTechPack == null) return;
+
+    try {
+      print('Loading existing tech pack data for: ${_editingTechPack!.id}');
+      
+      // Get complete edit data from Firebase
+      final editData = await _editDataService.getTechPackEditData(_editingTechPack!.id);
+      
+      if (editData != null) {
+        final techPackDetails = editData['techPackDetails'] as Map<String, dynamic>;
+        if (techPackDetails.isNotEmpty) {
+          final parsedDetails = _editDataService.parseTechPackDetailsForEdit(techPackDetails);
+          _populateTechPackFields(parsedDetails);
+          
+          // Show all blocks in edit mode
+          _showAllBlocks();
+          
+          Get.snackbar(
+            'Edit Mode',
+            'Loading existing tech pack data...',
+            backgroundColor: Colors.blue,
+            colorText: Colors.white,
+            duration: Duration(seconds: 2),
+          );
+        }
+      }
+    } catch (e) {
+      print('Error loading tech pack data: $e');
+      Get.snackbar(
+        'Notice',
+        'Starting with empty tech pack form',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+    }
+  }
+  
+  void _populateTechPackFields(Map<String, dynamic> techPackDetails) {
+    print('Populating tech pack fields with: $techPackDetails');
+    
+    // Materials & Fabrics
+    final materials = techPackDetails['materials'] as Map<String, dynamic>? ?? {};
+    mainFabricController.text = materials['mainFabric'] ?? '';
+    secondaryMaterialsController.text = materials['secondaryMaterials'] ?? '';
+    fabricPropertiesController.text = materials['fabricProperties'] ?? '';
+    
+    // Colors
+    final colors = techPackDetails['colors'] as Map<String, dynamic>? ?? {};
+    primaryColorController.text = colors['primaryColor'] ?? '';
+    alternateColorwaysController.text = colors['alternateColorways'] ?? '';
+    pantoneController.text = colors['pantone'] ?? '';
+    
+    // Sizes & Measurements
+    final sizes = techPackDetails['sizes'] as Map<String, dynamic>? ?? {};
+    sizeRangeController.text = sizes['sizeRange'] ?? '';
+    measurementChartController.text = sizes['measurementChart'] ?? '';
+    measurementImagePath.value = sizes['measurementImage'] ?? '';
+    
+    // Technical Details
+    final technical = techPackDetails['technical'] as Map<String, dynamic>? ?? {};
+    accessoriesController.text = technical['accessories'] ?? '';
+    stitchingController.text = technical['stitching'] ?? '';
+    decorativeStitchingController.text = technical['decorativeStitching'] ?? '';
+    
+    // Labeling & Branding
+    final labeling = techPackDetails['labeling'] as Map<String, dynamic>? ?? {};
+    logoPlacementController.text = labeling['logoPlacement'] ?? '';
+    labelsNeededController.text = labeling['labelsNeeded'] ?? '';
+    qrCodeController.text = labeling['qrCode'] ?? '';
+    
+    // Packaging & Shipping
+    final packaging = techPackDetails['packaging'] as Map<String, dynamic>? ?? {};
+    packagingTypeController.text = packaging['packagingType'] ?? '';
+    foldingInstructionsController.text = packaging['foldingInstructions'] ?? '';
+    insertsController.text = packaging['inserts'] ?? '';
+    
+    // Production Details
+    final production = techPackDetails['production'] as Map<String, dynamic>? ?? {};
+    costPerPieceController.text = production['costPerPiece'] ?? '';
+    quantityController.text = production['quantity'] ?? '';
+    deliveryDateController.text = production['deliveryDate'] ?? '';
+    
+    update();
+  }
+  
+  void _showAllBlocks() {
+    // In edit mode, show all blocks
+    showColorsBlock.value = true;
+    showSizesBlock.value = true;
+    showTechnicalBlock.value = true;
+    showLabelingBlock.value = true;
+    showPackagingBlock.value = true;
+    showProductionBlock.value = true;
   }
 
   String _extractGarmentType() {

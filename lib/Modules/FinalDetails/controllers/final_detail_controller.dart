@@ -1,12 +1,21 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/Modules/TechPack/controllers/generate_tech_pack_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FinalDetailsController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
+  final EditDataService _editDataService = EditDataService();
+  
+  // Edit mode tracking
+  final RxBool _isEditMode = false.obs;
+  bool get isEditMode => _isEditMode.value;
+  TechPackModel? _editingTechPack;
+  TechPackModel? get editingTechPack => _editingTechPack;
   
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
@@ -89,6 +98,87 @@ class FinalDetailsController extends GetxController {
     super.onInit();
     _startTimeUpdater();
     _updateCurrentTime();
+    _checkForEditMode();
+  }
+  
+  void _checkForEditMode() {
+    final arguments = Get.arguments;
+    print('=== FINAL DETAILS EDIT MODE CHECK ===');
+    print('Arguments received: $arguments');
+    print('Arguments type: ${arguments.runtimeType}');
+    
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      final isEditMode = arguments['editMode'] == true;
+      print('Edit mode flag: ${arguments['editMode']}');
+      print('Edit mode detected: $isEditMode');
+      
+      if (isEditMode) {
+        print('🟢 ENTERING FINAL DETAILS EDIT MODE');
+        _isEditMode.value = true;
+        _editingTechPack = arguments['techPackModel'] as TechPackModel?;
+        print('TechPack model: ${_editingTechPack?.projectName}');
+        _loadExistingFinalDetailsData();
+      } else {
+        print('🔴 EDIT MODE FLAG IS FALSE');
+      }
+    } else {
+      print('🔴 NO ARGUMENTS OR WRONG FORMAT RECEIVED');
+    }
+  }
+  
+  void _loadExistingFinalDetailsData() {
+    // Get data from design data service (loaded in creative brief)
+    final finalDetailsData = _dataService.getFinalDetailsData();
+    print('Loading final details data: $finalDetailsData');
+    
+    if (finalDetailsData.isNotEmpty) {
+      // Load checkbox-based answers
+      final targetSeason = finalDetailsData['target_season'] as String? ?? '';
+      if (targetSeason.isNotEmpty) {
+        final seasons = targetSeason.split(', ');
+        _answers['target_season'] = BriefAnswer(
+          questionId: 'target_season',
+          selectedOptions: seasons,
+        );
+      }
+      
+      final targetBudget = finalDetailsData['target_budget'] as String? ?? '';
+      if (targetBudget.isNotEmpty) {
+        _answers['target_budget'] = BriefAnswer(
+          questionId: 'target_budget',
+          selectedOptions: [targetBudget],
+        );
+      }
+      
+      final desiredFeatures = finalDetailsData['desired_features'] as String? ?? '';
+      if (desiredFeatures.isNotEmpty) {
+        final features = desiredFeatures.split(', ');
+        _answers['desired_features'] = BriefAnswer(
+          questionId: 'desired_features',
+          selectedOptions: features,
+          textInput: finalDetailsData['customFeatures'] as String?,
+        );
+      }
+      
+      // Load text-based answers
+      final additionalDetails = finalDetailsData['additional_details'] as String? ?? '';
+      if (additionalDetails.isNotEmpty) {
+        customInputController.text = additionalDetails;
+        _answers['additional_details'] = BriefAnswer(
+          questionId: 'additional_details',
+          textInput: additionalDetails,
+        );
+      }
+      
+      // In edit mode, show all questions
+      _currentQuestionIndex.value = questions.length - 1;
+      
+      // Force reactive update
+      _answers.refresh();
+      update();
+      
+      print('Loaded ${_answers.length} answers for final details');
+    }
   }
 
   @override
@@ -122,6 +212,11 @@ class FinalDetailsController extends GetxController {
 
   // Toggle option selection (for checkboxes)
   void toggleOption(String questionId, String option) async {
+    print('=== TOGGLE OPTION ===');
+    print('Question ID: $questionId');
+    print('Option: $option');
+    print('Is Edit Mode: $_isEditMode.value');
+    
     final currentAnswer = _answers[questionId];
     List<String> selectedOptions =
         currentAnswer?.selectedOptions.toList() ?? [];
@@ -166,6 +261,11 @@ class FinalDetailsController extends GetxController {
     }
 
     update();
+
+    // In edit mode, don't auto-advance - let user freely change answers
+    if (_isEditMode.value) {
+      return;
+    }
 
     // Auto-advance for single selection questions (budget)
     if (!question.allowMultiple && selectedOptions.isNotEmpty) {
@@ -326,16 +426,31 @@ class FinalDetailsController extends GetxController {
       Get.delete<TechPackController>();
     }
     
-    // Navigate to tech pack generation screen
-    Get.toNamed('/generate_tech_pack');
-    
-    Get.snackbar(
-      'Generating Designs!',
-      'Creating 3 unique designs based on your preferences...',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: const Color(0xFF8B5FE6),
-      colorText: Colors.white,
-    );
+    // Navigate to tech pack generation screen with edit mode data
+    if (_isEditMode.value && _editingTechPack != null) {
+      Get.toNamed('/generate_tech_pack', arguments: {
+        'editMode': true,
+        'techPackModel': _editingTechPack,
+      });
+      
+      Get.snackbar(
+        'Regenerating Designs!',
+        'Creating 3 new designs based on your updated preferences...',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF8B5FE6),
+        colorText: Colors.white,
+      );
+    } else {
+      Get.toNamed('/generate_tech_pack');
+      
+      Get.snackbar(
+        'Generating Designs!',
+        'Creating 3 unique designs based on your preferences...',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: const Color(0xFF8B5FE6),
+        colorText: Colors.white,
+      );
+    }
   }
   
   void _saveFinalDetailsData() {
@@ -410,6 +525,16 @@ class FinalDetailsController extends GetxController {
 
   // Method to get number of questions to show in the list
   int get questionsToShow {
+    // In edit mode, always show all relevant questions
+    if (_isEditMode.value) {
+      // Check if we should show question 4 in edit mode
+      final answer = _answers['desired_features'];
+      bool showQuestion4 = answer?.selectedOptions.contains('Other: ?') ?? false;
+      final result = showQuestion4 ? 4 : 3;
+      print('Edit mode questionsToShow: $result (showQuestion4: $showQuestion4)');
+      return result;
+    }
+    
     // Always show questions up to the current one
     int baseQuestions = currentQuestionIndex >= 2 ? 3 : currentQuestionIndex + 1;
     
@@ -439,4 +564,5 @@ class FinalDetailsController extends GetxController {
     customInputController.clear();
     update();
   }
+
 }

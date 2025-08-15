@@ -152,7 +152,7 @@ class SaveTechPackDialog extends StatelessWidget {
                 SizedBox(width: 8.w),
                 Expanded(
                   child: ElevatedButton(
-                    onPressed: () {
+                    onPressed: () async {
                       if (controller.projectNameController.text.trim().isEmpty) {
                         Get.snackbar(
                           'Error',
@@ -162,8 +162,13 @@ class SaveTechPackDialog extends StatelessWidget {
                         );
                         return;
                       }
-                      // Close dialog immediately and call onSave
-                      Get.back();
+                      
+                      // Close dialog first using Navigator to ensure it closes
+                      Navigator.of(context).pop();
+                      
+                      // Add small delay to ensure dialog closes before calling onSave
+                      await Future.delayed(Duration(milliseconds: 100));
+                      
                       onSave(
                         controller.projectNameController.text.trim(),
                         controller.selectedCollection.value,

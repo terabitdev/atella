@@ -61,10 +61,12 @@ class AppPages {
     GetPage(
       name: AppRoutes.gatheringBrief,
       page: () => const GatheringBriefScreen(),
+      binding: CreativeBriefBinding(),
     ),
     GetPage(
       name: AppRoutes.refineConcept,
       page: () => const RefineConceptScreen(),
+      binding: RefiningConceptBinding(),
     ),
     GetPage(
       name: AppRoutes.refiningConcept,

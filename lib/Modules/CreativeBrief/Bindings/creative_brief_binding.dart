@@ -6,6 +6,6 @@ class CreativeBriefBinding extends Bindings {
   @override
   void dependencies() {
      Get.put<DesignDataService>(DesignDataService(), permanent: true);
-    Get.lazyPut<CreativeBriefController>(() => CreativeBriefController());
+    Get.put<CreativeBriefController>(CreativeBriefController());
   }
 }

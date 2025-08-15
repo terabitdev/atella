@@ -88,6 +88,7 @@ void showPopup() {
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
+                    _handleEdit();
                   },
                   child: Container(
                     width: double.infinity,
@@ -143,6 +144,31 @@ void showPopup() {
     },
   );
 }
+
+  // Handle Edit functionality - Navigate to creative brief with existing data
+  void _handleEdit() {
+    print('=== EDIT BUTTON CLICKED ===');
+    print('TechPack ID: ${widget.techPack.id}');
+    print('Project Name: ${widget.techPack.projectName}');
+    print('Collection Name: ${widget.techPack.collectionName}');
+    
+    final arguments = {
+      'editMode': true,
+      'techPackModel': widget.techPack,
+      'projectName': widget.techPack.projectName,
+      'collectionName': widget.techPack.collectionName,
+    };
+    
+    print('=== ARGUMENTS BEING PASSED ===');
+    print('Arguments: $arguments');
+    print('EditMode: ${arguments['editMode']}');
+    print('TechPack: ${arguments['techPackModel']}');
+    
+    // In edit mode, skip onboarding and go directly to creative brief questionnaire
+    Get.toNamed('/creative_brief', arguments: arguments);
+    
+    print('=== NAVIGATION TO EDIT MODE TRIGGERED ===');
+  }
 
   // Handle Download functionality - Download all images
   Future<void> _handleDownload() async {

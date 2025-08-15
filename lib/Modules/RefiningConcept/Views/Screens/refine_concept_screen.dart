@@ -52,7 +52,13 @@ class RefineConceptScreen extends StatelessWidget {
                   RoundButton(
                     title: "Continue",
                     onTap: () {
-                      Get.toNamed('/refining_concept');
+                      // Pass through any arguments (like edit mode data) to the next screen
+                      final arguments = Get.arguments;
+                      if (arguments != null) {
+                        Get.toNamed('/refining_concept', arguments: arguments);
+                      } else {
+                        Get.toNamed('/refining_concept');
+                      }
                     },
                     color: AppColors.buttonColor,
                     isloading: false,

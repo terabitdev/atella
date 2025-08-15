@@ -1,11 +1,20 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
+  final EditDataService _editDataService = EditDataService();
+  
+  // Edit mode tracking
+  final RxBool _isEditMode = false.obs;
+  bool get isEditMode => _isEditMode.value;
+  TechPackModel? _editingTechPack;
+  TechPackModel? get editingTechPack => _editingTechPack;
   
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
@@ -104,6 +113,81 @@ class RefiningConceptController extends GetxController {
     super.onInit();
     _startTimeUpdater();
     _updateCurrentTime();
+    _checkForEditMode();
+  }
+  
+  void _checkForEditMode() {
+    final arguments = Get.arguments;
+    print('Refining Concept Controller - Arguments received: $arguments');
+    
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      final isEditMode = arguments['editMode'] == true;
+      print('Edit mode detected: $isEditMode');
+      
+      if (isEditMode) {
+        _isEditMode.value = true;
+        _editingTechPack = arguments['techPackModel'] as TechPackModel?;
+        _loadExistingRefinedConceptData();
+      }
+    }
+  }
+  
+  void _loadExistingRefinedConceptData() {
+    // Get data from design data service (loaded in creative brief)
+    final refinedConceptData = _dataService.getRefinedConceptData();
+    print('Loading refined concept data: $refinedConceptData');
+    
+    if (refinedConceptData.isNotEmpty) {
+      // Load chip-based answers
+      final garmentType = refinedConceptData['garment_type'] as String? ?? '';
+      if (garmentType.isNotEmpty) {
+        _answers['garment_type'] = BriefAnswer(
+          questionId: 'garment_type',
+          selectedOptions: [garmentType],
+        );
+      }
+      
+      final specificFeatures = refinedConceptData['specific_features'] as String? ?? '';
+      if (specificFeatures.isNotEmpty) {
+        _answers['specific_features'] = BriefAnswer(
+          questionId: 'specific_features',
+          selectedOptions: [specificFeatures],
+        );
+      }
+      
+      final seasonalConstraint = refinedConceptData['seasonal_constraint'] as String? ?? '';
+      if (seasonalConstraint.isNotEmpty) {
+        _answers['seasonal_constraint'] = BriefAnswer(
+          questionId: 'seasonal_constraint',
+          selectedOptions: [seasonalConstraint],
+        );
+      }
+      
+      final targetBudget = refinedConceptData['target_budget'] as String? ?? '';
+      if (targetBudget.isNotEmpty) {
+        _answers['target_budget'] = BriefAnswer(
+          questionId: 'target_budget',
+          selectedOptions: [targetBudget],
+        );
+      }
+      
+      final functionalitiesValues = refinedConceptData['functionalities_values'] as String? ?? '';
+      if (functionalitiesValues.isNotEmpty) {
+        _answers['functionalities_values'] = BriefAnswer(
+          questionId: 'functionalities_values',
+          selectedOptions: [functionalitiesValues],
+        );
+      }
+      
+      // In edit mode, show all questions
+      _currentQuestionIndex.value = questions.length - 1;
+      
+      // Force reactive update
+      _answers.refresh();
+      update();
+      
+      print('Loaded ${_answers.length} answers for refined concept');
+    }
   }
 
   @override
@@ -222,7 +306,7 @@ class RefiningConceptController extends GetxController {
   }
 
   // Method to allow editing of previously answered questions
-  void editAnswer(String questionId) {
+  void quickEditAnswer(String questionId) {
     if (_answers.containsKey(questionId)) {
       // Convert final answer back to temporary selection
       final answer = _answers[questionId]!;
@@ -429,6 +513,11 @@ class RefiningConceptController extends GetxController {
 
   // Method to get number of questions to show in the list
   int get questionsToShow {
+    // In edit mode, always show all questions
+    if (_isEditMode.value) {
+      return questions.length;
+    }
+    
     if (currentQuestionIndex >= 5) {
       return questions.length; // Show all questions after question 5
     }
@@ -497,6 +586,148 @@ class RefiningConceptController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     _saveRefinedConceptData();
-    Get.toNamed('/final_detail_onboard');
+    
+    // Pass edit mode data to next screen
+    if (_isEditMode.value && _editingTechPack != null) {
+      // In edit mode, skip onboarding and go directly to questionnaire
+      Get.toNamed('/final_details', arguments: {
+        'editMode': true,
+        'techPackModel': _editingTechPack,
+      });
+    } else {
+      Get.toNamed('/final_detail_onboard');
+    }
+  }
+  
+  // Edit answer method - allows editing a specific question's answer
+  void editAnswer(String questionId) {
+    final question = questions.firstWhere((q) => q.id == questionId);
+    final currentAnswer = _answers[questionId];
+    RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
+    
+    // Create a temporary controller for custom text
+    final tempCustomController = TextEditingController();
+    if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
+      tempCustomController.text = currentAnswer.textInput!;
+    }
+    
+    // Track if custom is selected
+    RxBool isCustomSelected = tempSelectedOptions.contains('Custom').obs;
+    
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text('Edit Answer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Text(question.question, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+              SizedBox(height: 16),
+              Obx(() => Wrap(
+                children: question.options.map((option) {
+                  final isSelected = tempSelectedOptions.contains(option);
+                  return GestureDetector(
+                    onTap: () {
+                      if (question.allowMultiple) {
+                        isSelected ? tempSelectedOptions.remove(option) : tempSelectedOptions.add(option);
+                      } else {
+                        tempSelectedOptions.value = [option];
+                      }
+                      
+                      // Update custom selected state
+                      isCustomSelected.value = tempSelectedOptions.contains('Custom');
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 8, bottom: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.black : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
+                      ),
+                      child: Text(option, style: TextStyle(
+                        color: isSelected ? Colors.white : Colors.black,
+                        fontSize: 14, fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                      )),
+                    ),
+                  );
+                }).toList(),
+              )),
+              SizedBox(height: 16),
+              // Show custom text field if Custom is selected
+              Obx(() => isCustomSelected.value ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Enter custom answer:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: tempCustomController,
+                    decoration: InputDecoration(
+                      hintText: 'Type your custom answer...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    maxLines: 2,
+                  ),
+                ],
+              ) : SizedBox.shrink()),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(Get.overlayContext!).pop();
+              // Dispose temporary controller after dialog is closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                tempCustomController.dispose();
+              });
+            }, 
+            child: Text('Cancel')
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validate custom input if Custom is selected
+              if (tempSelectedOptions.contains('Custom') && tempCustomController.text.trim().isEmpty) {
+                Get.snackbar(
+                  'Invalid Input',
+                  'Please enter a custom answer',
+                  backgroundColor: Colors.orange,
+                  colorText: Colors.white,
+                  duration: Duration(seconds: 2),
+                );
+                return;
+              }
+              
+              _answers[questionId] = BriefAnswer(
+                questionId: questionId, 
+                selectedOptions: tempSelectedOptions.toList(),
+                textInput: tempSelectedOptions.contains('Custom') 
+                    ? tempCustomController.text.trim() 
+                    : null,
+              );
+              
+              Navigator.of(Get.overlayContext!).pop();
+              
+              // Dispose temporary controller after dialog is closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                tempCustomController.dispose();
+              });
+              update();
+              Get.snackbar('Answer Updated', 'Successfully updated', backgroundColor: Colors.green, colorText: Colors.white);
+            },
+            style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
+            child: Text('Save Changes'),
+          ),
+        ],
+      ),
+    );
   }
 }

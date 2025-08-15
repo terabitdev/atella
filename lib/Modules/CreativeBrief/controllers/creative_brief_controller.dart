@@ -1,11 +1,18 @@
 import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class CreativeBriefController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
+  final EditDataService _editDataService = EditDataService();
+  
+  // Edit mode tracking
+  final RxBool _isEditMode = false.obs;
+  bool get isEditMode => _isEditMode.value;
+  TechPackModel? _editingTechPack;
   
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
@@ -109,51 +116,170 @@ class CreativeBriefController extends GetxController {
   
   void _checkForEditMode() {
     final arguments = Get.arguments;
-    print('Creative Brief Controller - Arguments received: $arguments');
+    print('=== CREATIVE BRIEF EDIT MODE CHECK ===');
+    print('Arguments received: $arguments');
+    print('Arguments type: ${arguments.runtimeType}');
     
     if (arguments != null && arguments is Map<String, dynamic>) {
+      print('Arguments keys: ${arguments.keys}');
       final isEditMode = arguments['editMode'] == true;
+      final techPackModel = arguments['techPackModel'] as TechPackModel?;
+      
+      print('Edit mode flag: ${arguments['editMode']}');
       print('Edit mode detected: $isEditMode');
+      print('TechPack model: ${techPackModel?.toString()}');
       
       if (isEditMode) {
-        _loadExistingData(arguments);
+        print('🟢 ENTERING EDIT MODE');
+        _isEditMode.value = true;
+        _editingTechPack = techPackModel;
+        print('Stored TechPack: ${_editingTechPack?.projectName}');
+        _loadExistingDataFromFirebase();
+      } else {
+        print('🔴 EDIT MODE FLAG IS FALSE');
       }
     } else {
-      print('No arguments or wrong format received');
+      print('🔴 NO ARGUMENTS OR WRONG FORMAT RECEIVED');
+      print('Arguments is null: ${arguments == null}');
+      print('Arguments is Map: ${arguments is Map<String, dynamic>}');
     }
   }
   
-  void _loadExistingData(Map<String, dynamic> arguments) {
-    print('Loading existing data for edit mode');
-    print('Arguments details: $arguments');
-    
-    // Load project name and collection name if available
-    final projectName = arguments['projectName'] as String?;
-    final collectionName = arguments['collectionName'] as String?;
-    final techPackModel = arguments['techPackModel'] as TechPackModel?;
-    
-    print('Extracted data - Project: $projectName, Collection: $collectionName');
-    print('TechPackModel: ${techPackModel?.toString()}');
-    
-    if (projectName != null && collectionName != null) {
-      // Pre-fill basic project info
-      print('Edit mode - Project: $projectName, Collection: $collectionName');
+  // Load existing data from Firebase for edit mode
+  Future<void> _loadExistingDataFromFirebase() async {
+    if (_editingTechPack == null) {
+      print('No tech pack model available for editing');
+      return;
+    }
+
+    try {
+      print('Loading data from Firebase for tech pack: ${_editingTechPack!.id}');
       
-      // Show that we're in edit mode
+      // Show loading indicator
       Get.snackbar(
-        'Edit Mode',
-        'Editing design: $projectName',
+        'Loading',
+        'Loading existing design data...',
         backgroundColor: Colors.blue,
         colorText: Colors.white,
-        duration: Duration(seconds: 3),
+        duration: Duration(seconds: 2),
       );
+
+      // Get complete edit data from Firebase
+      final editData = await _editDataService.getTechPackEditData(_editingTechPack!.id);
       
-      // For demonstration, pre-fill some example data
-      // In a real app, you would load actual stored answers from the database
-      _prefillDemoAnswers(techPackModel);
-    } else {
-      print('Missing project name or collection name');
+      if (editData != null) {
+        final questionnaireData = editData['designQuestionnaire'] as Map<String, dynamic>;
+        final parsedData = _editDataService.parseQuestionnaireForEdit(questionnaireData);
+        
+        // Load creative brief data if available
+        if (parsedData.containsKey('creativeBrief')) {
+          _loadCreativeBriefAnswers(parsedData['creativeBrief'] as Map<String, dynamic>);
+        }
+        
+        // Store all questionnaire data for later use
+        if (parsedData.containsKey('refinedConcept')) {
+          _dataService.setRefinedConceptData(parsedData['refinedConcept'] as Map<String, dynamic>);
+        }
+        if (parsedData.containsKey('finalDetails')) {
+          _dataService.setFinalDetailsData(parsedData['finalDetails'] as Map<String, dynamic>);
+        }
+        
+        Get.snackbar(
+          'Edit Mode',
+          'Editing design: ${_editingTechPack!.projectName}',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 2),
+        );
+      } else {
+        print('No edit data found, using default values');
+        _prefillDemoAnswers(_editingTechPack);
+      }
+    } catch (e) {
+      print('Error loading edit data: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to load existing data. Using defaults.',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+      );
+      _prefillDemoAnswers(_editingTechPack);
     }
+  }
+  
+  // Load creative brief answers from Firebase data
+  void _loadCreativeBriefAnswers(Map<String, dynamic> creativeBriefData) {
+    print('Loading creative brief answers: $creativeBriefData');
+    
+    // Load chip-based answers
+    final garmentType = creativeBriefData['garment_type'] as String? ?? '';
+    if (garmentType.isNotEmpty) {
+      _answers['garment_type'] = BriefAnswer(
+        questionId: 'garment_type',
+        selectedOptions: [garmentType],
+      );
+    }
+    
+    final style = creativeBriefData['style'] as String? ?? '';
+    if (style.isNotEmpty) {
+      _answers['style'] = BriefAnswer(
+        questionId: 'style',
+        selectedOptions: [style],
+      );
+    }
+    
+    final targetAudience = creativeBriefData['target_audience'] as String? ?? '';
+    if (targetAudience.isNotEmpty) {
+      _answers['target_audience'] = BriefAnswer(
+        questionId: 'target_audience',
+        selectedOptions: [targetAudience],
+      );
+    }
+    
+    final occasion = creativeBriefData['occasion'] as String? ?? '';
+    if (occasion.isNotEmpty) {
+      _answers['occasion'] = BriefAnswer(
+        questionId: 'occasion',
+        selectedOptions: [occasion],
+      );
+    }
+    
+    final inspiration = creativeBriefData['inspiration'] as String? ?? '';
+    if (inspiration.isNotEmpty) {
+      _answers['inspiration'] = BriefAnswer(
+        questionId: 'inspiration',
+        selectedOptions: [inspiration],
+      );
+    }
+    
+    // Load text-based answers
+    final colors = creativeBriefData['colors'] as String? ?? '';
+    if (colors.isNotEmpty) {
+      colorController.text = colors;
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        textInput: colors,
+      );
+    }
+    
+    final fabrics = creativeBriefData['fabrics'] as String? ?? '';
+    if (fabrics.isNotEmpty) {
+      fabricController.text = fabrics;
+      _answers['fabrics'] = BriefAnswer(
+        questionId: 'fabrics',
+        textInput: fabrics,
+      );
+    }
+    
+    // In edit mode, show all questions
+    _showLastTwoQuestions.value = true;
+    _currentQuestionIndex.value = questions.length - 1;
+    
+    // Force reactive update
+    _answers.refresh();
+    update();
+    
+    print('Loaded ${_answers.length} answers for creative brief');
   }
   
   void _prefillDemoAnswers(TechPackModel? techPack) {
@@ -351,7 +477,7 @@ class CreativeBriefController extends GetxController {
   }
 
   // Method to allow editing of previously answered questions
-  void editAnswer(String questionId) {
+  void editAnswerSimple(String questionId) {
     if (_answers.containsKey(questionId)) {
       // Convert final answer back to temporary selection
       final answer = _answers[questionId]!;
@@ -521,6 +647,192 @@ class CreativeBriefController extends GetxController {
     customController.clear();
     update();
   }
+  
+  // Edit answer method - allows editing a specific question's answer
+  void editAnswer(String questionId) {
+    print('=== EDIT ANSWER CLICKED ===');
+    print('Question ID: $questionId');
+    print('Current answer: ${_answers[questionId]?.selectedOptions}');
+    
+    // Show a dialog to allow editing
+    _showEditDialog(questionId);
+  }
+  
+  // Show edit dialog for a question
+  void _showEditDialog(String questionId) {
+    final question = questions.firstWhere((q) => q.id == questionId);
+    final currentAnswer = _answers[questionId];
+    
+    // Create a temporary list to track changes
+    RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
+    
+    // Create a temporary controller for custom text
+    final tempCustomController = TextEditingController();
+    if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
+      tempCustomController.text = currentAnswer.textInput!;
+    }
+    
+    // Track if custom is selected
+    RxBool isCustomSelected = tempSelectedOptions.contains('Custom').obs;
+    
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Edit Answer',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                question.question,
+                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+              ),
+              SizedBox(height: 16),
+              Text(
+                'Select your answer:',
+                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+              ),
+              SizedBox(height: 12),
+              Obx(() => Wrap(
+                children: question.options.map((option) {
+                  final isSelected = tempSelectedOptions.contains(option);
+                  return GestureDetector(
+                    onTap: () {
+                      if (question.allowMultiple) {
+                        if (isSelected) {
+                          tempSelectedOptions.remove(option);
+                        } else {
+                          tempSelectedOptions.add(option);
+                        }
+                      } else {
+                        tempSelectedOptions.value = [option];
+                      }
+                      
+                      // Update custom selected state
+                      isCustomSelected.value = tempSelectedOptions.contains('Custom');
+                    },
+                    child: Container(
+                      margin: EdgeInsets.only(right: 8, bottom: 8),
+                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        color: isSelected ? Colors.black : Colors.grey[100],
+                        borderRadius: BorderRadius.circular(25),
+                        border: Border.all(
+                          color: isSelected ? Colors.black : Colors.grey[300]!,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          color: isSelected ? Colors.white : Colors.black,
+                          fontSize: 14,
+                          fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                        ),
+                      ),
+                    ),
+                  );
+                }).toList(),
+              )),
+              SizedBox(height: 16),
+              // Show custom text field if Custom is selected
+              Obx(() => isCustomSelected.value ? Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Enter custom answer:',
+                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
+                  ),
+                  SizedBox(height: 8),
+                  TextField(
+                    controller: tempCustomController,
+                    decoration: InputDecoration(
+                      hintText: 'Type your custom answer...',
+                      border: OutlineInputBorder(
+                        borderRadius: BorderRadius.circular(8),
+                      ),
+                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                    ),
+                    maxLines: 2,
+                  ),
+                ],
+              ) : SizedBox.shrink()),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () {
+              Navigator.of(Get.overlayContext!).pop();
+              // Dispose temporary controller after dialog is closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                tempCustomController.dispose();
+              });
+            },
+            child: Text(
+              'Cancel',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validate custom input if Custom is selected
+              if (tempSelectedOptions.contains('Custom') && tempCustomController.text.trim().isEmpty) {
+                Get.snackbar(
+                  'Invalid Input',
+                  'Please enter a custom answer',
+                  backgroundColor: Colors.orange,
+                  colorText: Colors.white,
+                  duration: Duration(seconds: 2),
+                );
+                return;
+              }
+              
+              // Save the changes
+              _answers[questionId] = BriefAnswer(
+                questionId: questionId,
+                selectedOptions: tempSelectedOptions.toList(),
+                textInput: tempSelectedOptions.contains('Custom') 
+                    ? tempCustomController.text.trim() 
+                    : null,
+              );
+              
+              // Close dialog first
+              Navigator.of(Get.overlayContext!).pop();
+              
+              // Dispose temporary controller after dialog is closed
+              Future.delayed(Duration(milliseconds: 100), () {
+                tempCustomController.dispose();
+              });
+              
+              // Then update and show success message
+              update();
+              Get.snackbar(
+                'Answer Updated',
+                'Your answer has been updated successfully',
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+                duration: Duration(seconds: 2),
+                margin: EdgeInsets.all(16),
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text('Save Changes'),
+          ),
+        ],
+      ),
+    );
+  }
 
   // New methods for the updated UI
   bool isQuestionAnswered(String questionId) {
@@ -684,6 +996,16 @@ class CreativeBriefController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     _saveCreativeBriefData();
-    Get.toNamed('/refine_concept');
+    
+    // Pass edit mode data to next screen
+    if (_isEditMode.value && _editingTechPack != null) {
+      // In edit mode, skip onboarding and go directly to questionnaire
+      Get.toNamed('/refining_concept', arguments: {
+        'editMode': true,
+        'techPackModel': _editingTechPack,
+      });
+    } else {
+      Get.toNamed('/refine_concept');
+    }
   }
 }

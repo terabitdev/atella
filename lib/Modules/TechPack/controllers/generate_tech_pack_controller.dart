@@ -3,12 +3,20 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:atella/Data/api/openai_service.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/designservices/designs_service.dart';
+import 'package:atella/services/firebase/edit/edit_data_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
   final DesignsService _designsService = DesignsService();
+  final EditDataService _editDataService = EditDataService();
+  
+  // Edit mode tracking
+  final RxBool _isEditMode = false.obs;
+  bool get isEditMode => _isEditMode.value;
+  TechPackModel? _editingTechPack;
   
   var isLoading = false.obs;
   var isSaving = false.obs; // Separate loading state for saving to Firebase
@@ -23,7 +31,24 @@ class TechPackController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _checkForEditMode();
     _initializeApiKey();
+  }
+  
+  void _checkForEditMode() {
+    final arguments = Get.arguments;
+    print('TechPack Controller - Arguments received: $arguments');
+    
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      final isEditMode = arguments['editMode'] == true;
+      print('Edit mode detected: $isEditMode');
+      
+      if (isEditMode) {
+        _isEditMode.value = true;
+        _editingTechPack = arguments['techPackModel'] as TechPackModel?;
+        print('Editing tech pack: ${_editingTechPack?.projectName}');
+      }
+    }
   }
   
   Future<void> _initializeApiKey() async {
@@ -120,16 +145,21 @@ class TechPackController extends GetxController {
   void onContinueWithDesign(int selectedIndex) {
     // Continue with the selected design
     if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
+      // Prepare arguments for tech pack details
+      Map<String, dynamic> arguments = {
+        'selectedDesignUrl': generatedImages[selectedIndex],
+        'designPrompt': currentPrompt.value,
+        'designData': _dataService.getAllDesignData(),
+      };
+      
+      // Add edit mode data if applicable
+      if (_isEditMode.value && _editingTechPack != null) {
+        arguments['editMode'] = true;
+        arguments['techPackModel'] = _editingTechPack;
+      }
+      
       // Navigate to tech pack details with arguments
-      Get.toNamed(
-        '/tech_pack_details_screen',
-        arguments: {
-          'selectedDesignUrl': generatedImages[selectedIndex],
-          'designPrompt': currentPrompt.value,
-          'designData': _dataService.getAllDesignData(),
-        },
-
-      );
+      Get.toNamed('/tech_pack_details_screen', arguments: arguments);
     }
   }
   
@@ -150,6 +180,7 @@ class TechPackController extends GetxController {
 
 // Background save function - OPTIMIZED VERSION
 // Now saves all images to Storage but only selected design data to Firestore
+// Handles both new designs and edit mode updates
 Future<void> _saveDesignsInBackground() async {
   try {
     print('=== STARTING OPTIMIZED BACKGROUND SAVE ===');
@@ -162,30 +193,60 @@ Future<void> _saveDesignsInBackground() async {
       'prompt': currentPrompt.value,
     };
 
-    // Use the new optimized save method
-    // This will:
-    // 1. Upload ALL 3 design images to Firebase Storage
-    // 2. Save ONLY the selected design's data to Firestore
-    await _designsService.saveDesignsOptimized(
-      base64Images: generatedImages,
-      questionnaireData: questionnaireData,
-      selectedIndex: selectedDesignIndex.value,
-    );
+    if (_isEditMode.value && _editingTechPack != null) {
+      // EDIT MODE: Update existing design with new questionnaire data
+      print('=== EDIT MODE: Updating existing design ===');
+      
+      // Update the designs collection with new questionnaire data
+      await _editDataService.updateTechPackData(
+        techPackId: _editingTechPack!.id,
+        designQuestionnaireData: questionnaireData,
+      );
+      
+      // Also save new designs if user selects one (for comparison)
+      await _designsService.saveDesignsOptimized(
+        base64Images: generatedImages,
+        questionnaireData: questionnaireData,
+        selectedIndex: selectedDesignIndex.value,
+      );
+      
+      print('✅ Edit mode: Updated existing design and saved new options');
+      
+      Get.snackbar(
+        'Design Updated',
+        'Your design has been updated with new preferences',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.blue.withOpacity(0.8),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+      );
+    } else {
+      // NEW DESIGN MODE: Save as new design
+      print('=== NEW DESIGN MODE: Creating new design ===');
+      
+      await _designsService.saveDesignsOptimized(
+        base64Images: generatedImages,
+        questionnaireData: questionnaireData,
+        selectedIndex: selectedDesignIndex.value,
+      );
+      
+      print('✅ New design: Saved successfully');
+      
+      Get.snackbar(
+        'Design Saved',
+        'Your selected design has been saved successfully',
+        snackPosition: SnackPosition.BOTTOM,
+        duration: const Duration(seconds: 2),
+        backgroundColor: Colors.green.withOpacity(0.8),
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+      );
+    }
 
     print('=== OPTIMIZED BACKGROUND SAVE COMPLETED ===');
     print('✅ All 3 images saved to Storage');
-    print('✅ Only selected design data saved to Firestore');
-    
-    // Optional: Show success notification
-    Get.snackbar(
-      'Design Saved',
-      'Your selected design has been saved successfully',
-      snackPosition: SnackPosition.BOTTOM,
-      duration: const Duration(seconds: 2),
-      backgroundColor: Colors.green.withOpacity(0.8),
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(10),
-    );
+    print('✅ Selected design data saved to Firestore');
     
   } catch (e) {
     print('=== OPTIMIZED BACKGROUND SAVE FAILED ===');

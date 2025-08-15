@@ -40,7 +40,13 @@ class FinalDetailOnboard extends StatelessWidget {
                   RoundButton(
                     title: "Continue",
                     onTap: () {
-                      Get.toNamed('/final_details');
+                      // Pass through any arguments (like edit mode data) to the next screen
+                      final arguments = Get.arguments;
+                      if (arguments != null) {
+                        Get.toNamed('/final_details', arguments: arguments);
+                      } else {
+                        Get.toNamed('/final_details');
+                      }
                     },
                     color: AppColors.buttonColor,
                     isloading: false,
