@@ -188,8 +188,8 @@ class DesignsService {
     }
   }
 
-  // Save multiple designs at once (when all 3 are generated)
-  Future<void> saveMultipleDesigns({
+  // NEW: Save all images to Storage but only selected design data to Firestore
+  Future<void> saveDesignsOptimized({
     required List<String> base64Images,
     required Map<String, dynamic> questionnaireData,
     required int selectedIndex,
@@ -199,68 +199,115 @@ class DesignsService {
         throw Exception('User not authenticated');
       }
 
-      List<DesignModel> designs = [];
+      print('=== OPTIMIZED DESIGN SAVE STARTED ===');
       
-      // Process each design
+      // Step 1: Upload ALL images to Firebase Storage
+      List<String> allImageUrls = [];
+      String sessionId = DateTime.now().millisecondsSinceEpoch.toString();
+      
       for (int i = 0; i < base64Images.length; i++) {
-        // Generate design ID
-        String designId = await _generateNextDesignId(currentUserId!);
-        
-        String imageUrl;
-        
         try {
-          // Try to upload image to storage
-          imageUrl = await _uploadImageToStorage(base64Images[i], designId);
-          print('Successfully uploaded image to storage for design $designId');
-        } catch (e) {
-          print('Storage upload failed for design $designId: $e');
-          print('Falling back to base64 storage in Firestore');
+          // Create unique path for each design image
+          Uint8List imageBytes = base64Decode(base64Images[i]);
+          String fileName = 'design_${i + 1}_$sessionId.jpg';
+          Reference storageRef = _storage.ref('users/$currentUserId/designs/$sessionId/$fileName');
           
-          // Fallback: store base64 directly (prefix to identify)
-          imageUrl = 'data:image/jpeg;base64,${base64Images[i]}';
+          print('Uploading design ${i + 1} to Storage...');
+          
+          // Upload with metadata
+          UploadTask uploadTask = storageRef.putData(
+            imageBytes,
+            SettableMetadata(
+              contentType: 'image/jpeg',
+              customMetadata: {
+                'sessionId': sessionId,
+                'designIndex': i.toString(),
+                'isSelected': (i == selectedIndex).toString(),
+                'uploadedBy': currentUserId!,
+                'uploadedAt': DateTime.now().toIso8601String(),
+              },
+            ),
+          );
+          
+          TaskSnapshot snapshot = await uploadTask;
+          String downloadUrl = await snapshot.ref.getDownloadURL();
+          allImageUrls.add(downloadUrl);
+          
+          print('✅ Design ${i + 1} uploaded successfully');
+        } catch (e) {
+          print('❌ Failed to upload design ${i + 1}: $e');
+          throw Exception('Failed to upload design image ${i + 1}');
         }
-        
-        // Create design model
-        DesignModel design = DesignModel(
-          designId: designId,
-          userId: currentUserId!,
-          questionnaire: questionnaireData,
-          designImageUrl: imageUrl,
-          selected: i == selectedIndex, // Only selected design is marked as true
-          createdAt: DateTime.now(),
-        );
-        
-        designs.add(design);
-        print('Design $designId processed successfully');
       }
-
-      // Save all designs to user document
+      
+      print('All ${allImageUrls.length} images uploaded to Storage');
+      
+      // Step 2: Save ONLY selected design data to Firestore
+      String designId = await _generateNextDesignId(currentUserId!);
+      
+      // Create design document with selected design data only
+      // Note: Cannot use FieldValue.serverTimestamp() inside arrays
+      Map<String, dynamic> selectedDesignData = {
+        'designId': designId,
+        'userId': currentUserId!,
+        'sessionId': sessionId,
+        'selectedDesignImageUrl': allImageUrls[selectedIndex],
+        'selectedIndex': selectedIndex,
+        'allDesignImageUrls': allImageUrls, // Store references to all images
+        'questionnaire': questionnaireData,
+        'creativeBrief': questionnaireData['creativeBrief'] ?? {},
+        'refinedConcept': questionnaireData['refinedConcept'] ?? {},
+        'finalDetails': questionnaireData['finalDetails'] ?? {},
+        'prompt': questionnaireData['prompt'] ?? '',
+        'createdAt': DateTime.now().toIso8601String(), // Use DateTime instead of serverTimestamp
+        'updatedAt': DateTime.now().toIso8601String(),
+      };
+      
+      // Save to Firestore (only selected design data)
       DocumentReference userDocRef = _designsCollection.doc(currentUserId!);
       DocumentSnapshot userDoc = await userDocRef.get();
-
-      List<Map<String, dynamic>> designMaps = designs.map((d) => d.toMap()).toList();
-
+      
       if (userDoc.exists) {
         // Update existing document - add to designs array
         await userDocRef.update({
-          'designs': FieldValue.arrayUnion(designMaps),
+          'designs': FieldValue.arrayUnion([selectedDesignData]),
           'updatedAt': FieldValue.serverTimestamp(),
         });
       } else {
         // Create new document with designs array
         await userDocRef.set({
           'userId': currentUserId!,
-          'designs': designMaps,
+          'designs': [selectedDesignData],
           'createdAt': FieldValue.serverTimestamp(),
           'updatedAt': FieldValue.serverTimestamp(),
         });
       }
-
-      print('Successfully saved ${designs.length} designs');
+      
+      print('=== OPTIMIZED SAVE COMPLETED ===');
+      print('✅ Storage: All ${allImageUrls.length} images saved');
+      print('✅ Firestore: Only selected design data saved (index: $selectedIndex)');
+      
     } catch (e) {
-      print('Error saving multiple designs: $e');
+      print('=== OPTIMIZED SAVE FAILED ===');
+      print('Error: $e');
       throw Exception('Failed to save designs: $e');
     }
+  }
+
+  // DEPRECATED: Old method that saves all designs to Firestore
+  // Keeping for backward compatibility but marked as deprecated
+  @Deprecated('Use saveDesignsOptimized instead - it only saves selected design to Firestore')
+  Future<void> saveMultipleDesigns({
+    required List<String> base64Images,
+    required Map<String, dynamic> questionnaireData,
+    required int selectedIndex,
+  }) async {
+    // Call the new optimized method instead
+    await saveDesignsOptimized(
+      base64Images: base64Images,
+      questionnaireData: questionnaireData,
+      selectedIndex: selectedIndex,
+    );
   }
 
   // Get user's designs
@@ -286,7 +333,70 @@ class DesignsService {
     }
   }
 
-  // Update design selection status
+  // NEW: Get all design images for a session (useful for viewing design history)
+  Future<List<String>> getSessionDesignImages(String sessionId) async {
+    try {
+      if (currentUserId == null) {
+        throw Exception('User not authenticated');
+      }
+      
+      // Get the design document that contains this session
+      DocumentSnapshot userDoc = await _designsCollection.doc(currentUserId!).get();
+      
+      if (!userDoc.exists) {
+        return [];
+      }
+      
+      Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+      List<dynamic> designs = data?['designs'] ?? [];
+      
+      // Find the design with matching sessionId
+      for (var design in designs) {
+        if (design['sessionId'] == sessionId) {
+          List<dynamic> urls = design['allDesignImageUrls'] ?? [];
+          return urls.cast<String>();
+        }
+      }
+      
+      return [];
+    } catch (e) {
+      print('Error fetching session design images: $e');
+      return [];
+    }
+  }
+  
+  // NEW: Get only selected designs for display (optimized for list views)
+  Future<List<Map<String, dynamic>>> getSelectedDesigns() async {
+    try {
+      if (currentUserId == null) {
+        throw Exception('User not authenticated');
+      }
+      
+      DocumentSnapshot userDoc = await _designsCollection.doc(currentUserId!).get();
+      
+      if (!userDoc.exists) {
+        return [];
+      }
+      
+      Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
+      List<dynamic> designs = data?['designs'] ?? [];
+      
+      // Return only essential data for each design
+      return designs.map((design) => {
+        'designId': design['designId'],
+        'selectedDesignImageUrl': design['selectedDesignImageUrl'],
+        'sessionId': design['sessionId'],
+        'createdAt': design['createdAt'],
+        'prompt': design['prompt'] ?? '',
+      }).toList().cast<Map<String, dynamic>>();
+      
+    } catch (e) {
+      print('Error fetching selected designs: $e');
+      return [];
+    }
+  }
+
+  // Update design selection status (kept for compatibility but simplified)
   Future<void> updateDesignSelection(String designId, bool selected) async {
     try {
       if (currentUserId == null) {
@@ -303,10 +413,12 @@ class DesignsService {
       Map<String, dynamic>? data = userDoc.data() as Map<String, dynamic>?;
       List<dynamic> designs = List.from(data?['designs'] ?? []);
       
+      // With new architecture, this is mainly for changing selection after save
       // Update the specific design
       for (int i = 0; i < designs.length; i++) {
         if (designs[i]['designId'] == designId) {
-          designs[i]['selected'] = selected;
+          // Update selected index if needed
+          designs[i]['selectedIndex'] = selected ? designs[i]['selectedIndex'] : -1;
           break;
         }
       }

@@ -22,7 +22,36 @@ class SearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final homeController = Get.find<HomeController>();
+    // Safely get the controller
+    final HomeController? homeController = Get.isRegistered<HomeController>() 
+        ? Get.find<HomeController>() 
+        : null;
+    
+    if (homeController == null) {
+      // Return a basic text field if controller is not available
+      return Container(
+        height: 56.h,
+        decoration: BoxDecoration(
+          color: const Color.fromRGBO(236, 239, 246, 1),
+          borderRadius: BorderRadius.circular(6.r),
+        ),
+        child: TextField(
+          controller: controller,
+          onChanged: onChanged,
+          style: osTextStyle165002,
+          decoration: InputDecoration(
+            hintText: 'Search Designs',
+            hintStyle: osTextStyle165002,
+            border: InputBorder.none,
+            contentPadding: EdgeInsets.symmetric(
+              horizontal: 16.w,
+              vertical: 12.h,
+            ),
+          ),
+        ),
+      );
+    }
+    
     final FocusNode searchFocusNode = focusNode ?? FocusNode();
     
     return Obx(() {

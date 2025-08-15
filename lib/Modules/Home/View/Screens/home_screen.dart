@@ -20,7 +20,28 @@ class HomeScreen extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomeScreen> {
-  final HomeController controller = Get.put(HomeController());
+  late final HomeController controller;
+  
+  @override
+  void initState() {
+    super.initState();
+    // Use permanent to prevent disposal when navigating away
+    controller = Get.put(HomeController(), permanent: true);
+    
+    // Refresh data if coming back from another screen
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      final args = Get.arguments;
+      if (args != null && args['refresh'] == true) {
+        controller.refreshData();
+      }
+    });
+  }
+  
+  @override
+  void dispose() {
+    // Don't dispose the controller since it's permanent
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {

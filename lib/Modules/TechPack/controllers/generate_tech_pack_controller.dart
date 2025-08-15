@@ -148,10 +148,11 @@ class TechPackController extends GetxController {
   }
 }
 
-// Background save function
+// Background save function - OPTIMIZED VERSION
+// Now saves all images to Storage but only selected design data to Firestore
 Future<void> _saveDesignsInBackground() async {
   try {
-    print('=== STARTING BACKGROUND SAVE ===');
+    print('=== STARTING OPTIMIZED BACKGROUND SAVE ===');
     
     // Get questionnaire data
     Map<String, dynamic> questionnaireData = {
@@ -161,19 +162,45 @@ Future<void> _saveDesignsInBackground() async {
       'prompt': currentPrompt.value,
     };
 
-    // Save to Firebase in background
-    await _designsService.saveMultipleDesigns(
+    // Use the new optimized save method
+    // This will:
+    // 1. Upload ALL 3 design images to Firebase Storage
+    // 2. Save ONLY the selected design's data to Firestore
+    await _designsService.saveDesignsOptimized(
       base64Images: generatedImages,
       questionnaireData: questionnaireData,
       selectedIndex: selectedDesignIndex.value,
     );
 
-    print('=== BACKGROUND SAVE COMPLETED ===');
+    print('=== OPTIMIZED BACKGROUND SAVE COMPLETED ===');
+    print('✅ All 3 images saved to Storage');
+    print('✅ Only selected design data saved to Firestore');
+    
+    // Optional: Show success notification
+    Get.snackbar(
+      'Design Saved',
+      'Your selected design has been saved successfully',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 2),
+      backgroundColor: Colors.green.withOpacity(0.8),
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(10),
+    );
     
   } catch (e) {
-    print('=== BACKGROUND SAVE FAILED ===');
+    print('=== OPTIMIZED BACKGROUND SAVE FAILED ===');
     print('Error: $e');
-    // Data will be lost but user doesn't need to know
+    
+    // Optional: Show error notification
+    Get.snackbar(
+      'Save Failed',
+      'Failed to save design. It will be available during this session.',
+      snackPosition: SnackPosition.BOTTOM,
+      duration: const Duration(seconds: 3),
+      backgroundColor: Colors.orange.withOpacity(0.8),
+      colorText: Colors.white,
+      margin: const EdgeInsets.all(10),
+    );
   }
 }
   

@@ -14,13 +14,15 @@ class TechPackService {
   static final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   static final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  // Save tech pack images to Firebase Storage
+  // Save tech pack images to Firebase Storage with complete questionnaire data
   static Future<Map<String, String>> saveTechPackImages({
     required List<String> base64Images,
     required String techPackId,
     String? projectName,
     String? collectionName,
     String? selectedDesignImageUrl,
+    Map<String, dynamic>? techPackQuestionnaireData,
+    Map<String, dynamic>? designData,
   }) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -61,8 +63,9 @@ class TechPackService {
         uploadedUrls['image_${i + 1}'] = downloadUrl;
       }
 
-      // Save metadata to Firestore
+      // Save complete metadata to Firestore including questionnaire data
       Map<String, dynamic> techPackData = {
+        'tech_pack_id': techPackId,
         'images': uploadedUrls,
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
@@ -78,6 +81,16 @@ class TechPackService {
       if (selectedDesignImageUrl != null) {
         techPackData['selected_design_image_url'] = selectedDesignImageUrl;
       }
+      
+      // Add tech pack questionnaire data if provided
+      if (techPackQuestionnaireData != null) {
+        techPackData['tech_pack_details'] = techPackQuestionnaireData;
+      }
+      
+      // Add design questionnaire data if provided
+      if (designData != null) {
+        techPackData['design_questionnaire'] = designData;
+      }
 
       await _firestore
           .collection('users')
@@ -85,6 +98,14 @@ class TechPackService {
           .collection('tech_packs')
           .doc(techPackId)
           .set(techPackData, SetOptions(merge: true));
+
+      // Trigger a refresh event for any listening screens
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            'last_tech_pack_update': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
 
       return uploadedUrls;
     } catch (e) {
@@ -292,7 +313,7 @@ pdf.addPage(
     }
   }
 
-  // Get selected design image URL for current user
+  // Get selected design image URL for current user - OPTIMIZED VERSION
   static Future<String?> getSelectedDesignImageUrl() async {
     try {
       final user = _auth.currentUser;
@@ -319,15 +340,25 @@ pdf.addPage(
       
       print('Found ${designs.length} designs');
 
-      // Find the selected design
-      for (var design in designs) {
-        final designMap = design as Map<String, dynamic>;
-        final isSelected = designMap['selected'] as bool? ?? false;
+      // With new optimized structure, get the most recent design
+      // All designs in the array are already "selected" designs
+      if (designs.isNotEmpty) {
+        // Get the most recent design (last in array or by timestamp)
+        final latestDesign = designs.last as Map<String, dynamic>;
         
-        if (isSelected) {
-          final designImageUrl = designMap['designImageUrl'] as String?;
+        // Use the new field name from optimized structure
+        final designImageUrl = latestDesign['selectedDesignImageUrl'] as String?;
+        
+        if (designImageUrl != null) {
           print('Found selected design with URL: $designImageUrl');
           return designImageUrl;
+        }
+        
+        // Fallback for old structure
+        final oldImageUrl = latestDesign['designImageUrl'] as String?;
+        if (oldImageUrl != null) {
+          print('Found design with URL (old structure): $oldImageUrl');
+          return oldImageUrl;
         }
       }
       

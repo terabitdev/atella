@@ -31,6 +31,12 @@ class HomeController extends GetxController {
       _filterTechPacks();
     });
     fetchTechPacks();
+    
+    // Check for refresh flag from navigation arguments
+    final args = Get.arguments;
+    if (args != null && args['refresh'] == true) {
+      refreshData();
+    }
   }
 
   void onSearchChanged(String value) {
@@ -258,7 +264,9 @@ class HomeController extends GetxController {
 
   @override
   void onClose() {
-    searchController.dispose();
+    // Don't dispose searchController since this controller is permanent
+    // Only remove the listener to prevent memory leaks
+    searchController.removeListener(() {});
     super.onClose();
   }
 }

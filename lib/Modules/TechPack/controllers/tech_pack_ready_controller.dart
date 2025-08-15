@@ -1,10 +1,12 @@
 import 'package:get/get.dart';
 import 'tech_pack_details_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
+import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
 
 class TechPackReadyController extends GetxController {
   final TechPackDetailsController _detailsController = Get.find<TechPackDetailsController>();
+  final CollectionsService _collectionsService = CollectionsService();
   
   List<String> get generatedImages => _detailsController.generatedTechPackImages;
   
@@ -62,15 +64,64 @@ Delivery: ${_detailsController.deliveryDateController.text}
   RxList<String> collections = <String>['SUMMER COLLECTION', 'WINTER COLLECTION'].obs;
 
   @override
+  void onInit() {
+    super.onInit();
+    _loadCollections();
+  }
+
+  @override
   void onClose() {
     projectNameController.dispose();
     super.onClose();
   }
 
-  // Add new collection
-  void addNewCollection(String collectionName) {
-    collections.add(collectionName.toUpperCase());
-    selectedCollection.value = collectionName.toUpperCase();
+  // Load collections from Firebase
+  Future<void> _loadCollections() async {
+    try {
+      final userCollections = await _collectionsService.getUserCollections();
+      collections.value = userCollections;
+      if (userCollections.isNotEmpty) {
+        selectedCollection.value = userCollections.first;
+      }
+    } catch (e) {
+      print('Error loading collections: $e');
+    }
+  }
+
+  // Add new collection and save to Firebase
+  Future<void> addNewCollection(String collectionName) async {
+    try {
+      final upperCaseName = collectionName.toUpperCase();
+      
+      // Check if collection already exists
+      if (collections.contains(upperCaseName)) {
+        Get.snackbar(
+          'Collection Exists',
+          'This collection already exists',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 2),
+        );
+        return;
+      }
+      
+      // Add to Firebase
+      await _collectionsService.addCollection(upperCaseName);
+      
+      // Update local list
+      collections.add(upperCaseName);
+      selectedCollection.value = upperCaseName;
+      
+      print('Collection added successfully: $upperCaseName');
+    } catch (e) {
+      print('Error adding collection: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to add collection',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
   }
 
   // Update selected collection
@@ -99,13 +150,54 @@ Delivery: ${_detailsController.deliveryDateController.text}
       // Get selected design image URL
       final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
       
-      // Save images to Firebase Storage with project and collection details
+      // Collect tech pack questionnaire data
+      Map<String, dynamic> techPackQuestionnaireData = {
+        'materials': {
+          'mainFabric': _detailsController.mainFabricController.text,
+          'secondaryMaterials': _detailsController.secondaryMaterialsController.text,
+          'fabricProperties': _detailsController.fabricPropertiesController.text,
+        },
+        'colors': {
+          'primaryColor': _detailsController.primaryColorController.text,
+          'alternateColorways': _detailsController.alternateColorwaysController.text,
+          'pantone': _detailsController.pantoneController.text,
+        },
+        'sizes': {
+          'sizeRange': _detailsController.sizeRangeController.text,
+          'measurementChart': _detailsController.measurementChartController.text,
+          'measurementImage': _detailsController.measurementImagePath.value,
+        },
+        'technical': {
+          'accessories': _detailsController.accessoriesController.text,
+          'stitching': _detailsController.stitchingController.text,
+          'decorativeStitching': _detailsController.decorativeStitchingController.text,
+        },
+        'labeling': {
+          'logoPlacement': _detailsController.logoPlacementController.text,
+          'labelsNeeded': _detailsController.labelsNeededController.text,
+          'qrCode': _detailsController.qrCodeController.text,
+        },
+        'packaging': {
+          'packagingType': _detailsController.packagingTypeController.text,
+          'foldingInstructions': _detailsController.foldingInstructionsController.text,
+          'inserts': _detailsController.insertsController.text,
+        },
+        'production': {
+          'costPerPiece': _detailsController.costPerPieceController.text,
+          'quantity': _detailsController.quantityController.text,
+          'deliveryDate': _detailsController.deliveryDateController.text,
+        },
+      };
+      
+      // Save images to Firebase Storage with all data
       await TechPackService.saveTechPackImages(
         base64Images: generatedImages,
         techPackId: techPackId,
         projectName: projectName,
         collectionName: collectionName,
         selectedDesignImageUrl: selectedDesignImageUrl,
+        techPackQuestionnaireData: techPackQuestionnaireData,
+        designData: _detailsController.designData,
       );
 
       Get.snackbar(
@@ -116,8 +208,13 @@ Delivery: ${_detailsController.deliveryDateController.text}
         duration: const Duration(seconds: 2),
       );
 
-      // Navigate to nav_bar after successful save
-      Get.toNamed('/nav_bar');
+      // Clear any existing project controller to force refresh
+      if (Get.isRegistered<dynamic>(tag: 'projectController')) {
+        Get.delete(tag: 'projectController', force: true);
+      }
+
+      // Navigate to nav_bar with refresh flag
+      Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
     } catch (e) {
       Get.snackbar(
         'Error',
