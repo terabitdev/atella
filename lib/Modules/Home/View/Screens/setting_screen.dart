@@ -26,14 +26,6 @@ class _SettingScreenState extends State<SettingScreen> {
               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
               child: Row(
                 children: [
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: Image.asset(
-                      'assets/images/Arrow_Left.png',
-                      height: 40.h,
-                      width: 40.w,
-                    ),
-                  ),
                   SizedBox(width: 8.w),
                   Text('Settings', style: ssTitleTextTextStyle208001),
                 ],
@@ -78,6 +70,12 @@ class _SettingScreenState extends State<SettingScreen> {
                       ),
                       SettingCard(
                         title: 'Privacy Policy',
+                        onTap: () {
+                          // Get.toNamed('/terms');
+                        },
+                      ),
+                      SettingCard(
+                        title: 'Recommended Manufactures',
                         onTap: () {
                           Get.toNamed('/recommended_tech_pack');
                         },

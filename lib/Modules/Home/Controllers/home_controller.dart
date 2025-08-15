@@ -111,14 +111,29 @@ class HomeController extends GetxController {
   void _applySearchFilter() {
     final query = searchQuery.value.toLowerCase();
     
+    // Filter designs by project name primarily
     myDesigns.value = allTechPacks.where((tp) =>
         tp.projectName.toLowerCase().contains(query) ||
         tp.collectionName.toLowerCase().contains(query)
     ).toList();
     
-    myCollections.value = allTechPacks.where((tp) =>
+    // For collections, filter and then group by collection name
+    final filteredForCollections = allTechPacks.where((tp) =>
+        tp.projectName.toLowerCase().contains(query) ||
         tp.collectionName.toLowerCase().contains(query)
     ).toList();
+    
+    Map<String, List<TechPackModel>> groupedByCollection = {};
+    for (var techPack in filteredForCollections) {
+      if (!groupedByCollection.containsKey(techPack.collectionName)) {
+        groupedByCollection[techPack.collectionName] = [];
+      }
+      groupedByCollection[techPack.collectionName]!.add(techPack);
+    }
+    
+    myCollections.value = groupedByCollection.values
+        .map((collection) => collection.first)
+        .toList();
     
     favorites.value = allTechPacks.where((tp) =>
         tp.isFavorite && (
@@ -187,6 +202,36 @@ class HomeController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  // Get unique collection names
+  List<String> get collectionNames {
+    final names = allTechPacks.map((tp) => tp.collectionName).toSet().toList();
+    names.sort();
+    return names;
+  }
+
+  // Get tech packs by collection name
+  List<TechPackModel> getTechPacksByCollection(String collectionName) {
+    return allTechPacks.where((tp) => tp.collectionName == collectionName).toList();
+  }
+
+  // Get grouped collections (Map of collection name to tech packs)
+  Map<String, List<TechPackModel>> get groupedCollections {
+    final techPacksToGroup = searchQuery.value.isEmpty ? allTechPacks : 
+        allTechPacks.where((tp) =>
+            tp.projectName.toLowerCase().contains(searchQuery.value.toLowerCase()) ||
+            tp.collectionName.toLowerCase().contains(searchQuery.value.toLowerCase())
+        ).toList();
+    
+    Map<String, List<TechPackModel>> grouped = {};
+    for (var techPack in techPacksToGroup) {
+      if (!grouped.containsKey(techPack.collectionName)) {
+        grouped[techPack.collectionName] = [];
+      }
+      grouped[techPack.collectionName]!.add(techPack);
+    }
+    return grouped;
   }
 
   // Check if there are any tech packs

@@ -7,6 +7,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import 'package:get/get.dart';
 
 class FavouriteScreen extends StatefulWidget {
@@ -35,25 +36,16 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
         child: SingleChildScrollView(
           child: Column(
             children: [
-              Row(
-                children: [
-                  InkWell(
-                    onTap: () => Get.back(),
-                    child: Image.asset(
-                      'assets/images/Arrow_Left.png',
-                      height: 40.h,
-                      width: 40.w,
+                  Align(
+                    alignment: Alignment.centerLeft,
+                    child: Text(
+                      'Favorites',
+                      style: ssTitleTextTextStyle208001.copyWith(
+                        color: Colors.black,
+                      ),
                     ),
                   ),
-                  SizedBox(width: 8.w),
-                  Text(
-                    'Favorites',
-                    style: ssTitleTextTextStyle208001.copyWith(
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
+              
               SizedBox(height: 34.h),
               SearchWidget(
                 controller: controller.searchController,
@@ -61,12 +53,16 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
               ),
               SizedBox(height: 20.h),
               // Dynamic content based on favorites
-              Expanded(
-                child: Obx(() {
+              Obx(() {
                   // Loading state
                   if (controller.isLoading.value) {
                     return Center(
-                      child: CircularProgressIndicator(color: AppColors.buttonColor),
+                      child: Lottie.asset(
+                        'assets/lottie/Loading_dots.json',
+                        width: 100.w,
+                        height: 100.h,
+                        fit: BoxFit.cover,
+                      ),
                     );
                   }
 
@@ -130,7 +126,6 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                     ),
                   );
                 }),
-              ),
             ],
           ),
         ),

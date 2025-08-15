@@ -181,7 +181,7 @@ class DesignGridItem extends StatelessWidget {
                         ),
                         child: Icon(
                           techPack.isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: techPack.isFavorite ? Colors.red : Colors.black,
+                          color: techPack.isFavorite ? Colors.black : Colors.black,
                           size: 20.sp,
                         ),
                       ),
@@ -208,19 +208,6 @@ class DesignGridItem extends StatelessWidget {
                   ),
                   
                   SizedBox(height: 4.h),
-                  
-                  Text(
-                    techPack.collectionName,
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey[600],
-                    ),
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                  ),
-                  
-                  SizedBox(height: 6.h),
-                  
                   Text(
                     _formatDate(techPack.createdAt),
                     style: TextStyle(

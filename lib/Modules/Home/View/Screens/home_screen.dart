@@ -3,6 +3,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:lottie/lottie.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../Widgets/custom_roundbutton.dart';
 import '../../../../Widgets/empty_state_widget.dart';
@@ -83,6 +84,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SearchWidget(
                         controller: controller.searchController,
                         onChanged: controller.onSearchChanged,
+                        onClear: controller.clearSearch,
                       ),
                       SizedBox(height: 32.h),
                     ],
@@ -97,7 +99,12 @@ class _HomeScreenState extends State<HomeScreen> {
                   height: 200.h,
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
                   child: Center(
-                    child: CircularProgressIndicator(color: AppColors.buttonColor),
+                    child: Lottie.asset(
+                      'assets/lottie/Loading_dots.json',
+                      width: 100.w,
+                      height: 100.h,
+                      fit: BoxFit.cover,
+                    ),
                   ),
                 );
               }
@@ -146,7 +153,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.myDesigns.length > 4 ? 4 : controller.myDesigns.length,
+                      itemCount: controller.myDesigns.length > 2 ? 2 : controller.myDesigns.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16.w,
@@ -203,7 +210,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     GridView.builder(
                       shrinkWrap: true,
                       physics: NeverScrollableScrollPhysics(),
-                      itemCount: controller.myCollections.length > 4 ? 4 : controller.myCollections.length,
+                      itemCount: controller.myCollections.length > 2 ? 2 : controller.myCollections.length,
                       gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                         crossAxisCount: 2,
                         crossAxisSpacing: 16.w,

@@ -21,9 +21,9 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
-void showpopup() {
+void showPopup() {
   showDialog(
-    context: Get.context!,
+    context: context,
     builder: (context) {
       return Dialog(
         shape: RoundedRectangleBorder(
@@ -185,7 +185,7 @@ void showpopup() {
                             size: 24.sp,
                           ),
                           onPressed: () {
-                            showpopup();
+                            showPopup();
                           },
                         ),
                       ],
@@ -196,11 +196,31 @@ void showpopup() {
                     child: Center(
                       child: ClipRRect(
                         borderRadius: BorderRadius.circular(20),
-                        child: Image.asset(
+                        child: Image.network(
                           widget.image,
                           width: 0.85.sw,
                           height: 0.6.sh,
                           fit: BoxFit.cover,
+                          loadingBuilder: (context, child, loadingProgress) {
+                            if (loadingProgress == null) return child;
+                            return Center(
+                              child: CircularProgressIndicator(
+                                value: loadingProgress.expectedTotalBytes != null
+                                    ? loadingProgress.cumulativeBytesLoaded / 
+                                      loadingProgress.expectedTotalBytes!
+                                    : null,
+                              ),
+                            );
+                          },
+                          errorBuilder: (context, error, stackTrace) {
+                            return Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                color: Colors.grey,
+                                size: 48.sp,
+                              ),
+                            );
+                          },
                         ),
                       ),
                     ),
