@@ -74,11 +74,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       SizedBox(height: 40.h),
                       Text(
                         'Welcome to ATELIA!',
-                        style: TextStyle(
-                          fontSize: 20.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.white,
-                        ),
+                        style: hTitleTextStyle18600,
                       ),
                       SizedBox(height: 60.h),
                       SearchWidget(

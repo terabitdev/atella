@@ -397,3 +397,10 @@ final TextStyle dbTitleTextTextStyle12500 = GoogleFonts.outfit(
   fontWeight: FontWeight.w500,
   color: Colors.black,
 );
+
+
+final TextStyle hTitleTextStyle18600 = GoogleFonts.manrope(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w600,
+  color: Colors.white,
+);
