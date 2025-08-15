@@ -18,6 +18,9 @@ class TechPackService {
   static Future<Map<String, String>> saveTechPackImages({
     required List<String> base64Images,
     required String techPackId,
+    String? projectName,
+    String? collectionName,
+    String? selectedDesignImageUrl,
   }) async {
     final user = _auth.currentUser;
     if (user == null) throw Exception('User not authenticated');
@@ -59,16 +62,29 @@ class TechPackService {
       }
 
       // Save metadata to Firestore
+      Map<String, dynamic> techPackData = {
+        'images': uploadedUrls,
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+
+      // Add optional fields if provided
+      if (projectName != null) {
+        techPackData['project_name'] = projectName;
+      }
+      if (collectionName != null) {
+        techPackData['collection_name'] = collectionName;
+      }
+      if (selectedDesignImageUrl != null) {
+        techPackData['selected_design_image_url'] = selectedDesignImageUrl;
+      }
+
       await _firestore
           .collection('users')
           .doc(user.uid)
           .collection('tech_packs')
           .doc(techPackId)
-          .set({
-            'images': uploadedUrls,
-            'created_at': FieldValue.serverTimestamp(),
-            'updated_at': FieldValue.serverTimestamp(),
-          }, SetOptions(merge: true));
+          .set(techPackData, SetOptions(merge: true));
 
       return uploadedUrls;
     } catch (e) {
@@ -273,6 +289,53 @@ pdf.addPage(
     } catch (e) {
       print('Error downloading PDF: $e');
       throw Exception('Failed to download PDF: $e');
+    }
+  }
+
+  // Get selected design image URL for current user
+  static Future<String?> getSelectedDesignImageUrl() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) {
+        print('User not authenticated');
+        return null;
+      }
+
+      print('Looking for selected design for user: ${user.uid}');
+
+      // Get the user's design document from designs collection
+      final userDesignDoc = await _firestore
+          .collection('designs')
+          .doc(user.uid)
+          .get();
+
+      if (!userDesignDoc.exists) {
+        print('No design document found for user');
+        return null;
+      }
+
+      final data = userDesignDoc.data() as Map<String, dynamic>?;
+      final designs = data?['designs'] as List<dynamic>? ?? [];
+      
+      print('Found ${designs.length} designs');
+
+      // Find the selected design
+      for (var design in designs) {
+        final designMap = design as Map<String, dynamic>;
+        final isSelected = designMap['selected'] as bool? ?? false;
+        
+        if (isSelected) {
+          final designImageUrl = designMap['designImageUrl'] as String?;
+          print('Found selected design with URL: $designImageUrl');
+          return designImageUrl;
+        }
+      }
+      
+      print('No selected design found');
+      return null;
+    } catch (e) {
+      print('Error getting selected design: $e');
+      return null;
     }
   }
 }

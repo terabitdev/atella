@@ -1,7 +1,10 @@
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Widgets/search_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/Widgets/empty_state_widget.dart';
+import 'package:atella/Widgets/design_grid_item.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,40 +17,15 @@ class FavouriteScreen extends StatefulWidget {
 }
 
 class _FavouriteScreenState extends State<FavouriteScreen> {
-  // Static data for My Designs
-  final List<Map<String, String>> myDesigns = [
-    {
-      'image': 'assets/images/grid1.png',
-      'name': 'Project 1',
-      'date': '13 July 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-  ];
-  final controller = Get.put(HomeController());
+  // Get the existing HomeController instance
+  final controller = Get.find<HomeController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh favorites when screen opens
+    controller.refreshData();
+  }
   
   @override
   Widget build(BuildContext context) {
@@ -82,99 +60,77 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                 onChanged: controller.onSearchChanged,
               ),
               SizedBox(height: 20.h),
-              Padding(
-                padding: EdgeInsets.symmetric(horizontal: 16.w),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    GridView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: myDesigns.length,
-                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                        crossAxisCount: 2,
-                        crossAxisSpacing: 16.w,
-                        mainAxisSpacing: 16.h,
-                        childAspectRatio: 0.6,
+              // Dynamic content based on favorites
+              Expanded(
+                child: Obx(() {
+                  // Loading state
+                  if (controller.isLoading.value) {
+                    return Center(
+                      child: CircularProgressIndicator(color: AppColors.buttonColor),
+                    );
+                  }
+
+                  // Empty state - no favorites
+                  if (!controller.hasFavorites && controller.searchQuery.value.isEmpty) {
+                    return FavoritesEmptyState(
+                      onCreateProject: controller.startNewProject,
+                    );
+                  }
+
+                  // Search empty state
+                  if (!controller.hasFavorites && controller.searchQuery.value.isNotEmpty) {
+                    return SearchEmptyState(
+                      searchQuery: controller.searchQuery.value,
+                      onClearSearch: controller.clearSearch,
+                    );
+                  }
+
+                  // Show favorites grid
+                  return SingleChildScrollView(
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 16.w),
+                      child: Column(
+                        children: [
+                          GridView.builder(
+                            shrinkWrap: true,
+                            physics: NeverScrollableScrollPhysics(),
+                            itemCount: controller.favorites.length,
+                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                              crossAxisCount: 2,
+                              crossAxisSpacing: 16.w,
+                              mainAxisSpacing: 16.h,
+                              childAspectRatio: 0.6,
+                            ),
+                            itemBuilder: (context, index) {
+                              final techPack = controller.favorites[index];
+                              return DesignGridItem(
+                                techPack: techPack,
+                                showFavoriteIcon: true,
+                                onTap: () {
+                                  // Navigate to preview or details
+                                },
+                                onFavoriteToggle: () {
+                                  controller.toggleFavorite(techPack);
+                                },
+                              );
+                            },
+                          ),
+                          SizedBox(height: 20.h),
+                          // Create new design button (only show if there are favorites)
+                          if (controller.hasFavorites)
+                            RoundButton(
+                              title: 'Create New Design',
+                              onTap: controller.startNewProject,
+                              color: AppColors.buttonColor,
+                              isloading: false,
+                            ),
+                          SizedBox(height: 20.h),
+                        ],
                       ),
-                      itemBuilder: (context, index) {
-                        final project = myDesigns[index];
-                        return Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              // Image with Heart Icon Overlay
-                              Stack(
-                                children: [
-                                  ClipRRect(
-                                    borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                                    child: Image.asset(
-                                      project['image']!,
-                                      height: 177.h,
-                                      width: 162.w,
-                                      fit: BoxFit.cover,
-                                    ),
-                                  ),
-                                  // Heart Icon positioned at top-left
-                                  Positioned(
-                                    top: 8.h,
-                                    left: 8.w,
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        print('Favorite tapped for ${project['name']}');
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.all(4.w),
-                                        child: Icon(
-                                          Icons.favorite,
-                                          color: Colors.black,
-                                          size: 20.sp,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Row(
-                                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                                      children: [
-                                        Text(
-                                          project['name']!,
-                                          style: ssTitleTextTextStyle186004,
-                                        ),
-                                        Image.asset('assets/images/pen.png', height: 15.h, width: 15.w),
-                                      ],
-                                    ),
-                                    SizedBox(height: 6.h),
-                                    Text(
-                                      project['date']!,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 10.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        );
-                      },
                     ),
-                  ],
-                ),
+                  );
+                }),
               ),
-              SizedBox(height: 20.h),
-              RoundButton(title: 'Create New Design', onTap: () {}, color: Colors.black, isloading: false)
             ],
           ),
         ),

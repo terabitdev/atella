@@ -56,8 +56,30 @@ Delivery: ${_detailsController.deliveryDateController.text}
   RxBool isSaving = false.obs;
   RxBool isExporting = false.obs;
 
-  // Save tech pack images to Firebase
-  Future<void> saveTechPack() async {
+  // Dialog state management
+  final TextEditingController projectNameController = TextEditingController();
+  RxString selectedCollection = 'SUMMER COLLECTION'.obs;
+  RxList<String> collections = <String>['SUMMER COLLECTION', 'WINTER COLLECTION'].obs;
+
+  @override
+  void onClose() {
+    projectNameController.dispose();
+    super.onClose();
+  }
+
+  // Add new collection
+  void addNewCollection(String collectionName) {
+    collections.add(collectionName.toUpperCase());
+    selectedCollection.value = collectionName.toUpperCase();
+  }
+
+  // Update selected collection
+  void updateSelectedCollection(String collection) {
+    selectedCollection.value = collection;
+  }
+
+  // Save tech pack images to Firebase with project and collection info
+  Future<void> saveTechPackWithDetails(String projectName, String collectionName) async {
     if (!hasGeneratedImages) {
       Get.snackbar(
         'No Images',
@@ -74,10 +96,16 @@ Delivery: ${_detailsController.deliveryDateController.text}
       // Generate unique tech pack ID
       final techPackId = DateTime.now().millisecondsSinceEpoch.toString();
       
-      // Save images to Firebase Storage
+      // Get selected design image URL
+      final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
+      
+      // Save images to Firebase Storage with project and collection details
       await TechPackService.saveTechPackImages(
         base64Images: generatedImages,
         techPackId: techPackId,
+        projectName: projectName,
+        collectionName: collectionName,
+        selectedDesignImageUrl: selectedDesignImageUrl,
       );
 
       Get.snackbar(
@@ -102,6 +130,12 @@ Delivery: ${_detailsController.deliveryDateController.text}
     } finally {
       isSaving.value = false;
     }
+  }
+
+  // Legacy save method (kept for compatibility)
+  Future<void> saveTechPack() async {
+    // Use default values for legacy calls
+    await saveTechPackWithDetails(_getProjectName(), 'GENERAL COLLECTION');
   }
 
   // Export tech pack as PDF

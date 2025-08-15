@@ -330,13 +330,13 @@ static Future<Map<String, String>> generateTechPackPrompts({
   final stitching = techPackDetails['technical']?['stitching'] ?? 'single stitch';
   final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? 'contrast topstitch';
   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? 'chest';
-  final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? 'brand';
+  // final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? 'brand';
   final packagingType = techPackDetails['packaging']?['packagingType'] ?? 'polybag';
-  final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? 'fold neatly';
+  // final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? 'fold neatly';
   final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '\$25';
   final quantity = techPackDetails['production']?['quantity'] ?? '100';
   final deliveryDate = techPackDetails['production']?['deliveryDate'] ?? 'TBD';
-  final style = creativeBrief['style'] ?? 'casual';
+  // final style = creativeBrief['style'] ?? 'casual';
   final features = refinedConcept['features'] ?? 'standard collar';
 
   // Manufacturing prompt - clean and organized

@@ -379,3 +379,21 @@ final TextStyle gtpadTitleTextTextStyle14600 = GoogleFonts.manrope(
   fontWeight: FontWeight.w600,
   color: Colors.black,
 );
+
+final TextStyle dbTitleTextTextStyle18700 = GoogleFonts.outfit(
+  fontSize: 18.sp,
+  fontWeight: FontWeight.w700,
+  color: Colors.black,
+);
+
+final TextStyle dbTitleTextTextStyle12400 = GoogleFonts.manrope(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w400,
+  color: Colors.grey[700]!,
+);
+
+final TextStyle dbTitleTextTextStyle12500 = GoogleFonts.outfit(
+  fontSize: 12.sp,
+  fontWeight: FontWeight.w500,
+  color: Colors.black,
+);

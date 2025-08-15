@@ -1,6 +1,6 @@
 import 'package:get/get.dart';
 import '../../Data/Models/manufacturer_model.dart';
-import '../firebase/services/manufacturer_firebase_service.dart';
+import 'manufacturer_firebase_service.dart';
 
 class ManufacturerService extends GetxService {
   static ManufacturerService get instance => Get.find();

@@ -18,7 +18,7 @@ plugins {
 android {
     namespace = "com.example.atella"
     compileSdk = 35
-    ndkVersion = flutter.ndkVersion
+    // ndkVersion = flutter.ndkVersion as String
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -34,7 +34,7 @@ android {
         applicationId = "com.example.atella"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdk = 23
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName

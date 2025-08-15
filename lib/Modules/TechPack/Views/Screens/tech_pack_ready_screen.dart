@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../Widgets/save_export_button_row.dart';
+import '../Widgets/save_tech_pack_dialog.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
@@ -61,6 +62,20 @@ class TechPackReadyScreen extends StatelessWidget {
                 },
               ),
             ),
+        );
+      },
+    );
+  }
+
+  void _showSaveDialog(BuildContext context, TechPackReadyController controller) {
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) {
+        return SaveTechPackDialog(
+          onSave: (projectName, collectionName) async {
+            await controller.saveTechPackWithDetails(projectName, collectionName);
+          },
         );
       },
     );
@@ -253,12 +268,12 @@ class TechPackReadyScreen extends StatelessWidget {
                 isloading: false,
               ),
               const SizedBox(height: 16),
-              SaveExportButtonRow(onSave: () {
-                Get.toNamed('/nav_bar');
-                controller.saveTechPack();
-              }, onExport: () {
-                controller.exportTechPackPDF();
-              }),
+              Obx(() => SaveExportButtonRow(
+                onSave: () => _showSaveDialog(context, controller),
+                onExport: () => controller.exportTechPackPDF(),
+                isSaving: controller.isSaving.value, // Show loading on screen save button
+                isExporting: controller.isExporting.value,
+              )),
               const SizedBox(height: 30),
             ],
           ),

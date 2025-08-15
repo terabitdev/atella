@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../Widgets/custom_roundbutton.dart';
+import '../../../../Widgets/empty_state_widget.dart';
+import '../../../../Widgets/design_grid_item.dart';
 import '../Widgets/search_widget.dart';
 import '../../Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
@@ -18,34 +20,6 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   final HomeController controller = Get.put(HomeController());
-
-  // Static data for My Designs
-  final List<Map<String, String>> myDesigns = [
-    {
-      'image': 'assets/images/grid1.png',
-      'name': 'Project 1',
-      'date': '13 July 2025',
-    },
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project 2',
-      'date': '20Mar 2025',
-    },
-  ];
-
-  // Static data for Collections
-  final List<Map<String, String>> collections = [
-    {
-      'image': 'assets/images/grid2.png',
-      'name': 'Project3',
-      'date': '13 July 2025',
-    },
-    {
-      'image': 'assets/images/grid1.png',
-      'name': 'Project 4',
-      'date': '20Mar 2025',
-    },
-  ];
 
   @override
   Widget build(BuildContext context) {
@@ -117,205 +91,163 @@ class _HomeScreenState extends State<HomeScreen> {
               ],
             ),
             // My Designs Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('My Designs', style: hsTitleTextTextStyle18800),
-                      GestureDetector(
-                        onTap: (){
-                          Get.toNamed('/my_designs');
-                        },
-                        child: Text('See All', style: ssTitleTextTextStyle14400),
-                      ),
-                    ],
+            Obx(() {
+              if (controller.isLoading.value) {
+                return Container(
+                  height: 200.h,
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  child: Center(
+                    child: CircularProgressIndicator(color: AppColors.buttonColor),
                   ),
-                  SizedBox(height: 12.h),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: myDesigns.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.w,
-                      mainAxisSpacing: 16.h,
-                      childAspectRatio: 0.6,
+                );
+              }
+
+              // Show empty state if no data and not searching
+              if (!controller.hasAnyData && controller.searchQuery.value.isEmpty) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  child: HomeEmptyState(
+                    onCreateProject: controller.startNewProject,
+                  ),
+                );
+              }
+
+              // Show search empty state if searching with no results
+              if (!controller.hasDesigns && controller.searchQuery.value.isNotEmpty) {
+                return Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  child: SearchEmptyState(
+                    searchQuery: controller.searchQuery.value,
+                    onClearSearch: controller.clearSearch,
+                  ),
+                );
+              }
+
+              // Show designs section
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('My Designs', style: hsTitleTextTextStyle18800),
+                        if (controller.hasDesigns)
+                          GestureDetector(
+                            onTap: () {
+                              Get.toNamed('/my_designs');
+                            },
+                            child: Text('See All', style: ssTitleTextTextStyle14400),
+                          ),
+                      ],
                     ),
-                    itemBuilder: (context, index) {
-                      final project = myDesigns[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(() => PreviewScreen(
-                            image: project['image']!,
-                            title: project['name']! +' (Short-sleeve Shirt)',
-                            version: 'V2',
-                          ));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
-                          ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                                child: Image.asset(
-                                  project['image']!,
-                                  height: 177.h,
-                                  width: 162.w,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      project['name']!,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                    SizedBox(height: 6.h),
-                                    Text(
-                                      project['date']!,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 11.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
-            // Collections Section
-            Padding(
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: [
-                      Text('Collections', style: TextStyle(fontWeight: FontWeight.bold, fontSize: 20.sp)),
-                      GestureDetector(
-                        onTap: () {
-                          Get.toNamed('/collections');
-                        },
-                        child: Text('See All', style: TextStyle(color: Colors.grey, fontSize: 14.sp)),
+                    SizedBox(height: 12.h),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.myDesigns.length > 4 ? 4 : controller.myDesigns.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.w,
+                        mainAxisSpacing: 16.h,
+                        childAspectRatio: 0.6,
                       ),
-                    ],
-                  ),
-                  SizedBox(height: 12.h),
-                  GridView.builder(
-                    shrinkWrap: true,
-                    physics: NeverScrollableScrollPhysics(),
-                    itemCount: collections.length,
-                    gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                      crossAxisCount: 2,
-                      crossAxisSpacing: 16.w,
-                      mainAxisSpacing: 16.h,
-                      childAspectRatio: 0.6,
+                      itemBuilder: (context, index) {
+                        final techPack = controller.myDesigns[index];
+                        return DesignGridItem(
+                          techPack: techPack,
+                          showFavoriteIcon: true,
+                          onTap: () {
+                            Get.to(() => PreviewScreen(
+                              image: techPack.displayImage ?? 'assets/images/grid1.png',
+                              title: '${techPack.projectName} (${techPack.collectionName})',
+                              version: 'V2',
+                            ));
+                          },
+                          onFavoriteToggle: () {
+                            controller.toggleFavorite(techPack);
+                          },
+                        );
+                      },
                     ),
-                    itemBuilder: (context, index) {
-                      final project = collections[index];
-                      return GestureDetector(
-                        onTap: () {
-                          Get.to(() => PreviewScreen(
-                            image: project['image']!,
-                            title: project['name']! + ' (Short-sleeve Shirt)',
-                            version: 'V2',
-                          ));
-                        },
-                        child: Container(
-                          decoration: BoxDecoration(
-                            color: Colors.white,
-                            borderRadius: BorderRadius.circular(16),
-                            boxShadow: [
-                              BoxShadow(
-                                color: Colors.grey.withOpacity(0.1),
-                                blurRadius: 8,
-                                offset: Offset(0, 4),
-                              ),
-                            ],
+                  ],
+                ),
+              );
+            }),
+            // Collections Section  
+            Obx(() {
+              if (!controller.hasCollections && !controller.isLoading.value) {
+                return SizedBox.shrink(); // Don't show collections section if no collections
+              }
+
+              return Padding(
+                padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                      children: [
+                        Text('My Collections', style: hsTitleTextTextStyle18800),
+                        if (controller.hasCollections)
+                          GestureDetector(
+                            onTap: () {
+                              Get.toNamed('/collections');
+                            },
+                            child: Text('See All', style: ssTitleTextTextStyle14400),
                           ),
-                          child: Column(
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              ClipRRect(
-                                borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
-                                child: Image.asset(
-                                  project['image']!,
-                                  height: 177.h,
-                                  width: 162.w,
-                                  fit: BoxFit.cover,
-                                ),
-                              ),
-                              Padding(
-                                padding: EdgeInsets.all(12.w),
-                                child: Column(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Text(
-                                      project['name']!,
-                                      style: TextStyle(
-                                        fontWeight: FontWeight.bold,
-                                        fontSize: 14.sp,
-                                      ),
-                                    ),
-                                    SizedBox(height: 6.h),
-                                    Text(
-                                      project['date']!,
-                                      style: TextStyle(
-                                        color: Colors.grey,
-                                        fontSize: 11.sp,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-                ],
-              ),
-            ),
+                      ],
+                    ),
+                    SizedBox(height: 12.h),
+                    GridView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: controller.myCollections.length > 4 ? 4 : controller.myCollections.length,
+                      gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
+                        crossAxisCount: 2,
+                        crossAxisSpacing: 16.w,
+                        mainAxisSpacing: 16.h,
+                        childAspectRatio: 0.6,
+                      ),
+                      itemBuilder: (context, index) {
+                        final techPack = controller.myCollections[index];
+                        return DesignGridItem(
+                          techPack: techPack,
+                          showFavoriteIcon: true,
+                          onTap: () {
+                            Get.to(() => PreviewScreen(
+                              image: techPack.displayImage ?? 'assets/images/grid1.png',
+                              title: '${techPack.collectionName}',
+                              version: 'Collection',
+                            ));
+                          },
+                          onFavoriteToggle: () {
+                            controller.toggleFavorite(techPack);
+                          },
+                        );
+                      },
+                    ),
+                  ],
+                ),
+              );
+            }),
             // ------------- Start New Project Button --------------
-            Padding(
-              padding: const EdgeInsets.all(20.0),
-              child: RoundButton(
-                title: 'Start New Project',
-                onTap: controller.startNewProject,
-                color: AppColors.buttonColor,
-                isloading: false,
-              ),
-            ),
+            Obx(() {
+              // Only show button if user has data (not on empty state)
+              if (controller.hasAnyData) {
+                return Padding(
+                  padding: const EdgeInsets.all(20.0),
+                  child: RoundButton(
+                    title: 'Start New Project',
+                    onTap: controller.startNewProject,
+                    color: AppColors.buttonColor,
+                    isloading: false,
+                  ),
+                );
+              }
+              return SizedBox.shrink();
+            }),
           ],
         ),
       ),
