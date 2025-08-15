@@ -1,18 +1,21 @@
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/Modules/Home/View/Screens/revision_hsitory_screen.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:http/http.dart' as http;
+import 'package:path_provider/path_provider.dart';
+import 'package:lottie/lottie.dart';
+import 'dart:io';
 
 class PreviewScreen extends StatefulWidget {
-  final String image;
-  final String title;
+  final TechPackModel techPack;
   final String version;
 
   const PreviewScreen({
     Key? key,
-    required this.image,
-    required this.title,
+    required this.techPack,
     required this.version,
   }) : super(key: key);
 
@@ -21,6 +24,51 @@ class PreviewScreen extends StatefulWidget {
 }
 
 class _PreviewScreenState extends State<PreviewScreen> {
+  late PageController _pageController;
+  final RxInt currentImageIndex = 0.obs;
+  final RxInt _downloadProgress = 0.obs;
+  
+  @override
+  void initState() {
+    super.initState();
+    _pageController = PageController();
+  }
+  
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+  
+  // Get all images for the slider
+  List<String> get allImages {
+    List<String> images = [];
+    
+    // Add design image first if available
+    if (widget.techPack.selectedDesignImageUrl != null && 
+        widget.techPack.selectedDesignImageUrl!.isNotEmpty) {
+      images.add(widget.techPack.selectedDesignImageUrl!);
+    }
+    
+    // Add tech pack images
+    images.addAll(widget.techPack.images.values);
+    
+    return images;
+  }
+  
+  // Get image type label for current index
+  String _getImageTypeLabel(int index) {
+    final hasDesignImage = widget.techPack.selectedDesignImageUrl != null && 
+                          widget.techPack.selectedDesignImageUrl!.isNotEmpty;
+    
+    if (hasDesignImage && index == 0) {
+      return 'Design Image';
+    } else {
+      final techPackIndex = hasDesignImage ? index : index + 1;
+      return 'Tech Pack Image $techPackIndex';
+    }
+  }
+
 void showPopup() {
   showDialog(
     context: context,
@@ -75,6 +123,7 @@ void showPopup() {
                 child: InkWell(
                   onTap: () {
                     Navigator.of(context).pop();
+                    _handleDownload();
                   },
                   child: Container(
                     width: double.infinity,
@@ -95,6 +144,171 @@ void showPopup() {
   );
 }
 
+  // Handle Download functionality - Download all images
+  Future<void> _handleDownload() async {
+    try {
+      final images = allImages;
+      if (images.isEmpty) {
+        Get.snackbar(
+          'Info',
+          'No images available to download',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+        return;
+      }
+
+      // Filter out local asset images and keep only URL images
+      final urlImages = images.where((image) => image.startsWith('http')).toList();
+      
+      if (urlImages.isEmpty) {
+        Get.snackbar(
+          'Info',
+          'All images are local assets and cannot be downloaded',
+          backgroundColor: Colors.blue,
+          colorText: Colors.white,
+        );
+        return;
+      }
+      // Show loading dialog with progress indicator
+      showDialog(
+        context: context,
+        barrierDismissible: false,
+        builder: (context) => Obx(() => AlertDialog(
+          backgroundColor: Colors.white,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          content: SizedBox(
+            height: 100.h,
+            child: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: [
+            CircularProgressIndicator(
+              value: _downloadProgress.value / urlImages.length,
+              color: Colors.black,
+            ),
+            SizedBox(height: 16.h),
+            Text(
+              'Downloading ${_downloadProgress.value} of ${urlImages.length}...',
+              style: TextStyle(
+            color: Colors.black,
+            fontSize: 14.sp,
+            fontWeight: FontWeight.w500,
+              ),
+            ),
+          ],
+            ),
+          ),
+        )),
+      );
+
+      // Download all images
+      await _downloadAllImages(urlImages);
+      
+    } catch (e) {
+      // Close dialog if open
+      if (Get.isDialogOpen!) Get.back();
+      
+      Get.snackbar(
+        'Error',
+        'Failed to download images: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Download all images method
+  Future<void> _downloadAllImages(List<String> imageUrls) async {
+    try {
+      _downloadProgress.value = 0;
+      List<String> downloadedFiles = [];
+      List<String> failedDownloads = [];
+
+      // Get directory to save images
+      final directory = await getApplicationDocumentsDirectory();
+      final projectFolder = Directory('${directory.path}/Atella_${widget.techPack.projectName}');
+      if (!await projectFolder.exists()) {
+        await projectFolder.create(recursive: true);
+      }
+
+      // Download each image
+      for (int i = 0; i < imageUrls.length; i++) {
+        try {
+          final imageUrl = imageUrls[i];
+          final response = await http.get(Uri.parse(imageUrl));
+          
+          if (response.statusCode == 200) {
+            // Determine file name based on image type
+            String fileName;
+            if (widget.techPack.selectedDesignImageUrl != null && 
+                imageUrl == widget.techPack.selectedDesignImageUrl) {
+              fileName = '${widget.techPack.projectName}_Design.jpg';
+            } else {
+              final techPackIndex = widget.techPack.images.values.toList().indexOf(imageUrl) + 1;
+              fileName = '${widget.techPack.projectName}_TechPack_$techPackIndex.jpg';
+            }
+
+            final file = File('${projectFolder.path}/$fileName');
+            await file.writeAsBytes(response.bodyBytes);
+            downloadedFiles.add(file.path);
+          } else {
+            failedDownloads.add('Image ${i + 1} (Status: ${response.statusCode})');
+          }
+        } catch (e) {
+          failedDownloads.add('Image ${i + 1} (Error: $e)');
+        }
+        
+        // Update progress
+        _downloadProgress.value = i + 1;
+      }
+
+      // Close loading dialog
+      Get.back();
+
+      // Show result message
+      if (downloadedFiles.isNotEmpty && failedDownloads.isEmpty) {
+        // All downloads successful
+        Get.snackbar(
+          'Success',
+          '${downloadedFiles.length} images downloaded successfully to:\n${projectFolder.path}',
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+          duration: Duration(seconds: 4),
+        );
+      } else if (downloadedFiles.isNotEmpty && failedDownloads.isNotEmpty) {
+        // Partial success
+        Get.snackbar(
+          'Partial Success',
+          '${downloadedFiles.length} images downloaded. ${failedDownloads.length} failed.',
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+          duration: Duration(seconds: 4),
+        );
+      } else {
+        // All failed
+        Get.snackbar(
+          'Error',
+          'Failed to download all images.',
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          duration: Duration(seconds: 3),
+        );
+      }
+
+    } catch (e) {
+      // Close dialog if open
+      if (Get.isDialogOpen!) Get.back();
+      
+      Get.snackbar(
+        'Error',
+        'Download failed: $e',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
 
 
   @override
@@ -148,7 +362,7 @@ void showPopup() {
                       children: [
                         Expanded(
                           child: Text(
-                            widget.title,
+                            '${widget.techPack.projectName} (${widget.techPack.collectionName})',
                             style: TextStyle(
                               color: Colors.black,
                               fontWeight: FontWeight.w600,
@@ -193,36 +407,91 @@ void showPopup() {
                   ),
                   SizedBox(height: 12.h),
                   Expanded(
-                    child: Center(
-                      child: ClipRRect(
-                        borderRadius: BorderRadius.circular(20),
-                        child: Image.network(
-                          widget.image,
-                          width: 0.85.sw,
-                          height: 0.6.sh,
-                          fit: BoxFit.cover,
-                          loadingBuilder: (context, child, loadingProgress) {
-                            if (loadingProgress == null) return child;
-                            return Center(
-                              child: CircularProgressIndicator(
-                                value: loadingProgress.expectedTotalBytes != null
-                                    ? loadingProgress.cumulativeBytesLoaded / 
-                                      loadingProgress.expectedTotalBytes!
-                                    : null,
-                              ),
-                            );
-                          },
-                          errorBuilder: (context, error, stackTrace) {
-                            return Center(
-                              child: Icon(
-                                Icons.error_outline,
-                                color: Colors.grey,
-                                size: 48.sp,
-                              ),
-                            );
-                          },
+                    child: Column(
+                      children: [
+                        // Image slider
+                        Expanded(
+                          child: PageView.builder(
+                            controller: _pageController,
+                            onPageChanged: (index) {
+                              currentImageIndex.value = index;
+                            },
+                            itemCount: allImages.length,
+                            itemBuilder: (context, index) {
+                              final imageUrl = allImages[index];
+                              return Center(
+                                child: ClipRRect(
+                                  borderRadius: BorderRadius.circular(20),
+                                  child: Image.network(
+                                    imageUrl,
+                                    width: 0.85.sw,
+                                    height: 0.6.sh,
+                                    fit: BoxFit.cover,
+                                    loadingBuilder: (context, child, loadingProgress) {
+                                      if (loadingProgress == null) return child;
+                                      return Center(
+                                        child: Lottie.asset(
+                                          'assets/lottie/Loading_dots.json',
+                                          width: 100.w,
+                                          height: 100.h,
+                                          fit: BoxFit.cover,
+                                        ),
+                                      );
+                                    },
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return Center(
+                                        child: Icon(
+                                          Icons.error_outline,
+                                          color: Colors.grey,
+                                          size: 48.sp,
+                                        ),
+                                      );
+                                    },
+                                  ),
+                                ),
+                              );
+                            },
+                          ),
                         ),
-                      ),
+                        
+                        // Image indicators and labels
+                        if (allImages.length > 1) ...[
+                          SizedBox(height: 16.h),
+                          
+                          // Page indicators
+                          Obx(() => Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: List.generate(
+                              allImages.length,
+                              (index) => Container(
+                                width: 8.w,
+                                height: 8.h,
+                                margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                decoration: BoxDecoration(
+                                  shape: BoxShape.circle,
+                                  color: currentImageIndex.value == index
+                                      ? Colors.black
+                                      : Colors.grey.shade300,
+                                ),
+                              ),
+                            ),
+                          )),
+                          
+                          SizedBox(height: 8.h),
+                          
+                          // Image type label
+                          Obx(() => Text(
+                            _getImageTypeLabel(currentImageIndex.value),
+                            style: TextStyle(
+                              color: Colors.grey.shade600,
+                              fontSize: 12.sp,
+                              fontWeight: FontWeight.w500,
+                            ),
+                          )),
+                        ],
+                        
+                        SizedBox(height: 16.h),
+                      ],
                     ),
                   ),
                 ],

@@ -1,5 +1,5 @@
 import 'dart:async';
-import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/Data/Models/brief_questions_model.dart';import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -102,6 +102,139 @@ class CreativeBriefController extends GetxController {
     super.onInit();
     _startTimeUpdater();
     _updateCurrentTime();
+    
+    // Check if we're in edit mode and pre-fill data
+    _checkForEditMode();
+  }
+  
+  void _checkForEditMode() {
+    final arguments = Get.arguments;
+    print('Creative Brief Controller - Arguments received: $arguments');
+    
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      final isEditMode = arguments['editMode'] == true;
+      print('Edit mode detected: $isEditMode');
+      
+      if (isEditMode) {
+        _loadExistingData(arguments);
+      }
+    } else {
+      print('No arguments or wrong format received');
+    }
+  }
+  
+  void _loadExistingData(Map<String, dynamic> arguments) {
+    print('Loading existing data for edit mode');
+    print('Arguments details: $arguments');
+    
+    // Load project name and collection name if available
+    final projectName = arguments['projectName'] as String?;
+    final collectionName = arguments['collectionName'] as String?;
+    final techPackModel = arguments['techPackModel'] as TechPackModel?;
+    
+    print('Extracted data - Project: $projectName, Collection: $collectionName');
+    print('TechPackModel: ${techPackModel?.toString()}');
+    
+    if (projectName != null && collectionName != null) {
+      // Pre-fill basic project info
+      print('Edit mode - Project: $projectName, Collection: $collectionName');
+      
+      // Show that we're in edit mode
+      Get.snackbar(
+        'Edit Mode',
+        'Editing design: $projectName',
+        backgroundColor: Colors.blue,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
+      
+      // For demonstration, pre-fill some example data
+      // In a real app, you would load actual stored answers from the database
+      _prefillDemoAnswers(techPackModel);
+    } else {
+      print('Missing project name or collection name');
+    }
+  }
+  
+  void _prefillDemoAnswers(TechPackModel? techPack) {
+    print('Pre-filling demo answers...');
+    
+    // Pre-fill some answers to demonstrate edit mode functionality
+    // In a real application, you would load these from stored data
+    
+    // Example: Pre-fill garment type (this would come from stored questionnaire data)
+    _answers['garment_type'] = BriefAnswer(
+      questionId: 'garment_type',
+      selectedOptions: ['Shirt'], // This would be the stored selection
+      textInput: null,
+    );
+    print('Pre-filled garment_type: ${_answers['garment_type']}');
+    
+    // Example: Pre-fill style preference
+    _answers['style'] = BriefAnswer(
+      questionId: 'style',
+      selectedOptions: ['Casual'], // This would be the stored selection
+      textInput: null,
+    );
+    print('Pre-filled style: ${_answers['style']}');
+    
+    // Example: Pre-fill colors (using project name as example)
+    if (techPack?.projectName.toLowerCase().contains('blue') == true) {
+      colorController.text = 'Blue, Navy';
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        selectedOptions: [],
+        textInput: 'Blue, Navy',
+      );
+    } else {
+      // Default colors for edit mode
+      colorController.text = 'Black, White';
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        selectedOptions: [],
+        textInput: 'Black, White',
+      );
+    }
+    print('Pre-filled colors: ${_answers['colors']}');
+    
+    // Example: Pre-fill fabrics based on collection name
+    if (techPack?.collectionName.toLowerCase().contains('summer') == true) {
+      fabricController.text = 'Cotton, Linen';
+      _answers['fabrics'] = BriefAnswer(
+        questionId: 'fabrics',
+        selectedOptions: [],
+        textInput: 'Cotton, Linen',
+      );
+    } else {
+      // Default fabrics for edit mode
+      fabricController.text = 'Cotton, Polyester';
+      _answers['fabrics'] = BriefAnswer(
+        questionId: 'fabrics',
+        selectedOptions: [],
+        textInput: 'Cotton, Polyester',
+      );
+    }
+    print('Pre-filled fabrics: ${_answers['fabrics']}');
+    
+    // Force trigger reactive update for the _answers map
+    _answers.refresh();
+    
+    // Also trigger general update
+    update();
+    
+    print('All answers after pre-filling: ${_answers.keys.toList()}');
+    print('Is garment_type answered: ${isQuestionAnswered('garment_type')}');
+    print('Is style answered: ${isQuestionAnswered('style')}');
+    
+    // Show success message
+    Future.delayed(Duration(seconds: 2), () {
+      Get.snackbar(
+        'Data Loaded',
+        'Previous answers have been loaded for editing',
+        backgroundColor: Colors.green,
+        colorText: Colors.white,
+      );
+    });
   }
 
   @override

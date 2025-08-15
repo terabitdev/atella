@@ -57,6 +57,7 @@ dependencies:
   url_launcher: ^6.2.5
   country_picker: ^2.0.26
   cached_network_image: ^3.4.1
+  dio: ^5.9.0
 
 dev_dependencies:
   flutter_test:

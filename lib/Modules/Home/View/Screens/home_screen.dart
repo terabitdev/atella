@@ -163,8 +163,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           showFavoriteIcon: true,
                           onTap: () {
                             Get.to(() => PreviewScreen(
-                              image: techPack.displayImage ?? 'assets/images/grid1.png',
-                              title: '${techPack.projectName} (${techPack.collectionName})',
+                              techPack: techPack,
                               version: 'V2',
                             ));
                           },
@@ -220,8 +219,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           showFavoriteIcon: true,
                           onTap: () {
                             Get.to(() => PreviewScreen(
-                              image: techPack.displayImage ?? 'assets/images/grid1.png',
-                              title: '${techPack.collectionName}',
+                              techPack: techPack,
                               version: 'Collection',
                             ));
                           },

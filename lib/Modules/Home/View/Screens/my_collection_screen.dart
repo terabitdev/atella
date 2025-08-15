@@ -139,8 +139,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                                 showFavoriteIcon: true,
                                 onTap: () {
                                   Get.to(() => PreviewScreen(
-                                    image: techPack.displayImage ?? 'assets/images/grid1.png',
-                                    title: '${techPack.projectName} (${techPack.collectionName})',
+                                    techPack: techPack,
                                     version: 'Collection',
                                   ));
                                 },

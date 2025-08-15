@@ -111,8 +111,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                         showFavoriteIcon: true,
                         onTap: () {
                           Get.to(() => PreviewScreen(
-                            image: techPack.displayImage ?? 'assets/images/grid1.png',
-                            title: '${techPack.projectName} (${techPack.collectionName})',
+                            techPack: techPack,
                             version: 'V2',
                           ));
                         },
