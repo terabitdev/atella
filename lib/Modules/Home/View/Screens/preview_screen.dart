@@ -1,13 +1,11 @@
 import 'package:atella/Data/Models/tech_pack_model.dart';
-import 'package:atella/Modules/Home/View/Screens/revision_hsitory_screen.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
-import 'package:path_provider/path_provider.dart';
 import 'package:lottie/lottie.dart';
-import 'dart:io';
+import 'package:gal/gal.dart';
 
 class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
@@ -80,7 +78,7 @@ void showPopup() {
         backgroundColor: Colors.white,
         child: SizedBox(
           width: 238.w,
-          height: 116.h,
+          height: 80.h,
           child: Column(
             mainAxisSize: MainAxisSize.min,
             children: [
@@ -95,24 +93,6 @@ void showPopup() {
                     child: Center(
                       child: Text(
                         'Edit',
-                        style: dbTitleTextTextStyle14400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(height: 1, color: Colors.grey.shade300),
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    Get.to(RevisionHistoryScreen());
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'View Revision History',
                         style: dbTitleTextTextStyle14400,
                       ),
                     ),
@@ -252,14 +232,7 @@ void showPopup() {
       List<String> downloadedFiles = [];
       List<String> failedDownloads = [];
 
-      // Get directory to save images
-      final directory = await getApplicationDocumentsDirectory();
-      final projectFolder = Directory('${directory.path}/Atella_${widget.techPack.projectName}');
-      if (!await projectFolder.exists()) {
-        await projectFolder.create(recursive: true);
-      }
-
-      // Download each image
+      // Download each image and save to gallery
       for (int i = 0; i < imageUrls.length; i++) {
         try {
           final imageUrl = imageUrls[i];
@@ -276,9 +249,17 @@ void showPopup() {
               fileName = '${widget.techPack.projectName}_TechPack_$techPackIndex.jpg';
             }
 
-            final file = File('${projectFolder.path}/$fileName');
-            await file.writeAsBytes(response.bodyBytes);
-            downloadedFiles.add(file.path);
+            // Save directly to gallery using Gal
+            try {
+              await Gal.putImageBytes(
+                response.bodyBytes,
+                name: fileName.replaceAll('.jpg', ''),
+                album: 'Atella',
+              );
+              downloadedFiles.add(fileName);
+            } catch (e) {
+              failedDownloads.add('Image ${i + 1} (Failed to save to gallery: $e)');
+            }
           } else {
             failedDownloads.add('Image ${i + 1} (Status: ${response.statusCode})');
           }
@@ -298,7 +279,7 @@ void showPopup() {
         // All downloads successful
         Get.snackbar(
           'Success',
-          '${downloadedFiles.length} images downloaded successfully to:\n${projectFolder.path}',
+          '${downloadedFiles.length} images saved to gallery in "Atella" album',
           backgroundColor: Colors.green,
           colorText: Colors.white,
           duration: Duration(seconds: 4),
@@ -307,7 +288,7 @@ void showPopup() {
         // Partial success
         Get.snackbar(
           'Partial Success',
-          '${downloadedFiles.length} images downloaded. ${failedDownloads.length} failed.',
+          '${downloadedFiles.length} images saved to gallery. ${failedDownloads.length} failed.',
           backgroundColor: Colors.orange,
           colorText: Colors.white,
           duration: Duration(seconds: 4),
@@ -316,7 +297,7 @@ void showPopup() {
         // All failed
         Get.snackbar(
           'Error',
-          'Failed to download all images.',
+          'Failed to save images to gallery.',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: Duration(seconds: 3),
@@ -445,34 +426,45 @@ void showPopup() {
                             itemCount: allImages.length,
                             itemBuilder: (context, index) {
                               final imageUrl = allImages[index];
+                              // Check if this is the design image or tech pack image
+                              final isDesignImage = widget.techPack.selectedDesignImageUrl != null && 
+                                                   imageUrl == widget.techPack.selectedDesignImageUrl;
+                              
                               return Center(
-                                child: ClipRRect(
-                                  borderRadius: BorderRadius.circular(20),
-                                  child: Image.network(
-                                    imageUrl,
-                                    width: 0.85.sw,
-                                    height: 0.6.sh,
-                                    fit: BoxFit.cover,
-                                    loadingBuilder: (context, child, loadingProgress) {
-                                      if (loadingProgress == null) return child;
-                                      return Center(
-                                        child: Lottie.asset(
-                                          'assets/lottie/Loading_dots.json',
-                                          width: 100.w,
-                                          height: 100.h,
-                                          fit: BoxFit.cover,
-                                        ),
-                                      );
-                                    },
-                                    errorBuilder: (context, error, stackTrace) {
-                                      return Center(
-                                        child: Icon(
-                                          Icons.error_outline,
-                                          color: Colors.grey,
-                                          size: 48.sp,
-                                        ),
-                                      );
-                                    },
+                                child: Container(
+                                  width: 0.85.sw,
+                                  height: 0.6.sh,
+                                  decoration: BoxDecoration(
+                                    borderRadius: BorderRadius.circular(20),
+                                    color: Colors.grey.shade100,
+                                  ),
+                                  child: ClipRRect(
+                                    borderRadius: BorderRadius.circular(20),
+                                    child: Image.network(
+                                      imageUrl,
+                                      // Use different fit for design vs tech pack images
+                                      fit: isDesignImage ? BoxFit.cover : BoxFit.contain,
+                                      loadingBuilder: (context, child, loadingProgress) {
+                                        if (loadingProgress == null) return child;
+                                        return Center(
+                                          child: Lottie.asset(
+                                            'assets/lottie/Loading_dots.json',
+                                            width: 100.w,
+                                            height: 100.h,
+                                            fit: BoxFit.cover,
+                                          ),
+                                        );
+                                      },
+                                      errorBuilder: (context, error, stackTrace) {
+                                        return Center(
+                                          child: Icon(
+                                            Icons.error_outline,
+                                            color: Colors.grey,
+                                            size: 48.sp,
+                                          ),
+                                        );
+                                      },
+                                    ),
                                   ),
                                 ),
                               );

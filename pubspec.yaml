@@ -58,6 +58,7 @@ dependencies:
   country_picker: ^2.0.26
   cached_network_image: ^3.4.1
   dio: ^5.9.0
+  gal: ^2.3.0
 
 dev_dependencies:
   flutter_test:
