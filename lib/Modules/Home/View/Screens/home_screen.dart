@@ -200,8 +200,9 @@ class _HomeScreenState extends State<HomeScreen> {
             }),
             // Collections Section  
             Obx(() {
-              if (!controller.hasCollections && !controller.isLoading.value) {
-                return SizedBox.shrink(); // Don't show collections section if no collections
+              // Don't show collections section during loading or if no collections
+              if (controller.isLoading.value || !controller.hasCollections) {
+                return SizedBox.shrink();
               }
 
               return Padding(

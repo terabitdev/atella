@@ -1,4 +1,3 @@
-import 'package:atella/Modules/TechPack/Views/Screens/edit_project_screen.dart';
 import 'package:atella/Modules/TechPack/Views/Screens/recommended_manufacture_screen.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
@@ -167,7 +166,7 @@ class TechPackReadyScreen extends StatelessWidget {
                     style: tprtTextTextStyle28700,
                   ),
                   InkWell(
-                    onTap: () => Get.to(EditProjectScreen()),
+                    onTap: () => Get.toNamed('/tech_pack_details_screen'),
                     child: Image.asset(
                       'assets/images/edit.png',
                       width: 36.w,

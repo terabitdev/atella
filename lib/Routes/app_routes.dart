@@ -20,7 +20,6 @@ class AppRoutes {
   static const String techPackReadyScreen = '/tech_pack_ready_screen';
   static const String recommendedTechPack = '/recommended_tech_pack';
   static const String viewprofileTechPack = '/view_profile_tech_pack';
-  static const String editProjectScreen = '/edit_project_screen';
   static const String subscribe = '/subscribe';
   static const String myDesigns = '/my_designs';
   static const String collections = '/collections';
