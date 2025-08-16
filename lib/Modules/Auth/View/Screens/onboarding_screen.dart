@@ -48,7 +48,7 @@ class OnboardingScreen extends StatelessWidget {
                   RoundButton(
                     title: "Join Now",
                     onTap: () {
-                      Get.toNamed('/login');
+                      Get.toNamed('/signup');
                     },
                     color: AppColors.buttonColor,
                     isloading: false,
