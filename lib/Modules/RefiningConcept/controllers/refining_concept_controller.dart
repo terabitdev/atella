@@ -425,7 +425,7 @@ class RefiningConceptController extends GetxController {
         'Refining Complete!',
         'Your concept has been refined successfully.',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF8B5FE6),
+        backgroundColor: Colors.black,
         colorText: Colors.white,
       );
     }

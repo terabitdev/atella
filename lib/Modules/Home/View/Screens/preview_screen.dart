@@ -283,6 +283,7 @@ void showPopup() {
           backgroundColor: Colors.green,
           colorText: Colors.white,
           duration: Duration(seconds: 4),
+          snackPosition: SnackPosition.TOP,
         );
       } else if (downloadedFiles.isNotEmpty && failedDownloads.isNotEmpty) {
         // Partial success
@@ -292,6 +293,7 @@ void showPopup() {
           backgroundColor: Colors.orange,
           colorText: Colors.white,
           duration: Duration(seconds: 4),
+          snackPosition: SnackPosition.TOP,
         );
       } else {
         // All failed
@@ -301,6 +303,7 @@ void showPopup() {
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: Duration(seconds: 3),
+          snackPosition: SnackPosition.TOP,
         );
       }
 
@@ -313,6 +316,7 @@ void showPopup() {
         'Download failed: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
       );
     }
   }
