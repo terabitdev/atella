@@ -4,7 +4,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../Widgets/app_header.dart';
 import '../../../../Widgets/custom_roundbutton.dart';
-import '../../../Auth/View/Widgets/auth_textfield.dart';
+import '../../../auth/View/Widgets/auth_textfield.dart';
 import '../../Controllers/profile_controller.dart';
 
 class ProfileScreen extends StatefulWidget {

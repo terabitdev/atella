@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
+import 'package:atella/modules/auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Widgets/app_header.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:flutter/material.dart';

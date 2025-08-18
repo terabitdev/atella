@@ -21,6 +21,11 @@ class AuthService {
           'name': name,
           'email': email,
           'createdAt': FieldValue.serverTimestamp(),
+          'subscriptionPlan': 'FREE',
+          'subscriptionStatus': 'active',
+          'stripeCustomerId': null,
+          'currentSubscriptionId': null,
+          'techpacksUsedThisMonth': 0,
         });
         return null; // Success
       } else {
@@ -73,7 +78,29 @@ class AuthService {
         );
 
         // Sign in with the credential
-        await _auth.signInWithCredential(credential);
+        UserCredential userCredential = await _auth.signInWithCredential(credential);
+        User? user = userCredential.user;
+        
+        if (user != null) {
+          // Check if user already exists
+          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+          
+          if (!userDoc.exists) {
+            // Create new user document with subscription info
+            await _firestore.collection('users').doc(user.uid).set({
+              'uid': user.uid,
+              'name': user.displayName ?? '',
+              'email': user.email ?? '',
+              'createdAt': FieldValue.serverTimestamp(),
+              'subscriptionPlan': 'FREE',
+              'subscriptionStatus': 'active',
+              'stripeCustomerId': null,
+              'currentSubscriptionId': null,
+              'techpacksUsedThisMonth': 0,
+            });
+          }
+        }
+        
         return null; // Success
       } else {
         return 'Failed to get Google authentication tokens';

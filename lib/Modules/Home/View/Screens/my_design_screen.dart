@@ -1,6 +1,6 @@
-import 'package:atella/Modules/Home/Controllers/home_controller.dart';
-import 'package:atella/Modules/Home/View/Widgets/search_widget.dart';
-import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
+import 'package:atella/modules/home/Controllers/home_controller.dart';
+import 'package:atella/modules/home/View/Widgets/search_widget.dart';
+import 'package:atella/modules/home/View/Screens/preview_screen.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/Widgets/design_grid_item.dart';
 import 'package:atella/Widgets/empty_state_widget.dart';

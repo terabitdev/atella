@@ -1,0 +1,11 @@
+import 'package:atella/modules/refining_concept/controllers/refining_concept_controller.dart';
+import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:get/get.dart';
+
+class RefiningConceptBinding extends Bindings {
+  @override
+  void dependencies() {
+     Get.put<DesignDataService>(DesignDataService(), permanent: true);
+    Get.lazyPut<RefiningConceptController>(() => RefiningConceptController());
+  }
+}

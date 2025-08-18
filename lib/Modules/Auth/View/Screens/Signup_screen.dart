@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
+import 'package:atella/modules/auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../widgets/auth_header.dart';
-import 'package:atella/Modules/Auth/Controllers/signup_controller.dart';
+import 'package:atella/modules/auth/Controllers/signup_controller.dart';
 
 class SignUpscreen extends GetView<SignupController> {
 

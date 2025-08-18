@@ -1,1 +1,54 @@
-{"flutter":{"platforms":{"android":{"default":{"projectId":"atelia-123","appId":"1:1097482533368:android:181994ea31245a91dafe0d","fileOutput":"android/app/google-services.json"}},"dart":{"lib/firebase_options.dart":{"projectId":"atelia-123","configurations":{"android":"1:1097482533368:android:181994ea31245a91dafe0d","ios":"1:1097482533368:ios:d13f0e3e3a40273adafe0d","macos":"1:1097482533368:ios:d13f0e3e3a40273adafe0d","web":"1:1097482533368:web:fbaee85d14347023dafe0d","windows":"1:1097482533368:web:21651127b6c63624dafe0d"}}},"ios":{"default":{"projectId":"atelia-123","appId":"1:1097482533368:ios:d13f0e3e3a40273adafe0d","uploadDebugSymbols":false,"fileOutput":"ios/Runner/GoogleService-Info.plist"}},"macos":{"default":{"projectId":"atelia-123","appId":"1:1097482533368:ios:d13f0e3e3a40273adafe0d","uploadDebugSymbols":false,"fileOutput":"macos/Runner/GoogleService-Info.plist"}}}}}
+{
+  "functions": [
+    {
+      "source": "functions",
+      "codebase": "default",
+      "ignore": [
+        "node_modules",
+        ".git",
+        "firebase-debug.log",
+        "firebase-debug.*.log",
+        "*.local"
+      ]
+    }
+  ],
+  "flutter": {
+    "platforms": {
+      "android": {
+        "default": {
+          "projectId": "atelia-123",
+          "appId": "1:1097482533368:android:181994ea31245a91dafe0d",
+          "fileOutput": "android/app/google-services.json"
+        }
+      },
+      "dart": {
+        "lib/firebase_options.dart": {
+          "projectId": "atelia-123",
+          "configurations": {
+            "android": "1:1097482533368:android:181994ea31245a91dafe0d",
+            "ios": "1:1097482533368:ios:d13f0e3e3a40273adafe0d",
+            "macos": "1:1097482533368:ios:d13f0e3e3a40273adafe0d",
+            "web": "1:1097482533368:web:fbaee85d14347023dafe0d",
+            "windows": "1:1097482533368:web:21651127b6c63624dafe0d"
+          }
+        }
+      },
+      "ios": {
+        "default": {
+          "projectId": "atelia-123",
+          "appId": "1:1097482533368:ios:d13f0e3e3a40273adafe0d",
+          "uploadDebugSymbols": false,
+          "fileOutput": "ios/Runner/GoogleService-Info.plist"
+        }
+      },
+      "macos": {
+        "default": {
+          "projectId": "atelia-123",
+          "appId": "1:1097482533368:ios:d13f0e3e3a40273adafe0d",
+          "uploadDebugSymbols": false,
+          "fileOutput": "macos/Runner/GoogleService-Info.plist"
+        }
+      }
+    }
+  }
+}

@@ -10,7 +10,7 @@ import '../../../../Widgets/empty_state_widget.dart';
 import '../../../../Widgets/design_grid_item.dart';
 import '../Widgets/search_widget.dart';
 import '../../Controllers/home_controller.dart';
-import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
+import 'package:atella/modules/home/View/Screens/preview_screen.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});

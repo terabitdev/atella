@@ -1,5 +1,5 @@
-import 'package:atella/Modules/Auth/Controllers/login_controller.dart';
-import 'package:atella/Modules/Auth/Controllers/signup_controller.dart';
+import 'package:atella/modules/auth/Controllers/login_controller.dart';
+import 'package:atella/modules/auth/Controllers/signup_controller.dart';
 import 'package:get/get.dart';
 
 class LoginBinding extends Bindings {

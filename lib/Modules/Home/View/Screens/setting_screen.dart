@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
+import 'package:atella/modules/home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';

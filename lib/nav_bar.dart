@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Home/Controllers/navbar_controller.dart';
+import 'package:atella/modules/home/Controllers/navbar_controller.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';

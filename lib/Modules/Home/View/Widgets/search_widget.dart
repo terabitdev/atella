@@ -1,6 +1,6 @@
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
-import 'package:atella/Modules/Home/Controllers/home_controller.dart';
+import 'package:atella/modules/home/Controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

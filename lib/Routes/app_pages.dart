@@ -1,36 +1,38 @@
-import 'package:atella/Modules/Auth/Bindings/auth_bindings.dart';
-import 'package:atella/Modules/Auth/View/Screens/Signup_screen.dart';
-import 'package:atella/Modules/Auth/View/Screens/login_screen.dart';
-import 'package:atella/Modules/Auth/View/Screens/onboarding_screen.dart';
-import 'package:atella/Modules/Auth/View/Screens/splash_screen.dart';
-import 'package:atella/Modules/Auth/View/Screens/verification_screen.dart';
-import 'package:atella/Modules/CreativeBrief/Bindings/creative_brief_binding.dart';
-import 'package:atella/Modules/CreativeBrief/Views/Screens/creative_brief_Screen.dart';
-import 'package:atella/Modules/CreativeBrief/Views/Screens/gathering_brief_screen.dart';
-import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_onboard.dart';
-import 'package:atella/Modules/FinalDetails/Views/Screens/final_detail_screen.dart';
-import 'package:atella/Modules/FinalDetails/bindings/final_detail_binding.dart';
-import 'package:atella/Modules/Home/View/Screens/create_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/favourite_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/my_collection_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/my_design_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
-import 'package:atella/Modules/RefiningConcept/Views/Screens/refine_concept_screen.dart';
-import 'package:atella/Modules/RefiningConcept/Views/Screens/refining_brief_screen.dart';
-import 'package:atella/Modules/RefiningConcept/bindings/refining_concept_binding.dart';
-import 'package:atella/Modules/TechPack/Views/Screens/generate_tech_pack_screen.dart';
-import 'package:atella/Modules/TechPack/Views/Screens/recommended_manufacture_screen.dart';
-import 'package:atella/Modules/TechPack/Views/Screens/tech_pack_details_screen.dart';
-import 'package:atella/Modules/TechPack/Views/Screens/tech_pack_ready_screen.dart';
-import 'package:atella/Modules/TechPack/Views/Screens/view_profile_tech_pack_screen.dart';
 import 'package:atella/Routes/app_routes.dart';
+import 'package:atella/modules/auth/bindings/auth_bindings.dart';
+import 'package:atella/modules/auth/view/screens/signup_screen.dart';
+import 'package:atella/modules/auth/view/screens/login_screen.dart';
+import 'package:atella/modules/auth/view/screens/onboarding_screen.dart';
+import 'package:atella/modules/auth/view/screens/splash_screen.dart';
+import 'package:atella/modules/auth/view/screens/verification_screen.dart';
+import 'package:atella/modules/creative_brief/bindings/creative_brief_binding.dart';
+import 'package:atella/modules/creative_brief/views/screens/creative_brief_screen.dart';
+import 'package:atella/modules/creative_brief/views/screens/gathering_brief_screen.dart';
+import 'package:atella/modules/final_details/views/screens/final_detail_onboard.dart';
+import 'package:atella/modules/final_details/views/screens/final_detail_screen.dart';
+import 'package:atella/modules/final_details/bindings/final_detail_binding.dart';
+import 'package:atella/modules/home/view/screens/create_screen.dart';
+import 'package:atella/modules/home/view/screens/favourite_screen.dart';
+import 'package:atella/modules/home/view/screens/home_screen.dart';
+import 'package:atella/modules/home/view/screens/my_collection_screen.dart';
+import 'package:atella/modules/home/view/screens/my_design_screen.dart';
+import 'package:atella/modules/home/view/screens/profile_screen.dart';
+import 'package:atella/modules/home/view/screens/subscribe_free_plan.dart';
+import 'package:atella/modules/home/view/screens/subscribe_pro_plan.dart';
+import 'package:atella/modules/home/view/screens/subscribe_screen.dart';
+import 'package:atella/modules/home/view/screens/subscribe_starter_plan.dart';
+import 'package:atella/modules/home/bindings/subscribe_binding.dart';
+import 'package:atella/modules/refining_concept/views/screens/refine_concept_screen.dart';
+import 'package:atella/modules/refining_concept/views/screens/refining_brief_screen.dart';
+import 'package:atella/modules/refining_concept/bindings/refining_concept_binding.dart';
+import 'package:atella/modules/tech_pack/views/screens/generate_tech_pack_screen.dart';
+import 'package:atella/modules/tech_pack/views/screens/recommended_manufacture_screen.dart';
+import 'package:atella/modules/tech_pack/views/screens/tech_pack_details_screen.dart';
+import 'package:atella/modules/tech_pack/views/screens/tech_pack_ready_screen.dart';
+import 'package:atella/modules/tech_pack/views/screens/view_profile_tech_pack_screen.dart';
 import 'package:atella/nav_bar.dart';
 import 'package:get/get.dart';
+
 
 class AppPages {
   static const initial = AppRoutes.splash;
@@ -104,6 +106,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.subscribe,
       page: () => const SubscribeScreen(),
+      binding: SubscribeBinding(),
     ),
     GetPage(
       name: AppRoutes.myDesigns,
