@@ -17,7 +17,7 @@ plugins {
 
 android {
     namespace = "com.example.atella"
-    compileSdk = 35
+    compileSdk = 36
     // ndkVersion = flutter.ndkVersion as String
 
     compileOptions {
@@ -26,7 +26,7 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = JavaVersion.VERSION_11.toString()
+        jvmTarget = "11"
     }
 
     defaultConfig {
@@ -34,7 +34,7 @@ android {
         applicationId = "com.example.atella"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
-        minSdkVersion flutter.minSdkVersion
+        minSdk = flutter.minSdkVersion
         targetSdk = flutter.targetSdkVersion
         versionCode = flutter.versionCode
         versionName = flutter.versionName
