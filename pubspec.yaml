@@ -44,7 +44,6 @@ dependencies:
   firebase_core: ^3.15.2
   firebase_storage: ^12.4.10
   cloud_firestore: ^5.6.12
-  device_preview_plus: ^2.4.3
   image_picker: ^1.0.7
   permission_handler: ^11.3.1
   lottie: ^3.3.1
@@ -57,8 +56,9 @@ dependencies:
   url_launcher: ^6.2.5
   country_picker: ^2.0.26
   cached_network_image: ^3.4.1
-  dio: ^5.9.0
   gal: ^2.3.0
+  flutter_stripe: ^11.5.0
+
 
 dev_dependencies:
   flutter_test:
