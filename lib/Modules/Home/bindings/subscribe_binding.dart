@@ -1,6 +1,6 @@
 // subscribe_binding.dart
 import 'package:get/get.dart';
-import 'package:atella/Modules/Home/controllers/subscribe_controller.dart';
+import 'package:atella/modules/home/Controllers/subscribe_controller.dart';
 
 class SubscribeBinding extends Bindings {
   @override

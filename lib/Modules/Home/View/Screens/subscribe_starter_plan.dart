@@ -103,8 +103,6 @@ class SubscribeStarterPlan extends StatelessWidget {
                             // Features List
                             _buildFeatureItem("Up to 3 techpacks per month"),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("Unlimited 3D visualizations"),
-                            SizedBox(height: 16.h),
                             _buildFeatureItem("Custom PDF export (includes logo)"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Access to a curated list of manufacturers"),

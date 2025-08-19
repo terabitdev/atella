@@ -80,25 +80,6 @@ class SubscribeFreePlan extends StatelessWidget {
                                       ],
                                     ),
                                   ),
-                                  SizedBox(width: 10.w),
-                                  Container(
-                                    padding: EdgeInsets.symmetric(
-                                      horizontal: 10.w,
-                                      vertical: 4.h,
-                                    ),
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      borderRadius: BorderRadius.circular(20.r),
-                                    ),
-                                    child: Text(
-                                      "Best Value",
-                                      style: TextStyle(
-                                        color: Colors.black,
-                                        fontSize: 10.sp,
-                                        fontWeight: FontWeight.w500,
-                                      ),
-                                    ),
-                                  ),
                                 ],
                               ),
                             ),
@@ -124,8 +105,6 @@ class SubscribeFreePlan extends StatelessWidget {
                             // Features List
                             _buildFeatureItem("Unlimited AI-generated designs"),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("3D visualization included"),
-                            SizedBox(height: 16.h),
                             _buildFeatureItem("No techpack generation"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("No PDF export"),
@@ -140,7 +119,7 @@ class SubscribeFreePlan extends StatelessWidget {
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       RoundButton(title: "Start 30-day free trial", onTap: () async {
+                       RoundButton(title: "Start", onTap: () async {
                          await PaymentService()
                              .makePayment(context);
                        }, color: Colors.black, isloading: false),

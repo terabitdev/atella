@@ -3,14 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controllers/subscribe_controller.dart';
-import '../../../../models/subscription_plan.dart';
 
-class SubscribeScreen extends GetView<SubscribeController> {
+class SubscribeScreen extends StatelessWidget {
   const SubscribeScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -50,41 +48,51 @@ class SubscribeScreen extends GetView<SubscribeController> {
                     crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       SizedBox(height: 16.h),
-                      Text("Choose Your Plan", style: ssTitleTextTextStyle327002),
+                      Text(
+                        "Choose Your Plan",
+                        style: TextStyle(
+                          fontSize: 24.sp,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
                       SizedBox(height: 12.h),
                       Text(
                         'Start for free. Upgrade anytime.',
-                        style: ssTitleTextTextStyle124003,
-                      ),
-                      SizedBox(height: 20.h),
-                      Image.asset('assets/images/subscribe.png', height: 180.h),
-                      SizedBox(height: 20.h),
-                    Column(
-                          children: [
-                            _buildPlanCard(
-                              plan: SubscriptionPlan.freePlan,
-                              isCurrentPlan: controller.currentSubscription.value?.subscriptionPlan == 'FREE',
-                              onTap: () => Get.toNamed("/subscribe_free"),
-                              showBadge: true,
-                              badgeText: "Current Plan",
-                            ),
-                            SizedBox(height: 12.h),
-                            _buildPlanCard(
-                              plan: SubscriptionPlan.starterPlan,
-                              isCurrentPlan: controller.currentSubscription.value?.subscriptionPlan == 'STARTER',
-                              onTap: () => controller.subscribeToPlan(SubscriptionPlan.starterPlan),
-                            ),
-                            SizedBox(height:12.h),
-                            _buildPlanCard(
-                              plan: SubscriptionPlan.proPlan,
-                              isCurrentPlan: controller.currentSubscription.value?.subscriptionPlan == 'PRO',
-                              onTap: () => controller.subscribeToPlan(SubscriptionPlan.proPlan),
-                              showBadge: true,
-                              badgeText: "Most Popular",
-                            ),
-                          ],
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: Colors.grey[600],
                         ),
-                      SizedBox(height: 12.h),
+                      ),
+                      SizedBox(height: 40.h),
+                      Image.asset('assets/images/subscribe.png', height: 200.h),
+                      SizedBox(height: 40.h),
+                      Column(
+                        children: [
+                          _buildSimplePlanCard(
+                            title: "Free",
+                            subtitle: "Plan",
+                            onTap: () => Get.toNamed("/subscribe_free"),
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildSimplePlanCard(
+                            title: "Starter",
+                            subtitle: "€9.99/Month",
+                            onTap: (){
+                              Get.toNamed("/subscribe_starter");
+                            },
+                          ),
+                          SizedBox(height: 16.h),
+                          _buildSimplePlanCard(
+                            title: "Pro",
+                            subtitle: "€24.99/Month",
+                            onTap: (){
+                              Get.toNamed("/subscribe_pro");
+                            },
+                          ),
+                        ],
+                      ),
+                      SizedBox(height: 40.h),
                     ],
                   ),
                 ),
@@ -96,107 +104,44 @@ class SubscribeScreen extends GetView<SubscribeController> {
     );
   }
 
-  Widget _buildPlanCard({
-    required SubscriptionPlan plan,
-    required bool isCurrentPlan,
+  Widget _buildSimplePlanCard({
+    required String title,
+    required String subtitle,
     required VoidCallback onTap,
-    bool showBadge = false,
-    String? badgeText,
   }) {
-    return Obx(() => GestureDetector(
-      onTap: controller.isLoading.value ? null : onTap,
+    return GestureDetector(
+      onTap: onTap,
       child: Container(
         width: double.infinity,
-        padding: EdgeInsets.all(16.h),
+        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
         decoration: BoxDecoration(
-          color: isCurrentPlan ? Colors.blue.shade50 : Colors.grey.shade100,
+          color: Color.fromRGBO(236, 239, 246, 1),
           borderRadius: BorderRadius.circular(12.r),
-          border: isCurrentPlan
-              ? Border.all(color: Colors.blue.shade300, width: 2)
-              : null,
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.start,
-                    children: [
-                      Text(
-                        plan.displayName,
-                        style: ssTitleTextTextStyle186004,
-                      ),
-                      SizedBox(height: 4.h),
-                      Text(
-                        plan.price == 0
-                            ? 'Free'
-                            : '€${plan.price.toStringAsFixed(2)}/Month',
-                        style: TextStyle(
-                          fontSize: 18.sp,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black87,
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
-                if (showBadge && badgeText != null)
-                  Container(
-                    padding: EdgeInsets.symmetric(
-                      horizontal: 10.w,
-                      vertical: 4.h,
-                    ),
-                    decoration: BoxDecoration(
-                      color: isCurrentPlan ? Colors.blue : Colors.black,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      badgeText,
-                      style: TextStyle(
-                        color: Colors.white,
-                        fontSize: 10.sp,
-                      ),
-                    ),
-                  ),
-              ],
+            Text(
+              title,
+              style: TextStyle(
+                fontSize: 18.sp,
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
             ),
-            SizedBox(height: 12.h),
-            ...plan.features.map((feature) => Padding(
-              padding: EdgeInsets.only(bottom: 6.h),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Icon(
-                    feature.contains('No') ? Icons.close : Icons.check,
-                    size: 16.sp,
-                    color: feature.contains('No') ? Colors.red : Colors.green,
-                  ),
-                  SizedBox(width: 8.w),
-                  Expanded(
-                    child: Text(
-                      feature,
-                      style: TextStyle(
-                        fontSize: 13.sp,
-                        color: Colors.black87,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            )).toList(),
-            if (controller.isLoading.value)
-              Center(
-                child: Padding(
-                  padding: EdgeInsets.only(top: 8.h),
-                  child: CircularProgressIndicator(strokeWidth: 2),
+            if (subtitle.isNotEmpty) ...[
+              SizedBox(height: 4.h),
+              Text(
+                subtitle,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey[600],
                 ),
               ),
+            ],
           ],
         ),
       ),
-    ));
+    );
   }
 }
