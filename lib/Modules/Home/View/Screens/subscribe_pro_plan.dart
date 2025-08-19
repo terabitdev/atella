@@ -1,8 +1,8 @@
+import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import '../../../../models/subscription_plan.dart';
 import '../../Controllers/subscribe_controller.dart';
 
 class SubscribeProPlan extends StatefulWidget {

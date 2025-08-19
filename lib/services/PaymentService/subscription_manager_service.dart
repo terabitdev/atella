@@ -1,4 +1,4 @@
-import '../services/PaymentService/stripe_subscription_service.dart';
+import 'stripe_subscription_service.dart';
 
 /// Service to manage subscription-related tasks and periodic checks
 class SubscriptionManagerService {

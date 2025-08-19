@@ -1,9 +1,9 @@
+import 'package:atella/Data/Models/subscription_plan.dart';
+import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
-import '../../../models/subscription_plan.dart';
-import '../../../models/user_subscription.dart';
-import '../../../services/subscription_callback_service.dart';
+import '../../../services/PaymentService/subscription_callback_service.dart';
 
 class SubscribeController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();

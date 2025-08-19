@@ -1,6 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:atella/Data/Models/tech_pack_model.dart';
 
 class EditDataService {
   static final EditDataService _instance = EditDataService._internal();
@@ -74,7 +73,7 @@ class EditDataService {
 
       if (!designsDoc.exists) return null;
 
-      final designsData = designsDoc.data() as Map<String, dynamic>?;
+      final designsData = designsDoc.data();
       final designs = designsData?['designs'] as List<dynamic>? ?? [];
 
       // Find the design with matching URL

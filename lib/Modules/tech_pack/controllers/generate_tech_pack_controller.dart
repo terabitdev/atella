@@ -8,7 +8,7 @@ import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/designservices/designs_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
-import 'package:atella/services/subscription_callback_service.dart';
+import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;

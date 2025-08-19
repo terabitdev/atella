@@ -1,3 +1,5 @@
+import 'package:atella/Data/Models/subscription_plan.dart';
+import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -5,8 +7,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import '../../models/subscription_plan.dart';
-import '../../models/user_subscription.dart';
 
 class StripeSubscriptionService {
   static final StripeSubscriptionService _instance = StripeSubscriptionService._internal();

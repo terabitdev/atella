@@ -8,7 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
-import 'services/subscription_manager_service.dart';
+import 'services/PaymentService/subscription_manager_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();

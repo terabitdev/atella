@@ -30,7 +30,7 @@ class CollectionsService {
         return ['SUMMER COLLECTION', 'WINTER COLLECTION'];
       }
 
-      final data = userDoc.data() as Map<String, dynamic>?;
+      final data = userDoc.data();
       final collections = List<String>.from(data?['collections'] ?? []);
       
       // Always include default collections

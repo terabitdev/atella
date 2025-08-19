@@ -335,7 +335,7 @@ pdf.addPage(
         return null;
       }
 
-      final data = userDesignDoc.data() as Map<String, dynamic>?;
+      final data = userDesignDoc.data();
       final designs = data?['designs'] as List<dynamic>? ?? [];
       
       print('Found ${designs.length} designs');

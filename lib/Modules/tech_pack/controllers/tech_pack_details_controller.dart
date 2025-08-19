@@ -7,7 +7,7 @@ import '../../../Data/api/openai_service.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
-import '../../../services/subscription_callback_service.dart';
+import '../../../services/PaymentService/subscription_callback_service.dart';
 
 class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
