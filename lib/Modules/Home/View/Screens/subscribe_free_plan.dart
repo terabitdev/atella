@@ -4,8 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-import '../../../../services/PaymentService/PaymentService.dart';
-
 class SubscribeFreePlan extends StatelessWidget {
   const SubscribeFreePlan({super.key});
 
@@ -119,9 +117,7 @@ class SubscribeFreePlan extends StatelessWidget {
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       RoundButton(title: "Start", onTap: () async {
-                         await PaymentService()
-                             .makePayment(context);
+                       RoundButton(title: "Start", onTap: (){
                        }, color: Colors.black, isloading: false),
                         SizedBox(height: 16.h),
                         RichText(

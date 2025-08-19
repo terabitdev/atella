@@ -3,9 +3,18 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../../../models/subscription_plan.dart';
+import '../../Controllers/subscribe_controller.dart';
 
-class SubscribeProPlan extends StatelessWidget {
+class SubscribeProPlan extends StatefulWidget {
   const SubscribeProPlan({super.key});
+
+  @override
+  State<SubscribeProPlan> createState() => _SubscribeProPlanState();
+}
+
+class _SubscribeProPlanState extends State<SubscribeProPlan> {
+  final SubscribeController controller = Get.find<SubscribeController>();
 
   @override
   Widget build(BuildContext context) {
@@ -101,11 +110,15 @@ class SubscribeProPlan extends StatelessWidget {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Up to 3 techpacks per month"),
+                            _buildFeatureItem("Unlimited AI-generated designs"),
+                            SizedBox(height: 16.h),
+                            _buildFeatureItem("Unlimited techpacks"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Custom PDF export (includes logo)"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Access to a curated list of manufacturers"),
+                            SizedBox(height: 16.h),
+                            _buildFeatureItem("Priority support"),
                             SizedBox(height: 40.h),
                           ],
                         ),
@@ -115,7 +128,49 @@ class SubscribeProPlan extends StatelessWidget {
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       RoundButton(title: "Start 30-day free trial", onTap: () {}, color: Colors.black, isloading: false),
+                       Obx(() {
+                          bool hasActiveSubscription = controller.currentSubscription.value != null && 
+                                                      controller.currentSubscription.value!.subscriptionPlan != 'FREE';
+                          bool isCurrentPlan = controller.currentSubscription.value?.subscriptionPlan == 'PRO';
+                          bool isDisabled = controller.isLoading.value || hasActiveSubscription;
+                          
+                          return InkWell(
+                            onTap: isDisabled ? null : () {
+                              controller.subscribeToPlan(SubscriptionPlan.proPlan);
+                            },
+                            child: Container(
+                              height: 50.h,
+                              width: 375.w,
+                              decoration: BoxDecoration(
+                                color: isDisabled ? Colors.grey[400] : Colors.black,
+                                borderRadius: BorderRadius.circular(10.r),
+                              ),
+                              child: Center(
+                                child: controller.isLoading.value
+                                    ? SizedBox(
+                                        height: 20.h,
+                                        width: 20.w,
+                                        child: CircularProgressIndicator(
+                                          color: Colors.white,
+                                          strokeWidth: 2,
+                                        ),
+                                      )
+                                    : Text(
+                                        isCurrentPlan 
+                                            ? "Current Plan" 
+                                            : hasActiveSubscription 
+                                                ? "Cancel subscription first"
+                                                : "Start",
+                                        style: TextStyle(
+                                          color: Colors.white,
+                                          fontSize: 16.sp,
+                                          fontWeight: FontWeight.w600,
+                                        ),
+                                      ),
+                              ),
+                            ),
+                          );
+                        }),
                         SizedBox(height: 16.h),
                         RichText(
                           textAlign: TextAlign.center,

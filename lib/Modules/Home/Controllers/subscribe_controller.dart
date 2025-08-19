@@ -1,5 +1,6 @@
+import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import '../../../services/stripe_subscription_service.dart';
+import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../models/subscription_plan.dart';
 import '../../../models/user_subscription.dart';
 
@@ -9,6 +10,7 @@ class SubscribeController extends GetxController {
   RxString selectedPlan = 'FREE'.obs;
   Rx<UserSubscription?> currentSubscription = Rx<UserSubscription?>(null);
   RxBool isLoading = false.obs;
+  RxBool isCancellingSubscription = false.obs;
 
   @override
   void onInit() {
@@ -22,6 +24,8 @@ class SubscribeController extends GetxController {
       currentSubscription.value = await _stripeService.getCurrentUserSubscription();
       if (currentSubscription.value != null) {
         selectedPlan.value = currentSubscription.value!.subscriptionPlan;
+      } else {
+        selectedPlan.value = 'FREE';
       }
     } catch (e) {
       Get.snackbar('Error', 'Failed to load subscription details');
@@ -30,8 +34,25 @@ class SubscribeController extends GetxController {
     }
   }
 
-  void selectPlan(String plan) {
-    selectedPlan.value = plan;
+  @override
+  void onReady() {
+    super.onReady();
+    // Reset selected plan to current subscription when returning to screen
+    ever(currentSubscription, (subscription) {
+      if (subscription != null) {
+        selectedPlan.value = subscription.subscriptionPlan;
+      } else {
+        selectedPlan.value = 'FREE';
+      }
+    });
+  }
+
+  void resetToCurrentPlan() {
+    if (currentSubscription.value != null) {
+      selectedPlan.value = currentSubscription.value!.subscriptionPlan;
+    } else {
+      selectedPlan.value = 'FREE';
+    }
   }
 
   Future<void> subscribeToPlan(SubscriptionPlan plan) async {
@@ -41,14 +62,22 @@ class SubscribeController extends GetxController {
       return;
     }
 
+    print('Setting loading to true for plan: ${plan.name}');
     isLoading.value = true;
+    
     try {
+      // Add a small delay to ensure loading state is visible
+      await Future.delayed(Duration(milliseconds: 500));
+      
+      print('Calling stripe service for plan: ${plan.name}');
       bool success = await _stripeService.createSubscriptionPaymentSheet(plan);
+      
       if (success) {
         Get.snackbar(
           'Success', 
           'Successfully subscribed to ${plan.displayName} plan',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 3),
         );
         await loadCurrentSubscription();
         Get.back(); // Go back to previous screen
@@ -56,46 +85,63 @@ class SubscribeController extends GetxController {
         Get.snackbar(
           'Error', 
           'Failed to complete subscription',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
+      print('Error in subscribeToPlan: $e');
       Get.snackbar(
         'Error', 
         'An error occurred: $e',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
       );
     } finally {
+      print('Setting loading to false');
       isLoading.value = false;
     }
   }
 
   Future<void> cancelSubscription() async {
-    isLoading.value = true;
+    isCancellingSubscription.value = true;
     try {
       bool success = await _stripeService.cancelSubscription();
       if (success) {
         Get.snackbar(
           'Success', 
           'Subscription cancelled successfully',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
         );
         await loadCurrentSubscription();
       } else {
         Get.snackbar(
           'Error', 
           'Failed to cancel subscription',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.snackbar(
         'Error', 
         'An error occurred: $e',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 3),
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
       );
     } finally {
-      isLoading.value = false;
+      isCancellingSubscription.value = false;
     }
   }
 
