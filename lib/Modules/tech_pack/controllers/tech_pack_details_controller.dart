@@ -1,3 +1,4 @@
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -5,10 +6,14 @@ import 'package:permission_handler/permission_handler.dart';
 import '../../../Data/api/openai_service.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
+import '../../../services/PaymentService/stripe_subscription_service.dart';
+import '../../../services/subscription_callback_service.dart';
 
 class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
-  
+  final StripeSubscriptionService _subscriptionService =
+      StripeSubscriptionService();
+
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
@@ -75,6 +80,13 @@ class TechPackDetailsController extends GetxController {
     _initializeWithArguments();
   }
 
+  @override
+  void onReady() {
+    super.onReady();
+    // Clear any pending callbacks to prevent disposed controller issues
+    SubscriptionCallbackService().clearCallback();
+  }
+
   void _initializeWithArguments() {
     // Get arguments passed from generate tech pack screen
     final arguments = Get.arguments as Map<String, dynamic>?;
@@ -82,7 +94,7 @@ class TechPackDetailsController extends GetxController {
       selectedDesignImagePath.value = arguments['selectedDesignUrl'] ?? '';
       selectedDesignPrompt.value = arguments['designPrompt'] ?? '';
       designData = arguments['designData'] ?? {};
-      
+
       // Check for edit mode
       final isEditMode = arguments['editMode'] == true;
       if (isEditMode) {
@@ -91,33 +103,43 @@ class TechPackDetailsController extends GetxController {
         print('Tech Pack Details: Edit mode detected');
         _loadExistingTechPackData();
       }
-      
+
       print('Tech Pack Details initialized with:');
-      print('Design Image: ${selectedDesignImagePath.value.substring(0, 50)}...');
+      final imagePathPreview = selectedDesignImagePath.value.isNotEmpty
+          ? selectedDesignImagePath.value.length > 50
+                ? '${selectedDesignImagePath.value.substring(0, 50)}...'
+                : selectedDesignImagePath.value
+          : 'No image path';
+      print('Design Image: $imagePathPreview');
       print('Design Prompt: ${selectedDesignPrompt.value}');
       print('Design Data: $designData');
       print('Edit Mode: $isEditMode');
     }
   }
-  
+
   Future<void> _loadExistingTechPackData() async {
     if (_editingTechPack == null) return;
 
     try {
       print('Loading existing tech pack data for: ${_editingTechPack!.id}');
-      
+
       // Get complete edit data from Firebase
-      final editData = await _editDataService.getTechPackEditData(_editingTechPack!.id);
-      
+      final editData = await _editDataService.getTechPackEditData(
+        _editingTechPack!.id,
+      );
+
       if (editData != null) {
-        final techPackDetails = editData['techPackDetails'] as Map<String, dynamic>;
+        final techPackDetails =
+            editData['techPackDetails'] as Map<String, dynamic>;
         if (techPackDetails.isNotEmpty) {
-          final parsedDetails = _editDataService.parseTechPackDetailsForEdit(techPackDetails);
+          final parsedDetails = _editDataService.parseTechPackDetailsForEdit(
+            techPackDetails,
+          );
           _populateTechPackFields(parsedDetails);
-          
+
           // Show all blocks in edit mode
           _showAllBlocks();
-          
+
           Get.snackbar(
             'Edit Mode',
             'Loading existing tech pack data...',
@@ -137,55 +159,59 @@ class TechPackDetailsController extends GetxController {
       );
     }
   }
-  
+
   void _populateTechPackFields(Map<String, dynamic> techPackDetails) {
     print('Populating tech pack fields with: $techPackDetails');
-    
+
     // Materials & Fabrics
-    final materials = techPackDetails['materials'] as Map<String, dynamic>? ?? {};
+    final materials =
+        techPackDetails['materials'] as Map<String, dynamic>? ?? {};
     mainFabricController.text = materials['mainFabric'] ?? '';
     secondaryMaterialsController.text = materials['secondaryMaterials'] ?? '';
     fabricPropertiesController.text = materials['fabricProperties'] ?? '';
-    
+
     // Colors
     final colors = techPackDetails['colors'] as Map<String, dynamic>? ?? {};
     primaryColorController.text = colors['primaryColor'] ?? '';
     alternateColorwaysController.text = colors['alternateColorways'] ?? '';
     pantoneController.text = colors['pantone'] ?? '';
-    
+
     // Sizes & Measurements
     final sizes = techPackDetails['sizes'] as Map<String, dynamic>? ?? {};
     sizeRangeController.text = sizes['sizeRange'] ?? '';
     measurementChartController.text = sizes['measurementChart'] ?? '';
     measurementImagePath.value = sizes['measurementImage'] ?? '';
-    
+
     // Technical Details
-    final technical = techPackDetails['technical'] as Map<String, dynamic>? ?? {};
+    final technical =
+        techPackDetails['technical'] as Map<String, dynamic>? ?? {};
     accessoriesController.text = technical['accessories'] ?? '';
     stitchingController.text = technical['stitching'] ?? '';
     decorativeStitchingController.text = technical['decorativeStitching'] ?? '';
-    
+
     // Labeling & Branding
     final labeling = techPackDetails['labeling'] as Map<String, dynamic>? ?? {};
     logoPlacementController.text = labeling['logoPlacement'] ?? '';
     labelsNeededController.text = labeling['labelsNeeded'] ?? '';
     qrCodeController.text = labeling['qrCode'] ?? '';
-    
+
     // Packaging & Shipping
-    final packaging = techPackDetails['packaging'] as Map<String, dynamic>? ?? {};
+    final packaging =
+        techPackDetails['packaging'] as Map<String, dynamic>? ?? {};
     packagingTypeController.text = packaging['packagingType'] ?? '';
     foldingInstructionsController.text = packaging['foldingInstructions'] ?? '';
     insertsController.text = packaging['inserts'] ?? '';
-    
+
     // Production Details
-    final production = techPackDetails['production'] as Map<String, dynamic>? ?? {};
+    final production =
+        techPackDetails['production'] as Map<String, dynamic>? ?? {};
     costPerPieceController.text = production['costPerPiece'] ?? '';
     quantityController.text = production['quantity'] ?? '';
     deliveryDateController.text = production['deliveryDate'] ?? '';
-    
+
     update();
   }
-  
+
   void _showAllBlocks() {
     // In edit mode, show all blocks
     showColorsBlock.value = true;
@@ -199,14 +225,15 @@ class TechPackDetailsController extends GetxController {
   String _extractGarmentType() {
     // Extract garment type from the design prompt and data
     String garmentType = 'garment';
-    
+
     if (designData.isNotEmpty) {
-      final creativeBrief = designData['creativeBrief'] as Map<String, dynamic>?;
+      final creativeBrief =
+          designData['creativeBrief'] as Map<String, dynamic>?;
       if (creativeBrief != null && creativeBrief['garmentType'] != null) {
         garmentType = creativeBrief['garmentType'].toString().toLowerCase();
       }
     }
-    
+
     // Fallback to analyzing the prompt
     if (garmentType == 'garment' && selectedDesignPrompt.value.isNotEmpty) {
       final prompt = selectedDesignPrompt.value.toLowerCase();
@@ -224,7 +251,7 @@ class TechPackDetailsController extends GetxController {
         garmentType = 'hoodie';
       }
     }
-    
+
     return garmentType;
   }
 
@@ -280,168 +307,207 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> generateTechPackImages() async {
-  try {
-    print('=== STARTING DETAILED TECH PACK GENERATION ===');
-    isGeneratingTechPack.value = true;
-    generatedTechPackImages.clear();
+    // Check subscription before generating final techpack (with monthly reset check)
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
+      'techpack',
+    );
 
-    final techPackDetails = _collectTechPackDetails();
-    
-    print('Tech Pack Details: $techPackDetails');
-    print('Design Data: $designData');
-
-    // Try different prompt approaches in order of preference
-    Map<String, String> prompts;
-    String approach = '';
+    if (!canGenerate) {
+      // Show upgrade prompt
+      _showUpgradeDialog();
+      return;
+    }
 
     try {
-      // First attempt: Full detailed prompts with three views
-      approach = 'Detailed Three Views';
-      prompts = await OpenAIService.generateTechPackPrompts(
-        creativeBrief: designData['creativeBrief'] ?? {},
-        refinedConcept: designData['refinedConcept'] ?? {},
-        finalDetails: designData['finalDetails'] ?? {},
-        techPackDetails: techPackDetails,
-        selectedDesignPrompt: selectedDesignPrompt.value,
-      );
-    } catch (e) {
+      print('=== STARTING DETAILED TECH PACK GENERATION ===');
+      isGeneratingTechPack.value = true;
+      generatedTechPackImages.clear();
+
+      final techPackDetails = _collectTechPackDetails();
+
+      print('Tech Pack Details: $techPackDetails');
+      print('Design Data: $designData');
+
+      // Try different prompt approaches in order of preference
+      Map<String, String> prompts;
+      String approach = '';
+
       try {
-        // Second attempt: Advanced detailed with explicit positioning
-        approach = 'Advanced Detailed Layout';
-        print('Trying advanced detailed prompts...');
-        prompts = OpenAIService.getAdvancedDetailedPrompts(techPackDetails, designData['creativeBrief'] ?? {});
-      } catch (e2) {
+        // First attempt: Full detailed prompts with three views
+        approach = 'Detailed Three Views';
+        prompts = await OpenAIService.generateTechPackPrompts(
+          creativeBrief: designData['creativeBrief'] ?? {},
+          refinedConcept: designData['refinedConcept'] ?? {},
+          finalDetails: designData['finalDetails'] ?? {},
+          techPackDetails: techPackDetails,
+          selectedDesignPrompt: selectedDesignPrompt.value,
+        );
+      } catch (e) {
         try {
-          // Third attempt: Detailed single view
-          approach = 'Detailed Single View';
-          print('Trying detailed single view prompts...');
-          prompts = OpenAIService.getDetailedSingleViewPrompts(techPackDetails, designData['creativeBrief'] ?? {});
-        } catch (e3) {
-          // Final fallback: Simplified but detailed
-          approach = 'Simplified Detailed';
-          print('Using simplified detailed prompts...');
-          prompts = OpenAIService.getSimplifiedDetailedPrompts(techPackDetails, designData['creativeBrief'] ?? {});
+          // Second attempt: Advanced detailed with explicit positioning
+          approach = 'Advanced Detailed Layout';
+          print('Trying advanced detailed prompts...');
+          prompts = OpenAIService.getAdvancedDetailedPrompts(
+            techPackDetails,
+            designData['creativeBrief'] ?? {},
+          );
+        } catch (e2) {
+          try {
+            // Third attempt: Detailed single view
+            approach = 'Detailed Single View';
+            print('Trying detailed single view prompts...');
+            prompts = OpenAIService.getDetailedSingleViewPrompts(
+              techPackDetails,
+              designData['creativeBrief'] ?? {},
+            );
+          } catch (e3) {
+            // Final fallback: Simplified but detailed
+            approach = 'Simplified Detailed';
+            print('Using simplified detailed prompts...');
+            prompts = OpenAIService.getSimplifiedDetailedPrompts(
+              techPackDetails,
+              designData['creativeBrief'] ?? {},
+            );
+          }
         }
       }
-    }
-    
-    print('Using approach: $approach');
-    print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
-    print('Technical Prompt: ${prompts['technical_flat_prompt']}');
 
-    // Generate manufacturing layout image
-    print('Generating manufacturing layout image...');
-    List<String> manufacturingImages = [];
-    try {
-      manufacturingImages = await OpenAIService.generateDesignImages(
-        prompt: prompts['manufacturing_prompt'] ?? '',
-        numberOfImages: 1,
-        size: '1024x1024',
+      print('Using approach: $approach');
+      print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
+      print('Technical Prompt: ${prompts['technical_flat_prompt']}');
+
+      // Generate manufacturing layout image
+      print('Generating manufacturing layout image...');
+      List<String> manufacturingImages = [];
+      try {
+        manufacturingImages = await OpenAIService.generateDesignImages(
+          prompt: prompts['manufacturing_prompt'] ?? '',
+          numberOfImages: 1,
+          size: '1024x1024',
+        );
+        print('✅ Manufacturing image generated successfully');
+      } catch (e) {
+        print('❌ Manufacturing image generation failed: $e');
+        throw Exception('Failed to generate manufacturing image');
+      }
+
+      // Generate technical flat drawing with detailed approach
+      print('Generating detailed technical flat drawing...');
+      List<String> technicalImages = [];
+      try {
+        technicalImages = await OpenAIService.generateDesignImages(
+          prompt: prompts['technical_flat_prompt'] ?? '',
+          numberOfImages: 1,
+          size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
+        );
+        print('✅ Technical flat drawing generated successfully');
+      } catch (e) {
+        print('❌ Technical image generation failed, trying fallback: $e');
+
+        // Fallback with even simpler prompt
+        final fallbackPrompt =
+            'Technical flat drawing of garment, front view, black lines on white background. Include measurement labels A, B, C, D and construction details. Complete drawing centered with margins.';
+        technicalImages = await OpenAIService.generateDesignImages(
+          prompt: fallbackPrompt,
+          numberOfImages: 1,
+          size: '1024x1024',
+        );
+      }
+
+      // Add images to the list
+      generatedTechPackImages.addAll(manufacturingImages);
+      generatedTechPackImages.addAll(technicalImages);
+
+      print('=== DETAILED TECH PACK GENERATION COMPLETED ===');
+      print(
+        'Generated ${generatedTechPackImages.length} tech pack images using: $approach',
       );
-      print('✅ Manufacturing image generated successfully');
+
+      // Increment techpack usage for STARTER plan users after successful generation
+      await _subscriptionService.incrementTechpackUsage();
+
+      // Validate and provide feedback
+      if (generatedTechPackImages.length >= 2) {
+        print(
+          '✅ Both manufacturing and detailed technical images generated successfully',
+        );
+        Get.snackbar(
+          'Success',
+          'Detailed tech pack images generated with professional labeling!',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.green,
+          colorText: Colors.white,
+        );
+      } else {
+        print(
+          '⚠️ Warning: Only ${generatedTechPackImages.length} images generated',
+        );
+        Get.snackbar(
+          'Partial Success',
+          'Some tech pack images generated. Check results.',
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.orange,
+          colorText: Colors.white,
+        );
+      }
     } catch (e) {
-      print('❌ Manufacturing image generation failed: $e');
-      throw Exception('Failed to generate manufacturing image');
-    }
+      print('=== TECH PACK GENERATION ERROR ===');
+      print('Error: $e');
 
-    // Generate technical flat drawing with detailed approach
-    print('Generating detailed technical flat drawing...');
-    List<String> technicalImages = [];
-    try {
-      technicalImages = await OpenAIService.generateDesignImages(
-        prompt: prompts['technical_flat_prompt'] ?? '',
-        numberOfImages: 1,
-        size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
-      );
-      print('✅ Technical flat drawing generated successfully');
-    } catch (e) {
-      print('❌ Technical image generation failed, trying fallback: $e');
-      
-      // Fallback with even simpler prompt
-      final fallbackPrompt = 'Technical flat drawing of garment, front view, black lines on white background. Include measurement labels A, B, C, D and construction details. Complete drawing centered with margins.';
-      technicalImages = await OpenAIService.generateDesignImages(
-        prompt: fallbackPrompt,
-        numberOfImages: 1,
-        size: '1024x1024',
-      );
-    }
-
-    // Add images to the list
-    generatedTechPackImages.addAll(manufacturingImages);
-    generatedTechPackImages.addAll(technicalImages);
-    
-    print('=== DETAILED TECH PACK GENERATION COMPLETED ===');
-    print('Generated ${generatedTechPackImages.length} tech pack images using: $approach');
-
-    // Validate and provide feedback
-    if (generatedTechPackImages.length >= 2) {
-      print('✅ Both manufacturing and detailed technical images generated successfully');
       Get.snackbar(
-        'Success',
-        'Detailed tech pack images generated with professional labeling!',
+        'Error',
+        'Failed to generate detailed tech pack images: ${e.toString()}',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-    } else {
-      print('⚠️ Warning: Only ${generatedTechPackImages.length} images generated');
-      Get.snackbar(
-        'Partial Success',
-        'Some tech pack images generated. Check results.',
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.orange,
-        colorText: Colors.white,
-      );
+    } finally {
+      isGeneratingTechPack.value = false;
     }
-  } catch (e) {
-    print('=== TECH PACK GENERATION ERROR ===');
-    print('Error: $e');
-    
-    Get.snackbar(
-      'Error',
-      'Failed to generate detailed tech pack images: ${e.toString()}',
-      snackPosition: SnackPosition.TOP,
-      backgroundColor: Colors.red,
-      colorText: Colors.white,
-    );
-  } finally {
-    isGeneratingTechPack.value = false;
   }
-}
 
-// Add this function to test different technical drawing approaches
-void testTechnicalDrawingPrompts() {
-  final techPackDetails = _collectTechPackDetails();
-  final creativeBrief = designData['creativeBrief'] ?? {};
-  
-  print('=== TESTING TECHNICAL DRAWING PROMPTS ===');
-  
-  // Test detailed three views
-  final detailed = OpenAIService.getAdvancedDetailedPrompts(techPackDetails, creativeBrief);
-  print('Advanced Detailed: ${detailed['technical_flat_prompt']}');
-  
-  // Test single detailed view
-  final singleView = OpenAIService.getDetailedSingleViewPrompts(techPackDetails, creativeBrief);
-  print('Single Detailed: ${singleView['technical_flat_prompt']}');
-  
-  // Test simplified detailed
-  final simplified = OpenAIService.getSimplifiedDetailedPrompts(techPackDetails, creativeBrief);
-  print('Simplified Detailed: ${simplified['technical_flat_prompt']}');
-}
+  // Add this function to test different technical drawing approaches
+  void testTechnicalDrawingPrompts() {
+    final techPackDetails = _collectTechPackDetails();
+    final creativeBrief = designData['creativeBrief'] ?? {};
+
+    print('=== TESTING TECHNICAL DRAWING PROMPTS ===');
+
+    // Test detailed three views
+    final detailed = OpenAIService.getAdvancedDetailedPrompts(
+      techPackDetails,
+      creativeBrief,
+    );
+    print('Advanced Detailed: ${detailed['technical_flat_prompt']}');
+
+    // Test single detailed view
+    final singleView = OpenAIService.getDetailedSingleViewPrompts(
+      techPackDetails,
+      creativeBrief,
+    );
+    print('Single Detailed: ${singleView['technical_flat_prompt']}');
+
+    // Test simplified detailed
+    final simplified = OpenAIService.getSimplifiedDetailedPrompts(
+      techPackDetails,
+      creativeBrief,
+    );
+    print('Simplified Detailed: ${simplified['technical_flat_prompt']}');
+  }
 
   // Camera functionality
   Future<void> openCameraForMeasurement() async {
     try {
       // Request camera permission
       PermissionStatus cameraStatus = await Permission.camera.request();
-      
+
       if (cameraStatus.isGranted) {
         final XFile? photo = await _picker.pickImage(
           source: ImageSource.camera,
           imageQuality: 80,
           preferredCameraDevice: CameraDevice.rear,
         );
-        
+
         if (photo != null) {
           measurementImagePath.value = photo.path;
           // Check if sizes block should be shown after image capture
@@ -464,7 +530,10 @@ void testTechnicalDrawingPrompts() {
           colorText: Colors.white,
           mainButton: TextButton(
             onPressed: () => openAppSettings(),
-            child: const Text('Settings', style: TextStyle(color: Color.fromARGB(255, 236, 236, 236))),
+            child: const Text(
+              'Settings',
+              style: TextStyle(color: Color.fromARGB(255, 236, 236, 236)),
+            ),
           ),
         );
       }
@@ -486,7 +555,7 @@ void testTechnicalDrawingPrompts() {
         source: ImageSource.gallery,
         imageQuality: 80,
       );
-      
+
       if (image != null) {
         measurementImagePath.value = image.path;
         checkSizesBlockComplete();
@@ -500,6 +569,187 @@ void testTechnicalDrawingPrompts() {
         colorText: Colors.white,
       );
     }
+  }
+
+  void _showUpgradeDialog() async {
+    // Get current subscription to show in dialog
+    final subscription = await _subscriptionService
+        .getCurrentUserSubscription();
+    String currentPlan = subscription?.subscriptionPlan ?? 'FREE';
+    int remainingTechpacks = subscription?.remainingTechpacks ?? 3;
+
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Row(
+          children: [
+            Text(
+              'Upgrade Required',
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Current plan info
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Current Plan: ',
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _getPlanDisplayName(currentPlan),
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (currentPlan == 'STARTER' && remainingTechpacks >= 0)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Text(
+                        remainingTechpacks > 0
+                            ? 'Remaining techpacks: $remainingTechpacks/3'
+                            : 'Monthly limit reached',
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: remainingTechpacks > 0
+                              ? Colors.grey.shade600
+                              : Colors.red.shade600,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              currentPlan == 'FREE'
+                  ? 'Final techpack generation requires a premium plan.'
+                  : 'You\'ve reached your monthly limit of 3 techpacks.',
+              style: ssTitleTextTextStyle124003,
+            ),
+            SizedBox(height: 12),
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    'Upgrade to access:',
+                    style: ssTitleTextTextStyle14400.copyWith(
+                      fontSize: 16,
+                      fontWeight: FontWeight.bold,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(height: 8),
+                  _buildFeatureItem(
+                    currentPlan == 'FREE'
+                        ? 'Generate final techpacks (3/month with Starter)'
+                        : 'Unlimited techpacks with Pro plan',
+                  ),
+                  _buildFeatureItem('Professional PDF techpack exports'),
+                  _buildFeatureItem('Access to manufacturer database'),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Maybe Later',
+              style: ssTitleTextTextStyle14400.copyWith(
+                color: Colors.black,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+
+              // Navigate to subscription screen
+              Get.toNamed(
+                '/subscribe',
+                arguments: {
+                  'returnRoute': '/tech_pack_details_screen',
+                  'showSuccessMessage': true,
+                },
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(24),
+              ),
+            ),
+            child: Text(
+              'Upgrade Now',
+              style: ssTitleTextTextStyle14400.copyWith(
+                color: Colors.white,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  String _getPlanDisplayName(String plan) {
+    switch (plan) {
+      case 'FREE':
+        return 'Free';
+      case 'STARTER':
+        return 'Starter (€9.99/month)';
+      case 'PRO':
+        return 'Pro (€24.99/month)';
+      default:
+        return 'Free';
+    }
+  }
+
+  Widget _buildFeatureItem(String text) {
+    return Padding(
+      padding: EdgeInsets.only(bottom: 4),
+      child: Row(
+        children: [
+          Icon(Icons.check_circle, color: Colors.green, size: 16),
+          SizedBox(width: 8),
+          Expanded(child: Text(text, style: ssTitleTextTextStyle124003)),
+        ],
+      ),
+    );
   }
 
   // Collect all current tech pack details from form inputs

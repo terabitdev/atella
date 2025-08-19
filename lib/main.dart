@@ -8,6 +8,7 @@ import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'services/firebase/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
+import 'services/subscription_manager_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -16,6 +17,10 @@ void main() async {
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+  
+  // Initialize subscription manager to check for monthly resets
+  await SubscriptionManagerService().initialize();
+  
   runApp(const MyApp());
 }
 

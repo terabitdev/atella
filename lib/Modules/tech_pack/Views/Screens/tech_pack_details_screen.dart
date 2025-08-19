@@ -12,7 +12,7 @@ import 'package:atella/core/themes/app_colors.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
   TechPackDetailsScreen({super.key});
-  final controller = Get.put(TechPackDetailsController());
+  final controller = Get.find<TechPackDetailsController>();
 
   void onContinue() {}
 

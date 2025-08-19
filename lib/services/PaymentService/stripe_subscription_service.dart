@@ -211,28 +211,55 @@ class StripeSubscriptionService {
   // Check if user can use premium feature
   Future<bool> canUsePremiumFeature(String feature) async {
     UserSubscription? subscription = await getCurrentUserSubscription();
-    if (subscription == null) return false;
+    if (subscription == null) {
+      print('❌ Cannot check feature access: No subscription found');
+      return false;
+    }
 
+    bool canUse = false;
     switch (feature) {
       case 'techpack':
-        return subscription.canGenerateTechpack;
+        canUse = subscription.canGenerateTechpack;
+        print('🔍 Techpack access check: ${subscription.subscriptionPlan} plan, ${subscription.techpacksUsedThisMonth}/3 used, can generate: $canUse');
+        break;
       case 'pdf_export':
-        return subscription.subscriptionPlan != 'FREE';
+        canUse = subscription.subscriptionPlan != 'FREE';
+        print('🔍 PDF export access check: ${subscription.subscriptionPlan} plan, access: $canUse');
+        break;
       case 'manufacturers':
-        return subscription.subscriptionPlan != 'FREE';
+        canUse = subscription.subscriptionPlan != 'FREE';
+        print('🔍 Manufacturers access check: ${subscription.subscriptionPlan} plan, access: $canUse');
+        break;
       default:
+        print('❌ Unknown feature: $feature');
         return false;
     }
+    
+    return canUse;
   }
 
   // Increment techpack usage
   Future<void> incrementTechpackUsage() async {
     User? user = _auth.currentUser;
-    if (user == null) return;
+    if (user == null) {
+      print('❌ Cannot increment techpack usage: No authenticated user');
+      return;
+    }
 
-    await _firestore.collection('users').doc(user.uid).update({
-      'techpacksUsedThisMonth': FieldValue.increment(1),
-    });
+    try {
+      await _firestore.collection('users').doc(user.uid).update({
+        'techpacksUsedThisMonth': FieldValue.increment(1),
+      });
+      print('✅ Incremented techpack usage for user: ${user.uid}');
+      
+      // Log current usage after increment
+      final updatedSubscription = await getCurrentUserSubscription();
+      if (updatedSubscription != null) {
+        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/3 (${updatedSubscription.subscriptionPlan} plan)');
+      }
+    } catch (e) {
+      print('❌ Error incrementing techpack usage: $e');
+    }
   }
 
   // Reset monthly techpack count (call this from a scheduled function)
@@ -242,6 +269,76 @@ class StripeSubscriptionService {
       'currentPeriodStart': FieldValue.serverTimestamp(),
       'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
     });
+  }
+  
+  // Check and handle monthly reset for current user
+  Future<void> checkAndHandleMonthlyReset() async {
+    User? user = _auth.currentUser;
+    if (user == null) return;
+    
+    try {
+      UserSubscription? subscription = await getCurrentUserSubscription();
+      if (subscription == null) return;
+      
+      // Check if current period has ended
+      if (subscription.currentPeriodEnd != null && 
+          DateTime.now().isAfter(subscription.currentPeriodEnd!)) {
+        
+        // Reset the monthly usage count
+        await resetMonthlyTechpackCount(user.uid);
+        
+        print('Monthly techpack count reset for user: ${user.uid}');
+      }
+    } catch (e) {
+      print('Error checking monthly reset: $e');
+    }
+  }
+  
+  // Enhanced method that checks reset before checking premium features
+  Future<bool> canUsePremiumFeatureWithReset(String feature) async {
+    // First check and handle monthly reset
+    await checkAndHandleMonthlyReset();
+    
+    // Then check if user can use the feature
+    return await canUsePremiumFeature(feature);
+  }
+  
+  // Get subscription status for UI display
+  Future<Map<String, dynamic>> getSubscriptionStatus() async {
+    UserSubscription? subscription = await getCurrentUserSubscription();
+    if (subscription == null) {
+      return {
+        'plan': 'FREE',
+        'displayName': 'Free',
+        'remainingTechpacks': 0,
+        'maxTechpacks': 0,
+        'isActive': false,
+        'periodEnd': null,
+      };
+    }
+    
+    return {
+      'plan': subscription.subscriptionPlan,
+      'displayName': _getPlanDisplayName(subscription.subscriptionPlan),
+      'remainingTechpacks': subscription.remainingTechpacks,
+      'maxTechpacks': subscription.subscriptionPlan == 'PRO' ? -1 : 
+                      subscription.subscriptionPlan == 'STARTER' ? 3 : 0,
+      'isActive': subscription.subscriptionStatus == 'active',
+      'periodEnd': subscription.currentPeriodEnd,
+    };
+  }
+  
+  String _getPlanDisplayName(String plan) {
+    switch (plan) {
+      case 'FREE':
+        return 'Free';
+      case 'STARTER':
+        return 'Starter (€9.99/month)';
+      case 'PRO':
+        return 'Pro (€24.99/month)';
+      default:
+        return 'Free';
+    }
   }
 
 }

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../models/subscription_plan.dart';
 import '../../../models/user_subscription.dart';
+import '../../../services/subscription_callback_service.dart';
 
 class SubscribeController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
@@ -11,10 +12,26 @@ class SubscribeController extends GetxController {
   Rx<UserSubscription?> currentSubscription = Rx<UserSubscription?>(null);
   RxBool isLoading = false.obs;
   RxBool isCancellingSubscription = false.obs;
+  
+  // Navigation handling
+  String? returnRoute;
+  bool showSuccessMessage = false;
 
   @override
   void onInit() {
     super.onInit();
+    
+    // Check for arguments passed from other screens
+    final arguments = Get.arguments;
+    print('📍 SubscribeController received arguments: $arguments');
+    
+    if (arguments != null && arguments is Map<String, dynamic>) {
+      returnRoute = arguments['returnRoute'];
+      showSuccessMessage = arguments['showSuccessMessage'] ?? false;
+      print('📍 Return route set to: $returnRoute');
+      print('📍 Show success message: $showSuccessMessage');
+    }
+    
     loadCurrentSubscription();
   }
 
@@ -73,14 +90,68 @@ class SubscribeController extends GetxController {
       bool success = await _stripeService.createSubscriptionPaymentSheet(plan);
       
       if (success) {
-        Get.snackbar(
-          'Success', 
-          'Successfully subscribed to ${plan.displayName} plan',
-          snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 3),
-        );
+        print('✅ Subscription successful! Plan: ${plan.displayName}');
+        print('📍 Return route: $returnRoute');
+        print('📍 Show success message: $showSuccessMessage');
+        
+        if (showSuccessMessage) {
+          Get.snackbar(
+            'Success! 🎉', 
+            'Welcome to ${plan.displayName}! You can now generate techpacks.',
+            snackPosition: SnackPosition.TOP,
+            duration: Duration(seconds: 4),
+            backgroundColor: Colors.green,
+            colorText: Colors.white,
+            icon: Icon(Icons.check_circle, color: Colors.white),
+          );
+        }
+        
         await loadCurrentSubscription();
-        Get.back(); // Go back to previous screen
+        
+        // Wait a moment for the subscription to be processed
+        await Future.delayed(Duration(milliseconds: 500));
+        
+        // Navigate back to the original screen if specified
+        if (returnRoute != null) {
+          print('📍 Starting navigation back to: $returnRoute');
+          
+          if (returnRoute == '/tech_pack_details_screen') {
+            print('📍 Navigating back to tech pack details...');
+            
+            // Use a more reliable navigation approach
+            Get.until((route) => route.settings.name == '/tech_pack_details_screen');
+            
+            // Show success message after a short delay
+            Future.delayed(Duration(milliseconds: 500), () {
+              Get.snackbar(
+                'Subscription Active! 🎉',
+                'You can now generate your techpack. Click "Generate Tech Pack" button.',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.green,
+                colorText: Colors.white,
+                duration: Duration(seconds: 4),
+                icon: Icon(Icons.check_circle, color: Colors.white),
+              );
+            });
+            
+          } else if (returnRoute == '/generate_tech_pack_screen') {
+            print('📍 Navigating back to generate screen...');
+            
+            Get.until((route) => route.settings.name == '/generate_tech_pack_screen');
+            
+            Future.delayed(Duration(milliseconds: 1000), () {
+              SubscriptionCallbackService().executeSubscriptionSuccessCallback();
+            });
+            
+          } else {
+            // Default fallback
+            print('📍 Using fallback navigation to: $returnRoute');
+            Get.offAllNamed(returnRoute!);
+          }
+        } else {
+          print('📍 No return route specified, going back');
+          Get.back();
+        }
       } else {
         Get.snackbar(
           'Error', 

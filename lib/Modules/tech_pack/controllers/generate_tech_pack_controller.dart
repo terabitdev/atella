@@ -8,6 +8,7 @@ import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/designservices/designs_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/subscription_callback_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
@@ -35,6 +36,22 @@ class TechPackController extends GetxController {
     super.onInit();
     _checkForEditMode();
     _initializeApiKey();
+  }
+  
+  @override
+  void onReady() {
+    super.onReady();
+    // Execute any pending subscription callbacks when screen is ready
+    // Check if controllers are still valid before executing
+    Future.delayed(Duration(milliseconds: 500), () {
+      if (!Get.isRegistered<TechPackController>()) {
+        print('TechPackController not registered, clearing callbacks');
+        SubscriptionCallbackService().clearCallback();
+        return;
+      }
+      
+      SubscriptionCallbackService().executeSubscriptionSuccessCallback();
+    });
   }
   
   void _checkForEditMode() {
@@ -145,8 +162,8 @@ class TechPackController extends GetxController {
   
   
   void onContinueWithDesign(int selectedIndex) async {
-    // Check subscription before allowing techpack generation
-    bool canGenerate = await _subscriptionService.canUsePremiumFeature('techpack');
+    // Check subscription before allowing techpack generation (with monthly reset check)
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
     
     if (!canGenerate) {
       // Show upgrade prompt
@@ -169,9 +186,6 @@ class TechPackController extends GetxController {
         arguments['techPackModel'] = _editingTechPack;
       }
       
-      // Increment techpack usage for STARTER plan users
-      await _subscriptionService.incrementTechpackUsage();
-      
       // Navigate to tech pack details with arguments
       Get.toNamed('/tech_pack_details_screen', arguments: arguments);
     }
@@ -183,8 +197,19 @@ class TechPackController extends GetxController {
     }
   }
   Future<void> onContinueWithSelectedDesign() async {
-    // Check subscription before allowing techpack generation
-    bool canGenerate = await _subscriptionService.canUsePremiumFeature('techpack');
+    // Safety check - ensure controller is not disposed
+    try {
+      if (generatedImages.isEmpty) {
+        print('GeneratedImages is empty, controller might be disposed');
+        return;
+      }
+    } catch (e) {
+      print('Controller might be disposed: $e');
+      return;
+    }
+    
+    // Check subscription before allowing techpack generation (with monthly reset check)
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
     
     if (!canGenerate) {
       // Show upgrade prompt
@@ -310,7 +335,12 @@ Future<void> _saveDesignsInBackground() async {
     generateDesigns();
   }
   
-  void _showUpgradeDialog() {
+  void _showUpgradeDialog() async {
+    // Get current subscription to show in dialog
+    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    String currentPlan = subscription?.subscriptionPlan ?? 'FREE';
+    int remainingTechpacks = subscription?.remainingTechpacks ?? 0;
+    
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(
@@ -318,38 +348,84 @@ Future<void> _saveDesignsInBackground() async {
         ),
         title: Row(
           children: [
-            Icon(Icons.lock_outline, color: Colors.blue, size: 28),
-            SizedBox(width: 10),
-            Text('Premium Feature'),
+            Text('Upgrade Required',style:  sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),),
           ],
         ),
         content: Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
+            // Current plan info
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Text(
+                        'Current Plan: ${_getPlanDisplayName(currentPlan)}',
+                        style:  ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (currentPlan == 'STARTER' && remainingTechpacks > 0)
+                    Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Text(
+                        'Remaining techpacks: $remainingTechpacks/3',
+                        style:  ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                    ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
             Text(
-              'Techpack generation is a premium feature.',
-              style: TextStyle(fontSize: 16),
+              currentPlan == 'FREE' 
+                ? 'Techpack generation is a premium feature.'
+                : 'You\'ve reached your monthly limit of 3 techpacks.',
+              style:  ssTitleTextTextStyle14400.copyWith(
+                fontSize: 12,
+                color: Colors.black,
+              ),
             ),
             SizedBox(height: 12),
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
+                color: Colors.white,
                 borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.grey.shade300),
               ),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
                     'Upgrade to access:',
-                    style: TextStyle(
+                    style:  ssTitleTextTextStyle14400.copyWith(
+                      color: Colors.black,
                       fontWeight: FontWeight.bold,
-                      color: Colors.blue.shade900,
                     ),
                   ),
                   SizedBox(height: 8),
-                  _buildFeatureItem('Generate professional techpacks'),
+                  _buildFeatureItem(currentPlan == 'FREE' 
+                    ? 'Generate professional techpacks (3/month with Starter)'
+                    : 'Unlimited techpacks with Pro plan'),
                   _buildFeatureItem('Custom PDF export with your logo'),
                   _buildFeatureItem('Access to manufacturers'),
                 ],
@@ -360,25 +436,52 @@ Future<void> _saveDesignsInBackground() async {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Maybe Later'),
+            child: Text('Maybe Later', style: ssTitleTextTextStyle14400.copyWith(
+              color: Colors.black,
+            )),
           ),
           ElevatedButton(
             onPressed: () {
               Get.back();
-              Get.toNamed('/subscribe');
+              
+              // Set callback to continue with selected design after subscription
+              SubscriptionCallbackService().setOnSubscriptionSuccess(() {
+                // Re-check if user can now generate techpack
+                onContinueWithSelectedDesign();
+              });
+              
+              Get.toNamed('/subscribe', arguments: {
+                'returnRoute': '/generate_tech_pack_screen',
+                'showSuccessMessage': true,
+              });
             },
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.blue,
+              backgroundColor: Colors.black,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(8),
+                borderRadius: BorderRadius.circular(24),
               ),
             ),
-            child: Text('View Plans'),
+            child: Text('Upgrade Now', style: ssTitleTextTextStyle14400.copyWith(
+              color: Colors.white,
+            )),
           ),
         ],
       ),
       barrierDismissible: false,
     );
+  }
+  
+  String _getPlanDisplayName(String plan) {
+    switch (plan) {
+      case 'FREE':
+        return 'Free';
+      case 'STARTER':
+        return 'Starter (€9.99/month)';
+      case 'PRO':
+        return 'Pro (€24.99/month)';
+      default:
+        return 'Free';
+    }
   }
   
   Widget _buildFeatureItem(String text) {

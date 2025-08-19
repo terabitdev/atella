@@ -30,6 +30,7 @@ import 'package:atella/modules/tech_pack/views/screens/recommended_manufacture_s
 import 'package:atella/modules/tech_pack/views/screens/tech_pack_details_screen.dart';
 import 'package:atella/modules/tech_pack/views/screens/tech_pack_ready_screen.dart';
 import 'package:atella/modules/tech_pack/views/screens/view_profile_tech_pack_screen.dart';
+import 'package:atella/modules/tech_pack/bindings/tech_pack_binding.dart';
 import 'package:atella/nav_bar.dart';
 import 'package:get/get.dart';
 
@@ -90,6 +91,7 @@ class AppPages {
     GetPage(
       name: AppRoutes.techPackDetails,
       page: () => TechPackDetailsScreen(),
+      binding: TechPackBinding(),
     ),
     GetPage(
       name: AppRoutes.techPackReadyScreen,
