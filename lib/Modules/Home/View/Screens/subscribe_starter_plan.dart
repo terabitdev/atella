@@ -110,8 +110,6 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Unlimited AI-generated designs"),
-                            SizedBox(height: 16.h),
                             _buildFeatureItem("Up to 3 techpacks per month"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Custom PDF export (includes logo)"),

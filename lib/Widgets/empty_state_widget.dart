@@ -31,8 +31,8 @@ class EmptyStateWidget extends StatelessWidget {
           if (imagePath != null)
             Image.asset(
               imagePath!,
-              height: 120.h,
-              width: 120.w,
+              height: 229.h,
+              width: 203.w,
               fit: BoxFit.contain,
             ),
           
@@ -67,14 +67,11 @@ class EmptyStateWidget extends StatelessWidget {
           SizedBox(height: 32.h),
           
           // Action button
-          SizedBox(
-            width: double.infinity,
-            child: RoundButton(
-              title: buttonText,
-              onTap: onButtonPressed,
-              color: AppColors.buttonColor,
-              isloading: false,
-            ),
+          RoundButton(
+            title: buttonText,
+            onTap: onButtonPressed,
+            color: AppColors.buttonColor,
+            isloading: false,
           ),
         ],
       ),

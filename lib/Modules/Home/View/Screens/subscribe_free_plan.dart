@@ -103,6 +103,8 @@ class SubscribeFreePlan extends StatelessWidget {
                             // Features List
                             _buildFeatureItem("Unlimited AI-generated designs"),
                             SizedBox(height: 16.h),
+                            _buildFeatureItem("3D Visualization included"),
+                            SizedBox(height: 16.h),
                             _buildFeatureItem("No techpack generation"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("No PDF export"),
