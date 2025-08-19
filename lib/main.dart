@@ -1,5 +1,6 @@
 import 'package:atella/Routes/app_pages.dart';
 import 'package:atella/core/themes/app_theme.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ void main() async {
   Stripe.publishableKey = dotenv.env['PublishableKey']!;
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
+  await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   runApp(const MyApp());
 }
 

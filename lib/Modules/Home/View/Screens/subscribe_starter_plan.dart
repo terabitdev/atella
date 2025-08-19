@@ -1,4 +1,3 @@
-import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -111,6 +110,8 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                             
                             // Features List
                             _buildFeatureItem("Up to 3 techpacks per month"),
+                            SizedBox(height: 16.h),
+                            _buildFeatureItem("3D Visualization included"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Custom PDF export (includes logo)"),
                             SizedBox(height: 16.h),
