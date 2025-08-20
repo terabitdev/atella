@@ -19,9 +19,11 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   let event: Stripe.Event;
   
   try {
-    event = stripe.webhooks.constructEvent(req.body, sig, webhookSecret);
+    // Use req.rawBody for signature verification (not req.body)
+    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
+    console.log('✅ WEBHOOK: Signature verified successfully');
   } catch (err: any) {
-    console.error(`❌ Webhook signature verification failed.`, err.message);
+    console.error(`❌ WEBHOOK: Signature verification failed.`, err.message);
     res.status(400).send(`Webhook Error: ${err.message}`);
     return;
   }
@@ -87,10 +89,11 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
       currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
       techpacksUsedThisMonth: 0,
-      lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+      lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+      updatedBy: 'WEBHOOK' // Debug field to identify source
     });
     
-    console.log(`✅ Updated user ${userId} to ${planName} plan`);
+    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} to ${planName} plan`);
   } catch (error) {
     console.error(`❌ Error handling subscription created:`, error);
   }
@@ -167,10 +170,11 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       subscriptionStatus: 'canceled',
       currentSubscriptionId: null,
       techpacksUsedThisMonth: 0,
-      lastUpdated: admin.firestore.FieldValue.serverTimestamp()
+      lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
+      updatedBy: 'WEBHOOK' // Debug field to identify source
     });
     
-    console.log(`✅ Downgraded user ${userId} to FREE plan`);
+    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} downgraded to FREE plan`);
   } catch (error) {
     console.error(`❌ Error handling subscription deleted:`, error);
   }

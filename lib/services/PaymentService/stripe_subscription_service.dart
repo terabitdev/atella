@@ -78,6 +78,7 @@ class StripeSubscriptionService {
 
   // Create payment sheet for subscription
   Future<bool> createSubscriptionPaymentSheet(SubscriptionPlan plan) async {
+    print('🔥 DEBUG: createSubscriptionPaymentSheet called for plan: ${plan.name}');
     try {
       User? user = _auth.currentUser;
       if (user == null) return false;
@@ -120,10 +121,14 @@ class StripeSubscriptionService {
         );
 
         // Present payment sheet
+        print('🔥 DEBUG: About to present payment sheet');
         await Stripe.instance.presentPaymentSheet();
+        print('🔥 DEBUG: Payment sheet completed successfully');
 
         // Update user subscription in Firebase
+        print('🔥 CLIENT-SIDE: About to update Firebase for user ${user.uid} with plan ${plan.name}');
         await _updateUserSubscription(user.uid, plan, subscriptionData['id']);
+        print('🔥 CLIENT-SIDE: Firebase update completed for subscription ${subscriptionData['id']}');
         
         return true;
       }
@@ -160,6 +165,7 @@ class StripeSubscriptionService {
 
   // Update user subscription in Firebase
   Future<void> _updateUserSubscription(String userId, SubscriptionPlan plan, String subscriptionId) async {
+    print('🔥 CLIENT-SIDE: Writing to Firebase - User: $userId, Plan: ${plan.name}, SubID: $subscriptionId');
     await _firestore.collection('users').doc(userId).update({
       'subscriptionPlan': plan.name,
       'subscriptionStatus': 'active',
@@ -167,7 +173,9 @@ class StripeSubscriptionService {
       'currentPeriodStart': FieldValue.serverTimestamp(),
       'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
       'techpacksUsedThisMonth': 0,
+      'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
     });
+    print('🔥 CLIENT-SIDE: Firebase write completed successfully');
   }
 
   // Cancel subscription
@@ -195,11 +203,14 @@ class StripeSubscriptionService {
 
       if (response.statusCode == 200) {
         // Update Firebase to FREE plan
+        print('🔥 CLIENT-SIDE: About to cancel subscription in Firebase for user ${user.uid}');
         await _firestore.collection('users').doc(user.uid).update({
           'subscriptionPlan': 'FREE',
           'subscriptionStatus': 'canceled',
           'currentSubscriptionId': null,
+          'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
         });
+        print('🔥 CLIENT-SIDE: Firebase cancellation update completed');
         return true;
       }
     } catch (e) {
