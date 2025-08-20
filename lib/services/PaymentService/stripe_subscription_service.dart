@@ -117,6 +117,7 @@ class StripeSubscriptionService {
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,
+            
           ),
         );
 

@@ -105,11 +105,11 @@ class SubscribeFreePlan extends StatelessWidget {
                             SizedBox(height: 16.h),
                             _buildFeatureItem("3D Visualization included"),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No techpack generation"),
+                            _buildFeatureItem("No techpack generation",isAvailable: false),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No PDF export"),
+                            _buildFeatureItem("No PDF export", isAvailable: false ),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No access to manufacturers"),
+                            _buildFeatureItem("No access to manufacturers", isAvailable: false),
                             SizedBox(height: 40.h),
                           ],
                         ),
@@ -119,8 +119,28 @@ class SubscribeFreePlan extends StatelessWidget {
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       RoundButton(title: "Start", onTap: (){
-                       }, color: Colors.black, isloading: false),
+                        // Upgrade message
+                        Container(
+                          width: double.infinity,
+                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                          margin: EdgeInsets.only(bottom: 16.h),
+                          decoration: BoxDecoration(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          child: Text(
+                            "You can upgrade your plan to generate tech PDF's and access to manufacturers",
+                            style: sfpsTitleTextTextStyle14500,
+                            textAlign: TextAlign.center,
+                          ),
+                        ),
+                        RoundButton(
+                          title: "Upgrade plan", 
+                          onTap: () {
+                            Get.offAllNamed('/subscribe');
+                          }, 
+                          color: Colors.black, 
+                          isloading: false
+                        ),
                         SizedBox(height: 16.h),
                         RichText(
                           textAlign: TextAlign.center,
@@ -162,19 +182,19 @@ class SubscribeFreePlan extends StatelessWidget {
     );
   }
 
-  Widget _buildFeatureItem(String feature) {
+  Widget _buildFeatureItem(String feature, {bool isAvailable = true}) {
     return Row(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
           width: 20.w,
           height: 20.h,
-          decoration: const BoxDecoration(
-            color: Colors.black,
+          decoration: BoxDecoration(
+            color: isAvailable ? Colors.black : Colors.red,
             shape: BoxShape.circle,
           ),
           child: Icon(
-            Icons.check,
+            isAvailable ? Icons.check : Icons.close,
             color: Colors.white,
             size: 14.sp,
           ),

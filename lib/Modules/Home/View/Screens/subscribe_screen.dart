@@ -144,11 +144,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                 Expanded(
                   child: Text(
                     plan.displayName,
-                    style: TextStyle(
-                      fontSize: 18.sp,
-                      fontWeight: FontWeight.w600,
-                      color: Colors.black,
-                    ),
+                    style: vsTextStyle20800,
                   ),
                 ),
                 if (isSelected)
@@ -177,6 +173,28 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                 color: Colors.grey[600],
               ),
             ),
+            // Show remaining techpacks for Starter plan users
+            if (plan.type == SubscriptionPlanType.STARTER && isSelected)
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                if (subscription != null && subscription.subscriptionPlan == 'STARTER') {
+                  final usedTechpacks = 3 - subscription.remainingTechpacks;
+                  return Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Text(
+                      'Techpacks: $usedTechpacks/3',
+                      style: TextStyle(
+                        fontSize: 12.sp,
+                        color: subscription.remainingTechpacks > 0
+                            ? Colors.grey[700]
+                            : Colors.red[600],  
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
           ],
         ),
       ),

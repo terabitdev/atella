@@ -15,7 +15,7 @@ import 'dart:convert';
 class GenerateTechPackScreen extends StatelessWidget {
   GenerateTechPackScreen({super.key});
 
-  final controller = Get.put(TechPackController());
+  final controller = Get.put(TechPackController(), permanent: true);
 
   void showImageDialog(BuildContext context, String base64Image) {
     showDialog(

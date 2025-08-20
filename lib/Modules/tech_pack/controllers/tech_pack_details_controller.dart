@@ -307,16 +307,8 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> generateTechPackImages() async {
-    // Check subscription before generating final techpack (with monthly reset check)
-    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
-      'techpack',
-    );
-
-    if (!canGenerate) {
-      // Show upgrade prompt
-      _showUpgradeDialog();
-      return;
-    }
+    // Subscription check is now handled by checkSubscriptionAndGenerate method
+    // This method only handles the actual generation
 
     try {
       print('=== STARTING DETAILED TECH PACK GENERATION ===');
@@ -571,6 +563,21 @@ class TechPackDetailsController extends GetxController {
     }
   }
 
+  Future<void> checkSubscriptionAndGenerate() async {
+    // Check subscription before generating final techpack (with monthly reset check)
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
+    
+    if (!canGenerate) {
+      // Show upgrade prompt
+      _showUpgradeDialog();
+      return;
+    }
+    
+    // If user has permission, start generation and navigate immediately
+    generateTechPackImages(); // Don't await - let it run in background
+    Get.toNamed('/tech_pack_ready_screen'); // Navigate immediately to show generating state
+  }
+
   void _showUpgradeDialog() async {
     // Get current subscription to show in dialog
     final subscription = await _subscriptionService
@@ -696,6 +703,13 @@ class TechPackDetailsController extends GetxController {
           ElevatedButton(
             onPressed: () {
               Get.back();
+              
+              // Set callback to refresh the UI state after subscription
+              SubscriptionCallbackService().setOnSubscriptionSuccess(() {
+                // Just refresh the UI, don't automatically navigate
+                // User needs to manually click the button again
+                print('Subscription upgraded, TechPack UI refreshed');
+              });
 
               // Navigate to subscription screen
               Get.toNamed(

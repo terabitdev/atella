@@ -192,6 +192,10 @@ class SubscribeController extends GetxController {
           colorText: Colors.white,
         );
         await loadCurrentSubscription();
+        
+        // Navigate back to subscribe screen after successful cancellation
+        await Future.delayed(Duration(milliseconds: 500));
+        Get.offAllNamed('/subscribe');
       } else {
         Get.snackbar(
           'Error', 

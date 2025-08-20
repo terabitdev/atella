@@ -418,8 +418,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 OutlineGenerateRoundButton(
                                   title: 'Generate Tech Pack',
                                   onTap: () {
-                                    controller.generateTechPackImages();
-                                    Get.toNamed('/tech_pack_ready_screen');
+                                    controller.checkSubscriptionAndGenerate();
                                   },
                                   color: AppColors.buttonColor,
                                   loading: false,

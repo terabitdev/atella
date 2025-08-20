@@ -75,8 +75,10 @@ class TechPackController extends GetxController {
     await OpenAIService.setApiKey(dotenv.env['OPENAI_API_KEY'] ?? '');
     isInitialized.value = true;
     
-    // Start generating designs automatically
-    generateDesigns();
+    // Only start generating designs if we don't already have them
+    if (generatedImages.isEmpty) {
+      generateDesigns();
+    }
   }
   
   Future<void> generateDesigns() async {
@@ -444,14 +446,15 @@ Future<void> _saveDesignsInBackground() async {
             onPressed: () {
               Get.back();
               
-              // Set callback to continue with selected design after subscription
+              // Set callback to refresh the UI state after subscription
               SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-                // Re-check if user can now generate techpack
-                onContinueWithSelectedDesign();
+                // Just refresh the UI, don't automatically navigate
+                // User needs to manually click the button again
+                print('Subscription upgraded, UI refreshed');
               });
               
               Get.toNamed('/subscribe', arguments: {
-                'returnRoute': '/generate_tech_pack_screen',
+                'returnRoute': '/generate_tech_pack',
                 'showSuccessMessage': true,
               });
             },
