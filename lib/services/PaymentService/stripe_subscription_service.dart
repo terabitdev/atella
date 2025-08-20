@@ -125,10 +125,13 @@ class StripeSubscriptionService {
         await Stripe.instance.presentPaymentSheet();
         print('🔥 DEBUG: Payment sheet completed successfully');
 
-        // Update user subscription in Firebase
-        print('🔥 CLIENT-SIDE: About to update Firebase for user ${user.uid} with plan ${plan.name}');
-        await _updateUserSubscription(user.uid, plan, subscriptionData['id']);
-        print('🔥 CLIENT-SIDE: Firebase update completed for subscription ${subscriptionData['id']}');
+        // NOTE: Firebase updates are now handled by webhooks only
+        // Client-side updates commented out to prevent dual updates
+        // print('🔥 CLIENT-SIDE: About to update Firebase for user ${user.uid} with plan ${plan.name}');
+        // await _updateUserSubscription(user.uid, plan, subscriptionData['id']);
+        // print('🔥 CLIENT-SIDE: Firebase update completed for subscription ${subscriptionData['id']}');
+        
+        print('✅ Payment completed successfully. Webhook will update Firebase automatically.');
         
         return true;
       }
@@ -202,15 +205,18 @@ class StripeSubscriptionService {
       );
 
       if (response.statusCode == 200) {
-        // Update Firebase to FREE plan
-        print('🔥 CLIENT-SIDE: About to cancel subscription in Firebase for user ${user.uid}');
-        await _firestore.collection('users').doc(user.uid).update({
-          'subscriptionPlan': 'FREE',
-          'subscriptionStatus': 'canceled',
-          'currentSubscriptionId': null,
-          'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
-        });
-        print('🔥 CLIENT-SIDE: Firebase cancellation update completed');
+        // NOTE: Firebase updates are now handled by webhooks only
+        // Client-side updates commented out to prevent dual updates
+        // print('🔥 CLIENT-SIDE: About to cancel subscription in Firebase for user ${user.uid}');
+        // await _firestore.collection('users').doc(user.uid).update({
+        //   'subscriptionPlan': 'FREE',
+        //   'subscriptionStatus': 'canceled',
+        //   'currentSubscriptionId': null,
+        //   'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
+        // });
+        // print('🔥 CLIENT-SIDE: Firebase cancellation update completed');
+        
+        print('✅ Subscription cancelled successfully. Webhook will update Firebase automatically.');
         return true;
       }
     } catch (e) {
