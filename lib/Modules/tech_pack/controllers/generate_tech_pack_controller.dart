@@ -265,9 +265,9 @@ Future<void> _saveDesignsInBackground() async {
       Get.snackbar(
         'Design Updated',
         'Your design has been updated with new preferences',
-        snackPosition: SnackPosition.BOTTOM,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 2),
-        backgroundColor: Colors.blue.withOpacity(0.8),
+        backgroundColor: Colors.black,
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
       );
@@ -286,9 +286,9 @@ Future<void> _saveDesignsInBackground() async {
       Get.snackbar(
         'Design Saved',
         'Your selected design has been saved successfully',
-        snackPosition: SnackPosition.BOTTOM,
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.green.withOpacity(0.8),
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        backgroundColor: Colors.black,
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
       );
@@ -306,9 +306,9 @@ Future<void> _saveDesignsInBackground() async {
     Get.snackbar(
       'Save Failed',
       'Failed to save design. It will be available during this session.',
-      snackPosition: SnackPosition.BOTTOM,
+      snackPosition: SnackPosition.TOP,
       duration: const Duration(seconds: 3),
-      backgroundColor: Colors.orange.withOpacity(0.8),
+      backgroundColor: Colors.black,
       colorText: Colors.white,
       margin: const EdgeInsets.all(10),
     );

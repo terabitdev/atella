@@ -65,8 +65,7 @@ class EmptyStateWidget extends StatelessWidget {
           ],
           
           SizedBox(height: 32.h),
-          
-          // Action button
+
           RoundButton(
             title: buttonText,
             onTap: onButtonPressed,
@@ -92,7 +91,7 @@ class HomeEmptyState extends StatelessWidget {
   Widget build(BuildContext context) {
     return EmptyStateWidget(
       title: "Here to guide you through creating the garment you have in mind.",
-      buttonText: "Create New Project",
+      buttonText: "Create a  new Project",
       onButtonPressed: onCreateProject,
       imagePath: "assets/images/empty.png",
     );

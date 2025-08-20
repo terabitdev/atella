@@ -437,7 +437,7 @@ class FinalDetailsController extends GetxController {
         'Regenerating Designs!',
         'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF8B5FE6),
+        backgroundColor:Colors.black,
         colorText: Colors.white,
       );
     } else {
@@ -447,7 +447,7 @@ class FinalDetailsController extends GetxController {
         'Generating Designs!',
         'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,
-        backgroundColor: const Color(0xFF8B5FE6),
+        backgroundColor: Colors.black,
         colorText: Colors.white,
       );
     }

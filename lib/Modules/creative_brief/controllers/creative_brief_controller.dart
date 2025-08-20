@@ -159,8 +159,9 @@ class CreativeBriefController extends GetxController {
       Get.snackbar(
         'Loading',
         'Loading existing design data...',
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
         duration: Duration(seconds: 2),
       );
 
@@ -187,8 +188,9 @@ class CreativeBriefController extends GetxController {
         Get.snackbar(
           'Edit Mode',
           'Editing design: ${_editingTechPack!.projectName}',
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
           duration: Duration(seconds: 2),
         );
       } else {
@@ -200,8 +202,10 @@ class CreativeBriefController extends GetxController {
       Get.snackbar(
         'Error',
         'Failed to load existing data. Using defaults.',
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.black,
         colorText: Colors.white,
+        duration: Duration(seconds: 2),
+        snackPosition: SnackPosition.TOP,
       );
       _prefillDemoAnswers(_editingTechPack);
     }
@@ -785,8 +789,9 @@ class CreativeBriefController extends GetxController {
                 Get.snackbar(
                   'Invalid Input',
                   'Please enter a custom answer',
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.black,
                   colorText: Colors.white,
+                  snackPosition: SnackPosition.TOP,
                   duration: Duration(seconds: 2),
                 );
                 return;
@@ -814,10 +819,11 @@ class CreativeBriefController extends GetxController {
               Get.snackbar(
                 'Answer Updated',
                 'Your answer has been updated successfully',
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.black,
                 colorText: Colors.white,
                 duration: Duration(seconds: 2),
                 margin: EdgeInsets.all(16),
+                snackPosition: SnackPosition.TOP,
               );
             },
             style: ElevatedButton.styleFrom(

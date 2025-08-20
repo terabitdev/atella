@@ -699,9 +699,10 @@ class RefiningConceptController extends GetxController {
                 Get.snackbar(
                   'Invalid Input',
                   'Please enter a custom answer',
-                  backgroundColor: Colors.orange,
+                  backgroundColor: Colors.black,
                   colorText: Colors.white,
-                  duration: Duration(seconds: 2),
+                  snackPosition: SnackPosition.TOP,
+                  duration: Duration(seconds: 3),
                 );
                 return;
               }
@@ -721,7 +722,7 @@ class RefiningConceptController extends GetxController {
                 tempCustomController.dispose();
               });
               update();
-              Get.snackbar('Answer Updated', 'Successfully updated', backgroundColor: Colors.green, colorText: Colors.white);
+              Get.snackbar('Answer Updated', 'Successfully updated', backgroundColor: Colors.black, colorText: Colors.white, snackPosition: SnackPosition.TOP, duration: Duration(seconds: 3));
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
             child: Text('Save Changes'),

@@ -98,9 +98,10 @@ Delivery: ${_detailsController.deliveryDateController.text}
         Get.snackbar(
           'Collection Exists',
           'This collection already exists',
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
         );
         return;
       }
@@ -215,9 +216,10 @@ Delivery: ${_detailsController.deliveryDateController.text}
         Get.snackbar(
           'Updated!',
           'Tech pack updated successfully!',
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
         );
       } else {
         // NEW TECH PACK MODE: Create new tech pack
@@ -236,9 +238,10 @@ Delivery: ${_detailsController.deliveryDateController.text}
         Get.snackbar(
           'Success',
           'Tech pack saved successfully!',
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: const Duration(seconds: 2),
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
         );
       }
 
@@ -255,6 +258,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         'Failed to save tech pack: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );
       print('Error saving tech pack: ${e.toString()}');
@@ -277,6 +281,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         'Please generate tech pack images first',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
       );
       return;
     }
@@ -298,8 +303,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
       Get.snackbar(
         'Success',
         'Tech pack PDF saved successfully!',
-        backgroundColor: Colors.green,
+        backgroundColor: Colors.black,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );
     } catch (e) {
@@ -309,6 +315,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         'Failed to export PDF: ${e.toString()}',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );
     } finally {

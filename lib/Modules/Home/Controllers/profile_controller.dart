@@ -40,7 +40,7 @@ class ProfileController extends GetxController {
         Get.snackbar(
           'Success',
           'Profile updated successfully',
-          snackPosition: SnackPosition.BOTTOM,
+          snackPosition: SnackPosition.TOP,
         );
       });
     }

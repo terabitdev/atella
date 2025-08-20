@@ -143,9 +143,10 @@ class TechPackDetailsController extends GetxController {
           Get.snackbar(
             'Edit Mode',
             'Loading existing tech pack data...',
-            backgroundColor: Colors.blue,
+            backgroundColor: Colors.black,
             colorText: Colors.white,
-            duration: Duration(seconds: 2),
+            snackPosition: SnackPosition.TOP,
+            duration: Duration(seconds: 3),
           );
         }
       }
@@ -154,7 +155,8 @@ class TechPackDetailsController extends GetxController {
       Get.snackbar(
         'Notice',
         'Starting with empty tech pack form',
-        backgroundColor: Colors.orange,
+        backgroundColor: Colors.black,
+        snackPosition: SnackPosition.TOP,
         colorText: Colors.white,
       );
     }
@@ -427,7 +429,7 @@ class TechPackDetailsController extends GetxController {
           'Success',
           'Detailed tech pack images generated with professional labeling!',
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       } else {
@@ -438,7 +440,7 @@ class TechPackDetailsController extends GetxController {
           'Partial Success',
           'Some tech pack images generated. Check results.',
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       }
@@ -510,7 +512,7 @@ class TechPackDetailsController extends GetxController {
           'Permission Required',
           'Camera permission is required to take photos.',
           snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.orange,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       } else if (cameraStatus.isPermanentlyDenied) {

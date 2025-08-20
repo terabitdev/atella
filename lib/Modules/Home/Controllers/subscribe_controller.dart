@@ -45,7 +45,12 @@ class SubscribeController extends GetxController {
         selectedPlan.value = 'FREE';
       }
     } catch (e) {
-      Get.snackbar('Error', 'Failed to load subscription details');
+      Get.snackbar('Error', 'Failed to load subscription details',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -75,7 +80,12 @@ class SubscribeController extends GetxController {
   Future<void> subscribeToPlan(SubscriptionPlan plan) async {
     if (plan.type == SubscriptionPlanType.FREE) {
       // Free plan doesn't need payment
-      Get.snackbar('Info', 'You are on the free plan');
+      Get.snackbar('Info', 'You are on the free plan',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+        duration: Duration(seconds: 3),
+      );
       return;
     }
 
@@ -100,7 +110,7 @@ class SubscribeController extends GetxController {
             'Welcome to ${plan.displayName}! You can now generate techpacks.',
             snackPosition: SnackPosition.TOP,
             duration: Duration(seconds: 4),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.black,
             colorText: Colors.white,
             icon: Icon(Icons.check_circle, color: Colors.white),
           );
@@ -127,7 +137,7 @@ class SubscribeController extends GetxController {
                 'Subscription Active! 🎉',
                 'You can now generate your techpack. Click "Generate Tech Pack" button.',
                 snackPosition: SnackPosition.TOP,
-                backgroundColor: Colors.green,
+                backgroundColor: Colors.black,
                 colorText: Colors.white,
                 duration: Duration(seconds: 4),
                 icon: Icon(Icons.check_circle, color: Colors.white),
@@ -212,7 +222,7 @@ class SubscribeController extends GetxController {
         'An error occurred: $e',
         snackPosition: SnackPosition.TOP,
         duration: Duration(seconds: 3),
-        backgroundColor: Colors.black,
+        backgroundColor: Colors.red,
         colorText: Colors.white,
       );
     } finally {
