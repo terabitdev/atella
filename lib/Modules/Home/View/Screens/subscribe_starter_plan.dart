@@ -126,46 +126,88 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                     Column(
                       children: [
                        Obx(() {
-                          bool hasActiveSubscription = controller.currentSubscription.value != null && 
-                                                      controller.currentSubscription.value!.subscriptionPlan != 'FREE';
-                          bool isCurrentPlan = controller.currentSubscription.value?.subscriptionPlan == 'STARTER';
-                          bool isDisabled = controller.isLoading.value || hasActiveSubscription;
+                          final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
+                          bool isCurrentPlan = currentPlan == 'STARTER';
+                          bool hasOtherSubscription = currentPlan != null && currentPlan != 'FREE' && !isCurrentPlan;
+                          bool isFreeUser = currentPlan == null || currentPlan == 'FREE';
                           
-                          return InkWell(
-                            onTap: isDisabled ? null : () {
-                              controller.subscribeToPlan(SubscriptionPlan.starterPlan);
-                            },
-                            child: Container(
-                              height: 50.h,
-                              width: 375.w,
-                              decoration: BoxDecoration(
-                                color: isDisabled ? Colors.grey[400] : Colors.black,
-                                borderRadius: BorderRadius.circular(10.r),
+                          return Column(
+                            children: [
+                              // Main action button
+                              InkWell(
+                                onTap: (controller.isLoading.value || isCurrentPlan || hasOtherSubscription) ? null : () {
+                                  controller.subscribeToPlan(SubscriptionPlan.starterPlan);
+                                },
+                                child: Container(
+                                  height: 50.h,
+                                  width: 375.w,
+                                  decoration: BoxDecoration(
+                                    color: (controller.isLoading.value || isCurrentPlan || hasOtherSubscription) ? Colors.grey[400] : Colors.black,
+                                    borderRadius: BorderRadius.circular(10.r),
+                                  ),
+                                  child: Center(
+                                    child: controller.isLoading.value
+                                        ? SizedBox(
+                                            height: 20.h,
+                                            width: 20.w,
+                                            child: CircularProgressIndicator(
+                                              color: Colors.white,
+                                              strokeWidth: 2,
+                                            ),
+                                          )
+                                        : Text(
+                                            isCurrentPlan 
+                                                ? "Current Plan" 
+                                                : hasOtherSubscription 
+                                                    ? "Cancel subscription first"
+                                                    : "Start",
+                                            style: TextStyle(
+                                              color: Colors.white,
+                                              fontSize: 16.sp,
+                                              fontWeight: FontWeight.w600,
+                                            ),
+                                          ),
+                                  ),
+                                ),
                               ),
-                              child: Center(
-                                child: controller.isLoading.value
-                                    ? SizedBox(
-                                        height: 20.h,
-                                        width: 20.w,
-                                        child: CircularProgressIndicator(
-                                          color: Colors.white,
-                                          strokeWidth: 2,
-                                        ),
-                                      )
-                                    : Text(
-                                        isCurrentPlan 
-                                            ? "Current Plan" 
-                                            : hasActiveSubscription 
-                                                ? "Cancel subscription first"
-                                                : "Start",
-                                        style: TextStyle(
-                                          color: Colors.white,
-                                          fontSize: 16.sp,
-                                          fontWeight: FontWeight.w600,
-                                        ),
-                                      ),
-                              ),
-                            ),
+                              
+                              // Cancel subscription button for current Starter users
+                              if (isCurrentPlan) ...[
+                                SizedBox(height: 16.h),
+                                InkWell(
+                                  onTap: controller.isCancellingSubscription.value ? null : () {
+                                    _showCancelConfirmationDialog();
+                                  },
+                                  child: Container(
+                                    height: 50.h,
+                                    width: 375.w,
+                                    decoration: BoxDecoration(
+                                      color: controller.isCancellingSubscription.value ? Colors.grey[400] : Colors.red,
+                                      borderRadius: BorderRadius.circular(10.r),
+                                    ),
+                                    child: Center(
+                                      child: controller.isCancellingSubscription.value
+                                          ? SizedBox(
+                                              height: 20.h,
+                                              width: 20.w,
+                                              child: CircularProgressIndicator(
+                                                color: Colors.white,
+                                                strokeWidth: 2,
+                                              ),
+                                            )
+                                          : Text(
+                                              "Cancel Subscription",
+                                              style: TextStyle(
+                                                color: Colors.white,
+                                                fontSize: 16.sp,
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            ),
+                                    ),
+                                  ),
+                                ),
+                              ],
+                            ],
                           );
                         }),
                         SizedBox(height: 16.h),
@@ -234,6 +276,31 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
           ),
         ),
       ],
+    );
+  }
+
+  void _showCancelConfirmationDialog() {
+    Get.dialog(
+      AlertDialog(
+        title: Text('Cancel Subscription',style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black),),
+        content: Text('Are you sure you want to cancel your Starter subscription? You will lose access to premium features.',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text('No, Keep Subscription',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black,fontWeight: FontWeight.bold),),
+          ),
+          TextButton(
+            onPressed: () {
+              Get.back();
+              controller.cancelSubscription();
+            },
+            style: TextButton.styleFrom(
+              foregroundColor: Colors.red,
+            ),
+            child: Text('Yes, Cancel',style: ssTitleTextTextStyle14400.copyWith(color: Colors.red,fontWeight: FontWeight.bold),),
+          ),
+        ],
+      ),
     );
   }
 }

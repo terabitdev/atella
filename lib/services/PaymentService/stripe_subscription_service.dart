@@ -115,7 +115,7 @@ class StripeSubscriptionService {
             merchantDisplayName: 'Atella',
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
-            style: ThemeMode.light,
+            style: ThemeMode.dark,
           ),
         );
 

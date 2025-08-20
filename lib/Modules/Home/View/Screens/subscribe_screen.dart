@@ -106,70 +106,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                       )),
                       SizedBox(height: 40.h),
                       
-                      // Action Buttons
-                      Obx(() => controller.currentSubscription.value != null && 
-                              controller.currentSubscription.value!.subscriptionPlan != 'FREE'
-                          ? Column(
-                              children: [
-                                Container(
-                                  width: double.infinity,
-                                  height: 50.h,
-                                  child: ElevatedButton(
-                                    onPressed: (controller.isLoading.value || controller.isCancellingSubscription.value) ? null : () {
-                                      _showChangeConfirmationDialog();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.black,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
-                                    ),
-                                    child: Text(
-                                      'Change Plan',
-                                      style: TextStyle(
-                                        color: Colors.white,
-                                        fontSize: 16.sp,
-                                        fontWeight: FontWeight.w600,
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 12.h),
-                                Container(
-                                  width: double.infinity,
-                                  height: 50.h,
-                                  child: ElevatedButton(
-                                    onPressed: (controller.isLoading.value || controller.isCancellingSubscription.value) ? null : () {
-                                      _showCancelConfirmationDialog();
-                                    },
-                                    style: ElevatedButton.styleFrom(
-                                      backgroundColor: Colors.red,
-                                      shape: RoundedRectangleBorder(
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
-                                    ),
-                                    child: controller.isCancellingSubscription.value
-                                        ? SizedBox(
-                                            height: 20.h,
-                                            width: 20.w,
-                                            child: CircularProgressIndicator(
-                                              color: Colors.white,
-                                              strokeWidth: 2,
-                                            ),
-                                          )
-                                        : Text(
-                                            'Cancel Subscription',
-                                            style: TextStyle(
-                                              color: Colors.white,
-                                              fontSize: 16.sp,
-                                              fontWeight: FontWeight.w600,
-                                            ),
-                                          ),
-                                  ),
-                                ),
-                              ],
-                            )
-                          : SizedBox.shrink()),
+                      // Removed action buttons - users will manage subscriptions from individual plan screens
                       SizedBox(height: 20.h),
                     ],
                   ),
