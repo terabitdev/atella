@@ -64,7 +64,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1097482533368',
     projectId: 'atelia-123',
     storageBucket: 'atelia-123.firebasestorage.app',
-    androidClientId: '1097482533368-53f3nhms6ngt7rie8t6or0ce0qgo3aaj.apps.googleusercontent.com',
+    androidClientId: '1097482533368-3boqt2eg1ip45pn7sj878q5tedsvhhlm.apps.googleusercontent.com',
     iosClientId: '1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com',
     iosBundleId: 'com.example.atella',
   );
@@ -75,7 +75,7 @@ class DefaultFirebaseOptions {
     messagingSenderId: '1097482533368',
     projectId: 'atelia-123',
     storageBucket: 'atelia-123.firebasestorage.app',
-    androidClientId: '1097482533368-53f3nhms6ngt7rie8t6or0ce0qgo3aaj.apps.googleusercontent.com',
+    androidClientId: '1097482533368-3boqt2eg1ip45pn7sj878q5tedsvhhlm.apps.googleusercontent.com',
     iosClientId: '1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com',
     iosBundleId: 'com.example.atella',
   );

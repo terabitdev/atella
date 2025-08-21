@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "1097482533368-uf9h14321309j952ph2qrrdfnd2fti1r.apps.googleusercontent.com",
+          "client_id": "1097482533368-3boqt2eg1ip45pn7sj878q5tedsvhhlm.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.example.atella",
-            "certificate_hash": "310f2be72ef9fcecfa22267c836663d6e1c2350d"
+            "certificate_hash": "bb170fb852459741fd97096a1c7c236ff0d47263"
           }
         },
         {
