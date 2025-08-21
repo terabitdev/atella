@@ -238,7 +238,7 @@ class StripeSubscriptionService {
     switch (feature) {
       case 'techpack':
         canUse = subscription.canGenerateTechpack;
-        print('🔍 Techpack access check: ${subscription.subscriptionPlan} plan, ${subscription.techpacksUsedThisMonth}/3 used, can generate: $canUse');
+        print('🔍 Techpack access check: ${subscription.subscriptionPlan} plan, ${subscription.techpacksUsedThisMonth}/${subscription.totalAllowedTechpacks} used, can generate: $canUse');
         break;
       case 'pdf_export':
         canUse = subscription.subscriptionPlan != 'FREE';
@@ -273,20 +273,193 @@ class StripeSubscriptionService {
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
-        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/3 (${updatedSubscription.subscriptionPlan} plan)');
+        String maxTechpacks = '${updatedSubscription.totalAllowedTechpacks}';
+        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks (${updatedSubscription.subscriptionPlan} plan)');
       }
     } catch (e) {
       print('❌ Error incrementing techpack usage: $e');
     }
   }
 
-  // Reset monthly techpack count (call this from a scheduled function)
-  Future<void> resetMonthlyTechpackCount(String userId) async {
+  // Increment design generation count
+  Future<void> incrementDesignUsage() async {
+    User? user = _auth.currentUser;
+    if (user == null) {
+      print('❌ Cannot increment design usage: No authenticated user');
+      return;
+    }
+
+    try {
+      await _firestore.collection('users').doc(user.uid).update({
+        'designsGeneratedThisMonth': FieldValue.increment(1),
+      });
+      print('✅ Incremented design usage for user: ${user.uid}');
+      
+      // Log current usage after increment
+      final updatedSubscription = await getCurrentUserSubscription();
+      if (updatedSubscription != null) {
+        print('📊 Current design usage: ${updatedSubscription.designCounterDisplay} (${updatedSubscription.subscriptionPlan} plan)');
+      }
+    } catch (e) {
+      print('❌ Error incrementing design usage: $e');
+    }
+  }
+
+  // Check if user can generate designs
+  Future<bool> canGenerateDesign() async {
+    UserSubscription? subscription = await getCurrentUserSubscription();
+    if (subscription == null) {
+      print('❌ Cannot check design generation access: No subscription found');
+      return false;
+    }
+
+    bool canGenerate = subscription.canGenerateDesign;
+    print('🔍 Design generation check: ${subscription.designCounterDisplay}, can generate: $canGenerate');
+    return canGenerate;
+  }
+
+  // Purchase extra techpacks (one-time payment) 
+  Future<bool> purchaseExtraTechpacks(int count, double price) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user == null) return false;
+
+      // Get or create Stripe customer
+      String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
+      if (customerId == null) return false;
+
+      // Create payment intent for one-time payment
+      final response = await http.post(
+        Uri.parse('$_stripeApiUrl/payment_intents'),
+        headers: {
+          'Authorization': 'Bearer $_stripeSecretKey',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'amount': '${(price * 100).round()}', // Convert euros to cents
+          'currency': 'eur',
+          'customer': customerId,
+          'description': 'Extra $count techpacks for this month',
+          'metadata[firebase_uid]': user.uid,
+          'metadata[extra_techpacks]': count.toString(),
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final paymentIntentData = json.decode(response.body);
+        final clientSecret = paymentIntentData['client_secret'];
+        
+        // Initialize payment sheet
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: clientSecret,
+            merchantDisplayName: 'Atella',
+            customerId: customerId,
+            customerEphemeralKeySecret: await _getEphemeralKey(customerId),
+            style: ThemeMode.dark,
+          ),
+        );
+
+        // Present payment sheet
+        await Stripe.instance.presentPaymentSheet();
+        
+        // Payment completed successfully - update user's extra techpacks
+        int packagesToAdd = count == 5 ? 1 : 2; // 5 techpacks = 1 package, 10 techpacks = 2 packages
+        await _firestore.collection('users').doc(user.uid).update({
+          'extraTechpacksPurchased': FieldValue.increment(packagesToAdd),
+        });
+        
+        print('✅ Extra techpacks purchased successfully: $count techpacks for €$price');
+        return true;
+      }
+    } catch (e) {
+      if (e is StripeException) {
+        print('Stripe error: ${e.error.message}');
+      } else {
+        print('Error purchasing extra techpacks: $e');
+      }
+    }
+    return false;
+  }
+
+  // Purchase extra designs (one-time payment)
+  Future<bool> purchaseExtraDesigns() async {
+    try {
+      User? user = _auth.currentUser;
+      if (user == null) return false;
+
+      // Get or create Stripe customer
+      String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
+      if (customerId == null) return false;
+
+      // Create payment intent for one-time payment
+      final response = await http.post(
+        Uri.parse('$_stripeApiUrl/payment_intents'),
+        headers: {
+          'Authorization': 'Bearer $_stripeSecretKey',
+          'Content-Type': 'application/x-www-form-urlencoded',
+        },
+        body: {
+          'amount': '399', // €3.99 in cents
+          'currency': 'eur',
+          'customer': customerId,
+          'description': 'Extra 20 designs for this month',
+          'metadata[firebase_uid]': user.uid,
+          'metadata[extra_designs]': '20',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final paymentIntentData = json.decode(response.body);
+        final clientSecret = paymentIntentData['client_secret'];
+        
+        // Initialize payment sheet
+        await Stripe.instance.initPaymentSheet(
+          paymentSheetParameters: SetupPaymentSheetParameters(
+            paymentIntentClientSecret: clientSecret,
+            merchantDisplayName: 'Atella',
+            customerId: customerId,
+            customerEphemeralKeySecret: await _getEphemeralKey(customerId),
+            style: ThemeMode.dark,
+          ),
+        );
+
+        // Present payment sheet
+        await Stripe.instance.presentPaymentSheet();
+        
+        // Payment completed successfully - update user's extra designs
+        await _firestore.collection('users').doc(user.uid).update({
+          'extraDesignsPurchased': FieldValue.increment(1),
+        });
+        
+        print('✅ Extra designs purchased successfully');
+        return true;
+      }
+    } catch (e) {
+      if (e is StripeException) {
+        print('Stripe error: ${e.error.message}');
+      } else {
+        print('Error purchasing extra designs: $e');
+      }
+    }
+    return false;
+  }
+
+  // Reset monthly counts (call this from a scheduled function)
+  Future<void> resetMonthlyCounts(String userId) async {
     await _firestore.collection('users').doc(userId).update({
       'techpacksUsedThisMonth': 0,
+      'designsGeneratedThisMonth': 0,
+      'extraDesignsPurchased': 0,
+      'extraTechpacksPurchased': 0,
       'currentPeriodStart': FieldValue.serverTimestamp(),
       'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
     });
+  }
+
+  // Legacy method - keeping for backward compatibility
+  Future<void> resetMonthlyTechpackCount(String userId) async {
+    await resetMonthlyCounts(userId);
   }
   
   // Check and handle monthly reset for current user
@@ -302,8 +475,8 @@ class StripeSubscriptionService {
       if (subscription.currentPeriodEnd != null && 
           DateTime.now().isAfter(subscription.currentPeriodEnd!)) {
         
-        // Reset the monthly usage count
-        await resetMonthlyTechpackCount(user.uid);
+        // Reset the monthly usage counts
+        await resetMonthlyCounts(user.uid);
         
         print('Monthly techpack count reset for user: ${user.uid}');
       }

@@ -174,16 +174,89 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && subscription.subscriptionPlan == 'STARTER') {
-                  final usedTechpacks = 3 - subscription.remainingTechpacks;
+                  final extraTechpacks = subscription.extraTechpacksPurchased;
+                  final totalAvailable = subscription.totalAllowedTechpacks;
+                  return Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Techpacks: ${subscription.techpacksUsedThisMonth}/$totalAvailable',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingTechpacks > 0
+                                ? Colors.grey[700]
+                                : Colors.red[600],  
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (extraTechpacks > 0)
+                          Text(
+                            'Extra packs purchased: $extraTechpacks',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: Colors.green[600],
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+            // Show techpacks info for Pro plan users
+            if (plan.type == SubscriptionPlanType.PRO && isSelected)
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                if (subscription != null && subscription.subscriptionPlan == 'PRO') {
+                  final extraTechpacks = subscription.extraTechpacksPurchased;
+                  final totalAvailable = subscription.totalAllowedTechpacks;
+                  return Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Techpacks: ${subscription.techpacksUsedThisMonth}/$totalAvailable',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingTechpacks > 0
+                                ? Colors.green[700]
+                                : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (extraTechpacks > 0)
+                          Text(
+                            'Extra packs purchased: $extraTechpacks',
+                            style: TextStyle(
+                              fontSize: 10.sp,
+                              color: Colors.green[600],
+                              fontWeight: FontWeight.w400,
+                            ),
+                          ),
+                      ],
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+            // Show design counter for Free plan users
+            if (plan.type == SubscriptionPlanType.FREE && isSelected)
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                if (subscription != null && subscription.subscriptionPlan == 'FREE') {
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Text(
-                      'Techpacks: $usedTechpacks/3',
+                      'Designs: ${subscription.designCounterDisplay}',
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: subscription.remainingTechpacks > 0
+                        color: subscription.remainingDesigns > 0
                             ? Colors.grey[700]
-                            : Colors.red[600],  
+                            : Colors.red[600],
                         fontWeight: FontWeight.w500,
                       ),
                     ),

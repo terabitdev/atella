@@ -109,7 +109,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Unlimited techpacks"),
+                            _buildFeatureItem("20 Techpacks per month"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("Unlimited AI-generated designs"),
                             SizedBox(height: 16.h),

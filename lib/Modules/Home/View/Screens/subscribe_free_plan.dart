@@ -3,12 +3,14 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import '../../Controllers/subscribe_controller.dart';
 
 class SubscribeFreePlan extends StatelessWidget {
   const SubscribeFreePlan({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final SubscribeController controller = Get.find<SubscribeController>();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -75,6 +77,24 @@ class SubscribeFreePlan extends StatelessWidget {
                                           "Features include:",
                                           style: sfpsTitleTextTextStyle14400,
                                         ),
+                                        SizedBox(height: 8.h),
+                                        // Design counter
+                                        Obx(() {
+                                          final subscription = controller.currentSubscription.value;
+                                          if (subscription != null && subscription.subscriptionPlan == 'FREE') {
+                                            return Text(
+                                              'Designs: ${subscription.designCounterDisplay}',
+                                              style: TextStyle(
+                                                fontSize: 14.sp,
+                                                color: subscription.remainingDesigns > 0
+                                                    ? Colors.white
+                                                    : Colors.red[300],
+                                                fontWeight: FontWeight.w600,
+                                              ),
+                                            );
+                                          }
+                                          return SizedBox.shrink();
+                                        }),
                                       ],
                                     ),
                                   ),

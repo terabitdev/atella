@@ -4,12 +4,15 @@ import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/modules/tech_pack/controllers/generate_tech_pack_controller.dart';
+import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class FinalDetailsController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final EditDataService _editDataService = EditDataService();
+  final StripeSubscriptionService _stripeService = StripeSubscriptionService();
   
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
@@ -417,7 +420,16 @@ class FinalDetailsController extends GetxController {
   }
 
   // Generate final design
-  void generateDesign() {
+  void generateDesign() async {
+    // Check if user can generate designs (only for non-edit mode)
+    if (!_isEditMode.value) {
+      bool canGenerate = await _stripeService.canGenerateDesign();
+      if (!canGenerate) {
+        _showLimitExceededDialog();
+        return;
+      }
+    }
+    
     // Store final details data in the design data service
     _saveFinalDetailsData();
     
@@ -441,6 +453,9 @@ class FinalDetailsController extends GetxController {
         colorText: Colors.white,
       );
     } else {
+      // Increment design usage count for new generations
+      await _stripeService.incrementDesignUsage();
+      
       Get.toNamed('/generate_tech_pack');
       
       Get.snackbar(
@@ -451,6 +466,35 @@ class FinalDetailsController extends GetxController {
         colorText: Colors.white,
       );
     }
+  }
+
+  // Show limit exceeded dialog
+  void _showLimitExceededDialog() {
+    Get.dialog(
+      LimitExceededDialog(
+        onGetExtraDesigns: () async {
+          Get.back(); // Close dialog
+          bool success = await _stripeService.purchaseExtraDesigns();
+          if (success) {
+            Get.snackbar(
+              'Extra Designs Added!',
+              '20 extra designs have been added to your account.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.black,
+              colorText: Colors.white,
+            );
+          }
+        },
+        onUpgradePlan: () {
+          Get.back(); // Close dialog
+          Get.toNamed('/subscribe');
+        },
+        onMaybeLater: () {
+          Get.back(); // Close dialog
+        },
+      ),
+      barrierDismissible: false,
+    );
   }
   
   void _saveFinalDetailsData() {
