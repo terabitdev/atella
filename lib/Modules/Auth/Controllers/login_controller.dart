@@ -73,18 +73,19 @@ class LoginController extends GetxController {
       }
     }
   }
-//sign with Google
+
   Future<void> loginWithGoogle() async {
     isGoogleLoading.value = true;
     final result = await _authService.signInWithGoogle();
     isGoogleLoading.value = false;
-
+    
     if (result == null) {
       Get.snackbar(
         'Success',
-        'Google sign-in successful',
-        backgroundColor: Colors.green,
+        'Successfully signed in with Google',
+        backgroundColor: Colors.black,
         colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
       );
       Get.offAllNamed('/nav_bar');
     } else {
@@ -94,7 +95,6 @@ class LoginController extends GetxController {
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      print('Google sign-in error details: $result');
     }
   }
 

@@ -6,6 +6,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final GoogleSignIn _googleSignIn = GoogleSignIn();
 
   Future<String?> signUp({
     required String name,
@@ -57,67 +58,55 @@ class AuthService {
       return 'An error occurred';
     }
   }
+  // Get the current user (null if not signed in)
+  User? get currentUser => _auth.currentUser;
 
-  // Sign in with Google
   Future<String?> signInWithGoogle() async {
     try {
-      // Trigger the Google Sign-In flow
-      final GoogleSignInAccount? googleUser = await GoogleSignIn().signIn();
-      
-      // User cancelled the sign-in
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
         return 'Google sign-in was cancelled';
       }
 
-      final GoogleSignInAuthentication? googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
 
-      if (googleAuth?.idToken != null && googleAuth?.accessToken != null) {
-        // Create a new credential
-        final credential = GoogleAuthProvider.credential(
-          idToken: googleAuth?.idToken,
-          accessToken: googleAuth?.accessToken,
-        );
+      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      User? user = userCredential.user;
 
-        // Sign in with the credential
-        UserCredential userCredential = await _auth.signInWithCredential(credential);
-        User? user = userCredential.user;
+      if (user != null) {
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
         
-        if (user != null) {
-          // Check if user already exists
-          DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-          
-          if (!userDoc.exists) {
-            // Create new user document with subscription info
-            await _firestore.collection('users').doc(user.uid).set({
-              'uid': user.uid,
-              'name': user.displayName ?? '',
-              'email': user.email ?? '',
-              'createdAt': FieldValue.serverTimestamp(),
-              'subscriptionPlan': 'FREE',
-              'subscriptionStatus': 'active',
-              'stripeCustomerId': null,
-              'currentSubscriptionId': null,
-              'techpacksUsedThisMonth': 0,
-            });
-          }
+        if (!userDoc.exists) {
+          await _firestore.collection('users').doc(user.uid).set({
+            'uid': user.uid,
+            'name': user.displayName ?? 'Google User',
+            'email': user.email,
+            'createdAt': FieldValue.serverTimestamp(),
+            'subscriptionPlan': 'FREE',
+            'subscriptionStatus': 'active',
+            'stripeCustomerId': null,
+            'currentSubscriptionId': null,
+            'techpacksUsedThisMonth': 0,
+          });
         }
-        
-        return null; // Success
+        return null;
       } else {
-        return 'Failed to get Google authentication tokens';
+        return 'Google sign-in failed';
       }
     } on FirebaseAuthException catch (e) {
-      return 'Firebase Auth Error: ${e.message}';
+      return e.message;
     } catch (e) {
-      return 'Google sign-in error: ${e.toString()}';
+      return 'An error occurred during Google sign-in';
     }
   }
-
-  // Get the current user (null if not signed in)
-  User? get currentUser => _auth.currentUser;
 
   // Sign out the current user
   Future<void> signOut() async {
     await _auth.signOut();
+    await _googleSignIn.signOut();
   }
 }

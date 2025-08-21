@@ -1,3 +1,4 @@
+import 'package:atella/modules/auth/Controllers/login_controller.dart';
 import 'package:atella/modules/auth/View/Widgets/auth_header.dart';
 import 'package:atella/modules/auth/View/Widgets/google_signin_button.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -6,7 +7,6 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:atella/modules/auth/Controllers/login_controller.dart';
 import '../widgets/auth_textfield.dart';
 
 class LoginScreen extends StatelessWidget {
