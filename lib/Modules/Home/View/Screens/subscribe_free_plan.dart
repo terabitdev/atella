@@ -101,7 +101,7 @@ class SubscribeFreePlan extends StatelessWidget {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Unlimited AI-generated designs"),
+                            _buildFeatureItem("Up to 10 3D designs / month"),
                             SizedBox(height: 16.h),
                             _buildFeatureItem("3D Visualization included"),
                             SizedBox(height: 16.h),

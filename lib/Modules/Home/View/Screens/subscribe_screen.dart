@@ -104,10 +104,6 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                           ),
                         ],
                       )),
-                      SizedBox(height: 40.h),
-                      
-                      // Removed action buttons - users will manage subscriptions from individual plan screens
-                      SizedBox(height: 20.h),
                     ],
                   ),
                 ),
@@ -197,53 +193,6 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               }),
           ],
         ),
-      ),
-    );
-  }
-
-  void _showChangeConfirmationDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: Text('Change Plan', style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black)),
-        content: Text('To change your plan, you need to cancel your current subscription first, then select a new plan.', style: ssTitleTextTextStyle14400.copyWith(color: Colors.black)),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('Cancel', style: ssTitleTextTextStyle14400.copyWith(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _showCancelConfirmationDialog();
-            },
-            child: Text('Continue', style: ssTitleTextTextStyle14400.copyWith(color: Colors.black, fontWeight: FontWeight.bold)),
-          ),
-        ],
-      ),
-    );
-  }
-
-  void _showCancelConfirmationDialog() {
-    Get.dialog(
-      AlertDialog(
-        title: Text('Cancel Subscription',style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black),),
-        content: Text('Are you sure you want to cancel your subscription? You will lose access to premium features.',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('No, Keep Subscription',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black,fontWeight: FontWeight.bold),),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.cancelSubscription();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
-            ),
-            child: Text('Yes, Cancel',style: ssTitleTextTextStyle14400.copyWith(color: Colors.red,fontWeight: FontWeight.bold),),
-          ),
-        ],
       ),
     );
   }
