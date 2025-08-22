@@ -175,7 +175,9 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                             // Features List
                             Obx(() => Column(
                               children: [
-                                _buildFeatureItem(controller.isYearlyBilling.value ? "Up to 3 techpacks per year" : "Up to 3 techpacks per month"),
+                                _buildFeatureItem(controller.isYearlyBilling.value 
+                                  ? "3 techpacks per month (36 total per year)" 
+                                  : "3 techpacks per month"),
                                 SizedBox(height: 16.h),
                                 _buildFeatureItem("Unlimited 3D visualization"),
                                 SizedBox(height: 16.h),

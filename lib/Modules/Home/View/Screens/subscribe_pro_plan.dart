@@ -173,9 +173,9 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            Obx(() => Column(
+                            Column(
                               children: [
-                                _buildFeatureItem(controller.isYearlyBilling.value ? "20 techpacks per year" : "20 techpacks per month"),
+                                _buildFeatureItem("20 techpacks per month"),
                                 SizedBox(height: 16.h),
                                 _buildFeatureItem("Unlimited 3D visualization"),
                                 SizedBox(height: 16.h),
@@ -183,7 +183,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                 SizedBox(height: 16.h),
                                 _buildFeatureItem("Access to manufacturers list"),
                               ],
-                            )),
+                            ),
                             SizedBox(height: 16.h),
                           ],
                         ),

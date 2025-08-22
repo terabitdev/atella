@@ -237,10 +237,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                   final extraTechpacks = subscription.extraTechpacksPurchased;
                   final totalAvailable = subscription.totalAllowedTechpacks;
                   
-                  // Use appropriate techpack counter based on billing period
+                  // Always use monthly counter for display
                   final isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
-                  final techpacksUsed = isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
-                  final periodText = isYearly ? 'year' : 'month';
+                  final techpacksUsed = subscription.techpacksUsedThisMonth;
                   
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
@@ -248,7 +247,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Techpacks: $techpacksUsed/$totalAvailable this $periodText',
+                          isYearly 
+                            ? 'Techpacks: $techpacksUsed/$totalAvailable per month (${subscription.techpacksUsedThisYear}/36 per year)'
+                            : 'Techpacks: $techpacksUsed/$totalAvailable per month',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0
@@ -271,10 +272,8 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                   final extraTechpacks = subscription.extraTechpacksPurchased;
                   final totalAvailable = subscription.totalAllowedTechpacks;
                   
-                  // Use appropriate techpack counter based on billing period
-                  final isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
-                  final techpacksUsed = isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
-                  final periodText = isYearly ? 'year' : 'month';
+                  // Always use monthly counter for Pro plans
+                  final techpacksUsed = subscription.techpacksUsedThisMonth;
                   
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
@@ -282,7 +281,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Techpacks: $techpacksUsed/$totalAvailable',
+                          'Techpacks: $techpacksUsed/$totalAvailable per month',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0

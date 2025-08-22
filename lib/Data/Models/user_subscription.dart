@@ -80,22 +80,33 @@ class UserSubscription {
     if (subscriptionPlan == 'FREE') return false;
     
     bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
-    int techpacksUsed = isYearly ? techpacksUsedThisYear : techpacksUsedThisMonth;
     
     if (subscriptionPlan.startsWith('PRO')) {
       int baseLimit = 20;
       int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
-      return techpacksUsed < totalAllowed;
+      return techpacksUsedThisMonth < totalAllowed;
     }
     if (subscriptionPlan.startsWith('STARTER')) {
-      int baseLimit = 3;
-      int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
-      return techpacksUsed < totalAllowed;
+      // For Starter plans, always check monthly limit (3 per month)
+      int monthlyLimit = 3;
+      int totalAllowed = monthlyLimit + (extraTechpacksPurchased * 5);
+      
+      // For yearly plans, also check yearly limit (36 per year)
+      if (isYearly) {
+        int yearlyLimit = 36;
+        int yearlyAllowed = yearlyLimit + (extraTechpacksPurchased * 5);
+        // Must satisfy both monthly AND yearly limits
+        return techpacksUsedThisMonth < totalAllowed && techpacksUsedThisYear < yearlyAllowed;
+      }
+      
+      // For monthly plans, just check monthly limit
+      return techpacksUsedThisMonth < totalAllowed;
     }
     return false;
   }
 
   int get totalAllowedTechpacks {
+    // Always return the monthly limit for display purposes
     if (subscriptionPlan.startsWith('PRO')) {
       return 20 + (extraTechpacksPurchased * 5);
     }
@@ -107,10 +118,9 @@ class UserSubscription {
 
   int get remainingTechpacks {
     if (subscriptionPlan.startsWith('PRO') || subscriptionPlan.startsWith('STARTER')) {
-      bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
-      int techpacksUsed = isYearly ? techpacksUsedThisYear : techpacksUsedThisMonth;
+      // Always use monthly count for remaining techpacks
       int totalAllowed = totalAllowedTechpacks;
-      return totalAllowed - techpacksUsed;
+      return totalAllowed - techpacksUsedThisMonth;
     }
     return 0;
   }

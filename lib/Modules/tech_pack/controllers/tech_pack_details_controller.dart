@@ -666,7 +666,7 @@ class TechPackDetailsController extends GetxController {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Upgrade to access:',
+                    'Choose a plan:',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -674,9 +674,11 @@ class TechPackDetailsController extends GetxController {
                     ),
                   ),
                   SizedBox(height: 8),
-                  _buildFeatureItem('Generate final techpacks (3/month with Starter)'),
+                  _buildFeatureItem('Starter: 3 techpacks/month (€9.99/mo or €99/yr)'),
+                  _buildFeatureItem('Pro: 20 techpacks/month (€24.99/mo or €249/yr)'),
                   _buildFeatureItem('Professional PDF techpack exports'),
                   _buildFeatureItem('Access to manufacturer database'),
+                  _buildFeatureItem('Unlimited 3D visualization'),
                 ],
               ),
             ),
@@ -788,7 +790,9 @@ class TechPackDetailsController extends GetxController {
                   Padding(
                     padding: EdgeInsets.only(top: 4),
                     child: Text(
-                      'limit reached: ${_getTechpacksUsed(subscription)}/${subscription?.totalAllowedTechpacks ?? 3} techpacks used this ${_getBillingPeriodText(subscription)}',
+                      subscription?.subscriptionPlan == 'STARTER_YEARLY' 
+                        ? 'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/3 techpacks used this month\nYearly usage: ${subscription?.techpacksUsedThisYear ?? 0}/36 techpacks'
+                        : 'Limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 3} techpacks used this month',
                       style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 12,
                         color: Colors.red.shade600,
@@ -801,7 +805,9 @@ class TechPackDetailsController extends GetxController {
             ),
             SizedBox(height: 16),
             Text(
-              'You\'ve reached your limit of techpacks. Choose an option to continue:',
+              subscription?.subscriptionPlan == 'STARTER_YEARLY'
+                ? 'You\'ve reached your monthly limit of 3 techpacks. Choose an option to continue:'
+                : 'You\'ve reached your monthly limit of techpacks. Choose an option to continue:',
               style: ssTitleTextTextStyle124003,
             ),
             SizedBox(height: 16),
@@ -830,7 +836,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this ${_getBillingPeriodText(subscription)}',
+                    'Get 5 additional techpacks for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.black,
@@ -865,7 +871,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 10 additional techpacks for this ${_getBillingPeriodText(subscription)}',
+                    'Get 10 additional techpacks for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.black,
@@ -961,7 +967,7 @@ class TechPackDetailsController extends GetxController {
             ),
             SizedBox(width: 8),
             Text(
-              '${_getBillingPeriodText(subscription).replaceFirstMapped(RegExp(r'^.'), (m) => m.group(0)!.toUpperCase())} Limit Reached',
+              'Monthly Limit Reached',
               style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.purple),
             ),
           ],
@@ -1051,7 +1057,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this ${_getBillingPeriodText(subscription)}',
+                    'Get 5 additional techpacks for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.blue.shade600,
@@ -1088,7 +1094,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 10 additional techpacks for this ${_getBillingPeriodText(subscription)}',
+                    'Get 10 additional techpacks for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.green.shade600,
@@ -1155,13 +1161,9 @@ class TechPackDetailsController extends GetxController {
       bool success = await _subscriptionService.purchaseExtraTechpacks(count, price);
       
       if (success) {
-        // Get current subscription to show correct billing period
-        final subscription = await _subscriptionService.getCurrentUserSubscription();
-        String period = _getBillingPeriodText(subscription);
-        
         Get.snackbar(
           'Success!',
-          'You now have $count additional techpacks for this $period!',
+          'You now have $count additional techpacks for this month!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -1208,15 +1210,6 @@ class TechPackDetailsController extends GetxController {
     }
   }
 
-  int _getTechpacksUsed(UserSubscription? subscription) {
-    if (subscription == null) return 0;
-    
-    // Check if it's a yearly subscription
-    bool isYearly = subscription.billingPeriod == 'YEARLY' || 
-                    subscription.subscriptionPlan.contains('YEARLY');
-    
-    return isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
-  }
 
   String _getBillingPeriodText(UserSubscription? subscription) {
     if (subscription == null) return 'month';

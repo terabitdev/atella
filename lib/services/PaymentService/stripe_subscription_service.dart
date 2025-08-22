@@ -281,22 +281,27 @@ class StripeSubscriptionService {
       
       bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
       
-      Map<String, dynamic> updates = {};
+      Map<String, dynamic> updates = {
+        // Always increment monthly counter
+        'techpacksUsedThisMonth': FieldValue.increment(1),
+      };
+      
+      // For yearly plans, also increment yearly counter
       if (isYearly) {
         updates['techpacksUsedThisYear'] = FieldValue.increment(1);
-      } else {
-        updates['techpacksUsedThisMonth'] = FieldValue.increment(1);
       }
       
       await _firestore.collection('users').doc(user.uid).update(updates);
-      print('✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly' : 'monthly'})');
+      print('✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly + monthly' : 'monthly'})');
       
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
         String maxTechpacks = '${updatedSubscription.totalAllowedTechpacks}';
-        int techpacksUsed = isYearly ? updatedSubscription.techpacksUsedThisYear : updatedSubscription.techpacksUsedThisMonth;
-        print('📊 Current techpack usage: $techpacksUsed/$maxTechpacks (${updatedSubscription.subscriptionPlan} plan)');
+        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks per month (${updatedSubscription.subscriptionPlan} plan)');
+        if (isYearly) {
+          print('📊 Yearly usage: ${updatedSubscription.techpacksUsedThisYear}/36 per year');
+        }
       }
     } catch (e) {
       print('❌ Error incrementing techpack usage: $e');
@@ -473,24 +478,38 @@ class StripeSubscriptionService {
     if (subscription == null) return;
     
     bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
-    int periodDays = isYearly ? 365 : 30;
     
     Map<String, dynamic> updates = {
+      // Always reset monthly counters
+      'techpacksUsedThisMonth': 0,
+      'designsGeneratedThisMonth': 0,
       'extraDesignsPurchased': 0,
       'extraTechpacksPurchased': 0,
       'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: periodDays))),
+      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: 30))), // Always 30 days for monthly reset
     };
     
-    if (isYearly) {
-      updates['techpacksUsedThisYear'] = 0;
-      updates['designsGeneratedThisMonth'] = 0; // Still reset monthly for designs
-    } else {
-      updates['techpacksUsedThisMonth'] = 0;
-      updates['designsGeneratedThisMonth'] = 0;
-    }
+    // Note: techpacksUsedThisYear is only reset at the yearly billing cycle, not monthly
+    // This is handled separately in a yearly reset function if needed
     
     await _firestore.collection('users').doc(userId).update(updates);
+  }
+
+  // Reset yearly counts for yearly subscriptions (call this from a scheduled function)
+  Future<void> resetYearlyCounts(String userId) async {
+    UserSubscription? subscription = await getCurrentUserSubscription();
+    if (subscription == null) return;
+    
+    // Only reset yearly counter if user has a yearly subscription
+    bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+    if (!isYearly) return;
+    
+    await _firestore.collection('users').doc(userId).update({
+      'techpacksUsedThisYear': 0,
+      // Note: Monthly counters are reset separately every month
+    });
+    
+    print('✅ Yearly techpack count reset for user: $userId');
   }
 
   // Legacy method - keeping for backward compatibility
