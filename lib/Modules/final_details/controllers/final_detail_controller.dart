@@ -428,14 +428,28 @@ class FinalDetailsController extends GetxController {
         _showLimitExceededDialog();
         return;
       }
+      // Increment design usage count for new generations ONLY if we can generate
+      await _stripeService.incrementDesignUsage();
     }
     
+    // Proceed with actual generation
+    _proceedWithGeneration();
+  }
+  
+  // Separate method for the actual generation logic
+  void _proceedWithGeneration() async {
     // Store final details data in the design data service
     _saveFinalDetailsData();
     
-    // Delete existing TechPackController to ensure fresh generation
+    // Force delete existing TechPackController to ensure fresh generation
     if (Get.isRegistered<TechPackController>()) {
-      Get.delete<TechPackController>();
+      try {
+        // Force delete even if it's permanent
+        Get.delete<TechPackController>(force: true);
+        print('Deleted existing TechPackController for fresh generation');
+      } catch (e) {
+        print('Error deleting TechPackController: $e');
+      }
     }
     
     // Navigate to tech pack generation screen with edit mode data
@@ -443,6 +457,7 @@ class FinalDetailsController extends GetxController {
       Get.toNamed('/generate_tech_pack', arguments: {
         'editMode': true,
         'techPackModel': _editingTechPack,
+        'forceRegenerate': true,  // Add flag to force regeneration
       });
       
       Get.snackbar(
@@ -453,10 +468,9 @@ class FinalDetailsController extends GetxController {
         colorText: Colors.white,
       );
     } else {
-      // Increment design usage count for new generations
-      await _stripeService.incrementDesignUsage();
-      
-      Get.toNamed('/generate_tech_pack');
+      Get.toNamed('/generate_tech_pack', arguments: {
+        'forceRegenerate': true,  // Add flag to force regeneration
+      });
       
       Get.snackbar(
         'Generating Designs!',
@@ -483,6 +497,11 @@ class FinalDetailsController extends GetxController {
               backgroundColor: Colors.black,
               colorText: Colors.white,
             );
+            await Future.delayed(Duration(seconds: 2));
+            // First increment the usage count since we now have extra designs
+            await _stripeService.incrementDesignUsage();
+            // Then proceed with generation directly without checking again
+            _proceedWithGeneration();
           }
         },
         onUpgradePlan: () {

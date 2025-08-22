@@ -60,12 +60,20 @@ class TechPackController extends GetxController {
     
     if (arguments != null && arguments is Map<String, dynamic>) {
       final isEditMode = arguments['editMode'] == true;
+      final forceRegenerate = arguments['forceRegenerate'] == true;
       print('Edit mode detected: $isEditMode');
+      print('Force regenerate: $forceRegenerate');
       
       if (isEditMode) {
         _isEditMode.value = true;
         _editingTechPack = arguments['techPackModel'] as TechPackModel?;
         print('Editing tech pack: ${_editingTechPack?.projectName}');
+      }
+      
+      // Clear existing images if force regenerate is requested
+      if (forceRegenerate) {
+        generatedImages.clear();
+        print('Cleared existing images for fresh generation');
       }
     }
   }
@@ -75,9 +83,16 @@ class TechPackController extends GetxController {
     await OpenAIService.setApiKey(dotenv.env['OPENAI_API_KEY'] ?? '');
     isInitialized.value = true;
     
-    // Only start generating designs if we don't already have them
-    if (generatedImages.isEmpty) {
+    // Always generate designs if forceRegenerate was passed or if images are empty
+    final arguments = Get.arguments;
+    final forceRegenerate = arguments != null && 
+                           arguments is Map<String, dynamic> && 
+                           arguments['forceRegenerate'] == true;
+    
+    if (generatedImages.isEmpty || forceRegenerate) {
       generateDesigns();
+    } else {
+      print('Skipping generation - already have ${generatedImages.length} images');
     }
   }
   
