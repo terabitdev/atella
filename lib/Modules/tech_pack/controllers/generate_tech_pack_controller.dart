@@ -381,11 +381,11 @@ Future<void> _saveDesignsInBackground() async {
                       ),
                     ],
                   ),
-                  if (currentPlan == 'STARTER' && remainingTechpacks > 0)
+                  if ((currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY') && remainingTechpacks > 0)
                     Padding(
                       padding: EdgeInsets.only(top: 4),
                       child: Text(
-                        'Remaining techpacks: $remainingTechpacks/3',
+                        'Remaining techpacks: $remainingTechpacks/3 this ${currentPlan == 'STARTER_YEARLY' ? 'year' : 'month'}',
                         style:  ssTitleTextTextStyle14400.copyWith(
                           fontSize: 12,
                           color: Colors.black,
@@ -480,8 +480,12 @@ Future<void> _saveDesignsInBackground() async {
         return 'Free';
       case 'STARTER':
         return 'Starter (€9.99/month)';
+      case 'STARTER_YEARLY':
+        return 'Starter (€99/year)';
       case 'PRO':
         return 'Pro (€24.99/month)';
+      case 'PRO_YEARLY':
+        return 'Pro (€249/year)';
       default:
         return 'Free';
     }

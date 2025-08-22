@@ -89,7 +89,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                           SizedBox(height: 16.h),
                           _buildPlanCard(
                             plan: SubscriptionPlan.starterPlan,
-                            isSelected: controller.selectedPlan.value == 'STARTER',
+                            isSelected: controller.selectedPlan.value == 'STARTER' || controller.selectedPlan.value == 'STARTER_YEARLY',
                             onTap: () {
                               Get.toNamed("/subscribe_starter");
                             },
@@ -97,7 +97,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                           SizedBox(height: 16.h),
                           _buildPlanCard(
                             plan: SubscriptionPlan.proPlan,
-                            isSelected: controller.selectedPlan.value == 'PRO',
+                            isSelected: controller.selectedPlan.value == 'PRO' || controller.selectedPlan.value == 'PRO_YEARLY',
                             onTap: () {
                               Get.toNamed("/subscribe_pro");
                             },
@@ -162,32 +162,132 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               ],
             ),
             SizedBox(height: 4.h),
-            Text(
-              plan.price == 0 ? 'Free' : '€${plan.price}/Month',
-              style: TextStyle(
-                fontSize: 14.sp,
-                color: Colors.grey[600],
-              ),
-            ),
-            // Show remaining techpacks for Starter plan users
+            // Pricing display
+            if (plan.price == 0)
+              Text(
+                'Free',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.grey[600],
+                ),
+              )
+            else
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                bool isUserOnThisPlan = isSelected;
+                bool isYearlyUser = subscription?.billingPeriod == 'YEARLY' || 
+                                   (subscription?.subscriptionPlan.contains('YEARLY') ?? false);
+                
+                return Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    // Monthly pricing row
+                    Row(
+                      children: [
+                        Text(
+                          '€${plan.price}/Month',
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (isUserOnThisPlan && !isYearlyUser) ...[
+                          SizedBox(width: 6.w),
+                          Icon(
+                            Icons.check,
+                            color: Colors.black,
+                            size: 16.sp,
+                          ),
+                        ],
+                      ],
+                    ),
+                    SizedBox(height: 2.h),
+                    // Yearly pricing row
+                    Row(
+                      children: [
+                        Text(
+                          plan.type == SubscriptionPlanType.STARTER 
+                              ? '€99/Year'
+                              : '€249/Year',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: Colors.grey[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        if (isUserOnThisPlan && isYearlyUser) ...[
+                          SizedBox(width: 6.w),
+                          Icon(
+                            Icons.check,
+                            color: Colors.black,
+                            size: 14.sp,
+                          ),
+                        ],
+                      ],
+                    ),
+                  ],
+                );
+              }),
+            // Show remaining techpacks for Starter plan users (monthly and yearly)
             if (plan.type == SubscriptionPlanType.STARTER && isSelected)
               Obx(() {
                 final subscription = controller.currentSubscription.value;
-                if (subscription != null && subscription.subscriptionPlan == 'STARTER') {
+                if (subscription != null && (subscription.subscriptionPlan == 'STARTER' || subscription.subscriptionPlan == 'STARTER_YEARLY')) {
                   final extraTechpacks = subscription.extraTechpacksPurchased;
                   final totalAvailable = subscription.totalAllowedTechpacks;
+                  
+                  // Use appropriate techpack counter based on billing period
+                  final isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+                  final techpacksUsed = isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
+                  final periodText = isYearly ? 'year' : 'month';
+                  
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         Text(
-                          'Techpacks: ${subscription.techpacksUsedThisMonth}/$totalAvailable',
+                          'Techpacks: $techpacksUsed/$totalAvailable this $periodText',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0
                                 ? Colors.grey[700]
                                 : Colors.red[600],  
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+            // Show techpacks info for Pro plan users (monthly and yearly)
+            if (plan.type == SubscriptionPlanType.PRO && isSelected)
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                if (subscription != null && (subscription.subscriptionPlan == 'PRO' || subscription.subscriptionPlan == 'PRO_YEARLY')) {
+                  final extraTechpacks = subscription.extraTechpacksPurchased;
+                  final totalAvailable = subscription.totalAllowedTechpacks;
+                  
+                  // Use appropriate techpack counter based on billing period
+                  final isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+                  final techpacksUsed = isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
+                  final periodText = isYearly ? 'year' : 'month';
+                  
+                  return Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          'Techpacks: $techpacksUsed/$totalAvailable this $periodText',
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingTechpacks > 0
+                                ? Colors.black
+                                : Colors.red[600],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -200,35 +300,6 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                               fontWeight: FontWeight.w400,
                             ),
                           ),
-                      ],
-                    ),
-                  );
-                }
-                return SizedBox.shrink();
-              }),
-            // Show techpacks info for Pro plan users
-            if (plan.type == SubscriptionPlanType.PRO && isSelected)
-              Obx(() {
-                final subscription = controller.currentSubscription.value;
-                if (subscription != null && subscription.subscriptionPlan == 'PRO') {
-                  final extraTechpacks = subscription.extraTechpacksPurchased;
-                  final totalAvailable = subscription.totalAllowedTechpacks;
-                  return Padding(
-                    padding: EdgeInsets.only(top: 6.h),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          'Techpacks: ${subscription.techpacksUsedThisMonth}/$totalAvailable',
-                          style: TextStyle(
-                            fontSize: 12.sp,
-                            color: subscription.remainingTechpacks > 0
-                                ? Colors.black
-                                : Colors.red[600],
-                            fontWeight: FontWeight.w500,
-                          ),
-                        ),
-                        
                       ],
                     ),
                   );

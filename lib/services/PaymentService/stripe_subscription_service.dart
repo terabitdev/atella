@@ -87,6 +87,11 @@ class StripeSubscriptionService {
       String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
       if (customerId == null) return false;
 
+      // Get the appropriate Stripe price ID based on billing period
+      String priceId = plan.billingPeriod == BillingPeriod.YEARLY && plan.stripeYearlyPriceId != null
+          ? plan.stripeYearlyPriceId!
+          : plan.stripePriceId;
+      
       // Create subscription on the backend
       final response = await http.post(
         Uri.parse('$_stripeApiUrl/subscriptions'),
@@ -96,12 +101,13 @@ class StripeSubscriptionService {
         },
         body: {
           'customer': customerId,
-          'items[0][price]': plan.stripePriceId,
+          'items[0][price]': priceId,
           'payment_behavior': 'default_incomplete',
           'payment_settings[save_default_payment_method]': 'on_subscription',
           'expand[]': 'latest_invoice.payment_intent',
           'metadata[firebase_uid]': user.uid,
           'metadata[plan_name]': plan.name,
+          'metadata[billing_period]': plan.billingPeriod == BillingPeriod.YEARLY ? 'YEARLY' : 'MONTHLY',
         },
       );
 
@@ -127,12 +133,11 @@ class StripeSubscriptionService {
         print('🔥 DEBUG: Payment sheet completed successfully');
 
         // NOTE: Firebase updates are now handled by webhooks only
-        // Client-side updates commented out to prevent dual updates
-        // print('🔥 CLIENT-SIDE: About to update Firebase for user ${user.uid} with plan ${plan.name}');
-        // await _updateUserSubscription(user.uid, plan, subscriptionData['id']);
-        // print('🔥 CLIENT-SIDE: Firebase update completed for subscription ${subscriptionData['id']}');
-        
+        // No client-side updates to prevent dual updates
         print('✅ Payment completed successfully. Webhook will update Firebase automatically.');
+        print('🔍 DEBUG: Plan being sent to webhook: ${plan.name}');
+        print('🔍 DEBUG: Billing period: ${plan.billingPeriod}');
+        print('🔍 DEBUG: Stripe Price ID used: $priceId');
         
         return true;
       }
@@ -170,13 +175,19 @@ class StripeSubscriptionService {
   // Update user subscription in Firebase
   Future<void> _updateUserSubscription(String userId, SubscriptionPlan plan, String subscriptionId) async {
     print('🔥 CLIENT-SIDE: Writing to Firebase - User: $userId, Plan: ${plan.name}, SubID: $subscriptionId');
+    
+    bool isYearly = plan.billingPeriod == BillingPeriod.YEARLY;
+    int periodDays = isYearly ? 365 : 30;
+    
     await _firestore.collection('users').doc(userId).update({
       'subscriptionPlan': plan.name,
       'subscriptionStatus': 'active',
       'currentSubscriptionId': subscriptionId,
+      'billingPeriod': isYearly ? 'YEARLY' : 'MONTHLY',
       'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
+      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: periodDays))),
       'techpacksUsedThisMonth': 0,
+      'techpacksUsedThisYear': 0,
       'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
     });
     print('🔥 CLIENT-SIDE: Firebase write completed successfully');
@@ -265,16 +276,27 @@ class StripeSubscriptionService {
     }
 
     try {
-      await _firestore.collection('users').doc(user.uid).update({
-        'techpacksUsedThisMonth': FieldValue.increment(1),
-      });
-      print('✅ Incremented techpack usage for user: ${user.uid}');
+      UserSubscription? subscription = await getCurrentUserSubscription();
+      if (subscription == null) return;
+      
+      bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+      
+      Map<String, dynamic> updates = {};
+      if (isYearly) {
+        updates['techpacksUsedThisYear'] = FieldValue.increment(1);
+      } else {
+        updates['techpacksUsedThisMonth'] = FieldValue.increment(1);
+      }
+      
+      await _firestore.collection('users').doc(user.uid).update(updates);
+      print('✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly' : 'monthly'})');
       
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
         String maxTechpacks = '${updatedSubscription.totalAllowedTechpacks}';
-        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks (${updatedSubscription.subscriptionPlan} plan)');
+        int techpacksUsed = isYearly ? updatedSubscription.techpacksUsedThisYear : updatedSubscription.techpacksUsedThisMonth;
+        print('📊 Current techpack usage: $techpacksUsed/$maxTechpacks (${updatedSubscription.subscriptionPlan} plan)');
       }
     } catch (e) {
       print('❌ Error incrementing techpack usage: $e');
@@ -445,16 +467,30 @@ class StripeSubscriptionService {
     return false;
   }
 
-  // Reset monthly counts (call this from a scheduled function)
+  // Reset counts based on billing period (call this from a scheduled function)
   Future<void> resetMonthlyCounts(String userId) async {
-    await _firestore.collection('users').doc(userId).update({
-      'techpacksUsedThisMonth': 0,
-      'designsGeneratedThisMonth': 0,
+    UserSubscription? subscription = await getCurrentUserSubscription();
+    if (subscription == null) return;
+    
+    bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+    int periodDays = isYearly ? 365 : 30;
+    
+    Map<String, dynamic> updates = {
       'extraDesignsPurchased': 0,
       'extraTechpacksPurchased': 0,
       'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(const Duration(days: 30))),
-    });
+      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: periodDays))),
+    };
+    
+    if (isYearly) {
+      updates['techpacksUsedThisYear'] = 0;
+      updates['designsGeneratedThisMonth'] = 0; // Still reset monthly for designs
+    } else {
+      updates['techpacksUsedThisMonth'] = 0;
+      updates['designsGeneratedThisMonth'] = 0;
+    }
+    
+    await _firestore.collection('users').doc(userId).update(updates);
   }
 
   // Legacy method - keeping for backward compatibility
@@ -525,8 +561,12 @@ class StripeSubscriptionService {
         return 'Free';
       case 'STARTER':
         return 'Starter (€9.99/month)';
+      case 'STARTER_YEARLY':
+        return 'Starter (€99/year)';
       case 'PRO':
         return 'Pro (€24.99/month)';
+      case 'PRO_YEARLY':
+        return 'Pro (€249/year)';
       default:
         return 'Free';
     }

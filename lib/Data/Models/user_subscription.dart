@@ -12,6 +12,8 @@ class UserSubscription {
   final int extraTechpacksPurchased;
   final DateTime? currentPeriodStart;
   final DateTime? currentPeriodEnd;
+  final String billingPeriod; // 'MONTHLY' or 'YEARLY'
+  final int techpacksUsedThisYear; // For yearly subscriptions
 
   UserSubscription({
     required this.userId,
@@ -25,6 +27,8 @@ class UserSubscription {
     this.extraTechpacksPurchased = 0,
     this.currentPeriodStart,
     this.currentPeriodEnd,
+    this.billingPeriod = 'MONTHLY',
+    this.techpacksUsedThisYear = 0,
   });
 
   factory UserSubscription.fromFirestore(DocumentSnapshot doc) {
@@ -45,6 +49,8 @@ class UserSubscription {
       currentPeriodEnd: data['currentPeriodEnd'] != null
           ? (data['currentPeriodEnd'] as Timestamp).toDate()
           : null,
+      billingPeriod: data['billingPeriod'] ?? 'MONTHLY',
+      techpacksUsedThisYear: data['techpacksUsedThisYear'] ?? 0,
     );
   }
 
@@ -65,40 +71,46 @@ class UserSubscription {
       'currentPeriodEnd': currentPeriodEnd != null
           ? Timestamp.fromDate(currentPeriodEnd!)
           : null,
+      'billingPeriod': billingPeriod,
+      'techpacksUsedThisYear': techpacksUsedThisYear,
     };
   }
 
   bool get canGenerateTechpack {
     if (subscriptionPlan == 'FREE') return false;
-    if (subscriptionPlan == 'PRO') {
-      int totalAllowed = 20 + (extraTechpacksPurchased * 5); // 20 base + 5 per purchase
-      return techpacksUsedThisMonth < totalAllowed;
+    
+    bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
+    int techpacksUsed = isYearly ? techpacksUsedThisYear : techpacksUsedThisMonth;
+    
+    if (subscriptionPlan.startsWith('PRO')) {
+      int baseLimit = 20;
+      int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
+      return techpacksUsed < totalAllowed;
     }
-    if (subscriptionPlan == 'STARTER') {
-      int totalAllowed = 3 + (extraTechpacksPurchased * 5); // 5 techpacks per purchase
-      return techpacksUsedThisMonth < totalAllowed;
+    if (subscriptionPlan.startsWith('STARTER')) {
+      int baseLimit = 3;
+      int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
+      return techpacksUsed < totalAllowed;
     }
     return false;
   }
 
   int get totalAllowedTechpacks {
-    if (subscriptionPlan == 'PRO') {
-      return 20 + (extraTechpacksPurchased * 5); // 20 base + 5 per purchase
+    if (subscriptionPlan.startsWith('PRO')) {
+      return 20 + (extraTechpacksPurchased * 5);
     }
-    if (subscriptionPlan == 'STARTER') {
-      return 3 + (extraTechpacksPurchased * 5); // 5 techpacks per purchase
+    if (subscriptionPlan.startsWith('STARTER')) {
+      return 3 + (extraTechpacksPurchased * 5);
     }
-    return 0; // Free plan gets 0 techpacks
+    return 0;
   }
 
   int get remainingTechpacks {
-    if (subscriptionPlan == 'PRO') {
+    if (subscriptionPlan.startsWith('PRO') || subscriptionPlan.startsWith('STARTER')) {
+      bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
+      int techpacksUsed = isYearly ? techpacksUsedThisYear : techpacksUsedThisMonth;
       int totalAllowed = totalAllowedTechpacks;
-      return totalAllowed - techpacksUsedThisMonth;
-    }
-    if (subscriptionPlan == 'STARTER') {
-      int totalAllowed = totalAllowedTechpacks;
-      return totalAllowed - techpacksUsedThisMonth;
+      return totalAllowed - techpacksUsed;
     }
     return 0;
   }

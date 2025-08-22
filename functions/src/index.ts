@@ -82,16 +82,30 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     const userId = userDoc.id;
     const planName = getPlanNameFromPriceId(priceId);
     
-    await db.collection('users').doc(userId).update({
+    const isYearly = planName.includes('YEARLY');
+    const billingPeriod = isYearly ? 'YEARLY' : 'MONTHLY';
+    
+    const updateData: any = {
       subscriptionPlan: planName,
       subscriptionStatus: status,
       currentSubscriptionId: subscriptionId,
+      billingPeriod: billingPeriod,
       currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
       currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
-      techpacksUsedThisMonth: 0,
       lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       updatedBy: 'WEBHOOK' // Debug field to identify source
-    });
+    };
+    
+    // Reset appropriate techpack counters based on billing period
+    if (isYearly) {
+      updateData.techpacksUsedThisYear = 0;
+      updateData.techpacksUsedThisMonth = 0; // Keep monthly counter for designs
+    } else {
+      updateData.techpacksUsedThisMonth = 0;
+      updateData.techpacksUsedThisYear = 0; // Initialize yearly counter
+    }
+    
+    await db.collection('users').doc(userId).update(updateData);
     
     console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} to ${planName} plan`);
   } catch (error) {
@@ -127,17 +141,27 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     const oldPeriodStart = currentData?.currentPeriodStart?.toDate();
     const shouldResetTechpacks = !oldPeriodStart || currentPeriodStart > oldPeriodStart;
     
+    const isYearly = planName.includes('YEARLY');
+    const billingPeriod = isYearly ? 'YEARLY' : 'MONTHLY';
+    
     const updateData: any = {
       subscriptionPlan: planName,
       subscriptionStatus: status,
       currentSubscriptionId: subscriptionId,
+      billingPeriod: billingPeriod,
       currentPeriodStart: admin.firestore.Timestamp.fromDate(currentPeriodStart),
       currentPeriodEnd: admin.firestore.Timestamp.fromDate(currentPeriodEnd),
       lastUpdated: admin.firestore.FieldValue.serverTimestamp()
     };
     
     if (shouldResetTechpacks) {
-      updateData.techpacksUsedThisMonth = 0;
+      if (isYearly) {
+        updateData.techpacksUsedThisYear = 0;
+        updateData.techpacksUsedThisMonth = 0; // Keep monthly counter for designs
+      } else {
+        updateData.techpacksUsedThisMonth = 0;
+        updateData.techpacksUsedThisYear = 0; // Initialize yearly counter
+      }
     }
     
     await db.collection('users').doc(userId).update(updateData);
@@ -240,10 +264,14 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 // Helper function to map price IDs to plan names
 function getPlanNameFromPriceId(priceId: string): string {
   switch (priceId) {
-    case 'price_1RxPj0B0j1hBhcav6vIJlc1C': // Your actual STARTER price ID
+    case 'price_1RxPj0B0j1hBhcav6vIJlc1C': // STARTER monthly
       return 'STARTER';
-    case 'price_1RxPlDB0j1hBhcavA9lDOp9F': // Your actual PRO price ID
+    case 'price_1RyT4WB0j1hBhcavwtIZ1kOU': // STARTER yearly
+      return 'STARTER_YEARLY';
+    case 'price_1RxPlDB0j1hBhcavA9lDOp9F': // PRO monthly
       return 'PRO';
+    case 'price_1RyT5pB0j1hBhcav7uph680L': // PRO yearly
+      return 'PRO_YEARLY';
     default:
       return 'FREE';
   }

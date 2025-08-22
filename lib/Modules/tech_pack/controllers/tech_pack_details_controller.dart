@@ -591,9 +591,9 @@ class TechPackDetailsController extends GetxController {
     // Show different dialogs based on plan
     if (currentPlan == 'FREE') {
       _showFreeUpgradeDialog(currentPlan);
-    } else if (currentPlan == 'STARTER') {
+    } else if (currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY') {
       _showStarterLimitDialog(subscription);
-    } else if (currentPlan == 'PRO') {
+    } else if (currentPlan == 'PRO' || currentPlan == 'PRO_YEARLY') {
       _showProLimitDialog(subscription);
     }
   }
@@ -739,13 +739,13 @@ class TechPackDetailsController extends GetxController {
           children: [
             Icon(
               Icons.warning_amber_rounded,
-              color: Colors.orange,
+              color: Colors.red,
               size: 24,
             ),
             SizedBox(width: 8),
             Text(
               'Limit Exceeded',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.orange),
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
             ),
           ],
         ),
@@ -788,7 +788,7 @@ class TechPackDetailsController extends GetxController {
                   Padding(
                     padding: EdgeInsets.only(top: 4),
                     child: Text(
-                      'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 3} techpacks used',
+                      'limit reached: ${_getTechpacksUsed(subscription)}/${subscription?.totalAllowedTechpacks ?? 3} techpacks used this ${_getBillingPeriodText(subscription)}',
                       style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 12,
                         color: Colors.red.shade600,
@@ -801,7 +801,7 @@ class TechPackDetailsController extends GetxController {
             ),
             SizedBox(height: 16),
             Text(
-              'You\'ve reached your monthly limit of 3 techpacks. Choose an option to continue:',
+              'You\'ve reached your limit of techpacks. Choose an option to continue:',
               style: ssTitleTextTextStyle124003,
             ),
             SizedBox(height: 16),
@@ -809,8 +809,8 @@ class TechPackDetailsController extends GetxController {
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -818,24 +818,22 @@ class TechPackDetailsController extends GetxController {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
-                      SizedBox(width: 8),
                       Text(
                         '+5 Techpacks: €4.99',
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
+                          color: Colors.black,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this month',
+                    'Get 5 additional techpacks for this ${_getBillingPeriodText(subscription)}',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
-                      color: Colors.blue.shade600,
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -846,8 +844,8 @@ class TechPackDetailsController extends GetxController {
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                border: Border.all(color: Colors.green.shade200),
+                color: Colors.white,
+                border: Border.all(color: Colors.grey.shade300),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -855,24 +853,22 @@ class TechPackDetailsController extends GetxController {
                 children: [
                   Row(
                     children: [
-                      Icon(Icons.add_circle, color: Colors.green, size: 20),
-                      SizedBox(width: 8),
                       Text(
                         '+10 Techpacks: €8.99',
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700,
+                          color: Colors.black,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 10 additional techpacks for this month',
+                    'Get 10 additional techpacks for this ${_getBillingPeriodText(subscription)}',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
-                      color: Colors.green.shade600,
+                      color: Colors.black,
                     ),
                   ),
                 ],
@@ -887,7 +883,6 @@ class TechPackDetailsController extends GetxController {
               'Maybe Later',
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -899,8 +894,7 @@ class TechPackDetailsController extends GetxController {
             child: Text(
               '+5 Techpacks',
               style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
           ),
@@ -912,8 +906,7 @@ class TechPackDetailsController extends GetxController {
             child: Text(
               '+10 Techpacks',
               style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.green,
-                fontWeight: FontWeight.bold,
+                color: Colors.black,
               ),
             ),
           ),
@@ -968,7 +961,7 @@ class TechPackDetailsController extends GetxController {
             ),
             SizedBox(width: 8),
             Text(
-              'Monthly Limit Reached',
+              '${_getBillingPeriodText(subscription).replaceFirstMapped(RegExp(r'^.'), (m) => m.group(0)!.toUpperCase())} Limit Reached',
               style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.purple),
             ),
           ],
@@ -1058,7 +1051,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this month',
+                    'Get 5 additional techpacks for this ${_getBillingPeriodText(subscription)}',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.blue.shade600,
@@ -1095,7 +1088,7 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 10 additional techpacks for this month',
+                    'Get 10 additional techpacks for this ${_getBillingPeriodText(subscription)}',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.green.shade600,
@@ -1162,9 +1155,13 @@ class TechPackDetailsController extends GetxController {
       bool success = await _subscriptionService.purchaseExtraTechpacks(count, price);
       
       if (success) {
+        // Get current subscription to show correct billing period
+        final subscription = await _subscriptionService.getCurrentUserSubscription();
+        String period = _getBillingPeriodText(subscription);
+        
         Get.snackbar(
           'Success!',
-          'You now have $count additional techpacks for this month!',
+          'You now have $count additional techpacks for this $period!',
           backgroundColor: Colors.green,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -1200,11 +1197,35 @@ class TechPackDetailsController extends GetxController {
         return 'Free';
       case 'STARTER':
         return 'Starter (€9.99/month)';
+      case 'STARTER_YEARLY':
+        return 'Starter (€99/year)';
       case 'PRO':
         return 'Pro (€24.99/month)';
+      case 'PRO_YEARLY':
+        return 'Pro (€249/year)';
       default:
         return 'Free';
     }
+  }
+
+  int _getTechpacksUsed(UserSubscription? subscription) {
+    if (subscription == null) return 0;
+    
+    // Check if it's a yearly subscription
+    bool isYearly = subscription.billingPeriod == 'YEARLY' || 
+                    subscription.subscriptionPlan.contains('YEARLY');
+    
+    return isYearly ? subscription.techpacksUsedThisYear : subscription.techpacksUsedThisMonth;
+  }
+
+  String _getBillingPeriodText(UserSubscription? subscription) {
+    if (subscription == null) return 'month';
+    
+    // Check if it's a yearly subscription
+    bool isYearly = subscription.billingPeriod == 'YEARLY' || 
+                    subscription.subscriptionPlan.contains('YEARLY');
+    
+    return isYearly ? 'year' : 'month';
   }
 
   Widget _buildFeatureItem(String text) {

@@ -12,6 +12,7 @@ class SubscribeController extends GetxController {
   Rx<UserSubscription?> currentSubscription = Rx<UserSubscription?>(null);
   RxBool isLoading = false.obs;
   RxBool isCancellingSubscription = false.obs;
+  RxBool isYearlyBilling = false.obs; // Toggle for monthly/yearly billing
   
   // Navigation handling
   String? returnRoute;
@@ -236,5 +237,34 @@ class SubscribeController extends GetxController {
 
   int get remainingTechpacks {
     return currentSubscription.value?.remainingTechpacks ?? 0;
+  }
+
+  // Helper methods for billing period
+  void toggleBillingPeriod() {
+    isYearlyBilling.value = !isYearlyBilling.value;
+  }
+
+  SubscriptionPlan getStarterPlan() {
+    return isYearlyBilling.value 
+        ? SubscriptionPlan.starterYearlyPlan 
+        : SubscriptionPlan.starterPlan;
+  }
+
+  SubscriptionPlan getProPlan() {
+    return isYearlyBilling.value 
+        ? SubscriptionPlan.proYearlyPlan 
+        : SubscriptionPlan.proPlan;
+  }
+
+  String getStarterPriceText() {
+    return isYearlyBilling.value 
+        ? 'Starter €99/Year' 
+        : 'Starter €9.99/Month';
+  }
+
+  String getProPriceText() {
+    return isYearlyBilling.value 
+        ? 'Pro €249/Year' 
+        : 'Pro €24.99/Month';
   }
 }

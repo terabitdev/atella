@@ -59,7 +59,71 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
                             SizedBox(height: 16.h),
-                            // Free Plan Header Container
+                            // Billing Period Toggle
+                            Container(
+                              width: double.infinity,
+                              padding: EdgeInsets.all(4.h),
+                              decoration: BoxDecoration(
+                                color: Colors.grey[200],
+                                borderRadius: BorderRadius.circular(8.r),
+                              ),
+                              child: Obx(() => Row(
+                                children: [
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (controller.isYearlyBilling.value) {
+                                          controller.toggleBillingPeriod();
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                                        decoration: BoxDecoration(
+                                          color: !controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(6.r),
+                                        ),
+                                        child: Text(
+                                          'Monthly',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: !controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                  Expanded(
+                                    child: GestureDetector(
+                                      onTap: () {
+                                        if (!controller.isYearlyBilling.value) {
+                                          controller.toggleBillingPeriod();
+                                        }
+                                      },
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(vertical: 12.h),
+                                        decoration: BoxDecoration(
+                                          color: controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
+                                          borderRadius: BorderRadius.circular(6.r),
+                                        ),
+                                        child: Text(
+                                          'Yearly (Save 17%)',
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            color: controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
+                                            fontSize: 14.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                                ],
+                              )),
+                            ),
+                            SizedBox(height: 16.h),
+                            // Plan Header Container
                             Container(
                               width: double.infinity,
                               padding: EdgeInsets.all(16.h),
@@ -74,10 +138,10 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                     child: Column(
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          "Starter €9.99/Month",
+                                        Obx(() => Text(
+                                          controller.getStarterPriceText(),
                                           style: sfpsTitleTextTextStyle18600,
-                                        ),
+                                        )),
                                         SizedBox(height: 4.h),
                                         Text(
                                           "Features include:",
@@ -109,13 +173,17 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Up to 3 techpacks per month"),
-                            SizedBox(height: 16.h),
-                            _buildFeatureItem("3D Visualization included"),
-                            SizedBox(height: 16.h),
-                            _buildFeatureItem("Custom PDF export (includes logo)"),
-                            SizedBox(height: 16.h),
-                            _buildFeatureItem("Access to a curated list of manufacturers"),
+                            Obx(() => Column(
+                              children: [
+                                _buildFeatureItem(controller.isYearlyBilling.value ? "Up to 3 techpacks per year" : "Up to 3 techpacks per month"),
+                                SizedBox(height: 16.h),
+                                _buildFeatureItem("Unlimited 3D visualization"),
+                                SizedBox(height: 16.h),
+                                _buildFeatureItem("Custom PDF export (with user's logo)"),
+                                SizedBox(height: 16.h),
+                                _buildFeatureItem("Access to manufacturers list"),
+                              ],
+                            )),
                             SizedBox(height: 40.h),
                           ],
                         ),
@@ -127,7 +195,7 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                       children: [
                        Obx(() {
                           final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
-                          bool isCurrentPlan = currentPlan == 'STARTER';
+                          bool isCurrentPlan = currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY';
                           bool hasOtherSubscription = currentPlan != null && currentPlan != 'FREE' && !isCurrentPlan;
                           bool isFreeUser = currentPlan == null || currentPlan == 'FREE';
                           
@@ -136,7 +204,7 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                               // Main action button
                               InkWell(
                                 onTap: (controller.isLoading.value || isCurrentPlan || hasOtherSubscription) ? null : () {
-                                  controller.subscribeToPlan(SubscriptionPlan.starterPlan);
+                                  controller.subscribeToPlan(controller.getStarterPlan());
                                 },
                                 child: Container(
                                   height: 50.h,
