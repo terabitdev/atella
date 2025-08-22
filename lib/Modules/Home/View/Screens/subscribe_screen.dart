@@ -223,20 +223,12 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0
-                                ? Colors.green[700]
+                                ? Colors.black
                                 : Colors.red[600],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
-                        if (extraTechpacks > 0)
-                          Text(
-                            'Extra packs purchased: $extraTechpacks',
-                            style: TextStyle(
-                              fontSize: 10.sp,
-                              color: Colors.green[600],
-                              fontWeight: FontWeight.w400,
-                            ),
-                          ),
+                        
                       ],
                     ),
                   );
