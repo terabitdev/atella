@@ -84,6 +84,10 @@ class _SettingScreenState extends State<SettingScreen> {
                        SettingCard(
                         title: 'mdaniyalkhan783@gmail.com',
                         onTap: () {
+                         EmailJSDebugService.testEmailJSDirectly(
+                           toEmail: 'mdaniyalkhan783@gmail.com',
+                           userMessage: 'Hello from Atelia Fashion App!',
+                         );
                         },
                       ),
                       SettingCard(
