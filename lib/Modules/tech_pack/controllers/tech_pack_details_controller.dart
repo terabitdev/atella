@@ -122,6 +122,8 @@ class TechPackDetailsController extends GetxController {
       } else if (labelsNeededController.text.trim().isEmpty) {
         showLabelText.value = true;
       }
+      // Check completion whenever image changes
+      checkLabelingBlockComplete();
     });
   }
 
@@ -330,17 +332,19 @@ class TechPackDetailsController extends GetxController {
   }
 
   void checkTechnicalBlockComplete() {
+    // Only require essential fields - decorative stitching is optional
     if (accessoriesController.text.isNotEmpty &&
-        stitchingController.text.isNotEmpty &&
-        decorativeStitchingController.text.isNotEmpty) {
+        stitchingController.text.isNotEmpty) {
       showLabelingBlock.value = true;
     }
   }
 
   void checkLabelingBlockComplete() {
-    // Only require the essential fields - QR code is optional
-    if (logoPlacementController.text.isNotEmpty &&
-        labelsNeededController.text.isNotEmpty) {
+    // Check if logo placement is filled AND either label text OR image is provided
+    bool hasLabelInput = labelsNeededController.text.isNotEmpty || 
+                         labelImagePath.value.isNotEmpty;
+    
+    if (logoPlacementController.text.isNotEmpty && hasLabelInput) {
       showPackagingBlock.value = true;
     }
   }
@@ -357,6 +361,31 @@ class TechPackDetailsController extends GetxController {
     // No further block, but could trigger a summary or enable submit
   }
 
+  Map<String, String> _collectReferenceImages() {
+    Map<String, String> images = {};
+    
+    // Add selected design image (main reference)
+    if (selectedDesignImagePath.value.isNotEmpty) {
+      images['selectedDesign'] = selectedDesignImagePath.value;
+      print('Added selected design image: ${selectedDesignImagePath.value.substring(0, 50)}...');
+    }
+    
+    // Add measurement chart image if uploaded
+    if (measurementImagePath.value.isNotEmpty) {
+      images['measurementChart'] = measurementImagePath.value;
+      print('Added measurement chart image: ${measurementImagePath.value.substring(0, 50)}...');
+    }
+    
+    // Add label reference image if uploaded
+    if (labelImagePath.value.isNotEmpty) {
+      images['labelReference'] = labelImagePath.value;
+      print('Added label reference image: ${labelImagePath.value.substring(0, 50)}...');
+    }
+    
+    print('Total reference images collected: ${images.length}');
+    return images;
+  }
+
   Future<void> generateTechPackImages() async {
     // Subscription check is now handled by checkSubscriptionAndGenerate method
     // This method only handles the actual generation
@@ -367,9 +396,11 @@ class TechPackDetailsController extends GetxController {
       generatedTechPackImages.clear();
 
       final techPackDetails = _collectTechPackDetails();
+      final referenceImages = _collectReferenceImages();
 
       print('Tech Pack Details: $techPackDetails');
       print('Design Data: $designData');
+      print('Reference Images: $referenceImages');
 
       // Try different prompt approaches in order of preference
       Map<String, String> prompts;
@@ -419,12 +450,13 @@ class TechPackDetailsController extends GetxController {
       print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
       print('Technical Prompt: ${prompts['technical_flat_prompt']}');
 
-      // Generate manufacturing layout image
-      print('Generating manufacturing layout image...');
+      // Generate manufacturing layout image with reference images
+      print('Generating manufacturing layout image with ${referenceImages.length} reference images...');
       List<String> manufacturingImages = [];
       try {
-        manufacturingImages = await OpenAIService.generateDesignImages(
+        manufacturingImages = await OpenAIService.generateTechPackImages(
           prompt: prompts['manufacturing_prompt'] ?? '',
+          referenceImages: referenceImages,
           numberOfImages: 1,
           size: '1024x1024',
         );
@@ -434,12 +466,13 @@ class TechPackDetailsController extends GetxController {
         throw Exception('Failed to generate manufacturing image');
       }
 
-      // Generate technical flat drawing with detailed approach
-      print('Generating detailed technical flat drawing...');
+      // Generate technical flat drawing with detailed approach and reference images
+      print('Generating detailed technical flat drawing with ${referenceImages.length} reference images...');
       List<String> technicalImages = [];
       try {
-        technicalImages = await OpenAIService.generateDesignImages(
+        technicalImages = await OpenAIService.generateTechPackImages(
           prompt: prompts['technical_flat_prompt'] ?? '',
+          referenceImages: referenceImages,
           numberOfImages: 1,
           size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
         );

@@ -35,6 +35,126 @@ class OpenAIService {
     }
   }
   
+  static Future<List<String>> generateTechPackImages({
+    required String prompt,
+    required Map<String, String> referenceImages,
+    int numberOfImages = 1,
+    String size = '1024x1024',
+  }) async {
+    try {
+      print('OpenAI: Starting tech pack image generation...');
+      print('OpenAI: Prompt: ${prompt.substring(0, 100)}...');
+      print('OpenAI: Reference images: ${referenceImages.keys.toList()}');
+      
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) {
+        print('OpenAI: ERROR - API key not found!');
+        throw Exception('OpenAI API key not found');
+      }
+      
+      // Use the main design image as the primary reference
+      String? primaryImagePath = referenceImages['selectedDesign'];
+      String? primaryImageBase64;
+      
+      if (primaryImagePath != null && primaryImagePath.isNotEmpty) {
+        // Check if it's already base64 data or a file path
+        if (primaryImagePath.startsWith('iVBOR') || primaryImagePath.startsWith('/9j/') || primaryImagePath.startsWith('R0lGOD')) {
+          // It's already base64 data
+          primaryImageBase64 = primaryImagePath;
+          print('OpenAI: Using selected design as primary reference (already base64)');
+        } else {
+          // It's a file path, convert to base64
+          primaryImageBase64 = await _convertImageToBase64(primaryImagePath);
+          if (primaryImageBase64 != null) {
+            print('OpenAI: Using selected design as primary reference (converted from file)');
+          }
+        }
+      }
+      
+      // Truncate prompt to 1000 characters if necessary
+      String safePrompt = prompt.length > 1000 ? prompt.substring(0, 1000) : prompt;
+      if (prompt.length > 1000) {
+        print('OpenAI: Prompt was too long (${prompt.length}), truncated to 1000 characters.');
+      }
+      
+      // Enhance prompt with reference information
+      if (referenceImages.containsKey('measurementChart')) {
+        safePrompt += '. Include detailed measurements and size specifications as shown in the reference chart.';
+      }
+      if (referenceImages.containsKey('labelReference')) {
+        safePrompt += '. Use the uploaded label examples for accurate label styling and placement.';
+      }
+
+      print('OpenAI: API key found, making request with enhanced prompt...');
+
+      http.Response response;
+      
+      if (primaryImageBase64 != null) {
+        // Use /v1/images/edits endpoint with form data when primary image is available
+        print('OpenAI: Using /v1/images/edits endpoint with reference images');
+        
+        final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/images/edits'));
+        request.headers['Authorization'] = 'Bearer $apiKey';
+        
+        // Add form fields
+        request.fields['model'] = 'gpt-image-1';
+        request.fields['prompt'] = safePrompt;
+        request.fields['size'] = size;
+        request.fields['n'] = numberOfImages.toString();
+        
+        // Add the primary image as the main reference
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          base64Decode(primaryImageBase64),
+          filename: 'primary_reference.png',
+        ));
+        
+        final streamedResponse = await request.send();
+        response = await http.Response.fromStream(streamedResponse);
+      } else {
+        // Use regular generation endpoint when no primary image
+        print('OpenAI: Using /v1/images/generations endpoint (no primary reference image)');
+        response = await http.post(
+          Uri.parse('$_baseUrl/images/generations'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $apiKey',
+          },
+          body: jsonEncode({
+            'model': 'gpt-image-1',
+            'prompt': safePrompt,
+            'n': numberOfImages,
+            'size': size,
+          }),
+        );
+      }
+
+      print('OpenAI: Response status code: ${response.statusCode}');
+      
+      if (response.statusCode == 200) {
+        print('OpenAI: Tech pack image generation successful!');
+        final data = jsonDecode(response.body);
+        final List<dynamic> imageData = data['data'];
+        
+        List<String> base64Images = [];
+        
+        for (int i = 0; i < imageData.length; i++) {
+          print('OpenAI: Adding tech pack image ${i + 1} base64 data.');
+          base64Images.add(imageData[i]['b64_json']);
+        }
+        
+        print('OpenAI: Total tech pack images generated: ${base64Images.length}');
+        return base64Images;
+      } else {
+        print('OpenAI: Error response: ${response.body}');
+        final errorData = jsonDecode(response.body);
+        throw Exception('OpenAI API Error: ${errorData['error']['message']}');
+      }
+    } catch (e) {
+      throw Exception('Failed to generate tech pack images: $e');
+    }
+  }
+
   static Future<List<String>> generateDesignImages({
     required String prompt,
     int numberOfImages = 3,
@@ -108,7 +228,6 @@ class OpenAIService {
             'prompt': safePrompt,
             'n': numberOfImages,
             'size': size,
-            'response_format': 'b64_json',
           }),
         );
       }
