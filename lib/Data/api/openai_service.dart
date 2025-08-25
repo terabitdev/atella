@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:io';
 import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -16,20 +17,49 @@ class OpenAIService {
     return await _storage.read(key: _apiKeyKey);
   }
   
+  static Future<String?> _convertImageToBase64(String imagePath) async {
+    try {
+      final file = File(imagePath);
+      if (!await file.exists()) {
+        print('OpenAI: Image file does not exist at path: $imagePath');
+        return null;
+      }
+      
+      final bytes = await file.readAsBytes();
+      final base64String = base64Encode(bytes);
+      print('OpenAI: Converted inspiration image to base64 (${bytes.length} bytes)');
+      return base64String;
+    } catch (e) {
+      print('OpenAI: Error converting image to base64: $e');
+      return null;
+    }
+  }
+  
   static Future<List<String>> generateDesignImages({
     required String prompt,
     int numberOfImages = 3,
     String size = '1024x1024',
+    String? inspirationImagePath,
   }) async {
     try {
       print('OpenAI: Starting image generation...');
       print('OpenAI: Prompt for images: $prompt');
       print('OpenAI: Number of images requested: $numberOfImages');
+      print('OpenAI: Inspiration image path: ${inspirationImagePath ?? 'none'}');
       
       final apiKey = await getApiKey();
       if (apiKey == null || apiKey.isEmpty) {
         print('OpenAI: ERROR - API key not found!');
         throw Exception('OpenAI API key not found');
+      }
+      
+      // Convert inspiration image to base64 if provided
+      String? inspirationBase64;
+      if (inspirationImagePath != null && inspirationImagePath.isNotEmpty) {
+        inspirationBase64 = await _convertImageToBase64(inspirationImagePath);
+        if (inspirationBase64 != null) {
+          print('OpenAI: Including inspiration image in generation request');
+        }
       }
       
       // Truncate prompt to 1000 characters if necessary
@@ -38,21 +68,50 @@ class OpenAIService {
         print('OpenAI: Prompt was too long (${prompt.length}), truncated to 1000 characters.');
       }
 
-      print('OpenAI: API key found, making request to gpt-image-1...');
+      print('OpenAI: API key found, making request to DALL-E 3...');
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/images/generations'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-        },
-        body: jsonEncode({
-          'model': 'gpt-image-1',
-          'prompt': safePrompt,
-          'n': numberOfImages, // Generate multiple images from one prompt
-          'size': size,
-        }),
-      );
+      http.Response response;
+      
+      if (inspirationBase64 != null) {
+        // Use /v1/images/edits endpoint with form data when inspiration image is provided
+        print('OpenAI: Using /v1/images/edits endpoint with inspiration image');
+        
+        final request = http.MultipartRequest('POST', Uri.parse('$_baseUrl/images/edits'));
+        request.headers['Authorization'] = 'Bearer $apiKey';
+        
+        // Add form fields
+        request.fields['model'] = 'gpt-image-1';
+        request.fields['prompt'] = safePrompt;
+        request.fields['size'] = size;
+        request.fields['n'] = numberOfImages.toString();
+        
+        // Add the base64 image as a file
+        request.files.add(http.MultipartFile.fromBytes(
+          'image',
+          base64Decode(inspirationBase64),
+          filename: 'base64decoded.png',
+        ));
+        
+        final streamedResponse = await request.send();
+        response = await http.Response.fromStream(streamedResponse);
+      } else {
+        // Use regular /v1/images/generations endpoint when no inspiration image
+        print('OpenAI: Using /v1/images/generations endpoint (no inspiration image)');
+        response = await http.post(
+          Uri.parse('$_baseUrl/images/generations'),
+          headers: {
+            'Content-Type': 'application/json',
+            'Authorization': 'Bearer $apiKey',
+          },
+          body: jsonEncode({
+            'model': 'gpt-image-1',
+            'prompt': safePrompt,
+            'n': numberOfImages,
+            'size': size,
+            'response_format': 'b64_json',
+          }),
+        );
+      }
 
       print('OpenAI: Response status code:  [32m${response.statusCode} [0m');
       

@@ -42,7 +42,7 @@ class TechPackImageUploadContainer extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'Open Camera & Take Photo',
+                      'Select Image from Gallery',
                       style: uiTextTextStyle13500,
                     ),
                   ],

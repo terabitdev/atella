@@ -129,10 +129,23 @@ class TechPackController extends GetxController {
       print('Generated Visual Prompt: ${currentPrompt.value}');
       
       print('Generating 3 design images with GPT-IMAGE-1...');
+      
+      // Get inspiration image path from creative brief data
+      final creativeBriefData = _dataService.getCreativeBriefData();
+      String? inspirationImagePath;
+      
+      if (creativeBriefData['inspirationType'] == 'image' && 
+          creativeBriefData['inspiration'] != null && 
+          creativeBriefData['inspiration'].isNotEmpty) {
+        inspirationImagePath = creativeBriefData['inspiration'];
+        print('Using inspiration image: $inspirationImagePath');
+      }
+      
       // Generate design images (now returns base64-encoded images)
       final base64Images = await OpenAIService.generateDesignImages(
         prompt: currentPrompt.value,
         numberOfImages: 3,
+        inspirationImagePath: inspirationImagePath,
       );
       
       print('Generated ${base64Images.length} images:');

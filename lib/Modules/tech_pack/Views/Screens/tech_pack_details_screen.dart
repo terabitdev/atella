@@ -157,40 +157,49 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkSizesBlockComplete(),
                                 ),
-                                TechPackQuestionField(
-                                  label:
-                                      'Will you provide a measurement chart by size?',
-                                  hint: '',
-                                  controller:
-                                      controller.measurementChartController,
-                                  onChanged: (_) =>
-                                      controller.checkSizesBlockComplete(),
-                                ),
-                                SizedBox(height: 10.h),
-                                Center(
-                                  child: Text(
-                                    'or',
-                                    style: TextStyle(
-                                      color: Colors.grey,
-                                      fontSize: 15.sp,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 10.h),
-                                Obx(
-                                  () => TechPackImageUploadContainer(
-                                    onTap: () {
-                                      controller.openCameraForMeasurement();
-                                    },
-                                    imagePath:
-                                        controller
-                                            .measurementImagePath
-                                            .value
-                                            .isEmpty
-                                        ? null
-                                        : controller.measurementImagePath.value,
-                                  ),
-                                ),
+                                Obx(() => controller.showMeasurementText.value
+                                    ? TechPackQuestionField(
+                                        label:
+                                            'Will you provide a measurement chart by size?',
+                                        hint: '',
+                                        controller:
+                                            controller.measurementChartController,
+                                        onChanged: (_) =>
+                                            controller.checkSizesBlockComplete(),
+                                      )
+                                    : const SizedBox.shrink()),
+                                Obx(() => (controller.showMeasurementText.value && controller.showMeasurementImage.value) ||
+                                           (!controller.showMeasurementText.value && !controller.showMeasurementImage.value)
+                                    ? Column(
+                                        children: [
+                                          SizedBox(height: 10.h),
+                                          Center(
+                                            child: Text(
+                                              'or',
+                                              style: TextStyle(
+                                                color: Colors.grey,
+                                                fontSize: 15.sp,
+                                              ),
+                                            ),
+                                          ),
+                                          SizedBox(height: 10.h),
+                                        ],
+                                      )
+                                    : const SizedBox.shrink()),
+                                Obx(() => controller.showMeasurementImage.value
+                                    ? TechPackImageUploadContainer(
+                                        onTap: () {
+                                          controller.openCameraForMeasurement();
+                                        },
+                                        imagePath:
+                                            controller
+                                                .measurementImagePath
+                                                .value
+                                                .isEmpty
+                                            ? null
+                                            : controller.measurementImagePath.value,
+                                      )
+                                    : const SizedBox.shrink()),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
@@ -299,6 +308,27 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkLabelingBlockComplete(),
                                 ),
+                                SizedBox(height: 10.h),
+                                Center(
+                                  child: Text(
+                                    'Upload reference image (optional)',
+                                    style: TextStyle(
+                                      color: Colors.grey,
+                                      fontSize: 13.sp,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 10.h),
+                                TechPackImageUploadContainer(
+                                  onTap: () {
+                                    controller.openCameraForLabels();
+                                  },
+                                  imagePath:
+                                      controller.labelImagePath.value.isEmpty
+                                      ? null
+                                      : controller.labelImagePath.value,
+                                ),
+                                SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
                                       'Should a QR code, barcode, or NFC chip be included?',
