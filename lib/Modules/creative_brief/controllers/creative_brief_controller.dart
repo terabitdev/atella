@@ -40,6 +40,10 @@ class CreativeBriefController extends GetxController {
   final RxBool _isTextLoading = false.obs;
   bool get isTextLoading => _isTextLoading.value;
 
+  // Image storage for inspiration question
+  final RxString _inspirationImage = ''.obs;
+  String get inspirationImage => _inspirationImage.value;
+
   // Track which question has custom selected - FIXED: Now properly observable
   final RxString _customSelectedForQuestion = ''.obs;
   String get customSelectedForQuestion => _customSelectedForQuestion.value;
@@ -87,8 +91,8 @@ class CreativeBriefController extends GetxController {
     BriefQuestion(
       id: 'inspiration',
       question: 'Do you have any visual inspirations or references?',
-      type: 'chips',
-      options: ['Instagram', 'Brands', 'Moodboards', 'Artists', 'Custom'],
+      type: 'image',
+      options: [],
     ),
     BriefQuestion(
       id: 'colors',
@@ -248,12 +252,25 @@ class CreativeBriefController extends GetxController {
       );
     }
     
+    // Load image-based inspiration
     final inspiration = creativeBriefData['inspiration'] as String? ?? '';
     if (inspiration.isNotEmpty) {
-      _answers['inspiration'] = BriefAnswer(
-        questionId: 'inspiration',
-        selectedOptions: [inspiration],
-      );
+      // Check if it's an image path or regular text
+      if (inspiration.contains('/') || inspiration.contains('\\')) {
+        // It's an image path
+        _inspirationImage.value = inspiration;
+        _answers['inspiration'] = BriefAnswer(
+          questionId: 'inspiration',
+          selectedOptions: ['Image'],
+          textInput: inspiration,
+        );
+      } else {
+        // It's regular text (legacy data)
+        _answers['inspiration'] = BriefAnswer(
+          questionId: 'inspiration',
+          selectedOptions: [inspiration],
+        );
+      }
     }
     
     // Load text-based answers
@@ -563,6 +580,32 @@ class CreativeBriefController extends GetxController {
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
+  }
+
+  void selectImage(String? imagePath) async {
+    if (imagePath == null || imagePath.isEmpty) {
+      // Remove image
+      _inspirationImage.value = '';
+      _answers.remove('inspiration');
+    } else {
+      // Set image
+      _inspirationImage.value = imagePath;
+      
+      // Create answer for inspiration question
+      _answers['inspiration'] = BriefAnswer(
+        questionId: 'inspiration',
+        selectedOptions: ['Image'],
+        textInput: imagePath, // Store image path as text input
+      );
+    }
+    
+    update();
+    
+    // Auto-advance to next question if image is selected
+    if (imagePath != null && imagePath.isNotEmpty) {
+      await Future.delayed(const Duration(milliseconds: 800));
+      _nextQuestion();
+    }
   }
 
   void _nextQuestion() {
@@ -977,11 +1020,19 @@ class CreativeBriefController extends GetxController {
           }
           break;
         case 'inspiration':
-          creativeBriefData['inspiration'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
-              : '';
-          if (answer.textInput?.isNotEmpty == true) {
-            creativeBriefData['customInspiration'] = answer.textInput;
+          // For image type, save the image path directly
+          if (answer.textInput?.isNotEmpty == true && answer.selectedOptions.contains('Image')) {
+            creativeBriefData['inspiration'] = answer.textInput; // Save image path
+            creativeBriefData['inspirationType'] = 'image';
+          } else {
+            // Legacy text-based inspiration
+            creativeBriefData['inspiration'] = answer.selectedOptions.isNotEmpty 
+                ? answer.selectedOptions.first 
+                : '';
+            creativeBriefData['inspirationType'] = 'text';
+            if (answer.textInput?.isNotEmpty == true) {
+              creativeBriefData['customInspiration'] = answer.textInput;
+            }
           }
           break;
         case 'colors':

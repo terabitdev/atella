@@ -1,7 +1,8 @@
 import 'package:atella/Data/Models/brief_questions_model.dart';
-import 'package:atella/modules/creative_brief/controllers/creative_brief_controller.dart';
-import 'package:atella/modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
-import 'package:atella/modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
+import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/image_upload_container.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -146,6 +147,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           const SizedBox(height: 16),
           if (question.type == 'chips')
             _buildChipOptions(question, isAnswered)
+          else if (question.type == 'image')
+            _buildImageUploadForQuestion(question, isAnswered)
           else if (question.type == 'text' && isCurrentQuestion && !controller.showLastTwoQuestions)
             _buildTextInputForQuestion(question)
           else if (shouldShowInput)
@@ -389,6 +392,22 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         isloading: false,
       ),
     );
+  }
+
+  Widget _buildImageUploadForQuestion(BriefQuestion question, bool isAnswered) {
+    return Obx(() {
+      final currentImage = question.id == 'inspiration' ? controller.inspirationImage : '';
+      
+      return ImageUploadContainer(
+        onImageSelected: (imagePath) {
+          if (question.id == 'inspiration') {
+            controller.selectImage(imagePath);
+          }
+        },
+        initialImage: currentImage.isNotEmpty ? currentImage : null,
+        placeholder: 'Upload your visual inspiration',
+      );
+    });
   }
 
 }
