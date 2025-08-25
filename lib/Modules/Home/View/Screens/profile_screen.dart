@@ -46,24 +46,6 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 controller: controller.emailController,
               ),
 
-              SizedBox(height: 20.h),
-
-              // Password
-              AuthTextField(
-                label: 'Password',
-                controller: controller.passwordController,
-                isPassword: true,
-              ),
-
-              SizedBox(height: 20.h),
-
-              // Confirm Password
-              AuthTextField(
-                label: 'Confirm Password',
-                controller: controller.confirmPasswordController,
-                isPassword: true,
-              ),
-
               Spacer(),
 
               // Update Button

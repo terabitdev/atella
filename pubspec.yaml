@@ -58,6 +58,7 @@ dependencies:
   cached_network_image: ^3.4.1
   gal: ^2.3.0
   flutter_stripe: ^11.5.0
+  emailjs: ^4.0.0
 
 
 dev_dependencies:

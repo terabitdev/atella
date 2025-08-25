@@ -9,10 +9,14 @@ import 'package:atella/Data/Models/manufacturer_model.dart';
 class ManufacturerSuggestionCard extends StatelessWidget {
   final Manufacturer manufacturer;
   final VoidCallback onViewProfile;
+  final VoidCallback? onSendEmail;
+  final bool isLoadingEmail;
   const ManufacturerSuggestionCard({
     super.key,
     required this.manufacturer,
     required this.onViewProfile,
+    this.onSendEmail,
+    this.isLoadingEmail = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -46,7 +50,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: onViewProfile,
+                  onPressed: isLoadingEmail ? null : onSendEmail,
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -54,13 +58,22 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                     side: const BorderSide(color: Colors.black, width: 1),
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                   ),
-                  child: const Text(
-                    'View Profile',
-                    style: TextStyle(
-                      color: Colors.black,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
+                  child: isLoadingEmail 
+                    ? SizedBox(
+                        width: 16.w,
+                        height: 16.h,
+                        child: const CircularProgressIndicator(
+                          strokeWidth: 2,
+                          color: Colors.black,
+                        ),
+                      )
+                    : const Text(
+                        'Send via Email',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                        ),
+                      ),
                 ),
               ),
               SizedBox(width: 12.w),

@@ -117,10 +117,12 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
               return Column(
                 children: [
                   ...controller.displayedManufacturers.map(
-                    (manufacturer) => ManufacturerSuggestionCard(
+                    (manufacturer) => Obx(() => ManufacturerSuggestionCard(
                       manufacturer: manufacturer,
                       onViewProfile: () {},
-                    ),
+                      onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
+                      isLoadingEmail: controller.isSendingEmail.value,
+                    )),
                   ).toList(),
                   if (controller.isLoadingMore.value)
                     Padding(
@@ -309,12 +311,14 @@ Widget customTab(ManufacturerSuggestionController controller) {
             } else {
               return Column(
                 children: controller.filteredManufacturers.map(
-                  (manufacturer) => ManufacturerSuggestionCard(
+                  (manufacturer) => Obx(() => ManufacturerSuggestionCard(
                     manufacturer: manufacturer,
                     onViewProfile: () {
                       Get.to(ViewProfileTechPackScreen());
                     },
-                  ),
+                    onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
+                    isLoadingEmail: controller.isSendingEmail.value,
+                  )),
                 ).toList(),
               );
             }

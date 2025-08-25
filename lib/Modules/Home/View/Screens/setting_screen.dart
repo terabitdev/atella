@@ -1,6 +1,7 @@
 import 'package:atella/modules/home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/Data/services/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -78,6 +79,11 @@ class _SettingScreenState extends State<SettingScreen> {
                         title: 'Recommended Manufactures',
                         onTap: () {
                           Get.toNamed('/recommended_tech_pack');
+                        },
+                      ),
+                       SettingCard(
+                        title: 'mdaniyalkhan783@gmail.com',
+                        onTap: () {
                         },
                       ),
                       SettingCard(

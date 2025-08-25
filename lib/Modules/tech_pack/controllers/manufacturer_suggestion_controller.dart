@@ -1,8 +1,12 @@
+import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/manufacturer_service.dart';
+import 'package:atella/Data/services/email_service.dart';
+import 'package:atella/Modules/tech_pack/controllers/tech_pack_details_controller.dart';
+
 
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
@@ -133,6 +137,100 @@ class ManufacturerSuggestionController extends GetxController {
     updateFilters();
   }
   
+  
+  // Email functionality
+  final RxBool isSendingEmail = false.obs;
+  
+  Future<void> sendEmailToManufacturer(Manufacturer manufacturer) async {
+    try {
+      isSendingEmail.value = true;
+      
+      // Get tech pack data from the tech pack controller
+      final techPackController = Get.find<TechPackDetailsController>();
+      
+      // Collect tech pack data
+      final techPackData = {
+        'mainFabric': techPackController.mainFabricController.text,
+        'secondaryMaterials': techPackController.secondaryMaterialsController.text,
+        'fabricProperties': techPackController.fabricPropertiesController.text,
+        'primaryColor': techPackController.primaryColorController.text,
+        'sizeRange': techPackController.sizeRangeController.text,
+        'costPerPiece': techPackController.costPerPieceController.text,
+        'quantity': techPackController.quantityController.text,
+        'deliveryDate': techPackController.deliveryDateController.text,
+        'accessories': techPackController.accessoriesController.text,
+        'logoPlacement': techPackController.logoPlacementController.text,
+        'packagingType': techPackController.packagingTypeController.text,
+      };
+      
+      // Collect image paths
+      final imagePaths = [
+        techPackController.selectedDesignImagePath.value,
+        techPackController.measurementImagePath.value,
+        techPackController.labelImagePath.value,
+      ];
+      
+      if (manufacturer.email == null || manufacturer.email!.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'No email address available for ${manufacturer.name}',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+        );
+        return;
+      }
+      
+      // Generate AI email content
+      final emailContentJson = await EmailService.generateEmailContent(
+        manufacturerName: manufacturer.name,
+        manufacturerLocation: manufacturer.location,
+        manufacturerCountry: manufacturer.country,
+        techPackData: techPackData,
+        userCompanyName: 'Your Fashion Brand', // You can make this configurable
+      );
+      
+      final emailData = jsonDecode(emailContentJson);
+      
+      // Send email
+      final success = await EmailService.sendEmail(
+        manufacturerEmail: manufacturer.email!,
+        manufacturerName: manufacturer.name,
+        subject: emailData['subject'],
+        body: emailData['body'],
+        userCompanyName: 'Your Fashion Brand',
+        userEmail: 'your-email@company.com', // You can make this configurable
+        imagePaths: imagePaths,
+      );
+      
+      if (success) {
+        Get.snackbar(
+          'Success',
+          'Email sent successfully to ${manufacturer.name}!',
+          backgroundColor: Colors.green.shade100,
+          colorText: Colors.green.shade800,
+          duration: const Duration(seconds: 3),
+        );
+      } else {
+        Get.snackbar(
+          'Error',
+          'Failed to send email. Please try again.',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+        );
+      }
+      
+    } catch (e) {
+      print('❌ Error sending email: $e');
+      Get.snackbar(
+        'Error',
+        'An error occurred while sending the email.',
+        backgroundColor: Colors.red.shade100,
+        colorText: Colors.red.shade800,
+      );
+    } finally {
+      isSendingEmail.value = false;
+    }
+  }
   
   // Get database statistics
   Future<Map<String, dynamic>> getDatabaseStats() async {
