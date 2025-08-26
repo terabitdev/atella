@@ -18,13 +18,12 @@ void main() async {
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
-  
   // Initialize subscription manager to check for monthly resets
   await SubscriptionManagerService().initialize();
   
   runApp(
     DevicePreview(
-      enabled: !bool.fromEnvironment('dart.vm.product'), // Enable only in debug
+      enabled: !bool.fromEnvironment('dart.vm.product'),
       builder: (context) => const MyApp(),
     ),
   );
@@ -32,8 +31,6 @@ void main() async {
 
 class MyApp extends StatelessWidget {
   const MyApp({super.key});
-
-  // This widget is the root of your application.
   @override
   Widget build(BuildContext context) {
     return ScreenUtilInit(
