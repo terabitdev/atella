@@ -1,6 +1,5 @@
 import 'package:atella/Routes/app_pages.dart';
 import 'package:atella/core/themes/app_theme.dart';
-import 'package:device_preview_plus/device_preview_plus.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
@@ -20,13 +19,8 @@ void main() async {
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
   // Initialize subscription manager to check for monthly resets
   await SubscriptionManagerService().initialize();
-  
-  runApp(
-    DevicePreview(
-      enabled: !bool.fromEnvironment('dart.vm.product'),
-      builder: (context) => const MyApp(),
-    ),
-  );
+
+  runApp(const MyApp());
 }
 
 class MyApp extends StatelessWidget {
@@ -36,7 +30,7 @@ class MyApp extends StatelessWidget {
     return ScreenUtilInit(
       designSize: const Size(375, 812),
       minTextAdapt: true,
-      useInheritedMediaQuery: true,
+      // useInheritedMediaQuery: true,
       builder: (context, child) => GetMaterialApp(
         title: 'Atella',
         theme: AppTheme.lightTheme,
@@ -44,8 +38,8 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         initialRoute: AppPages.initial,
         getPages: AppPages.routes,
-        locale: DevicePreview.locale(context),
-        builder: DevicePreview.appBuilder,
+        // locale: DevicePreview.locale(context),
+        // builder: DevicePreview.appBuilder,
       ),
     );
   }

@@ -38,7 +38,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
           SizedBox(height: 8.h),
           Row(
             children: [
-              Icon(Icons.location_on, color: Color(0xFFFF2D55), size: 20.w),
+              Icon(Icons.location_on, color: Color.fromARGB(199, 5, 1, 1), size: 20.w),
               SizedBox(width: 4.w),
               Expanded(
                 child: Text(manufacturer.location, style: TextStyle(fontSize: 15.sp)),

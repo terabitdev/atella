@@ -27,36 +27,38 @@ class GatheringBriefScreen extends StatelessWidget {
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Gathering the Creative Brief ",
-                    textAlign: TextAlign.center,
-                    style: osTextStyle18600,
-                  ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    "As your expert virtual fashion designer.",
-                    textAlign: TextAlign.center,
-                    style: gsTextStyle16600,
-                  ),
-                  SizedBox(height: 18.h),
-                  Text(
-                    "I’m here to help you create a custom garment or collection.",
-                    textAlign: TextAlign.center,
-                    style: osTextStyle165002,
-                  ),
-                  SizedBox(height: 50.h),
-                  RoundButton(
-                    title: "Get Started",
-                    onTap: () {
-                      Get.toNamed('/creative_brief');
-                    },
-                    color: AppColors.buttonColor,
-                    isloading: false,
-                  ),
-                ],
+              child: SingleChildScrollView(
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Gathering the Creative Brief ",
+                      textAlign: TextAlign.center,
+                      style: osTextStyle18600,
+                    ),
+                    SizedBox(height: 12.h),
+                    Text(
+                      "As your expert virtual fashion designer.",
+                      textAlign: TextAlign.center,
+                      style: gsTextStyle16600,
+                    ),
+                    SizedBox(height: 18.h),
+                    Text(
+                      "I’m here to help you create a custom garment or collection.",
+                      textAlign: TextAlign.center,
+                      style: osTextStyle165002,
+                    ),
+                    SizedBox(height: 24.h),
+                    RoundButton(
+                      title: "Get Started",
+                      onTap: () {
+                        Get.toNamed('/creative_brief');
+                      },
+                      color: AppColors.buttonColor,
+                      isloading: false,
+                    ),
+                  ],
+                ),
               ),
             ),
           ),
