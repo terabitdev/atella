@@ -19,11 +19,12 @@ class TechPackImageUploadContainer extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: DottedBorder(
-        color: Colors.black, // ✅ Set dotted border color to black
-        strokeWidth: 1.5,
-        borderType: BorderType.RRect,
-        radius: Radius.circular(18.r),
-        dashPattern: [6, 3], // ✅ Customizes the dot size and gap
+        options: RoundedRectDottedBorderOptions(
+          radius: Radius.circular(18.r),
+          color: Colors.black, // ✅ Set dotted border color to black
+          strokeWidth: 1.5,
+          dashPattern: [6, 3], // ✅ Customizes the dot size and gap
+        ),
         child: Container(
           width: double.infinity,
           height: 120.h,
