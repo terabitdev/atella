@@ -298,7 +298,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
       );
 
       // Download PDF to Downloads folder
-      final downloadPath = await TechPackService.downloadPDF(pdfPath);
+      await TechPackService.downloadPDF(pdfPath);
 
       Get.snackbar(
         'Success',

@@ -234,7 +234,6 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && (subscription.subscriptionPlan == 'STARTER' || subscription.subscriptionPlan == 'STARTER_YEARLY')) {
-                  final extraTechpacks = subscription.extraTechpacksPurchased;
                   final totalAvailable = subscription.totalAllowedTechpacks;
                   
                   // Always use monthly counter for display
@@ -269,7 +268,6 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && (subscription.subscriptionPlan == 'PRO' || subscription.subscriptionPlan == 'PRO_YEARLY')) {
-                  final extraTechpacks = subscription.extraTechpacksPurchased;
                   final totalAvailable = subscription.totalAllowedTechpacks;
                   
                   // Always use monthly counter for Pro plans

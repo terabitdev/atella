@@ -2,7 +2,6 @@ import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
-import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
@@ -11,7 +10,6 @@ import 'package:get/get.dart';
 
 class FinalDetailsController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
-  final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
   
   // Edit mode tracking

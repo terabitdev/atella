@@ -1,4 +1,3 @@
-import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -199,7 +198,6 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                           final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
                           bool isCurrentPlan = currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY';
                           bool hasOtherSubscription = currentPlan != null && currentPlan != 'FREE' && !isCurrentPlan;
-                          bool isFreeUser = currentPlan == null || currentPlan == 'FREE';
                           
                           return Column(
                             children: [

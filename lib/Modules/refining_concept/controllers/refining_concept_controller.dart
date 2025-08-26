@@ -2,13 +2,11 @@ import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
-import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
-  final EditDataService _editDataService = EditDataService();
   
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;

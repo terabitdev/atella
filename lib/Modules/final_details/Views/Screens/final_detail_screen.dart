@@ -1,6 +1,5 @@
 // Modified FinalDetailsScreen with custom text field behavior and Lottie animation
 import 'package:atella/Data/Models/brief_questions_model.dart';
-import 'package:atella/modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/modules/final_details/Views/Widgets/custom_check_boxes_widget.dart';
 import 'package:atella/modules/final_details/Views/Widgets/custom_generate_round_button_widget.dart';
 import 'package:atella/modules/final_details/controllers/final_detail_controller.dart';
@@ -9,7 +8,6 @@ import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart'; // Add this import
@@ -106,48 +104,6 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     });
   }
 
-  Widget _buildCustomTextField() {
-    return Container(
-      padding: const EdgeInsets.all(24),
-      child: SizedBox(
-        height: 45.h,
-        child: TextField(
-          controller: controller
-              .customInputController, // Use the controller from your existing code
-          style: authLableTextTextStyle144001,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color.fromRGBO(236, 239, 246, 1),
-            hintText: "Add any additional details...", // You can customize this
-            hintStyle: authLableTextTextStyle144002,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(233, 233, 233, 1),
-                width: 1.2,
-              ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 16.h,
-              horizontal: 12.w,
-            ),
-          ),
-          onSubmitted: (value) {
-            // Handle text submission here
-            if (value.trim().isNotEmpty) {
-              controller.submitTextAnswer(
-                controller.currentQuestion.id,
-                controller.customInputController,
-              );
-            }
-          },
-        ),
-      ),
-    );
-  }
 
   Widget _buildQuestionsList() {
     return Obx(
@@ -300,26 +256,6 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     });
   }
 
-  Widget _buildTextInput() {
-    return Column(
-      children: [
-        TextInputWithSend(
-          controller: controller.customInputController,
-          placeholder: 'Type something...',
-          onSend: () {
-            // Handle text submission
-            if (controller.customInputController.text.trim().isNotEmpty) {
-              controller.submitTextAnswer(
-                controller.currentQuestion.id,
-                controller.customInputController,
-              );
-            }
-          },
-          isLoading: controller.isLoading,
-        ),
-      ],
-    );
-  }
   
   Widget _buildInlineTextField() {
     return Container(

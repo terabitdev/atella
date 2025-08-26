@@ -2,7 +2,6 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:permission_handler/permission_handler.dart';
 import '../../../Data/api/openai_service.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 import '../../../Data/Models/user_subscription.dart';
@@ -272,38 +271,6 @@ class TechPackDetailsController extends GetxController {
     showProductionBlock.value = true;
   }
 
-  String _extractGarmentType() {
-    // Extract garment type from the design prompt and data
-    String garmentType = 'garment';
-
-    if (designData.isNotEmpty) {
-      final creativeBrief =
-          designData['creativeBrief'] as Map<String, dynamic>?;
-      if (creativeBrief != null && creativeBrief['garmentType'] != null) {
-        garmentType = creativeBrief['garmentType'].toString().toLowerCase();
-      }
-    }
-
-    // Fallback to analyzing the prompt
-    if (garmentType == 'garment' && selectedDesignPrompt.value.isNotEmpty) {
-      final prompt = selectedDesignPrompt.value.toLowerCase();
-      if (prompt.contains('jacket') || prompt.contains('coat')) {
-        garmentType = 'jacket';
-      } else if (prompt.contains('dress')) {
-        garmentType = 'dress';
-      } else if (prompt.contains('shirt') || prompt.contains('blouse')) {
-        garmentType = 'shirt';
-      } else if (prompt.contains('pants') || prompt.contains('trousers')) {
-        garmentType = 'pants';
-      } else if (prompt.contains('skirt')) {
-        garmentType = 'skirt';
-      } else if (prompt.contains('hoodie') || prompt.contains('sweatshirt')) {
-        garmentType = 'hoodie';
-      }
-    }
-
-    return garmentType;
-  }
 
   void checkMaterialsBlockComplete() {
     if (mainFabricController.text.isNotEmpty &&
@@ -660,7 +627,6 @@ class TechPackDetailsController extends GetxController {
     final subscription = await _subscriptionService
         .getCurrentUserSubscription();
     String currentPlan = subscription?.subscriptionPlan ?? 'FREE';
-    int remainingTechpacks = subscription?.remainingTechpacks ?? 3;
 
     // Show different dialogs based on plan
     if (currentPlan == 'FREE') {
@@ -1285,15 +1251,6 @@ class TechPackDetailsController extends GetxController {
   }
 
 
-  String _getBillingPeriodText(UserSubscription? subscription) {
-    if (subscription == null) return 'month';
-    
-    // Check if it's a yearly subscription
-    bool isYearly = subscription.billingPeriod == 'YEARLY' || 
-                    subscription.subscriptionPlan.contains('YEARLY');
-    
-    return isYearly ? 'year' : 'month';
-  }
 
   Widget _buildFeatureItem(String text) {
     return Padding(

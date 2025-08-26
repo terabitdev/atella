@@ -207,7 +207,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
     return Obx(() {
       final answer = controller.getAnswer(question.id);
-      final isCurrentQuestion = question.id == controller.currentQuestion.id;
       
       return Wrap(
         children: question.options.map((option) {
