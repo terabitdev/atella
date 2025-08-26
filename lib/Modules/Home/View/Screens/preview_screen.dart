@@ -279,8 +279,8 @@ void showPopup() {
         // All downloads successful
         Get.snackbar(
           'Success',
-          '${downloadedFiles.length} images saved to gallery in "Atella" album',
-          backgroundColor: Colors.green,
+          '${downloadedFiles.length} images saved to gallery in "Atelia" album',
+          backgroundColor: Colors.black,
           colorText: Colors.white,
           duration: Duration(seconds: 4),
           snackPosition: SnackPosition.TOP,
