@@ -83,26 +83,26 @@ class TechPackReadyScreen extends StatelessWidget {
   Widget _buildLoadingState() {
     return Column(
       children: [
-        const Text(
+        Text(
           'Creating your tech pack...',
           style: TextStyle(
-            fontSize: 18,
+            fontSize: 18.sp,
             fontWeight: FontWeight.w600,
             color: Color(0xFF1A1A1A),
           ),
         ),
-        const SizedBox(height: 8),
-        const Text(
+        SizedBox(height: 8.h),
+        Text(
           'Please wait while we generate your tech pack images with all specifications.',
           textAlign: TextAlign.center,
           style: TextStyle(
-            fontSize: 14,
+            fontSize: 14.sp,
             color: Color(0xFF666666),
           ),
         ),
-        const SizedBox(height: 24),
+        SizedBox(height: 24.h),
         _buildLoadingCard('Tech Pack Details'),
-        const SizedBox(height: 16),
+        SizedBox(height: 16.h),
         _buildLoadingCard('Technical Flat Drawing'),
       ],
     );
@@ -111,10 +111,10 @@ class TechPackReadyScreen extends StatelessWidget {
   Widget _buildLoadingCard(String title) {
     return Container(
       width: double.infinity,
-      height: 200,
+      height: 200.h,
       decoration: BoxDecoration(
         color: const Color.fromRGBO(236, 239, 246, 1),
-        borderRadius: BorderRadius.circular(12),
+        borderRadius: BorderRadius.circular(12.r),
       ),
       child: Center(
         child: Column(
@@ -122,21 +122,21 @@ class TechPackReadyScreen extends StatelessWidget {
           children: [
             Image.asset(
               'assets/images/generate.png', 
-              width: 60, 
-              height: 64,
+              width: 60.w, 
+              height: 64.h,
               errorBuilder: (context, error, stackTrace) {
-                return const Icon(
+                return Icon(
                   Icons.hourglass_empty,
-                  size: 60,
+                  size: 60.w,
                   color: Colors.grey,
                 );
               },
             ),
-            const SizedBox(height: 16),
+            SizedBox(height: 16.h),
             Text(
               'Generating $title...',
-              style: const TextStyle(
-                fontSize: 17,
+              style: TextStyle(
+                fontSize: 17.sp,
                 fontWeight: FontWeight.w500,
               ),
             ),
@@ -184,14 +184,14 @@ class TechPackReadyScreen extends StatelessWidget {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Text(
+                      Text(
                         'Generated Tech Pack Images',
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
-                          fontSize: 18,
+                          fontSize: 18.sp,
                         ),
                       ),
-                      const SizedBox(height: 16),
+                      SizedBox(height: 16.h),
                       
                       GestureDetector(
                         onTap: () => _showImagePopup(context, controller.generatedImages[0], 'Tech Pack Details'),
@@ -227,27 +227,27 @@ class TechPackReadyScreen extends StatelessWidget {
                 } else {
                   return Container(
                     width: double.infinity,
-                    height: 200,
+                    height: 200.h,
                     decoration: BoxDecoration(
                       color: Colors.grey[100],
-                      borderRadius: BorderRadius.circular(12),
+                      borderRadius: BorderRadius.circular(12.r),
                       border: Border.all(color: Colors.grey[300]!),
                     ),
-                    child: const Center(
+                    child: Center(
                       child: Column(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Icon(
                             Icons.image_not_supported,
-                            size: 48,
+                            size: 48.w,
                             color: Colors.grey,
                           ),
-                          SizedBox(height: 8),
+                          SizedBox(height: 8.h),
                           Text(
                             'No tech pack images generated yet',
                             style: TextStyle(
                               color: Colors.grey,
-                              fontSize: 14,
+                              fontSize: 14.sp,
                             ),
                           ),
                         ],
@@ -256,7 +256,7 @@ class TechPackReadyScreen extends StatelessWidget {
                   );
                 }
               }),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
               RoundButton(
                 title: 'Get Manufacturer Suggestions',
                 onTap: () {
@@ -266,14 +266,14 @@ class TechPackReadyScreen extends StatelessWidget {
                 color: AppColors.buttonColor,
                 isloading: false,
               ),
-              const SizedBox(height: 16),
+              SizedBox(height: 16.h),
               Obx(() => SaveExportButtonRow(
                 onSave: () => _showSaveDialog(context, controller),
                 onExport: () => controller.exportTechPackPDF(),
                 isSaving: controller.isSaving.value, // Show loading on screen save button
                 isExporting: controller.isExporting.value,
               )),
-              const SizedBox(height: 30),
+              SizedBox(height: 30.h),
             ],
           ),
         ),

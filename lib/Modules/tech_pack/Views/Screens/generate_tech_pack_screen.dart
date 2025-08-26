@@ -24,20 +24,20 @@ class GenerateTechPackScreen extends StatelessWidget {
       builder: (context) {
         return Dialog(
           backgroundColor: Colors.transparent,
-          insetPadding: const EdgeInsets.symmetric(
-            horizontal: 12,
-            vertical: 60,
+          insetPadding: EdgeInsets.symmetric(
+            horizontal: 12.w,
+            vertical: 60.h,
           ),
           child: Container(
             width: double.infinity,
-            height: 500,
+            height: 500.h,
             decoration: BoxDecoration(
               color: Colors.white,
-              borderRadius: BorderRadius.circular(36),
+              borderRadius: BorderRadius.circular(36.r),
             ),
-            padding: const EdgeInsets.all(8),
+            padding: EdgeInsets.all(8.r),
             child: ClipRRect(
-              borderRadius: BorderRadius.circular(28),
+              borderRadius: BorderRadius.circular(28.r),
               child: Image.memory(
                 base64Decode(base64Image),
                 fit: BoxFit.cover,
@@ -47,7 +47,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                     child: Center(
                       child: Icon(
                         Icons.error_outline,
-                        size: 48,
+                        size: 48.w,
                         color: Colors.grey.shade400,
                       ),
                     ),
@@ -164,32 +164,32 @@ class GenerateTechPackScreen extends StatelessWidget {
 
   Widget _buildErrorState() {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+      padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Container(
-        padding: const EdgeInsets.all(16),
+        padding: EdgeInsets.all(16.r),
         decoration: BoxDecoration(
           color: Colors.red.shade50,
-          borderRadius: BorderRadius.circular(12),
+          borderRadius: BorderRadius.circular(12.r),
           border: Border.all(color: Colors.red.shade200),
         ),
         child: Column(
           children: [
-            Icon(Icons.error_outline, color: Colors.red.shade600, size: 32),
-            const SizedBox(height: 8),
+            Icon(Icons.error_outline, color: Colors.red.shade600, size: 32.w),
+            SizedBox(height: 8.h),
             Text(
               'Something went wrong',
               style: GoogleFonts.inter(
-                fontSize: 16,
+                fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
                 color: Colors.red.shade700,
               ),
             ),
-            const SizedBox(height: 4),
+            SizedBox(height: 4.h),
             Text(
               controller.errorMessage.value,
               textAlign: TextAlign.center,
               style: GoogleFonts.inter(
-                fontSize: 14,
+                fontSize: 14.sp,
                 color: Colors.red.shade600,
               ),
             ),

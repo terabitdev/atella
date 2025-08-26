@@ -41,8 +41,8 @@ class ImageUploadField extends StatelessWidget {
               height: 48.h,
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) => Container(
-                width: 48,
-                height: 48,
+                width: 48.w,
+                height: 48.h,
                 color: Colors.grey[300],
                 child: const Icon(Icons.image, color: Colors.grey),
               ),
