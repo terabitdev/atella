@@ -99,11 +99,8 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
               loading: controller.isLoading,
             ),
           );
-        } else if (currentQuestionIndex < 2) {
-          // Show text input only for questions 1 and 2
-          return _buildTextInput();
         } else {
-          // Don't show anything for question 3 when nothing is selected
+          // Don't show anything for other cases
           return const SizedBox.shrink();
         } 
     });

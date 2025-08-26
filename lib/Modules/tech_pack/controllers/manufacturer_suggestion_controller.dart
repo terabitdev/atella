@@ -163,12 +163,27 @@ class ManufacturerSuggestionController extends GetxController {
         'packagingType': techPackController.packagingTypeController.text,
       };
       
-      // Collect image paths
+      // Collect image paths - three images as specified:
+      // 1. Selected design image
+      // 2. Tech pack flat drawing (measurement chart)  
+      // 3. Tech pack manufacturing (label reference)
       final imagePaths = [
         techPackController.selectedDesignImagePath.value,
         techPackController.measurementImagePath.value,
         techPackController.labelImagePath.value,
-      ];
+      ].where((path) => path.isNotEmpty).toList();
+      
+      // Validate that we have the required images
+      if (imagePaths.isEmpty) {
+        Get.snackbar(
+          'Missing Images',
+          'Please ensure you have uploaded the design image and tech pack images before sending email.',
+          backgroundColor: Colors.orange.shade100,
+          colorText: Colors.orange.shade800,
+          duration: const Duration(seconds: 4),
+        );
+        return;
+      }
       
       if (manufacturer.email == null || manufacturer.email!.isEmpty) {
         Get.snackbar(

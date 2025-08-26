@@ -1,3 +1,4 @@
+import 'package:atella/Modules/Home/View/Widgets/profile_textField.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -40,21 +41,13 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               SizedBox(height: 20.h),
 
-              // Email
-              AuthTextField(
-                label: 'Email',
-                controller: controller.emailController,
-              ),
-
+              ProfileTextfield(label: 'Email', controller: controller.emailController, enabled: false),
               Spacer(),
-
-              // Update Button
               Obx(
                 () => RoundButton(
                   title: 'Update',
                   onTap: controller.updateProfile,
                   color: AppColors.buttonColor,
-                  loading: controller.isLoading.value,
                   isloading: controller.isLoading.value,
                 ),
               ),

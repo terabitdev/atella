@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'dart:io';
-import 'dart:math' as math;
 import 'package:http/http.dart' as http;
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
@@ -324,171 +323,6 @@ Generate a comprehensive visual prompt that captures all the key design elements
       throw Exception('Failed to generate visual prompt: $e');
     }
   }
-  
-//   static Future<Map<String, String>> generateTechPackPrompts({
-//     required Map<String, dynamic> creativeBrief,
-//     required Map<String, dynamic> refinedConcept,
-//     required Map<String, dynamic> finalDetails,
-//     required Map<String, dynamic> techPackDetails,
-//     required String selectedDesignPrompt,
-//   }) async {
-//     try {
-//       final apiKey = await getApiKey();
-//       if (apiKey == null || apiKey.isEmpty) {
-//         throw Exception('OpenAI API key not found');
-//       }
-
-//       final systemPrompt = '''
-// You are a fashion tech pack expert. Based on user inputs from their questionnaire answers, selected design, and tech pack details, create two separate detailed prompts for generating tech pack images:
-
-// 1. MANUFACTURING LAYOUT PROMPT - for a comprehensive tech pack layout with all specifications
-// 2. TECHNICAL FLAT DRAWING PROMPT - for detailed technical flat drawings with annotations
-
-// Both prompts should be highly specific, professional, and suitable for DALL-E 3 image generation.
-// The images should be based on the selected design and incorporate all user-provided information.
-// ''';
-
-//       final userMessage = '''
-// Please create two detailed prompts for tech pack image generation based on these inputs:
-
-// SELECTED DESIGN PROMPT: $selectedDesignPrompt
-
-// QUESTIONNAIRE DATA:
-// Creative Brief: ${jsonEncode(creativeBrief)}
-// Refined Concept: ${jsonEncode(refinedConcept)}
-// Final Details: ${jsonEncode(finalDetails)}
-
-// TECH PACK SPECIFICATIONS:
-// ${jsonEncode(techPackDetails)}
-
-// Generate two separate prompts:
-// 1. "manufacturing_prompt" - for a professional manufacturing tech pack layout image with all sections, color swatches, specifications, and organized information blocks
-// 2. "technical_flat_prompt" - for technical flat drawings with detailed annotations, measurements, and construction details
-
-// Format your response as JSON with these two keys. Make sure both prompts reference the selected design and incorporate all the user's specifications for accurate, pixel-clear results.
-// ''';
-
-//       final response = await http.post(
-//         Uri.parse('$_baseUrl/chat/completions'),
-//         headers: {
-//           'Content-Type': 'application/json',
-//           'Authorization': 'Bearer $apiKey',
-//         },
-//         body: jsonEncode({
-//           'model': 'gpt-4',
-//           'messages': [
-//             {'role': 'system', 'content': systemPrompt},
-//             {'role': 'user', 'content': userMessage},
-//           ],
-//           'max_tokens': 1500,
-//           'temperature': 0.7,
-//         }),
-//       );
-
-//       if (response.statusCode == 200) {
-//         final data = jsonDecode(response.body);
-//         final content = data['choices'][0]['message']['content'];
-        
-//         // Try to parse as JSON, fallback to manual extraction if needed
-//         try {
-//           final promptsJson = jsonDecode(content);
-//           return {
-//             'manufacturing_prompt': promptsJson['manufacturing_prompt'] ?? '',
-//             'technical_flat_prompt': promptsJson['technical_flat_prompt'] ?? '',
-//           };
-//         } catch (e) {
-//           // Fallback parsing if JSON parsing fails
-//           return _extractPromptsFromText(content);
-//         }
-//       } else {
-//         final errorData = jsonDecode(response.body);
-//         throw Exception('OpenAI API Error: ${errorData['error']['message']}');
-//       }
-//     } catch (e) {
-//       throw Exception('Failed to generate tech pack prompts: $e');
-//     }
-//   }
-  
-//   static Map<String, String> _extractPromptsFromText(String text) {
-//     // Fallback method to extract prompts if JSON parsing fails
-//     final lines = text.split('\n');
-//     String manufacturingPrompt = '';
-//     String technicalFlatPrompt = '';
-    
-//     bool inManufacturing = false;
-//     bool inTechnical = false;
-    
-//     for (String line in lines) {
-//       if (line.toLowerCase().contains('manufacturing_prompt') || 
-//           line.toLowerCase().contains('manufacturing layout')) {
-//         inManufacturing = true;
-//         inTechnical = false;
-//         continue;
-//       } else if (line.toLowerCase().contains('technical_flat_prompt') || 
-//                  line.toLowerCase().contains('technical flat')) {
-//         inManufacturing = false;
-//         inTechnical = true;
-//         continue;
-//       }
-      
-//       if (inManufacturing && line.trim().isNotEmpty) {
-//         manufacturingPrompt += line.trim() + ' ';
-//       } else if (inTechnical && line.trim().isNotEmpty) {
-//         technicalFlatPrompt += line.trim() + ' ';
-//       }
-//     }
-    
-//     return {
-//       'manufacturing_prompt': manufacturingPrompt.trim(),
-//       'technical_flat_prompt': technicalFlatPrompt.trim(),
-//     };
-//   }
-// }
-
-// REPLACE YOUR EXISTING generateTechPackPrompts FUNCTION WITH THIS:
-// static Future<Map<String, String>> generateTechPackPrompts({
-//   required Map<String, dynamic> creativeBrief,
-//   required Map<String, dynamic> refinedConcept,
-//   required Map<String, dynamic> finalDetails,
-//   required Map<String, dynamic> techPackDetails,
-//   required String selectedDesignPrompt,
-// }) async {
-//   // Extract key information directly - no GPT-4 API call needed
-//   final garmentType = creativeBrief['garmentType'] ?? '';
-//   final primaryColor = techPackDetails['colors']?['primaryColor'] ?? '';
-//   final alternateColor = techPackDetails['colors']?['alternateColorways'] ?? '';
-//   final pantone = techPackDetails['colors']?['pantone'] ?? '';
-//   final mainFabric = techPackDetails['materials']?['mainFabric'] ?? '';
-//   final secondaryMaterial = techPackDetails['materials']?['secondaryMaterials'] ?? '';
-//   final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
-//   final accessories = techPackDetails['technical']?['accessories'] ?? '';
-//   final stitching = techPackDetails['technical']?['stitching'] ?? '';
-//   final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? '';
-//   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
-//   final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
-//   final packagingType = techPackDetails['packaging']?['packagingType'] ?? '';
-//   final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? '';
-//   final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '';
-//   final quantity = techPackDetails['production']?['quantity'] ?? '';
-//   final deliveryDate = techPackDetails['production']?['deliveryDate'] ?? '';
-//   final style = creativeBrief['style'] ?? '';
-//   final features = refinedConcept['features'] ?? 'Cuban collar';
-
-//   // Create focused, short prompts under 1000 characters
-//   final manufacturingPrompt = '''Professional tech pack specification sheet for ${style.toLowerCase()} ${garmentType.toLowerCase()}. Organized layout with sections: MATERIALS (${mainFabric}, ${secondaryMaterial} with swatches), COLORS (${primaryColor} primary, ${alternateColor} alternate, Pantone ${pantone} with color swatches), SIZES table (${sizeRange} with measurements), LABELS (${logoPlacement} placement, ${labelsNeeded}), PACKAGING (${packagingType}, ${foldingInstructions}), PRODUCTION (${costPerPiece}/piece, ${quantity} qty, ${deliveryDate}), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching}). White background, professional grid layout, fashion industry standard.''';
-
-//   final technicalFlatPrompt = '''Technical flat drawing ${style.toLowerCase()} ${garmentType.toLowerCase()} with ${features}. Black line art on white background. Front/back views with detailed measurements, seam allowances, construction notes. Show: ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}, sleeve/cuff construction, hem details, ${logoPlacement} label position. Include dimension lines, measurement points A-F, topstitching callouts, professional technical annotations. Fashion industry flat drawing standard.''';
-
-//   print('Manufacturing prompt (${manufacturingPrompt.length} chars): ${manufacturingPrompt.substring(0, math.min(100, manufacturingPrompt.length))}...');
-//   print('Technical prompt (${technicalFlatPrompt.length} chars): ${technicalFlatPrompt.substring(0, math.min(100, technicalFlatPrompt.length))}...');
-
-//   return {
-//     'manufacturing_prompt': manufacturingPrompt,
-//     'technical_flat_prompt': technicalFlatPrompt,
-//   };
-// }
-// }
-
 static Future<Map<String, String>> generateTechPackPrompts({
   required Map<String, dynamic> creativeBrief,
   required Map<String, dynamic> refinedConcept,
@@ -520,10 +354,6 @@ static Future<Map<String, String>> generateTechPackPrompts({
   // Manufacturing prompt - clean and organized
   final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible.''';
 
-  // DETAILED Technical flat prompt - with proper framing instructions
-//   final technicalFlatPrompt = '''Professional technical flat drawing layout for ${garmentType} on white background. Layout: FRONT view (left 40% of image), BACK view (right 40% of image) with  1% spacing each and enusre .. Black line art with detailed annotations. Show: ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}. Include measurement arrows labeled, seam allowances (1.3cm), construction callouts, Topstitching details shown in magnified circles, labeled with type (single, double) and stitch spacing in mm.
-// .  Include dimension arrows with measurement text in centimeters (cm) for *all garment parts*.
-// . All Two views completely visible within image boundaries with proper margins And not cutoff the image Ensure to show complete image in image boundaries. Fashion industry technical drawing standard.''';
 final technicalFlatPrompt = '''
 Professional technical flat drawing layout for ${garmentType} on a clean white background.
 
@@ -587,7 +417,6 @@ static Map<String, String> getDetailedSingleViewPrompts(Map<String, dynamic> tec
   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
   final accessories = techPackDetails['technical']?['accessories'] ?? 'zipper';
   final stitching = techPackDetails['technical']?['stitching'] ?? 'single stitch';
-  final features = creativeBrief['features'] ?? 'collar';
   
   return {
     'manufacturing_prompt': 'Professional fashion tech pack specification sheet for ${garmentType}. Organized sections: materials, colors with swatches, sizes chart, technical details, production info. Clean grid layout, white background.',

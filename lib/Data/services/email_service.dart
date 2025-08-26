@@ -1,14 +1,13 @@
-import 'package:emailjs/emailjs.dart';
-import 'package:emailjs/emailjs.dart' as EmailJS;
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/foundation.dart';
 
 class EmailService {
-  static const String _serviceId = 'YOUR_EMAILJS_SERVICE_ID';
-  static const String _templateId = 'YOUR_EMAILJS_TEMPLATE_ID';
-  static const String _publicKey = 'YOUR_EMAILJS_PUBLIC_KEY';
+  static const String _serviceId = 'service_6wga9uc';
+  static const String _templateId = 'template_zn65ngo';
+  static const String _publicKey = 'sHhGQhlBeKKbxxXAO';
+  static const String _privateKey = 'Phyfg7C4d6MiNjO7DFMBp';
   static const String _openaiApiKey = 'YOUR_OPENAI_API_KEY';
 
   static Future<String> generateEmailContent({
@@ -145,6 +144,8 @@ $userCompanyName''',
     List<String> imagePaths = const [],
   }) async {
     try {
+      final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
+      
       // Convert images to base64 for attachment
       List<Map<String, String>> attachments = [];
       for (int i = 0; i < imagePaths.length; i++) {
@@ -152,9 +153,9 @@ $userCompanyName''',
           final base64Image = await convertImageToBase64(imagePaths[i]);
           if (base64Image.isNotEmpty) {
             String fileName = '';
-            if (i == 0) fileName = 'design_reference.jpg';
-            else if (i == 1) fileName = 'measurement_chart.jpg';
-            else if (i == 2) fileName = 'label_reference.jpg';
+            if (i == 0) fileName = 'selected_design.jpg';
+            else if (i == 1) fileName = 'tech_pack_flat_drawing.jpg';
+            else if (i == 2) fileName = 'tech_pack_manufacturing.jpg';
             else fileName = 'image_${i + 1}.jpg';
 
             attachments.add({
@@ -166,33 +167,56 @@ $userCompanyName''',
         }
       }
 
-      final templateParams = {
-        'to_email': manufacturerEmail,
-        'to_name': manufacturerName,
-        'from_name': userCompanyName,
-        'from_email': userEmail,
-        'subject': subject,
-        'message': body,
-        'attachments': attachments,
+      final payload = {
+        'service_id': _serviceId,
+        'template_id': _templateId,
+        'user_id': _publicKey,
+        'accessToken': _privateKey,
+        'template_params': {
+          'to_email': manufacturerEmail,
+          'to_name': manufacturerName,
+          'from_name': userCompanyName,
+          'from_email': userEmail,
+          'subject': subject,
+          'message': body,
+          'attachments': attachments,
+        }
       };
 
-      await EmailJS.send(
-        _serviceId,
-        _templateId,
-        templateParams,
-        const Options(
-          publicKey: _publicKey,
-          limitRate: const LimitRate(
-            id: 'app',
-            throttle: 10000,
-          ),
-        ),
+      if (kDebugMode) {
+        print('🚀 Sending email to: $manufacturerEmail');
+        print('📧 Subject: $subject');
+        print('📎 Attachments count: ${attachments.length}');
+      }
+
+      final response = await http.post(
+        url,
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        body: jsonEncode(payload),
       );
 
-      return true;
+      if (kDebugMode) {
+        print('📤 Response Status: ${response.statusCode}');
+        print('📤 Response Body: ${response.body}');
+      }
+
+      if (response.statusCode == 200) {
+        if (kDebugMode) {
+          print('✅ Email sent successfully!');
+        }
+        return true;
+      } else {
+        if (kDebugMode) {
+          print('❌ Failed to send email');
+          print('Error details: ${response.body}');
+        }
+        return false;
+      }
     } catch (e) {
       if (kDebugMode) {
-        print('Email sending failed: $e');
+        print('❌ Exception occurred while sending email: $e');
       }
       return false;
     }

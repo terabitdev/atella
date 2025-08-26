@@ -61,6 +61,48 @@ class AuthService {
   // Get the current user (null if not signed in)
   User? get currentUser => _auth.currentUser;
 
+  // Get user data from Firestore
+  Future<Map<String, dynamic>?> getUserData() async {
+    try {
+      User? user = currentUser;
+      if (user != null) {
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        if (userDoc.exists) {
+          return userDoc.data() as Map<String, dynamic>;
+        }
+      }
+      return null;
+    } catch (e) {
+      print('Error getting user data: $e');
+      return null;
+    }
+  }
+
+  // Update user profile data
+  Future<bool> updateUserProfile({
+    required String name,
+  }) async {
+    try {
+      User? user = currentUser;
+      if (user != null) {
+        await _firestore.collection('users').doc(user.uid).update({
+          'name': name,
+          'updatedAt': FieldValue.serverTimestamp(),
+        });
+        
+        // Also update the Firebase Auth display name
+        await user.updateDisplayName(name);
+        await user.reload();
+        
+        return true;
+      }
+      return false;
+    } catch (e) {
+      print('Error updating user profile: $e');
+      return false;
+    }
+  }
+
   Future<String?> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();

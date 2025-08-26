@@ -172,28 +172,6 @@ class StripeSubscriptionService {
     throw Exception('Failed to create ephemeral key');
   }
 
-  // Update user subscription in Firebase
-  Future<void> _updateUserSubscription(String userId, SubscriptionPlan plan, String subscriptionId) async {
-    print('🔥 CLIENT-SIDE: Writing to Firebase - User: $userId, Plan: ${plan.name}, SubID: $subscriptionId');
-    
-    bool isYearly = plan.billingPeriod == BillingPeriod.YEARLY;
-    int periodDays = isYearly ? 365 : 30;
-    
-    await _firestore.collection('users').doc(userId).update({
-      'subscriptionPlan': plan.name,
-      'subscriptionStatus': 'active',
-      'currentSubscriptionId': subscriptionId,
-      'billingPeriod': isYearly ? 'YEARLY' : 'MONTHLY',
-      'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: periodDays))),
-      'techpacksUsedThisMonth': 0,
-      'techpacksUsedThisYear': 0,
-      'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
-    });
-    print('🔥 CLIENT-SIDE: Firebase write completed successfully');
-  }
-
-  // Cancel subscription
   Future<bool> cancelSubscription() async {
     try {
       User? user = _auth.currentUser;
@@ -217,17 +195,6 @@ class StripeSubscriptionService {
       );
 
       if (response.statusCode == 200) {
-        // NOTE: Firebase updates are now handled by webhooks only
-        // Client-side updates commented out to prevent dual updates
-        // print('🔥 CLIENT-SIDE: About to cancel subscription in Firebase for user ${user.uid}');
-        // await _firestore.collection('users').doc(user.uid).update({
-        //   'subscriptionPlan': 'FREE',
-        //   'subscriptionStatus': 'canceled',
-        //   'currentSubscriptionId': null,
-        //   'updatedBy': 'CLIENT-SIDE', // Debug field to identify source
-        // });
-        // print('🔥 CLIENT-SIDE: Firebase cancellation update completed');
-        
         print('✅ Subscription cancelled successfully. Webhook will update Firebase automatically.');
         return true;
       }
@@ -477,7 +444,6 @@ class StripeSubscriptionService {
     UserSubscription? subscription = await getCurrentUserSubscription();
     if (subscription == null) return;
     
-    bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
     
     Map<String, dynamic> updates = {
       // Always reset monthly counters

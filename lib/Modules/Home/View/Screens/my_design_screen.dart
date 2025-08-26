@@ -35,8 +35,10 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
             children: [
               Row(
                 children: [
-                  InkWell(
-                    onTap: () => Get.back(),
+                  GestureDetector(
+                    onTap: (){
+                      Get.back();
+                    },
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
                       height: 40.h,

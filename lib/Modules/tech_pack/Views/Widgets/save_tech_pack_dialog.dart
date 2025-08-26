@@ -141,11 +141,12 @@ class SaveTechPackDialog extends StatelessWidget {
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       side: BorderSide(color: Color(0xFF1A1A1A)),
-                      padding: EdgeInsets.symmetric(vertical: 16.h),
+                      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
                     ),
                     child: Text(
                       'ADD NEW COLLECTION',
                       style: dbTitleTextTextStyle12500,
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
