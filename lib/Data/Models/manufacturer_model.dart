@@ -5,6 +5,7 @@ class Manufacturer {
   final String? email;
   final String? website;
   final String country;
+  final String id;
 
   Manufacturer({
     required this.name,
@@ -13,6 +14,7 @@ class Manufacturer {
     this.phoneNumber,
     this.email,
     this.website,
+    required this.id,
   });
 
   factory Manufacturer.fromJson(Map<String, dynamic> json) {
@@ -23,6 +25,7 @@ class Manufacturer {
       phoneNumber: json['phoneNumber'],
       email: json['email'],
       website: json['website'],
+      id: json['id'] ?? '',
     );
   }
 

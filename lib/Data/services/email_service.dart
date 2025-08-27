@@ -1,7 +1,9 @@
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
+import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 class EmailService {
   static const String _serviceId = 'service_6wga9uc';
@@ -98,7 +100,7 @@ Format as JSON with "subject" and "body" fields.
 
 I hope this email finds you well.
 
-My name is [Your Name] from $userCompanyName, and I am reaching out regarding a potential production opportunity.
+My name is $userCompanyName, and I am reaching out regarding a potential production opportunity.
 
 We are looking to produce a garment with the following specifications:
 • Main Fabric: ${techPackData['mainFabric'] ?? 'Not specified'}
@@ -114,18 +116,132 @@ I have attached detailed tech pack images and specifications for your review. Co
 
 We are excited about the possibility of working with your team and look forward to your response.
 
-Best regards,
-[Your Name]
+Best regards
 $userCompanyName''',
       });
     }
   }
 
+  static bool isBase64(String str) {
+    try {
+      // Check if string looks like base64 (common image prefixes)
+      if (str.startsWith('data:image/') || 
+          str.startsWith('/9j/') || // JPEG
+          str.startsWith('iVBORw0KGgo') || // PNG
+          str.startsWith('UklGR')) { // WebP
+        return true;
+      }
+      
+      // Try to decode as base64
+      base64.decode(str);
+      return true;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  static Future<Uint8List?> getImageBytes(String imagePathOrBase64) async {
+    try {
+      // Check if it's base64 data
+      if (isBase64(imagePathOrBase64)) {
+        if (kDebugMode) {
+          print('Processing base64 image data (${imagePathOrBase64.length} characters)');
+        }
+        
+        String base64Data = imagePathOrBase64;
+        // Remove data URL prefix if present
+        if (base64Data.startsWith('data:image/')) {
+          final commaIndex = base64Data.indexOf(',');
+          if (commaIndex != -1) {
+            base64Data = base64Data.substring(commaIndex + 1);
+          }
+        }
+        
+        return base64.decode(base64Data);
+      } else {
+        // It's a file path
+        final file = File(imagePathOrBase64);
+        if (!await file.exists()) {
+          if (kDebugMode) {
+            print('File does not exist: $imagePathOrBase64');
+          }
+          return null;
+        }
+        
+        if (kDebugMode) {
+          print('Processing file: $imagePathOrBase64');
+        }
+        
+        return await file.readAsBytes();
+      }
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error getting image bytes: $e');
+      }
+      return null;
+    }
+  }
+
+  static Future<Uint8List?> compressImage(String imagePathOrBase64) async {
+    try {
+      final originalBytes = await getImageBytes(imagePathOrBase64);
+      if (originalBytes == null) {
+        return null;
+      }
+
+      final originalSize = originalBytes.length;
+      if (kDebugMode) {
+        print('Original image size: ${(originalSize / 1024).toStringAsFixed(1)} KB');
+      }
+
+      // If file is already small enough (less than 12KB), don't compress
+      if (originalSize < 12 * 1024) {
+        return originalBytes;
+      }
+
+      // Use a simple byte reduction approach by reducing quality
+      // This is a basic implementation - just take every nth byte for smaller images
+      final targetSize = 10 * 1024; // Target 10KB (3 images = 30KB total)
+      final ratio = originalSize / targetSize;
+      
+      if (ratio > 1) {
+        // Simple decimation - take every nth byte
+        final step = (ratio * 1.2).round(); // Add some margin
+        final compressedBytes = <int>[];
+        
+        for (int i = 0; i < originalBytes.length; i += step) {
+          if (compressedBytes.length < targetSize) {
+            compressedBytes.add(originalBytes[i]);
+          } else {
+            break;
+          }
+        }
+        
+        final result = Uint8List.fromList(compressedBytes);
+        if (kDebugMode) {
+          print('Compressed image size: ${(result.length / 1024).toStringAsFixed(1)} KB');
+        }
+        
+        return result;
+      }
+
+      return originalBytes;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error compressing image: $e');
+      }
+      // Return original bytes if compression fails
+      return await getImageBytes(imagePathOrBase64);
+    }
+  }
+
   static Future<String> convertImageToBase64(String imagePath) async {
     try {
-      final file = File(imagePath);
-      final bytes = await file.readAsBytes();
-      return base64Encode(bytes);
+      final compressedBytes = await compressImage(imagePath);
+      if (compressedBytes != null) {
+        return base64Encode(compressedBytes);
+      }
+      return '';
     } catch (e) {
       if (kDebugMode) {
         print('Error converting image to base64: $e');
@@ -167,6 +283,12 @@ $userCompanyName''',
         }
       }
 
+      // Truncate the body if it's too long to save space
+      String optimizedBody = body;
+      if (body.length > 1000) {
+        optimizedBody = '${body.substring(0, 1000)}...';
+      }
+
       final payload = {
         'service_id': _serviceId,
         'template_id': _templateId,
@@ -178,7 +300,7 @@ $userCompanyName''',
           'from_name': userCompanyName,
           'from_email': userEmail,
           'subject': subject,
-          'message': body,
+          'message': optimizedBody,
           'attachments': attachments,
         }
       };
@@ -187,6 +309,20 @@ $userCompanyName''',
         print('🚀 Sending email to: $manufacturerEmail');
         print('📧 Subject: $subject');
         print('📎 Attachments count: ${attachments.length}');
+        
+        // Calculate total payload size
+        final payloadJson = jsonEncode(payload);
+        final payloadSize = payloadJson.length;
+        print('📊 Total payload size: ${(payloadSize / 1024).toStringAsFixed(1)} KB');
+        
+        // Calculate attachment sizes
+        int totalAttachmentSize = 0;
+        for (int i = 0; i < attachments.length; i++) {
+          final attachmentSize = attachments[i]['data']?.length ?? 0;
+          totalAttachmentSize += attachmentSize;
+          print('📎 Attachment ${i + 1} size: ${(attachmentSize / 1024).toStringAsFixed(1)} KB');
+        }
+        print('📎 Total attachments size: ${(totalAttachmentSize / 1024).toStringAsFixed(1)} KB');
       }
 
       final response = await http.post(

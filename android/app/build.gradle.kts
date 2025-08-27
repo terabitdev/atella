@@ -48,7 +48,7 @@ android {
                 storePassword = keystoreProperties["storePassword"] as String?
             }
             getByName("debug") {
-                storeFile = file("D:\\TERABIT\\atella\\android\\app\\debug.keystore")
+                storeFile = file("D:\\TERABIT\\atelia\\android\\app\\debug.keystore")
                 storePassword = "android"
                 keyAlias = "androiddebugkey"
                 keyPassword = "android"

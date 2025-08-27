@@ -5,7 +5,8 @@ import 'package:country_picker/country_picker.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/manufacturer_service.dart';
 import 'package:atella/Data/services/email_service.dart';
-import 'package:atella/Modules/tech_pack/controllers/tech_pack_details_controller.dart';
+import 'package:atella/services/firebase/services/auth_service.dart';
+import 'tech_pack_details_controller.dart';
 
 
 class ManufacturerSuggestionController extends GetxController {
@@ -14,6 +15,7 @@ class ManufacturerSuggestionController extends GetxController {
 
   // Services
   final ManufacturerService _manufacturerService = Get.put(ManufacturerService());
+  final AuthService _authService = AuthService();
 
   // Data
   final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
@@ -140,13 +142,46 @@ class ManufacturerSuggestionController extends GetxController {
   
   // Email functionality
   final RxBool isSendingEmail = false.obs;
+  final RxSet<String> loadingManufacturers = <String>{}.obs;
   
+  // Helper method to check if a specific manufacturer is loading
+  bool isManufacturerLoading(String manufacturerId) {
+    return loadingManufacturers.contains(manufacturerId);
+  }
+
   Future<void> sendEmailToManufacturer(Manufacturer manufacturer) async {
     try {
+      // Add this manufacturer to loading set
+      loadingManufacturers.add(manufacturer.id);
       isSendingEmail.value = true;
       
       // Get tech pack data from the tech pack controller
       final techPackController = Get.find<TechPackDetailsController>();
+      
+      // Get current user data
+      final userData = await _authService.getUserData();
+      final currentUser = _authService.currentUser;
+      
+      String userEmail = '';
+      String userCompanyName = 'Your Fashion Brand';
+      
+      if (userData != null) {
+        userEmail = userData['email'] ?? '';
+        userCompanyName = userData['name'] ?? 'Your Fashion Brand';
+      } else if (currentUser != null) {
+        userEmail = currentUser.email ?? '';
+        userCompanyName = currentUser.displayName ?? 'Your Fashion Brand';
+      }
+      
+      if (userEmail.isEmpty) {
+        Get.snackbar(
+          'Error',
+          'Unable to get user email. Please make sure you are logged in.',
+          backgroundColor: Colors.red.shade100,
+          colorText: Colors.red.shade800,
+        );
+        return;
+      }
       
       // Collect tech pack data
       final techPackData = {
@@ -201,7 +236,7 @@ class ManufacturerSuggestionController extends GetxController {
         manufacturerLocation: manufacturer.location,
         manufacturerCountry: manufacturer.country,
         techPackData: techPackData,
-        userCompanyName: 'Your Fashion Brand', // You can make this configurable
+        userCompanyName: userCompanyName,
       );
       
       final emailData = jsonDecode(emailContentJson);
@@ -212,8 +247,8 @@ class ManufacturerSuggestionController extends GetxController {
         manufacturerName: manufacturer.name,
         subject: emailData['subject'],
         body: emailData['body'],
-        userCompanyName: 'Your Fashion Brand',
-        userEmail: 'your-email@company.com', // You can make this configurable
+        userCompanyName: userCompanyName,
+        userEmail: userEmail,
         imagePaths: imagePaths,
       );
       

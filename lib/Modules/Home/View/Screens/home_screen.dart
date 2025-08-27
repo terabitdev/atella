@@ -185,7 +185,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           onTap: () {
                             Get.to(() => PreviewScreen(
                               techPack: techPack,
-                              version: 'V2',
+                              version: 'designs',
                             ));
                           },
                           onFavoriteToggle: () {

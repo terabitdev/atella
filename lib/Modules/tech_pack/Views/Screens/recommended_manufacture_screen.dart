@@ -121,7 +121,6 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                       manufacturer: manufacturer,
                       onViewProfile: () {},
                       onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
-                      isLoadingEmail: controller.isSendingEmail.value,
                     )),
                   ).toList(),
                   if (controller.isLoadingMore.value)
@@ -317,7 +316,6 @@ Widget customTab(ManufacturerSuggestionController controller) {
                       Get.to(ViewProfileTechPackScreen());
                     },
                     onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
-                    isLoadingEmail: controller.isSendingEmail.value,
                   )),
                 ).toList(),
               );
