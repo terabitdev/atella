@@ -3,13 +3,14 @@ import 'dart:convert';
 import 'dart:io';
 import 'dart:typed_data';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
+import 'package:flutter_image_compress/flutter_image_compress.dart';
+import 'package:path_provider/path_provider.dart';
 
 class EmailService {
-  static const String _serviceId = 'service_6wga9uc';
-  static const String _templateId = 'template_zn65ngo';
-  static const String _publicKey = 'sHhGQhlBeKKbxxXAO';
-  static const String _privateKey = 'Phyfg7C4d6MiNjO7DFMBp';
+  static const String _serviceId = 'service_uwuy153';
+  static const String _templateId = 'template_7zj5iof';
+  static const String _publicKey = 'xQoXK58-R-NzOi3NG';
+  static const String _privateKey = 'tec1d9iLbllZvHiPEoMN8';
   static const String _openaiApiKey = 'YOUR_OPENAI_API_KEY';
 
   static Future<String> generateEmailContent({
@@ -63,12 +64,9 @@ Format as JSON with "subject" and "body" fields.
           'messages': [
             {
               'role': 'system',
-              'content': 'You are a professional business communication expert specializing in fashion industry B2B emails.'
+              'content': 'You are a professional business communication expert specializing in fashion industry B2B emails.',
             },
-            {
-              'role': 'user',
-              'content': prompt,
-            }
+            {'role': 'user', 'content': prompt},
           ],
           'max_tokens': 1000,
           'temperature': 0.7,
@@ -78,12 +76,11 @@ Format as JSON with "subject" and "body" fields.
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
         final content = data['choices'][0]['message']['content'];
-        
+
         try {
           final emailData = jsonDecode(content);
           return jsonEncode(emailData);
         } catch (e) {
-          // If JSON parsing fails, return a fallback structure
           return jsonEncode({
             'subject': 'Production Inquiry from $userCompanyName',
             'body': content,
@@ -93,7 +90,6 @@ Format as JSON with "subject" and "body" fields.
         throw Exception('Failed to generate email content: ${response.statusCode}');
       }
     } catch (e) {
-      // Fallback email content
       return jsonEncode({
         'subject': 'Production Inquiry from $userCompanyName',
         'body': '''Dear $manufacturerName Team,
@@ -124,15 +120,12 @@ $userCompanyName''',
 
   static bool isBase64(String str) {
     try {
-      // Check if string looks like base64 (common image prefixes)
-      if (str.startsWith('data:image/') || 
+      if (str.startsWith('data:image/') ||
           str.startsWith('/9j/') || // JPEG
           str.startsWith('iVBORw0KGgo') || // PNG
           str.startsWith('UklGR')) { // WebP
         return true;
       }
-      
-      // Try to decode as base64
       base64.decode(str);
       return true;
     } catch (e) {
@@ -142,24 +135,19 @@ $userCompanyName''',
 
   static Future<Uint8List?> getImageBytes(String imagePathOrBase64) async {
     try {
-      // Check if it's base64 data
       if (isBase64(imagePathOrBase64)) {
         if (kDebugMode) {
           print('Processing base64 image data (${imagePathOrBase64.length} characters)');
         }
-        
         String base64Data = imagePathOrBase64;
-        // Remove data URL prefix if present
         if (base64Data.startsWith('data:image/')) {
           final commaIndex = base64Data.indexOf(',');
           if (commaIndex != -1) {
             base64Data = base64Data.substring(commaIndex + 1);
           }
         }
-        
         return base64.decode(base64Data);
       } else {
-        // It's a file path
         final file = File(imagePathOrBase64);
         if (!await file.exists()) {
           if (kDebugMode) {
@@ -167,11 +155,9 @@ $userCompanyName''',
           }
           return null;
         }
-        
         if (kDebugMode) {
           print('Processing file: $imagePathOrBase64');
         }
-        
         return await file.readAsBytes();
       }
     } catch (e) {
@@ -194,50 +180,35 @@ $userCompanyName''',
         print('Original image size: ${(originalSize / 1024).toStringAsFixed(1)} KB');
       }
 
-      // If file is already small enough (less than 12KB), don't compress
-      if (originalSize < 12 * 1024) {
+      if (originalSize < 100 * 1024) {
         return originalBytes;
       }
 
-      // Use a simple byte reduction approach by reducing quality
-      // This is a basic implementation - just take every nth byte for smaller images
-      final targetSize = 10 * 1024; // Target 10KB (3 images = 30KB total)
-      final ratio = originalSize / targetSize;
-      
-      if (ratio > 1) {
-        // Simple decimation - take every nth byte
-        final step = (ratio * 1.2).round(); // Add some margin
-        final compressedBytes = <int>[];
-        
-        for (int i = 0; i < originalBytes.length; i += step) {
-          if (compressedBytes.length < targetSize) {
-            compressedBytes.add(originalBytes[i]);
-          } else {
-            break;
-          }
-        }
-        
-        final result = Uint8List.fromList(compressedBytes);
-        if (kDebugMode) {
-          print('Compressed image size: ${(result.length / 1024).toStringAsFixed(1)} KB');
-        }
-        
-        return result;
+      final compressedBytes = await FlutterImageCompress.compressWithList(
+        originalBytes,
+        minHeight: 800,
+        minWidth: 800,
+        quality: 70,
+        format: CompressFormat.jpeg,
+      );
+
+      final compressedSize = compressedBytes.length;
+      if (kDebugMode) {
+        print('Compressed image size: ${(compressedSize / 1024).toStringAsFixed(1)} KB');
       }
 
-      return originalBytes;
+      return compressedBytes;
     } catch (e) {
       if (kDebugMode) {
         print('Error compressing image: $e');
       }
-      // Return original bytes if compression fails
       return await getImageBytes(imagePathOrBase64);
     }
   }
 
-  static Future<String> convertImageToBase64(String imagePath) async {
+  static Future<String> convertImageToBase64(String imagePathOrBase64) async {
     try {
-      final compressedBytes = await compressImage(imagePath);
+      final compressedBytes = await compressImage(imagePathOrBase64);
       if (compressedBytes != null) {
         return base64Encode(compressedBytes);
       }
@@ -245,6 +216,28 @@ $userCompanyName''',
     } catch (e) {
       if (kDebugMode) {
         print('Error converting image to base64: $e');
+      }
+      return '';
+    }
+  }
+
+  static Future<String> saveBase64ToFile(String base64Data, String filename) async {
+    try {
+      final directory = await getTemporaryDirectory();
+      final path = '${directory.path}/$filename';
+      String cleanBase64 = base64Data;
+      if (base64Data.startsWith('data:image/')) {
+        cleanBase64 = base64Data.substring(base64Data.indexOf(',') + 1);
+      }
+      final bytes = base64.decode(cleanBase64);
+      await File(path).writeAsBytes(bytes);
+      if (kDebugMode) {
+        print('Saved image to: $path');
+      }
+      return path;
+    } catch (e) {
+      if (kDebugMode) {
+        print('Error saving base64 to file: $e');
       }
       return '';
     }
@@ -261,68 +254,65 @@ $userCompanyName''',
   }) async {
     try {
       final url = Uri.parse('https://api.emailjs.com/api/v1.0/email/send');
-      
-      // Convert images to base64 for attachment
-      List<Map<String, String>> attachments = [];
-      for (int i = 0; i < imagePaths.length; i++) {
-        if (imagePaths[i].isNotEmpty) {
-          final base64Image = await convertImageToBase64(imagePaths[i]);
-          if (base64Image.isNotEmpty) {
-            String fileName = '';
-            if (i == 0) fileName = 'selected_design.jpg';
-            else if (i == 1) fileName = 'tech_pack_flat_drawing.jpg';
-            else if (i == 2) fileName = 'tech_pack_manufacturing.jpg';
-            else fileName = 'image_${i + 1}.jpg';
 
-            attachments.add({
-              'name': fileName,
-              'data': base64Image,
-              'type': 'image/jpeg',
-            });
+      // Validate and prepare attachments
+      List<Map<String, String>> attachments = [];
+      for (int i = 0; i < imagePaths.length && i < 3; i++) {
+        String base64Data;
+        String filename = 'techpack${i + 1}.jpg';
+        if (isBase64(imagePaths[i])) {
+          final filePath = await saveBase64ToFile(imagePaths[i], filename);
+          if (filePath.isEmpty || !await File(filePath).exists()) {
+            if (kDebugMode) {
+              print('Skipping invalid base64 data: ${imagePaths[i].substring(0, 20)}...');
+            }
+            continue;
           }
+          base64Data = await convertImageToBase64(filePath);
+        } else {
+          final file = File(imagePaths[i]);
+          if (!await file.exists()) {
+            if (kDebugMode) {
+              print('Skipping invalid file path: ${imagePaths[i]}');
+            }
+            continue;
+          }
+          base64Data = await convertImageToBase64(imagePaths[i]);
+          filename = file.path.split('/').last;
+        }
+        if (base64Data.isNotEmpty) {
+          attachments.add({
+            'name': filename,
+            'data': base64Data,
+          });
         }
       }
 
-      // Truncate the body if it's too long to save space
-      String optimizedBody = body;
-      if (body.length > 1000) {
-        optimizedBody = '${body.substring(0, 1000)}...';
-      }
+      // Shorten body if too long
+      String optimizedBody = body.length > 1000 ? '${body.substring(0, 1000)}...' : body;
 
       final payload = {
         'service_id': _serviceId,
         'template_id': _templateId,
         'user_id': _publicKey,
-        'accessToken': _privateKey,
         'template_params': {
           'to_email': manufacturerEmail,
-          'to_name': manufacturerName,
           'from_name': userCompanyName,
-          'from_email': userEmail,
+          'reply_to': userEmail,
           'subject': subject,
           'message': optimizedBody,
-          'attachments': attachments,
-        }
+        },
+        'attachments': attachments,
       };
 
       if (kDebugMode) {
+        print('Payload: ${jsonEncode(payload)}');
         print('🚀 Sending email to: $manufacturerEmail');
         print('📧 Subject: $subject');
         print('📎 Attachments count: ${attachments.length}');
-        
-        // Calculate total payload size
-        final payloadJson = jsonEncode(payload);
-        final payloadSize = payloadJson.length;
-        print('📊 Total payload size: ${(payloadSize / 1024).toStringAsFixed(1)} KB');
-        
-        // Calculate attachment sizes
-        int totalAttachmentSize = 0;
-        for (int i = 0; i < attachments.length; i++) {
-          final attachmentSize = attachments[i]['data']?.length ?? 0;
-          totalAttachmentSize += attachmentSize;
-          print('📎 Attachment ${i + 1} size: ${(attachmentSize / 1024).toStringAsFixed(1)} KB');
+        for (var att in attachments) {
+          print('📎 Attachment ${att['name']}: ${att['data']?.length ?? 0} chars');
         }
-        print('📎 Total attachments size: ${(totalAttachmentSize / 1024).toStringAsFixed(1)} KB');
       }
 
       final response = await http.post(
@@ -338,21 +328,10 @@ $userCompanyName''',
         print('📤 Response Body: ${response.body}');
       }
 
-      if (response.statusCode == 200) {
-        if (kDebugMode) {
-          print('✅ Email sent successfully!');
-        }
-        return true;
-      } else {
-        if (kDebugMode) {
-          print('❌ Failed to send email');
-          print('Error details: ${response.body}');
-        }
-        return false;
-      }
+      return response.statusCode == 200;
     } catch (e) {
       if (kDebugMode) {
-        print('❌ Exception occurred while sending email: $e');
+        print('❌ Exception while sending email: $e');
       }
       return false;
     }

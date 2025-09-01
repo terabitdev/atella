@@ -48,32 +48,38 @@ class TechPackReadyScreen extends StatelessWidget {
               base64Decode(base64Image),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: Center(
-                      child: Icon(
-                        Icons.error_outline,
-                        size: 48.w,
-                        color: Colors.grey.shade400,
-                      ),
+                return Container(
+                  color: Colors.grey.shade200,
+                  child: Center(
+                    child: Icon(
+                      Icons.error_outline,
+                      size: 48.w,
+                      color: Colors.grey.shade400,
                     ),
-                  );
-                },
-              ),
+                  ),
+                );
+              },
             ),
+          ),
         );
       },
     );
   }
 
-  void _showSaveDialog(BuildContext context, TechPackReadyController controller) {
+  void _showSaveDialog(
+    BuildContext context,
+    TechPackReadyController controller,
+  ) {
     showDialog(
       context: context,
       barrierDismissible: false,
       builder: (context) {
         return SaveTechPackDialog(
           onSave: (projectName, collectionName) async {
-            await controller.saveTechPackWithDetails(projectName, collectionName);
+            await controller.saveTechPackWithDetails(
+              projectName,
+              collectionName,
+            );
           },
         );
       },
@@ -95,10 +101,7 @@ class TechPackReadyScreen extends StatelessWidget {
         Text(
           'Please wait while we generate your tech pack images with all specifications.',
           textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: Color(0xFF666666),
-          ),
+          style: TextStyle(fontSize: 14.sp, color: Color(0xFF666666)),
         ),
         SizedBox(height: 24.h),
         _buildLoadingCard('Tech Pack Details'),
@@ -121,8 +124,8 @@ class TechPackReadyScreen extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
             Image.asset(
-              'assets/images/generate.png', 
-              width: 60.w, 
+              'assets/images/generate.png',
+              width: 60.w,
               height: 64.h,
               errorBuilder: (context, error, stackTrace) {
                 return Icon(
@@ -135,10 +138,7 @@ class TechPackReadyScreen extends StatelessWidget {
             SizedBox(height: 16.h),
             Text(
               'Generating $title...',
-              style: TextStyle(
-                fontSize: 17.sp,
-                fontWeight: FontWeight.w500,
-              ),
+              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
             ),
           ],
         ),
@@ -149,7 +149,7 @@ class TechPackReadyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(TechPackReadyController());
-    
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       body: SafeArea(
@@ -180,7 +180,8 @@ class TechPackReadyScreen extends StatelessWidget {
               Obx(() {
                 if (controller.isGenerating) {
                   return _buildLoadingState();
-                } else if (controller.hasGeneratedImages && controller.generatedImages.length >= 2) {
+                } else if (controller.hasGeneratedImages &&
+                    controller.generatedImages.length >= 2) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
@@ -192,9 +193,13 @@ class TechPackReadyScreen extends StatelessWidget {
                         ),
                       ),
                       SizedBox(height: 16.h),
-                      
+
                       GestureDetector(
-                        onTap: () => _showImagePopup(context, controller.generatedImages[0], 'Tech Pack Details'),
+                        onTap: () => _showImagePopup(
+                          context,
+                          controller.generatedImages[0],
+                          'Tech Pack Details',
+                        ),
                         child: Container(
                           width: double.infinity,
                           margin: const EdgeInsets.only(bottom: 16),
@@ -203,14 +208,20 @@ class TechPackReadyScreen extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(0),
-                            child: _buildImageFromBase64(controller.generatedImages[0]),
+                            child: _buildImageFromBase64(
+                              controller.generatedImages[0],
+                            ),
                           ),
                         ),
                       ),
-                      
+
                       // Second Image - Technical Flat Drawing
                       GestureDetector(
-                        onTap: () => _showImagePopup(context, controller.generatedImages[1], 'Technical Flat Drawing'),
+                        onTap: () => _showImagePopup(
+                          context,
+                          controller.generatedImages[1],
+                          'Technical Flat Drawing',
+                        ),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
@@ -218,7 +229,9 @@ class TechPackReadyScreen extends StatelessWidget {
                           ),
                           child: ClipRRect(
                             borderRadius: BorderRadius.circular(0),
-                            child: _buildImageFromBase64(controller.generatedImages[1]),
+                            child: _buildImageFromBase64(
+                              controller.generatedImages[1],
+                            ),
                           ),
                         ),
                       ),
@@ -259,20 +272,23 @@ class TechPackReadyScreen extends StatelessWidget {
               SizedBox(height: 30.h),
               RoundButton(
                 title: 'Get Manufacturer Suggestions',
-                onTap: () {
-                  // Get.toNamed('/recommended_tech_pack');
-                  Get.to(() => const RecommendedManufactureScreen());
+                onTap: ()  {
+                  Get.to(() => RecommendedManufactureScreen());
                 },
                 color: AppColors.buttonColor,
                 isloading: false,
               ),
               SizedBox(height: 16.h),
-              Obx(() => SaveExportButtonRow(
-                onSave: () => _showSaveDialog(context, controller),
-                onExport: () => controller.exportTechPackPDF(),
-                isSaving: controller.isSaving.value, // Show loading on screen save button
-                isExporting: controller.isExporting.value,
-              )),
+              Obx(
+                () => SaveExportButtonRow(
+                  onSave: () => _showSaveDialog(context, controller),
+                  onExport: () => controller.exportTechPackPDF(),
+                  isSaving: controller
+                      .isSaving
+                      .value, // Show loading on screen save button
+                  isExporting: controller.isExporting.value,
+                ),
+              ),
               SizedBox(height: 30.h),
             ],
           ),
