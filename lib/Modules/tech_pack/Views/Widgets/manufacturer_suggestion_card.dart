@@ -5,6 +5,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
+import 'package:atella/Data/services/test_email_service.dart';
+import 'package:atella/modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 
 class ManufacturerSuggestionCard extends StatelessWidget {
   final Manufacturer manufacturer;
@@ -152,6 +154,24 @@ class ManufacturerSuggestionCard extends StatelessWidget {
               onPressed: () => Navigator.of(context).pop(),
               child: Text('Close',style: cstTextTextStyle16500,),
             ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Test simple email first
+                await _sendMinimalTestEmail();
+              },
+              child: Text('Test Simple Email',style: cstTextTextStyle16500,),
+            ),
+            const SizedBox(width: 8),
+            TextButton(
+              onPressed: () async {
+                Navigator.of(context).pop();
+                // Test email with attachments
+                await _sendTestEmail();
+              },
+              child: Text('Test with Images',style: cstTextTextStyle16500,),
+            ),
           ],
         );
       },
@@ -218,6 +238,153 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       ),
     );
   }
+  Future<void> _sendMinimalTestEmail() async {
+    try {
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Sending Simple Email',
+          message: 'Testing basic EmailJS functionality...',
+          duration: Duration(seconds: 2),
+          backgroundColor: Colors.orange,
+        ),
+      );
+
+      final success = await EmailJSDebugService.testMinimalEmail(
+        toEmail: 'dk03356000@gmail.com',
+        userMessage: '''Hello from Atelia Fashion App!
+
+This is a simple test email to verify our EmailJS integration is working.
+
+If you receive this email, our basic email functionality is working correctly.
+
+Best regards,
+Atelia Fashion App Team''',
+      );
+
+      if (success) {
+        Get.showSnackbar(
+          const GetSnackBar(
+            title: 'Simple Email Sent!',
+            message: 'Check dk03356000@gmail.com (including spam folder)',
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        Get.showSnackbar(
+          const GetSnackBar(
+            title: 'Simple Email Failed',
+            message: 'Check console for error details',
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      Get.showSnackbar(
+        GetSnackBar(
+          title: 'Error',
+          message: 'Exception: $e',
+          duration: const Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
+  Future<void> _sendTestEmail() async {
+    try {
+      // Show loading snackbar
+      Get.showSnackbar(
+        const GetSnackBar(
+          title: 'Sending Email',
+          message: 'Testing EmailJS with tech pack attachments...',
+          duration: Duration(seconds: 3),
+          backgroundColor: Colors.blue,
+        ),
+      );
+
+      // Try to get actual tech pack images
+      List<String> imagePaths = [];
+      List<String> imageUrls = [];
+      
+      try {
+        final techPackController = Get.find<TechPackReadyController>();
+        if (techPackController.hasGeneratedImages) {
+          imagePaths = techPackController.generatedImages;
+          print('📎 Found ${imagePaths.length} generated tech pack images');
+        }
+      } catch (e) {
+        print('📎 Could not find tech pack controller, using sample images: $e');
+      }
+      
+      // Fallback to sample images if no tech pack images
+      if (imagePaths.isEmpty) {
+        imageUrls = [
+          'https://picsum.photos/300/400?random=1', // Selected design
+          'https://picsum.photos/400/300?random=2', // Tech pack details
+          'https://picsum.photos/350/450?random=3', // Flat drawing
+        ];
+      }
+
+      // Test email with tech pack images
+      final success = await EmailJSDebugService.testEmailJSDirectly(
+        toEmail: 'dk03356000@gmail.com',
+        userMessage: '''Dear ${manufacturer.name} Team,
+
+We hope this email finds you well. We are reaching out from Atelia Fashion App regarding a potential collaboration opportunity.
+
+We have attached our tech pack images including:
+• Selected Design Image
+• Tech Pack Details & Specifications  
+• Flat Drawing Image
+• Manufacturing Guidelines
+
+${imagePaths.isNotEmpty ? 'These are the actual generated tech pack images from our platform.' : 'These are sample images for testing purposes.'}
+
+We would love to discuss production possibilities and pricing with your team.
+
+Best regards,
+Atelia Fashion App Team''',
+        imageUrls: imageUrls,
+        imagePaths: imagePaths,
+        minimalTest: false,
+      );
+
+      // Show result
+      if (success) {
+        Get.showSnackbar(
+          GetSnackBar(
+            title: 'Email Sent Successfully!',
+            message: imagePaths.isNotEmpty
+              ? 'Sent with ${imagePaths.length} actual tech pack images to dk03356000@gmail.com'
+              : 'Sent with ${imageUrls.length} sample images to .com',
+            duration: const Duration(seconds: 5),
+            backgroundColor: Colors.green,
+          ),
+        );
+      } else {
+        Get.showSnackbar(
+          const GetSnackBar(
+            title: 'Email Failed',
+            message: 'Failed to send email. Check console for error details.',
+            duration: Duration(seconds: 5),
+            backgroundColor: Colors.red,
+          ),
+        );
+      }
+    } catch (e) {
+      Get.showSnackbar(
+        GetSnackBar(
+          title: 'Error',
+          message: 'Exception occurred: $e',
+          duration: const Duration(seconds: 5),
+          backgroundColor: Colors.red,
+        ),
+      );
+    }
+  }
+
   Future<void> _launchUrl(String input) async {
   Uri uri;
 
