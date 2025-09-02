@@ -760,15 +760,12 @@ $userCompanyName Team''';
       // Keep AI-generated message concise but complete
       final cleanMessage = cleanTemplateVariable(emailBody);
       
-      // Add template parameters in proper format for sendForm
-      request.fields['template_params'] = jsonEncode({
-        'name': userCompanyName,
-        'time': DateTime.now().toString().split('.')[0],
-        'message': cleanMessage,
-        'to_email': toEmail,
-        'subject': emailSubject,
-        'email': toEmail,
-      });
+      // Add template parameters as individual fields (NOT JSON)
+      request.fields['name'] = userCompanyName;
+      request.fields['time'] = DateTime.now().toString().split('.')[0];
+      request.fields['message'] = cleanMessage;
+      request.fields['subject'] = emailSubject;
+      request.fields['email'] = toEmail;
 
       // Add PDF attachment (this doesn't count against 50KB template variable limit)
       final pdfFile = File(pdfPath);
@@ -783,12 +780,13 @@ $userCompanyName Team''';
       if (kDebugMode) {
         print('🚀 Sending AI-powered email with sendForm approach');
         print('📧 Recipient (routing): ${request.fields['to_email']}');
-        print('📝 Message being sent:');
-        print('---START OF MESSAGE---');
-        print(cleanMessage);
-        print('---END OF MESSAGE---');
+        print('📝 Template fields:');
+        print('   name: ${request.fields['name']}');
+        print('   time: ${request.fields['time']}');
+        print('   message: ${cleanMessage.substring(0, 100)}...');
+        print('   subject: ${request.fields['subject']}');
+        print('   email: ${request.fields['email']}');
         print('📎 PDF attachment: ${(pdfBytes.length / 1024).toStringAsFixed(1)} KB');
-        print('📧 Template params JSON: ${request.fields['template_params']}');
         print('📋 All form fields: ${request.fields.keys.join(', ')}');
       }
 
