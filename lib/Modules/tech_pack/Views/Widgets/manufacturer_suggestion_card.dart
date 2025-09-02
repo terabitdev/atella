@@ -297,8 +297,8 @@ Atelia Fashion App Team''',
       // Show loading snackbar
       Get.showSnackbar(
         const GetSnackBar(
-          title: 'Sending Email',
-          message: 'Testing EmailJS with tech pack attachments...',
+          title: 'Sending AI-Powered Email',
+          message: 'Generating personalized email with tech pack PDF...',
           duration: Duration(seconds: 3),
           backgroundColor: Colors.blue,
         ),
@@ -310,10 +310,27 @@ Atelia Fashion App Team''',
       
       try {
         final techPackController = Get.find<TechPackReadyController>();
-        if (techPackController.hasGeneratedImages) {
-          imagePaths = techPackController.generatedImages;
-          print('📎 Found ${imagePaths.length} generated tech pack images');
+        
+        // Get all three images: selected design + 2 tech pack images
+        List<String> allImages = [];
+        
+        // 1. Add selected design image first
+        if (techPackController.selectedDesignImage.isNotEmpty) {
+          allImages.add(techPackController.selectedDesignImage);
+          print('📎 Added selected design image');
         }
+        
+        // 2. Add generated tech pack images (limit to 2)
+        if (techPackController.hasGeneratedImages) {
+          final techPackImages = techPackController.generatedImages;
+          for (int i = 0; i < techPackImages.length && i < 2; i++) {
+            allImages.add(techPackImages[i]);
+          }
+          print('📎 Added ${techPackImages.length.clamp(0, 2)} tech pack images');
+        }
+        
+        imagePaths = allImages;
+        print('📎 Total images to attach: ${imagePaths.length}');
       } catch (e) {
         print('📎 Could not find tech pack controller, using sample images: $e');
       }
@@ -327,38 +344,62 @@ Atelia Fashion App Team''',
         ];
       }
 
-      // Test email with tech pack images
-      final success = await EmailJSDebugService.testEmailJSDirectly(
-        toEmail: 'dk03356000@gmail.com',
-        userMessage: '''Dear ${manufacturer.name} Team,
+      // Extract tech pack data for AI generation
+      Map<String, dynamic> techPackData = {};
+      try {
+        final techPackController = Get.find<TechPackReadyController>();
+        techPackData = {
+          'mainFabric': techPackController.techPackSummary.split('Materials: ')[1].split('\\n')[0],
+          'primaryColor': techPackController.techPackSummary.split('Colors: ')[1].split('\\n')[0],
+          'sizeRange': techPackController.techPackSummary.split('Sizes: ')[1].split('\\n')[0],
+          'quantity': techPackController.techPackSummary.split('Quantity: ')[1].split('\\n')[0],
+          'costPerPiece': techPackController.techPackSummary.split('Target Cost: ')[1].split('\\n')[0],
+          'deliveryDate': techPackController.techPackSummary.split('Delivery: ')[1].split('\\n')[0],
+        };
+        print('📋 Tech pack data extracted for AI generation');
+      } catch (e) {
+        // Use sample data for testing
+        techPackData = {
+          'mainFabric': 'Cotton blend',
+          'primaryColor': 'Navy blue',
+          'sizeRange': 'S-XL',
+          'quantity': '500 pieces',
+          'costPerPiece': '\$15-20',
+          'deliveryDate': '30 days',
+        };
+      }
 
-We hope this email finds you well. We are reaching out from Atelia Fashion App regarding a potential collaboration opportunity.
-
-We have attached our tech pack images including:
-• Selected Design Image
-• Tech Pack Details & Specifications  
-• Flat Drawing Image
-• Manufacturing Guidelines
-
-${imagePaths.isNotEmpty ? 'These are the actual generated tech pack images from our platform.' : 'These are sample images for testing purposes.'}
-
-We would love to discuss production possibilities and pricing with your team.
-
-Best regards,
-Atelia Fashion App Team''',
-        imageUrls: imageUrls,
-        imagePaths: imagePaths,
-        minimalTest: false,
-      );
+      // Send AI-powered email with PDF attachment
+      bool success = false;
+      if (imagePaths.isNotEmpty) {
+        success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
+          toEmail: 'dk03356000@gmail.com',
+          manufacturerName: manufacturer.name,
+          manufacturerLocation: manufacturer.location,
+          techPackData: techPackData,
+          userCompanyName: 'Atelia Fashion',
+          imagePaths: imagePaths,
+        );
+      } else {
+        // Fallback with sample data if no images available
+        success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
+          toEmail: 'dk03356000@gmail.com',
+          manufacturerName: manufacturer.name,
+          manufacturerLocation: manufacturer.location,
+          techPackData: techPackData,
+          userCompanyName: 'Atelia Fashion',
+          imagePaths: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABA...'], // Sample base64
+        );
+      }
 
       // Show result
       if (success) {
         Get.showSnackbar(
           GetSnackBar(
-            title: 'Email Sent Successfully!',
+            title: 'AI Email Sent Successfully!',
             message: imagePaths.isNotEmpty
-              ? 'Sent with ${imagePaths.length} actual tech pack images to dk03356000@gmail.com'
-              : 'Sent with ${imageUrls.length} sample images to .com',
+              ? 'Sent personalized AI email with PDF containing ${imagePaths.length} tech pack images to dk03356000@gmail.com'
+              : 'Sent AI-powered email with sample data to dk03356000@gmail.com',
             duration: const Duration(seconds: 5),
             backgroundColor: Colors.green,
           ),
@@ -366,8 +407,8 @@ Atelia Fashion App Team''',
       } else {
         Get.showSnackbar(
           const GetSnackBar(
-            title: 'Email Failed',
-            message: 'Failed to send email. Check console for error details.',
+            title: 'AI Email Failed',
+            message: 'Failed to send AI-powered email. Check console for error details.',
             duration: Duration(seconds: 5),
             backgroundColor: Colors.red,
           ),
