@@ -18,17 +18,67 @@ class RecommendedManufactureScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       body: SafeArea(
-        child: Obx(
-          () => Column(
-            children: [
-              SegmentedTabSwitcher(controller: controller),
-              Expanded(
-                child: controller.tabIndex.value == 0
-                    ? recommendedTab(controller)
-                    : customTab(controller),
+        child: Stack(
+          children: [
+            Obx(
+              () => Column(
+                children: [
+                  SegmentedTabSwitcher(controller: controller),
+                  Expanded(
+                    child: controller.tabIndex.value == 0
+                        ? recommendedTab(controller)
+                        : customTab(controller),
+                  ),
+                ],
               ),
-            ],
-          ),
+            ),
+            // Full screen loading overlay
+            Obx(
+              () => controller.isSendingEmail.value
+                  ? Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: Container(
+                          padding: EdgeInsets.all(24.r),
+                          decoration: BoxDecoration(
+                            color: Colors.white,
+                            borderRadius: BorderRadius.circular(16.r),
+                          ),
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Lottie.asset(
+                                'assets/lottie/Loading_dots.json',
+                                width: 80.w,
+                                height: 80.h,
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                'Sending Email...',
+                                style: TextStyle(
+                                  fontSize: 18.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.black,
+                                ),
+                              ),
+                              SizedBox(height: 8.h),
+                              Text(
+                                'Preparing your tech pack\nand sending to manufacturer',
+                                textAlign: TextAlign.center,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.grey[600],
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    )
+                  : const SizedBox.shrink(),
+            ),
+          ],
         ),
       ),
     );
@@ -315,7 +365,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                     onViewProfile: () {
                       Get.to(ViewProfileTechPackScreen());
                     },
-                    onSendEmail: () {},
+                    onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
                   ),
                 ).toList(),
               );

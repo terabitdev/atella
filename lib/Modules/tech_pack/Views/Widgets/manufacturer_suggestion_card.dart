@@ -12,13 +12,11 @@ class ManufacturerSuggestionCard extends StatelessWidget {
   final Manufacturer manufacturer;
   final VoidCallback onViewProfile;
   final VoidCallback? onSendEmail;
-  final bool isLoadingEmail;
   const ManufacturerSuggestionCard({
     super.key,
     required this.manufacturer,
     required this.onViewProfile,
     this.onSendEmail,
-    this.isLoadingEmail = false,
   });
   @override
   Widget build(BuildContext context) {
@@ -52,7 +50,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
             children: [
               Expanded(
                 child: OutlinedButton(
-                  onPressed: isLoadingEmail ? null : onSendEmail,
+                  onPressed: onSendEmail,
                   style: OutlinedButton.styleFrom(
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(8.r),
@@ -60,22 +58,13 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                     side: const BorderSide(color: Colors.black, width: 1),
                     padding: EdgeInsets.symmetric(vertical: 12.h),
                   ),
-                  child: isLoadingEmail 
-                    ? SizedBox(
-                        width: 16.w,
-                        height: 16.h,
-                        child: const CircularProgressIndicator(
-                          strokeWidth: 2,
-                          color: Colors.black,
-                        ),
-                      )
-                    : const Text(
-                        'Send via Email',
-                        style: TextStyle(
-                          color: Colors.black,
-                          fontWeight: FontWeight.w600,
-                        ),
-                      ),
+                  child: const Text(
+                    'Send via Email',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontWeight: FontWeight.w600,
+                    ),
+                  ),
                 ),
               ),
               SizedBox(width: 12.w),
@@ -158,15 +147,6 @@ class ManufacturerSuggestionCard extends StatelessWidget {
             TextButton(
               onPressed: () async {
                 Navigator.of(context).pop();
-                // Test simple email first
-                await _sendMinimalTestEmail();
-              },
-              child: Text('Test Simple Email',style: cstTextTextStyle16500,),
-            ),
-            const SizedBox(width: 8),
-            TextButton(
-              onPressed: () async {
-                Navigator.of(context).pop();
                 // Test email with attachments
                 await _sendTestEmail();
               },
@@ -238,59 +218,6 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       ),
     );
   }
-  Future<void> _sendMinimalTestEmail() async {
-    try {
-      Get.showSnackbar(
-        const GetSnackBar(
-          title: 'Sending Simple Email',
-          message: 'Testing basic EmailJS functionality...',
-          duration: Duration(seconds: 2),
-          backgroundColor: Colors.orange,
-        ),
-      );
-
-      final success = await EmailJSDebugService.testMinimalEmail(
-        toEmail: 'badar.raccoon.tech@gmail.com',
-        userMessage: '''Hello from Atelia Fashion App!
-
-This is a simple test email to verify our EmailJS integration is working.
-
-If you receive this email, our basic email functionality is working correctly.
-
-Best regards,
-Atelia Fashion App Team''',
-      );
-
-      if (success) {
-        Get.showSnackbar(
-          const GetSnackBar(
-            title: 'Simple Email Sent!',
-            message: 'Check badar.raccoon.tech@gmail.com (including spam folder)',
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.green,
-          ),
-        );
-      } else {
-        Get.showSnackbar(
-          const GetSnackBar(
-            title: 'Simple Email Failed',
-            message: 'Check console for error details',
-            duration: Duration(seconds: 5),
-            backgroundColor: Colors.red,
-          ),
-        );
-      }
-    } catch (e) {
-      Get.showSnackbar(
-        GetSnackBar(
-          title: 'Error',
-          message: 'Exception: $e',
-          duration: const Duration(seconds: 5),
-          backgroundColor: Colors.red,
-        ),
-      );
-    }
-  }
 
   Future<void> _sendTestEmail() async {
     try {
@@ -300,13 +227,13 @@ Atelia Fashion App Team''',
           title: 'Sending AI-Powered Email',
           message: 'Generating personalized email with tech pack PDF...',
           duration: Duration(seconds: 3),
-          backgroundColor: Colors.blue,
+          backgroundColor: Colors.black,
+          
         ),
       );
 
       // Try to get actual tech pack images
       List<String> imagePaths = [];
-      List<String> imageUrls = [];
       
       try {
         final techPackController = Get.find<TechPackReadyController>();
@@ -337,11 +264,6 @@ Atelia Fashion App Team''',
       
       // Fallback to sample images if no tech pack images
       if (imagePaths.isEmpty) {
-        imageUrls = [
-          'https://picsum.photos/300/400?random=1', // Selected design
-          'https://picsum.photos/400/300?random=2', // Tech pack details
-          'https://picsum.photos/350/450?random=3', // Flat drawing
-        ];
       }
 
       // Extract tech pack data for AI generation
@@ -401,7 +323,7 @@ Atelia Fashion App Team''',
               ? 'Sent personalized AI email with PDF containing ${imagePaths.length} tech pack images to dk03356000@gmail.com'
               : 'Sent AI-powered email with sample data to dk03356000@gmail.com',
             duration: const Duration(seconds: 5),
-            backgroundColor: Colors.green,
+            backgroundColor: Colors.black,
           ),
         );
       } else {
