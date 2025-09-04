@@ -315,7 +315,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                     onViewProfile: () {
                       Get.to(ViewProfileTechPackScreen());
                     },
-                    onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
+                    onSendEmail: () {},
                   ),
                 ).toList(),
               );

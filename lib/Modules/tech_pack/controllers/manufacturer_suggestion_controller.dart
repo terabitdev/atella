@@ -1,12 +1,8 @@
-import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/manufacturer_service.dart';
-import 'package:atella/Data/services/email_service.dart';
-import 'package:atella/services/firebase/services/auth_service.dart';
-import 'tech_pack_details_controller.dart';
 
 
 class ManufacturerSuggestionController extends GetxController {
@@ -15,7 +11,6 @@ class ManufacturerSuggestionController extends GetxController {
 
   // Services
   final ManufacturerService _manufacturerService = Get.put(ManufacturerService());
-  final AuthService _authService = AuthService();
 
   // Data
   final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
@@ -147,139 +142,6 @@ class ManufacturerSuggestionController extends GetxController {
   // Helper method to check if a specific manufacturer is loading
   bool isManufacturerLoading(String manufacturerId) {
     return loadingManufacturers.contains(manufacturerId);
-  }
-
-  Future<void> sendEmailToManufacturer(Manufacturer manufacturer) async {
-    try {
-      // Add this manufacturer to loading set
-      loadingManufacturers.add(manufacturer.id);
-      isSendingEmail.value = true;
-      
-      // Get tech pack data from the tech pack controller
-      final techPackController = Get.find<TechPackDetailsController>();
-      
-      // Get current user data
-      final userData = await _authService.getUserData();
-      final currentUser = _authService.currentUser;
-      
-      String userEmail = '';
-      String userCompanyName = 'Your Fashion Brand';
-      
-      if (userData != null) {
-        userEmail = userData['email'] ?? '';
-        userCompanyName = userData['name'] ?? 'Your Fashion Brand';
-      } else if (currentUser != null) {
-        userEmail = currentUser.email ?? '';
-        userCompanyName = currentUser.displayName ?? 'Your Fashion Brand';
-      }
-      
-      if (userEmail.isEmpty) {
-        Get.snackbar(
-          'Error',
-          'Unable to get user email. Please make sure you are logged in.',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade800,
-        );
-        return;
-      }
-      
-      // Collect tech pack data
-      final techPackData = {
-        'mainFabric': techPackController.mainFabricController.text,
-        'secondaryMaterials': techPackController.secondaryMaterialsController.text,
-        'fabricProperties': techPackController.fabricPropertiesController.text,
-        'primaryColor': techPackController.primaryColorController.text,
-        'sizeRange': techPackController.sizeRangeController.text,
-        'costPerPiece': techPackController.costPerPieceController.text,
-        'quantity': techPackController.quantityController.text,
-        'deliveryDate': techPackController.deliveryDateController.text,
-        'accessories': techPackController.accessoriesController.text,
-        'logoPlacement': techPackController.logoPlacementController.text,
-        'packagingType': techPackController.packagingTypeController.text,
-      };
-      
-      // Collect image paths - three images as specified:
-      // 1. Selected design image
-      // 2. Tech pack flat drawing (measurement chart)  
-      // 3. Tech pack manufacturing (label reference)
-      final imagePaths = [
-        techPackController.selectedDesignImagePath.value,
-        techPackController.measurementImagePath.value,
-        techPackController.labelImagePath.value,
-      ].where((path) => path.isNotEmpty).toList();
-      
-      // Validate that we have the required images
-      if (imagePaths.isEmpty) {
-        Get.snackbar(
-          'Missing Images',
-          'Please ensure you have uploaded the design image and tech pack images before sending email.',
-          backgroundColor: Colors.orange.shade100,
-          colorText: Colors.orange.shade800,
-          duration: const Duration(seconds: 4),
-        );
-        return;
-      }
-      
-      if (manufacturer.email == null || manufacturer.email!.isEmpty) {
-        Get.snackbar(
-          'Error',
-          'No email address available for ${manufacturer.name}',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade800,
-        );
-        return;
-      }
-      
-      // Generate AI email content
-      final emailContentJson = await EmailService.generateEmailContent(
-        manufacturerName: manufacturer.name,
-        manufacturerLocation: manufacturer.location,
-        manufacturerCountry: manufacturer.country,
-        techPackData: techPackData,
-        userCompanyName: userCompanyName,
-      );
-      
-      final emailData = jsonDecode(emailContentJson);
-      
-      // Send email
-      final success = await EmailService.sendEmail(
-        manufacturerEmail: manufacturer.email!,
-        manufacturerName: manufacturer.name,
-        subject: emailData['subject'],
-        body: emailData['body'],
-        userCompanyName: userCompanyName,
-        userEmail: userEmail,
-        imagePaths: imagePaths,
-      );
-      
-      if (success) {
-        Get.snackbar(
-          'Success',
-          'Email sent successfully to ${manufacturer.name}!',
-          backgroundColor: Colors.green.shade100,
-          colorText: Colors.green.shade800,
-          duration: const Duration(seconds: 3),
-        );
-      } else {
-        Get.snackbar(
-          'Error',
-          'Failed to send email. Please try again.',
-          backgroundColor: Colors.red.shade100,
-          colorText: Colors.red.shade800,
-        );
-      }
-      
-    } catch (e) {
-      print('❌ Error sending email: $e');
-      Get.snackbar(
-        'Error',
-        'An error occurred while sending the email.',
-        backgroundColor: Colors.red.shade100,
-        colorText: Colors.red.shade800,
-      );
-    } finally {
-      isSendingEmail.value = false;
-    }
   }
   
   // Get database statistics

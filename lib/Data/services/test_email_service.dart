@@ -14,6 +14,25 @@ class EmailJSDebugService {
   static const String _publicKey = 'xQoXK58-R-NzOi3NG';
   static const String _openaiApiKey = 'YOUR_OPENAI_API_KEY';
 
+  // Helper method to build PDF sections
+  static pw.Widget _buildPDFSection(String title, List<String> items) {
+    return pw.Column(
+      crossAxisAlignment: pw.CrossAxisAlignment.start,
+      children: [
+        pw.Text(
+          title,
+          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.grey800),
+        ),
+        pw.SizedBox(height: 5),
+        ...items.map((item) => pw.Padding(
+          padding: pw.EdgeInsets.only(left: 10, bottom: 3),
+          child: pw.Text('• $item', style: pw.TextStyle(fontSize: 12)),
+        )),
+        pw.SizedBox(height: 10),
+      ],
+    );
+  }
+
   // Clean template variables (simple cleanup without HTML escaping)
   static String cleanTemplateVariable(String input) {
     return input
@@ -186,11 +205,115 @@ $userCompanyName Team''',
     }
   }
 
-  // Create PDF with multiple images
-  static Future<String?> createTechPackPDF(List<String> imagePaths) async {
+  // Create PDF with tech pack details and multiple images
+  static Future<String?> createTechPackPDF(
+    List<String> imagePaths, {
+    Map<String, dynamic>? techPackData,
+    String? userCompanyName,
+  }) async {
     try {
       final pdf = pw.Document();
       
+      // Page 1: Complete Tech Pack Details
+      pdf.addPage(
+        pw.Page(
+          pageFormat: PdfPageFormat.a4,
+          build: (pw.Context context) {
+            return pw.Column(
+              crossAxisAlignment: pw.CrossAxisAlignment.start,
+              children: [
+                // Header
+                pw.Container(
+                  width: double.infinity,
+                  padding: pw.EdgeInsets.all(15),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.grey200,
+                    borderRadius: pw.BorderRadius.circular(5),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'COMPLETE TECH PACK SPECIFICATIONS',
+                        style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+                      ),
+                      pw.SizedBox(height: 5),
+                      pw.Text(
+                        'From: ${userCompanyName ?? 'Atelia Fashion App'}',
+                        style: pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
+                      ),
+                    ],
+                  ),
+                ),
+                pw.SizedBox(height: 15),
+                
+                // Materials Section
+                _buildPDFSection('MATERIALS & FABRICS', [
+                  'Main Fabric: ${techPackData?['mainFabric'] ?? 'Not specified'}',
+                  'Secondary Materials: ${techPackData?['secondaryMaterials'] ?? 'Not specified'}',
+                  'Fabric Properties: ${techPackData?['fabricProperties'] ?? 'Not specified'}',
+                ]),
+                
+                // Colors Section
+                _buildPDFSection('COLORS & DESIGN', [
+                  'Primary Color: ${techPackData?['primaryColor'] ?? 'Not specified'}',
+                  'Alternate Colorways: ${techPackData?['alternateColorways'] ?? 'Not specified'}',
+                  'Pantone: ${techPackData?['pantone'] ?? 'Not specified'}',
+                ]),
+                
+                // Sizing Section
+                _buildPDFSection('SIZING & FIT', [
+                  'Size Range: ${techPackData?['sizeRange'] ?? 'Not specified'}',
+                  'Measurement Chart: ${techPackData?['measurementChart'] ?? 'Not specified'}',
+                ]),
+                
+                // Technical Section
+                _buildPDFSection('TECHNICAL SPECIFICATIONS', [
+                  'Accessories: ${techPackData?['accessories'] ?? 'Not specified'}',
+                  'Stitching: ${techPackData?['stitching'] ?? 'Not specified'}',
+                  'Decorative Stitching: ${techPackData?['decorativeStitching'] ?? 'Not specified'}',
+                  'Logo Placement: ${techPackData?['logoPlacement'] ?? 'Not specified'}',
+                ]),
+                
+                // Production Requirements (highlighted)
+                pw.Container(
+                  width: double.infinity,
+                  padding: pw.EdgeInsets.all(15),
+                  decoration: pw.BoxDecoration(
+                    color: PdfColors.blue50,
+                    border: pw.Border.all(color: PdfColors.blue),
+                    borderRadius: pw.BorderRadius.circular(5),
+                  ),
+                  child: pw.Column(
+                    crossAxisAlignment: pw.CrossAxisAlignment.start,
+                    children: [
+                      pw.Text(
+                        'PRODUCTION REQUIREMENTS',
+                        style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+                      ),
+                      pw.SizedBox(height: 8),
+                      pw.Text('Quantity: ${techPackData?['quantity'] ?? 'Not specified'}'),
+                      pw.Text('Cost per Piece: ${techPackData?['costPerPiece'] ?? 'Not specified'}'),
+                      pw.Text('Delivery Date: ${techPackData?['deliveryDate'] ?? 'Not specified'}'),
+                    ],
+                  ),
+                ),
+                
+                pw.Spacer(),
+                
+                // Footer
+                pw.Text(
+                  'Generated by Atelia Fashion App - ${DateTime.now().toString().split(' ')[0]}',
+                  style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+                  textAlign: pw.TextAlign.center,
+                ),
+              ],
+            );
+          },
+        ),
+      );
+      
+      // Pages 2-4: Images
       for (int i = 0; i < imagePaths.length && i < 3; i++) { // Include all 3 images
         final imagePath = imagePaths[i];
         
@@ -262,9 +385,9 @@ $userCompanyName Team''',
             }
             
             // Create PDF page with image
-            final imageTitle = i == 0 ? 'Selected Design' 
-                              : i == 1 ? 'Tech Pack Details' 
-                              : 'Flat Tech Pack Image';
+            final imageTitle = i == 0 ? 'PAGE ${i + 2}: SELECTED DESIGN IMAGE' 
+                              : i == 1 ? 'PAGE ${i + 2}: MANUFACTURING DESIGN' 
+                              : 'PAGE ${i + 2}: TECHNICAL FLAT DRAWING';
             
             pdf.addPage(
               pw.Page(
@@ -274,7 +397,7 @@ $userCompanyName Team''',
                     crossAxisAlignment: pw.CrossAxisAlignment.start,
                     children: [
                       pw.Text(
-                        'Atelia Fashion App - $imageTitle',
+                        imageTitle,
                         style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                       ),
                       pw.SizedBox(height: 20),
@@ -288,8 +411,9 @@ $userCompanyName Team''',
                       ),
                       pw.SizedBox(height: 20),
                       pw.Text(
-                        'Generated on: ${DateTime.now().toString().split('.')[0]}',
-                        style: pw.TextStyle(fontSize: 10),
+                        'Generated by Atelia Fashion App - ${DateTime.now().toString().split('.')[0]}',
+                        style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+                        textAlign: pw.TextAlign.center,
                       ),
                     ],
                   );
@@ -330,12 +454,114 @@ $userCompanyName Team''',
         // Delete the large PDF
         await pdfFile.delete();
         
-        // Create new PDF with all 3 images but more aggressive compression
+        // Create new PDF with tech pack details page + all 3 images but more aggressive compression
         final smallPdf = pw.Document();
         
+        // Add Page 1: Complete Tech Pack Details (same as original)
+        smallPdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            build: (pw.Context context) {
+              return pw.Column(
+                crossAxisAlignment: pw.CrossAxisAlignment.start,
+                children: [
+                  // Header
+                  pw.Container(
+                    width: double.infinity,
+                    padding: pw.EdgeInsets.all(15),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.grey200,
+                      borderRadius: pw.BorderRadius.circular(5),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'COMPLETE TECH PACK SPECIFICATIONS',
+                          style: pw.TextStyle(fontSize: 20, fontWeight: pw.FontWeight.bold),
+                        ),
+                        pw.SizedBox(height: 5),
+                        pw.Text(
+                          'From: ${userCompanyName ?? 'Atelia Fashion App'}',
+                          style: pw.TextStyle(fontSize: 12, color: PdfColors.grey700),
+                        ),
+                      ],
+                    ),
+                  ),
+                  pw.SizedBox(height: 15),
+                  
+                  // Materials Section
+                  _buildPDFSection('MATERIALS & FABRICS', [
+                    'Main Fabric: ${techPackData?['mainFabric'] ?? 'Not specified'}',
+                    'Secondary Materials: ${techPackData?['secondaryMaterials'] ?? 'Not specified'}',
+                    'Fabric Properties: ${techPackData?['fabricProperties'] ?? 'Not specified'}',
+                  ]),
+                  
+                  // Colors Section
+                  _buildPDFSection('COLORS & DESIGN', [
+                    'Primary Color: ${techPackData?['primaryColor'] ?? 'Not specified'}',
+                    'Alternate Colorways: ${techPackData?['alternateColorways'] ?? 'Not specified'}',
+                    'Pantone: ${techPackData?['pantone'] ?? 'Not specified'}',
+                  ]),
+                  
+                  // Sizing Section
+                  _buildPDFSection('SIZING & FIT', [
+                    'Size Range: ${techPackData?['sizeRange'] ?? 'Not specified'}',
+                    'Measurement Chart: ${techPackData?['measurementChart'] ?? 'Not specified'}',
+                  ]),
+                  
+                  // Technical Section
+                  _buildPDFSection('TECHNICAL SPECIFICATIONS', [
+                    'Accessories: ${techPackData?['accessories'] ?? 'Not specified'}',
+                    'Stitching: ${techPackData?['stitching'] ?? 'Not specified'}',
+                    'Decorative Stitching: ${techPackData?['decorativeStitching'] ?? 'Not specified'}',
+                    'Logo Placement: ${techPackData?['logoPlacement'] ?? 'Not specified'}',
+                  ]),
+                  
+                  // Production Requirements (highlighted)
+                  pw.Container(
+                    width: double.infinity,
+                    padding: pw.EdgeInsets.all(15),
+                    decoration: pw.BoxDecoration(
+                      color: PdfColors.blue50,
+                      border: pw.Border.all(color: PdfColors.blue),
+                      borderRadius: pw.BorderRadius.circular(5),
+                    ),
+                    child: pw.Column(
+                      crossAxisAlignment: pw.CrossAxisAlignment.start,
+                      children: [
+                        pw.Text(
+                          'PRODUCTION REQUIREMENTS',
+                          style: pw.TextStyle(fontSize: 14, fontWeight: pw.FontWeight.bold, color: PdfColors.blue800),
+                        ),
+                        pw.SizedBox(height: 8),
+                        pw.Text('Quantity: ${techPackData?['quantity'] ?? 'Not specified'}'),
+                        pw.Text('Cost per Piece: ${techPackData?['costPerPiece'] ?? 'Not specified'}'),
+                        pw.Text('Delivery Date: ${techPackData?['deliveryDate'] ?? 'Not specified'}'),
+                      ],
+                    ),
+                  ),
+                  
+                  pw.Spacer(),
+                  
+                  // Footer
+                  pw.Text(
+                    'Generated by Atelia Fashion App - ${DateTime.now().toString().split(' ')[0]}',
+                    style: pw.TextStyle(fontSize: 10, color: PdfColors.grey600),
+                    textAlign: pw.TextAlign.center,
+                  ),
+                ],
+              );
+            },
+          ),
+        );
+        
         if (kDebugMode) {
+          print('✅ Added PAGE 1: COMPLETE TECH PACK DETAILS to fallback PDF');
           print('⚠️ PDF too large, recreating with compressed images and template parameters');
         }
+        
+        // Add the image pages
         for (int i = 0; i < imagePaths.length && i < 3; i++) { // All 3 images for fallback
           final imagePath = imagePaths[i];
           if (imagePath.startsWith('/9j/') || imagePath.startsWith('iVBORw0KGgo') || imagePath.startsWith('data:image/')) {
@@ -357,9 +583,9 @@ $userCompanyName Team''',
                 format: CompressFormat.jpeg,
               );
               
-              final imageTitle = i == 0 ? 'Selected Design' 
-                                : i == 1 ? 'Tech Pack Details' 
-                                : 'Flat Tech Pack Image';
+              final imageTitle = i == 0 ? 'PAGE ${i + 2}: SELECTED DESIGN IMAGE' 
+                                : i == 1 ? 'PAGE ${i + 2}: MANUFACTURING DESIGN' 
+                                : 'PAGE ${i + 2}: TECHNICAL FLAT DRAWING';
               
               smallPdf.addPage(
                 pw.Page(
@@ -369,7 +595,7 @@ $userCompanyName Team''',
                       crossAxisAlignment: pw.CrossAxisAlignment.start,
                       children: [
                         pw.Text(
-                          'Atelia Fashion App - $imageTitle',
+                          imageTitle,
                           style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold),
                         ),
                         pw.SizedBox(height: 20),
@@ -615,7 +841,10 @@ $userCompanyName Team''',
       String? pdfPath;
       int pdfSize = 0;
       if (imagePaths.isNotEmpty) {
-        pdfPath = await createTechPackPDF(imagePaths);
+        pdfPath = await createTechPackPDF(imagePaths, 
+          techPackData: techPackData, 
+          userCompanyName: userCompanyName,
+        );
         if (pdfPath != null) {
           final pdfFile = File(pdfPath);
           pdfSize = (await pdfFile.readAsBytes()).length;
@@ -728,7 +957,7 @@ $userCompanyName Team''';
         if (kDebugMode) {
           print('✅ AI email content generated successfully');
           print('📧 Subject: $emailSubject');
-          print('📧 Body preview: ${emailBody.substring(0, 100)}...');
+          print('📧 Body preview: ${emailBody.substring(0, emailBody.length > 100 ? 100 : emailBody.length)}...');
         }
       } catch (e) {
         if (kDebugMode) {
@@ -737,7 +966,10 @@ $userCompanyName Team''';
       }
 
       // Create PDF with all images
-      final pdfPath = await createTechPackPDF(imagePaths);
+      final pdfPath = await createTechPackPDF(imagePaths, 
+        techPackData: techPackData, 
+        userCompanyName: userCompanyName,
+      );
       if (pdfPath == null) {
         if (kDebugMode) {
           print('❌ Failed to create PDF');
@@ -757,8 +989,8 @@ $userCompanyName Team''';
       // Add recipient email separately (EmailJS needs this for routing)
       request.fields['to_email'] = toEmail;
       
-      // Keep AI-generated message concise but complete
-      final cleanMessage = cleanTemplateVariable(emailBody);
+      // Simple one-line message directing to PDF
+      final cleanMessage = 'Please see the attached PDF for complete design details and tech pack specifications.';
       
       // Add template parameters as individual fields (NOT JSON)
       request.fields['name'] = userCompanyName;
@@ -783,7 +1015,7 @@ $userCompanyName Team''';
         print('📝 Template fields:');
         print('   name: ${request.fields['name']}');
         print('   time: ${request.fields['time']}');
-        print('   message: ${cleanMessage.substring(0, 100)}...');
+        print('   message: ${cleanMessage.substring(0, cleanMessage.length > 100 ? 100 : cleanMessage.length)}...');
         print('   subject: ${request.fields['subject']}');
         print('   email: ${request.fields['email']}');
         print('📎 PDF attachment: ${(pdfBytes.length / 1024).toStringAsFixed(1)} KB');
@@ -890,7 +1122,7 @@ $userCompanyName Team''';
         if (kDebugMode) {
           print('✅ AI email content generated successfully');
           print('📧 Subject: $emailSubject');
-          print('📧 Body preview: ${emailBody.substring(0, 100)}...');
+          print('📧 Body preview: ${emailBody.substring(0, emailBody.length > 100 ? 100 : emailBody.length)}...');
         }
       } catch (e) {
         if (kDebugMode) {
@@ -899,7 +1131,10 @@ $userCompanyName Team''';
       }
 
       // Create PDF with all images
-      final pdfPath = await createTechPackPDF(imagePaths);
+      final pdfPath = await createTechPackPDF(imagePaths, 
+        techPackData: techPackData, 
+        userCompanyName: userCompanyName,
+      );
       if (pdfPath == null) {
         if (kDebugMode) {
           print('❌ Failed to create PDF');
@@ -983,7 +1218,12 @@ $userCompanyName Team''';
 
     try {
       // Create PDF with all images
-      final pdfPath = await createTechPackPDF(imagePaths);
+      Map<String, dynamic>? techPackData;
+      String? userCompanyName;
+      final pdfPath = await createTechPackPDF(imagePaths, 
+        techPackData: techPackData, 
+        userCompanyName: userCompanyName,
+      );
       if (pdfPath == null) {
         if (kDebugMode) {
           print('❌ Failed to create PDF');

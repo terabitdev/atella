@@ -250,7 +250,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       );
 
       final success = await EmailJSDebugService.testMinimalEmail(
-        toEmail: 'dk03356000@gmail.com',
+        toEmail: 'badar.raccoon.tech@gmail.com',
         userMessage: '''Hello from Atelia Fashion App!
 
 This is a simple test email to verify our EmailJS integration is working.
@@ -265,7 +265,7 @@ Atelia Fashion App Team''',
         Get.showSnackbar(
           const GetSnackBar(
             title: 'Simple Email Sent!',
-            message: 'Check dk03356000@gmail.com (including spam folder)',
+            message: 'Check badar.raccoon.tech@gmail.com (including spam folder)',
             duration: Duration(seconds: 5),
             backgroundColor: Colors.green,
           ),
@@ -373,7 +373,7 @@ Atelia Fashion App Team''',
       bool success = false;
       if (imagePaths.isNotEmpty) {
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'dk03356000@gmail.com',
+          toEmail: 'badar.raccoon.tech@gmail.com',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
@@ -383,7 +383,7 @@ Atelia Fashion App Team''',
       } else {
         // Fallback with sample data if no images available
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'dk03356000@gmail.com',
+          toEmail: 'badar.raccoon.tech@gmail.com',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
