@@ -1,6 +1,7 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:http_parser/http_parser.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
 
 class OpenAIService {
@@ -106,6 +107,7 @@ class OpenAIService {
           'image',
           base64Decode(primaryImageBase64),
           filename: 'primary_reference.png',
+          contentType: MediaType('image', 'png'),
         ));
         
         final streamedResponse = await request.send();
@@ -209,6 +211,7 @@ class OpenAIService {
           'image',
           base64Decode(inspirationBase64),
           filename: 'base64decoded.png',
+          contentType: MediaType('image', 'png'),
         ));
         
         final streamedResponse = await request.send();
