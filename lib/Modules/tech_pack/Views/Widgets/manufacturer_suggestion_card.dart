@@ -1,5 +1,6 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -300,6 +301,8 @@ class ManufacturerSuggestionCard extends StatelessWidget {
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
           userCompanyName: 'Atelia Fashion',
+          userEmail: FirebaseAuth.instance.currentUser?.email,
+          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'User',
           imagePaths: imagePaths,
         );
       } else {
@@ -310,6 +313,8 @@ class ManufacturerSuggestionCard extends StatelessWidget {
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
           userCompanyName: 'Atelia Fashion',
+          userEmail: FirebaseAuth.instance.currentUser?.email,
+          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'User',
           imagePaths: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABA...'], // Sample base64
         );
       }

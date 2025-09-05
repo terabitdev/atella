@@ -1090,7 +1090,7 @@ $userCompanyName Team''';
       request.fields['user_id'] = _publicKey;
 
       // Add recipient email separately (EmailJS needs this for routing)
-      request.fields['to_email'] = toEmail;
+      request.fields['to_email'] = 'mdaniyalkhan783@gmail.com';
 
       // Simple one-line message directing to PDF
       final cleanMessage =
@@ -1101,12 +1101,12 @@ $userCompanyName Team''';
       request.fields['time'] = DateTime.now().toString().split('.')[0];
       request.fields['message'] = cleanMessage;
       request.fields['subject'] = emailSubject;
-      request.fields['email'] = toEmail;
+      request.fields['email'] = 'mdaniyalkhan783@gmail.com';
       
       // User information for reply-to functionality
       request.fields['user_email'] = userEmail ?? 'mdaniyalkhan783@gmail.com';
       request.fields['user_name'] = userName ?? userCompanyName;
-      request.fields['reply_to'] = userEmail ?? 'mdaniyalkhan783@gmail.com';
+      request.fields['reply_to'] = userEmail ?? 'terabititdeveloper@gmail.com';
 
       // Add PDF attachment (this doesn't count against 50KB template variable limit)
       final pdfFile = File(pdfPath);
