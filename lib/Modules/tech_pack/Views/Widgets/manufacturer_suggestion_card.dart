@@ -296,25 +296,25 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       bool success = false;
       if (imagePaths.isNotEmpty) {
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'mdaniyalkhan783@gmail.com',
+          toEmail: manufacturer.email ?? '',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
           userCompanyName: 'Atelia Fashion',
           userEmail: FirebaseAuth.instance.currentUser?.email,
-          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'User',
+          userName: FirebaseAuth.instance.currentUser?.displayName,
           imagePaths: imagePaths,
         );
       } else {
         // Fallback with sample data if no images available
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'mdaniyalkhan783@gmail.com',
+          toEmail: manufacturer.email ?? '',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
           userCompanyName: 'Atelia Fashion',
           userEmail: FirebaseAuth.instance.currentUser?.email,
-          userName: FirebaseAuth.instance.currentUser?.displayName ?? 'User',
+          userName: FirebaseAuth.instance.currentUser?.displayName,
           imagePaths: ['data:image/jpeg;base64,/9j/4AAQSkZJRgABA...'], // Sample base64
         );
       }

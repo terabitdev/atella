@@ -282,9 +282,9 @@ class ManufacturerSuggestionController extends GetxController {
         Get.snackbar(
           'Email Sent Successfully!',
           'Your tech pack has been sent to ${manufacturer.name} at ${manufacturer.email}',
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: const Duration(seconds: 5),
+          duration: const Duration(seconds: 3),
           icon: const Icon(Icons.check_circle, color: Colors.white),
         );
       } else {

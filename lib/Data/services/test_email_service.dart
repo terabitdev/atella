@@ -1,3 +1,4 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
 import 'dart:io';
@@ -1090,18 +1091,18 @@ $userCompanyName Team''';
       request.fields['user_id'] = _publicKey;
 
       // Add recipient email separately (EmailJS needs this for routing)
-      request.fields['to_email'] = 'mdaniyalkhan783@gmail.com';
+      request.fields['to_email'] = toEmail;
 
       // Simple one-line message directing to PDF
       final cleanMessage =
-          'Please see the attached PDF for complete design details and tech pack specifications.';
+          'Please see the attached PDF for complete design details and tech pack specifications. for further details contact or reply to this ${FirebaseAuth.instance.currentUser?.email}';
 
       // Add template parameters as individual fields (NOT JSON)
       request.fields['name'] = userCompanyName;
       request.fields['time'] = DateTime.now().toString().split('.')[0];
       request.fields['message'] = cleanMessage;
       request.fields['subject'] = emailSubject;
-      request.fields['email'] = 'mdaniyalkhan783@gmail.com';
+      request.fields['email'] = toEmail;
       
       // User information for reply-to functionality
       request.fields['user_email'] = userEmail ?? 'mdaniyalkhan783@gmail.com';
