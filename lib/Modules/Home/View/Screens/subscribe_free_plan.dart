@@ -156,7 +156,7 @@ class SubscribeFreePlan extends StatelessWidget {
                         RoundButton(
                           title: "Upgrade plan", 
                           onTap: () {
-                            Get.offAllNamed('/subscribe');
+                            Get.back();
                           }, 
                           color: Colors.black, 
                           isloading: false

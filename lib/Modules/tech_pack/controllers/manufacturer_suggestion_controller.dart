@@ -1,9 +1,9 @@
+import 'package:atella/services/email/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/manufacturer_service.dart';
-import 'package:atella/Data/services/test_email_service.dart';
 import 'package:atella/modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 

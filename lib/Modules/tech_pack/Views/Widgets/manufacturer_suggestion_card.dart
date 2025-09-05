@@ -1,12 +1,12 @@
 // ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/services/email/test_email_service.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:atella/Data/Models/manufacturer_model.dart';
-import 'package:atella/Data/services/test_email_service.dart';
 import 'package:atella/modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 
 class ManufacturerSuggestionCard extends StatelessWidget {

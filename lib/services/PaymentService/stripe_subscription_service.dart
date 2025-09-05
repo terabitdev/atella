@@ -175,16 +175,27 @@ class StripeSubscriptionService {
   Future<bool> cancelSubscription() async {
     try {
       User? user = _auth.currentUser;
-      if (user == null) return false;
+      if (user == null) {
+        print('❌ Cancel subscription failed: No authenticated user');
+        return false;
+      }
 
+      print('🔍 Cancelling subscription for user: ${user.uid}');
       DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
       
-      if (userData == null || userData['currentSubscriptionId'] == null) {
+      if (userData == null) {
+        print('❌ Cancel subscription failed: No user data found');
+        return false;
+      }
+      
+      if (userData['currentSubscriptionId'] == null) {
+        print('❌ Cancel subscription failed: No subscription ID found');
         return false;
       }
 
       String subscriptionId = userData['currentSubscriptionId'];
+      print('🔍 Attempting to cancel subscription: $subscriptionId');
 
       // Cancel subscription in Stripe
       final response = await http.delete(
@@ -194,12 +205,28 @@ class StripeSubscriptionService {
         },
       );
 
+      print('📤 Stripe API response status: ${response.statusCode}');
+      print('📤 Stripe API response body: ${response.body}');
+
       if (response.statusCode == 200) {
         print('✅ Subscription cancelled successfully. Webhook will update Firebase automatically.');
         return true;
+      } else if (response.statusCode == 404) {
+        print('⚠️ Subscription not found in Stripe - cleaning up user data');
+        // Subscription doesn't exist in Stripe, so clean up user's subscription data
+        await _firestore.collection('users').doc(user.uid).update({
+          'currentSubscriptionId': null,
+          'subscriptionPlan': 'FREE',
+          'subscriptionStatus': 'cancelled',
+          'planEndDate': null,
+        });
+        print('✅ User subscription data cleaned up - user is now on FREE plan');
+        return true;
+      } else {
+        print('❌ Failed to cancel subscription. Status: ${response.statusCode}, Body: ${response.body}');
       }
     } catch (e) {
-      print('Error canceling subscription: $e');
+      print('❌ Error canceling subscription: $e');
     }
     return false;
   }
