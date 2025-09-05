@@ -21,6 +21,7 @@ class ManufacturerSuggestionController extends GetxController {
   final RxList<Manufacturer> allManufacturersCache = <Manufacturer>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
+  final RxBool isLoadingCustomTab = false.obs;
   final RxString error = ''.obs;
 
   // Pagination
@@ -134,6 +135,29 @@ class ManufacturerSuggestionController extends GetxController {
     selectedCountry.value = null;
     selectedCountryName.value = 'All Countries';
     updateFilters();
+  }
+
+  // Handle tab switching with loading state
+  void switchToTab(int index) async {
+    
+    tabIndex.value = index;
+    
+    if (index == 1) { // Custom tab
+      // Show loading for custom tab
+      isLoadingCustomTab.value = true;
+      
+      // Simulate loading time for custom tab data processing
+      await Future.delayed(const Duration(milliseconds: 800));
+      
+      // Ensure filtered manufacturers are loaded
+      if (allManufacturersCache.isEmpty) {
+        await loadRecommendedManufacturers();
+      } else {
+        loadFilteredManufacturers();
+      }
+      
+      isLoadingCustomTab.value = false;
+    }
   }
   
   

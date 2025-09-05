@@ -7,11 +7,13 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class TechPackImageUploadContainer extends StatelessWidget {
   final VoidCallback onTap;
   final String? imagePath;
+  final VoidCallback? onEdit;
 
   const TechPackImageUploadContainer({
     super.key,
     required this.onTap,
     this.imagePath,
+    this.onEdit,
   }) ;
 
   @override
@@ -48,14 +50,38 @@ class TechPackImageUploadContainer extends StatelessWidget {
                     ),
                   ],
                 )
-              : ClipRRect(
-                  borderRadius: BorderRadius.circular(16.r),
-                  child: Image.file(
-                    File(imagePath!),
-                    fit: BoxFit.cover,
-                    width: double.infinity,
-                    height: 120.h,
-                  ),
+              : Stack(
+                  children: [
+                    ClipRRect(
+                      borderRadius: BorderRadius.circular(16.r),
+                      child: Image.file(
+                        File(imagePath!),
+                        fit: BoxFit.cover,
+                        width: double.infinity,
+                        height: 120.h,
+                      ),
+                    ),
+                    if (onEdit != null)
+                      Positioned(
+                        top: 8.h,
+                        right: 8.w,
+                        child: GestureDetector(
+                          onTap: onEdit,
+                          child: Container(
+                            padding: EdgeInsets.all(6.w),
+                            decoration: BoxDecoration(
+                              color: Colors.black.withOpacity(0.7),
+                              borderRadius: BorderRadius.circular(20.r),
+                            ),
+                            child: Icon(
+                              Icons.edit,
+                              color: Colors.white,
+                              size: 16.sp,
+                            ),
+                          ),
+                        ),
+                      ),
+                  ],
                 ),
         ),
       ),

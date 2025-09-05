@@ -87,7 +87,7 @@ class TechPackDetailsController extends GetxController {
   }
   
   void _setupInputListeners() {
-    // Listen to measurement text changes
+    // Listen to measurement text changes - hide image upload when text is filled
     measurementChartController.addListener(() {
       if (measurementChartController.text.trim().isNotEmpty) {
         showMeasurementImage.value = false;
@@ -96,16 +96,17 @@ class TechPackDetailsController extends GetxController {
       }
     });
     
-    // Listen to measurement image changes
+    // Listen to measurement image changes - hide text field when image is uploaded
     measurementImagePath.listen((imagePath) {
       if (imagePath.isNotEmpty) {
         showMeasurementText.value = false;
       } else if (measurementChartController.text.trim().isEmpty) {
         showMeasurementText.value = true;
       }
+      checkSizesBlockComplete();
     });
     
-    // Listen to label text changes
+    // Listen to label text changes - hide image upload when text is filled
     labelsNeededController.addListener(() {
       if (labelsNeededController.text.trim().isNotEmpty) {
         showLabelImage.value = false;
@@ -114,14 +115,13 @@ class TechPackDetailsController extends GetxController {
       }
     });
     
-    // Listen to label image changes
+    // Listen to label image changes - hide text field when image is uploaded
     labelImagePath.listen((imagePath) {
       if (imagePath.isNotEmpty) {
         showLabelText.value = false;
       } else if (labelsNeededController.text.trim().isEmpty) {
         showLabelText.value = true;
       }
-      // Check completion whenever image changes
       checkLabelingBlockComplete();
     });
   }

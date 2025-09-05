@@ -198,6 +198,9 @@ class TechPackDetailsScreen extends StatelessWidget {
                                                 .isEmpty
                                             ? null
                                             : controller.measurementImagePath.value,
+                                        onEdit: controller.measurementImagePath.value.isNotEmpty 
+                                            ? () => controller.openCameraForMeasurement()
+                                            : null,
                                       )
                                     : const SizedBox.shrink()),
                                 SizedBox(height: 10.h),
@@ -301,13 +304,15 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkLabelingBlockComplete(),
                                 ),
-                                TechPackQuestionField(
-                                  label: 'What types of labels are needed?',
-                                  hint: 'Brand, care, size',
-                                  controller: controller.labelsNeededController,
-                                  onChanged: (_) =>
-                                      controller.checkLabelingBlockComplete(),
-                                ),
+                                Obx(() => controller.showLabelText.value
+                                    ? TechPackQuestionField(
+                                        label: 'What types of labels are needed?',
+                                        hint: 'Brand, care, size',
+                                        controller: controller.labelsNeededController,
+                                        onChanged: (_) =>
+                                            controller.checkLabelingBlockComplete(),
+                                      )
+                                    : const SizedBox.shrink()),
                                 SizedBox(height: 10.h),
                                 Center(
                                   child: Text(
@@ -319,7 +324,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 10.h),
-                                TechPackImageUploadContainer(
+                                Obx(() => TechPackImageUploadContainer(
                                   onTap: () {
                                     controller.openCameraForLabels();
                                   },
@@ -327,7 +332,10 @@ class TechPackDetailsScreen extends StatelessWidget {
                                       controller.labelImagePath.value.isEmpty
                                       ? null
                                       : controller.labelImagePath.value,
-                                ),
+                                  onEdit: controller.labelImagePath.value.isNotEmpty 
+                                      ? () => controller.openCameraForLabels()
+                                      : null,
+                                )),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
