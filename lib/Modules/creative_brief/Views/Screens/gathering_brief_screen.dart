@@ -31,6 +31,7 @@ class GatheringBriefScreen extends StatelessWidget {
                 child: Column(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
+                    SizedBox(height: 40.h),
                     Text(
                       "Gathering the Creative Brief ",
                       textAlign: TextAlign.center,

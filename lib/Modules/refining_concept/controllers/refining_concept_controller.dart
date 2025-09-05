@@ -688,7 +688,7 @@ class RefiningConceptController extends GetxController {
                 tempCustomController.dispose();
               });
             }, 
-            child: Text('Cancel')
+            child: Text('Cancel',style: TextStyle(color: Colors.black)),
           ),
           ElevatedButton(
             onPressed: () {
@@ -723,7 +723,7 @@ class RefiningConceptController extends GetxController {
               Get.snackbar('Answer Updated', 'Successfully updated', backgroundColor: Colors.black, colorText: Colors.white, snackPosition: SnackPosition.TOP, duration: Duration(seconds: 3));
             },
             style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-            child: Text('Save Changes'),
+            child: Text('Save Changes',style: TextStyle(color: Colors.white),),
           ),
         ],
       ),
