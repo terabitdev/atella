@@ -985,6 +985,8 @@ $userCompanyName Team''',
     required String manufacturerLocation,
     required Map<String, dynamic> techPackData,
     required String userCompanyName,
+    String? userEmail,
+    String? userName,
     List<String> imagePaths = const [],
   }) async {
     if (imagePaths.isEmpty) {
@@ -1100,6 +1102,11 @@ $userCompanyName Team''';
       request.fields['message'] = cleanMessage;
       request.fields['subject'] = emailSubject;
       request.fields['email'] = toEmail;
+      
+      // User information for reply-to functionality
+      request.fields['user_email'] = userEmail ?? 'mdaniyalkhan783@gmail.com';
+      request.fields['user_name'] = userName ?? userCompanyName;
+      request.fields['reply_to'] = userEmail ?? 'mdaniyalkhan783@gmail.com';
 
       // Add PDF attachment (this doesn't count against 50KB template variable limit)
       final pdfFile = File(pdfPath);
@@ -1117,6 +1124,8 @@ $userCompanyName Team''';
       if (kDebugMode) {
         print('🚀 Sending AI-powered email with sendForm approach');
         print('📧 Recipient (routing): ${request.fields['to_email']}');
+        print('👤 Sender: ${request.fields['user_name']} <${request.fields['user_email']}>');
+        print('↩️  Reply-to: ${request.fields['reply_to']}');
         print('📝 Template fields:');
         print('   name: ${request.fields['name']}');
         print('   time: ${request.fields['time']}');

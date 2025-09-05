@@ -295,7 +295,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       bool success = false;
       if (imagePaths.isNotEmpty) {
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'badar.raccoon.tech@gmail.com',
+          toEmail: 'mdaniyalkhan783@gmail.com',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
@@ -305,7 +305,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
       } else {
         // Fallback with sample data if no images available
         success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
-          toEmail: 'badar.raccoon.tech@gmail.com',
+          toEmail: 'mdaniyalkhan783@gmail.com',
           manufacturerName: manufacturer.name,
           manufacturerLocation: manufacturer.location,
           techPackData: techPackData,
@@ -320,8 +320,8 @@ class ManufacturerSuggestionCard extends StatelessWidget {
           GetSnackBar(
             title: 'AI Email Sent Successfully!',
             message: imagePaths.isNotEmpty
-              ? 'Sent personalized AI email with PDF containing ${imagePaths.length} tech pack images to dk03356000@gmail.com'
-              : 'Sent AI-powered email with sample data to dk03356000@gmail.com',
+              ? 'Sent personalized AI email with PDF containing ${imagePaths.length} tech pack images to mdaniyalkhan783@gmail.com'
+              : 'Sent AI-powered email with sample data to mdaniyalkhan783@gmail.com',
             duration: const Duration(seconds: 5),
             backgroundColor: Colors.black,
           ),

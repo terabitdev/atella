@@ -5,6 +5,7 @@ import 'package:atella/Data/Models/manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/manufacturer_service.dart';
 import 'package:atella/Data/services/test_email_service.dart';
 import 'package:atella/modules/tech_pack/controllers/tech_pack_ready_controller.dart';
+import 'package:atella/services/firebase/services/auth_service.dart';
 
 
 class ManufacturerSuggestionController extends GetxController {
@@ -13,6 +14,7 @@ class ManufacturerSuggestionController extends GetxController {
 
   // Services
   final ManufacturerService _manufacturerService = Get.put(ManufacturerService());
+  final AuthService _authService = AuthService();
 
   // Data
   final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
@@ -188,6 +190,28 @@ class ManufacturerSuggestionController extends GetxController {
     isSendingEmail.value = true;
     
     try {
+      // Get current user information
+      String? userEmail;
+      String? userName;
+      
+      try {
+        final userData = await _authService.getUserData();
+        if (userData != null) {
+          userEmail = userData['email'] as String?;
+          userName = userData['name'] as String?;
+        }
+        
+        // Fallback to Firebase Auth user if Firestore data is not available
+        if (userEmail == null) {
+          final currentUser = _authService.currentUser;
+          if (currentUser != null) {
+            userEmail = currentUser.email;
+            userName = currentUser.displayName ?? userName;
+          }
+        }
+      } catch (e) {
+        print('Failed to get user data: $e');
+      }
 
       // Get tech pack images and data
       List<String> imagePaths = [];
@@ -247,7 +271,9 @@ class ManufacturerSuggestionController extends GetxController {
         manufacturerName: manufacturer.name,
         manufacturerLocation: manufacturer.location,
         techPackData: techPackData,
-        userCompanyName: 'Atelia Fashion',
+        userCompanyName: userName ?? 'Atelia Fashion',
+        userEmail: userEmail,
+        userName: userName,
         imagePaths: imagePaths,
       );
 
