@@ -25,6 +25,7 @@ class ManufacturerSuggestionController extends GetxController {
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool isLoadingCustomTab = false.obs;
+  final RxBool isDataReady = false.obs;
   final RxString error = ''.obs;
   
   // Streams for real-time data updates
@@ -99,8 +100,11 @@ class ManufacturerSuggestionController extends GetxController {
       
       hasMoreData = _manufacturerService.hasMoreData;
       
-      // Pre-load filtered manufacturers for custom tab (no filter = all manufacturers)
-      filteredManufacturers.value = allManufacturers;
+      // Pre-load ALL manufacturers for instant custom tab switching
+      filteredManufacturers.assignAll(allManufacturers);
+      
+      // Mark data as ready for instant tab switching
+      isDataReady.value = true;
       
       // Update loading state
       _loadingStreamController.add(false);
@@ -140,6 +144,12 @@ class ManufacturerSuggestionController extends GetxController {
       return;
     }
 
+    // For instant switching, always show all manufacturers unless specific filter
+    if (selectedCountryName.value == 'All Countries') {
+      filteredManufacturers.value = allManufacturersCache;
+      return;
+    }
+
     final filtered = _manufacturerService.getFilteredManufacturers(
       country: selectedCountryName.value,
       sourceManufacturers: allManufacturersCache,
@@ -157,8 +167,10 @@ class ManufacturerSuggestionController extends GetxController {
       displayedManufacturers.clear();
       await loadRecommendedManufacturers();
     } else {
-      // For custom tab, just refresh filtered data
-      loadFilteredManufacturers();
+      // For custom tab, data is already cached - just refresh if needed
+      if (filteredManufacturers.isEmpty && allManufacturersCache.isNotEmpty) {
+        filteredManufacturers.assignAll(allManufacturersCache);
+      }
     }
   }
 
@@ -174,23 +186,10 @@ class ManufacturerSuggestionController extends GetxController {
     updateFilters();
   }
 
-  // Handle tab switching - instant, no loading delays
+  // Handle tab switching - instant, no processing
   void switchToTab(int index) {
+    // Just switch the tab index - all data is pre-loaded
     tabIndex.value = index;
-    
-    if (index == 0) {
-      // Switching to recommended tab - ensure data is available
-      if (displayedManufacturers.isEmpty && recommendedManufacturers.isNotEmpty) {
-        // Restore data if it was cleared
-        displayedManufacturers.value = recommendedManufacturers;
-      }
-    } else if (index == 1) {
-      // Switching to custom tab - data should already be pre-loaded
-      // Only update if filter is applied or data is empty
-      if (filteredManufacturers.isEmpty && allManufacturersCache.isNotEmpty) {
-        filteredManufacturers.value = allManufacturersCache;
-      }
-    }
   }
   
   
