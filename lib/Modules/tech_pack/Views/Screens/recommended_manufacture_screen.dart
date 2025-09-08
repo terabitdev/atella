@@ -1,3 +1,4 @@
+import 'package:atella/modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
 import 'package:atella/modules/tech_pack/Views/Screens/view_profile_tech_pack_screen.dart';
 import 'package:atella/modules/tech_pack/Views/Widgets/segmented_tab_switcher.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -7,7 +8,6 @@ import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:lottie/lottie.dart';
 import 'package:atella/modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
-import 'package:atella/modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
   const RecommendedManufactureScreen({super.key});
@@ -106,7 +106,9 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
           SizedBox(height: 8.h),
           SizedBox(height: 18.h),
           Obx(() {
-            if (controller.isLoading.value) {
+            final manufacturers = controller.displayedManufacturers;
+            
+            if (controller.isLoading.value && manufacturers.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -142,7 +144,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                   style: TextStyle(color: Colors.red.shade700),
                 ),
               );
-            } else if (controller.displayedManufacturers.isEmpty) {
+            } else if (manufacturers.isEmpty && !controller.isLoading.value) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -166,13 +168,13 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
             } else {
               return Column(
                 children: [
-                  ...controller.displayedManufacturers.map(
+                  ...manufacturers.map(
                     (manufacturer) => ManufacturerSuggestionCard(
                       manufacturer: manufacturer,
                       onViewProfile: () {},
                       onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
                     ),
-                  ).toList(),
+                  ),
                   if (controller.isLoadingMore.value)
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
@@ -185,7 +187,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                         ),
                       ),
                     ),
-                  if (!controller.hasMoreData && controller.displayedManufacturers.isNotEmpty)
+                  if (!controller.hasMoreData && manufacturers.isNotEmpty)
                     Padding(
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
@@ -295,9 +297,11 @@ customTab(ManufacturerSuggestionController controller) {
 
         SizedBox(height: 18.h),
 
-          // Manufacturer list - instant display
+          // Manufacturer list - instant display with reactive updates
           Obx(() {
-            if (controller.allManufacturersCache.isEmpty) {
+            final filteredManufacturers = controller.filteredManufacturers;
+              
+              if (controller.allManufacturersCache.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -319,7 +323,7 @@ customTab(ManufacturerSuggestionController controller) {
                   ],
                 ),
               );
-            } else if (controller.filteredManufacturers.isEmpty) {
+              } else if (filteredManufacturers.isEmpty) {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
@@ -354,19 +358,19 @@ customTab(ManufacturerSuggestionController controller) {
                   ),
                 ),
               );
-            } else {
-              return Column(
-                children: controller.filteredManufacturers.map(
-                  (manufacturer) => ManufacturerSuggestionCard(
-                    manufacturer: manufacturer,
-                    onViewProfile: () {
-                      Get.to(ViewProfileTechPackScreen());
-                    },
-                    onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
-                  ),
-                ).toList(),
-              );
-            }
+              } else {
+                return Column(
+                  children: filteredManufacturers.map(
+                    (manufacturer) => ManufacturerSuggestionCard(
+                      manufacturer: manufacturer,
+                      onViewProfile: () {
+                        Get.to(ViewProfileTechPackScreen());
+                      },
+                      onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
+                    ),
+                  ).toList(),
+                );
+              }
           }),
 
           SizedBox(height: 18.h),

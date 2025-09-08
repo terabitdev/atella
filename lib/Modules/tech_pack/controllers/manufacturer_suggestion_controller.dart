@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'package:atella/services/email/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -26,9 +27,14 @@ class ManufacturerSuggestionController extends GetxController {
   final RxBool isLoadingCustomTab = false.obs;
   final RxString error = ''.obs;
   
-  // Stream for custom tab data
-  Stream<List<Manufacturer>>? _customTabStream;
-  Stream<List<Manufacturer>> get customTabStream => _customTabStream ?? Stream.value([]);
+  // Streams for real-time data updates
+  final StreamController<List<Manufacturer>> _recommendedStreamController = StreamController<List<Manufacturer>>.broadcast();
+  final StreamController<List<Manufacturer>> _filteredStreamController = StreamController<List<Manufacturer>>.broadcast();
+  final StreamController<bool> _loadingStreamController = StreamController<bool>.broadcast();
+  
+  Stream<List<Manufacturer>> get recommendedStream => _recommendedStreamController.stream;
+  Stream<List<Manufacturer>> get filteredStream => _filteredStreamController.stream;
+  Stream<bool> get loadingStream => _loadingStreamController.stream;
 
   // Pagination
   final ScrollController scrollController = ScrollController();
@@ -41,18 +47,24 @@ class ManufacturerSuggestionController extends GetxController {
   @override
   void onInit() {
     super.onInit();
+    _initializeStreams();
     loadRecommendedManufacturers();
     setupScrollListener();
-    _initializeCustomTabStream();
   }
   
-  void _initializeCustomTabStream() {
-    _customTabStream = Stream.value(filteredManufacturers);
+  void _initializeStreams() {
+    // Initialize with empty lists
+    _recommendedStreamController.add([]);
+    _filteredStreamController.add([]);
+    _loadingStreamController.add(true);
   }
 
   @override
   void onClose() {
     scrollController.dispose();
+    _recommendedStreamController.close();
+    _filteredStreamController.close();
+    _loadingStreamController.close();
     super.onClose();
   }
 
@@ -71,6 +83,7 @@ class ManufacturerSuggestionController extends GetxController {
   Future<void> loadRecommendedManufacturers() async {
     try {
       isLoading.value = true;
+      _loadingStreamController.add(true);
       error.value = '';
       
       // Load initial manufacturers from Firebase
@@ -78,22 +91,24 @@ class ManufacturerSuggestionController extends GetxController {
       recommendedManufacturers.value = manufacturers;
       displayedManufacturers.value = manufacturers;
       
+      // Data is automatically reactive through displayedManufacturers observable
+      
       // Cache all manufacturers for filtering
       final allManufacturers = await _manufacturerService.getManufacturersFromFirebase();
       allManufacturersCache.value = allManufacturers;
       
       hasMoreData = _manufacturerService.hasMoreData;
       
-      // Update filtered manufacturers for custom tab immediately
-      loadFilteredManufacturers();
+      // Pre-load filtered manufacturers for custom tab (no filter = all manufacturers)
+      filteredManufacturers.value = allManufacturers;
       
-      // Ensure custom tab never shows loading if data is ready
-      if (allManufacturersCache.isNotEmpty) {
-        isLoadingCustomTab.value = false;
-      }
+      // Update loading state
+      _loadingStreamController.add(false);
+      isLoadingCustomTab.value = false;
     } catch (e) {
       error.value = 'Failed to load manufacturers: $e';
       print('Error loading manufacturers: $e');
+      _loadingStreamController.add(false);
     } finally {
       isLoading.value = false;
     }
@@ -124,15 +139,12 @@ class ManufacturerSuggestionController extends GetxController {
       filteredManufacturers.value = [];
       return;
     }
-    
+
     final filtered = _manufacturerService.getFilteredManufacturers(
       country: selectedCountryName.value,
       sourceManufacturers: allManufacturersCache,
     );
     filteredManufacturers.value = filtered;
-    
-    // Update stream for custom tab
-    _customTabStream = Stream.value(filtered);
   }
 
   void updateFilters() {
@@ -140,8 +152,14 @@ class ManufacturerSuggestionController extends GetxController {
   }
 
   Future<void> refreshManufacturers() async {
-    displayedManufacturers.clear();
-    await loadRecommendedManufacturers();
+    if (tabIndex.value == 0) {
+      // For recommended tab, reload data
+      displayedManufacturers.clear();
+      await loadRecommendedManufacturers();
+    } else {
+      // For custom tab, just refresh filtered data
+      loadFilteredManufacturers();
+    }
   }
 
   void selectCountry(Country country) {
@@ -160,9 +178,18 @@ class ManufacturerSuggestionController extends GetxController {
   void switchToTab(int index) {
     tabIndex.value = index;
     
-    if (index == 1 && allManufacturersCache.isNotEmpty && filteredManufacturers.isEmpty) {
-      // Load filtered data from cache instantly
-      loadFilteredManufacturers();
+    if (index == 0) {
+      // Switching to recommended tab - ensure data is available
+      if (displayedManufacturers.isEmpty && recommendedManufacturers.isNotEmpty) {
+        // Restore data if it was cleared
+        displayedManufacturers.value = recommendedManufacturers;
+      }
+    } else if (index == 1) {
+      // Switching to custom tab - data should already be pre-loaded
+      // Only update if filter is applied or data is empty
+      if (filteredManufacturers.isEmpty && allManufacturersCache.isNotEmpty) {
+        filteredManufacturers.value = allManufacturersCache;
+      }
     }
   }
   

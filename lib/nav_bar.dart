@@ -25,7 +25,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
           child: NavigationBar(
             backgroundColor: Colors.transparent,
             elevation: 0,
-            height: 60.h,
+            height: 80.h,
             selectedIndex: controller.selectedindex.value,
             onDestinationSelected: (index) {
               controller.selectedindex.value = index;

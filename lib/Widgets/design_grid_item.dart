@@ -49,7 +49,7 @@ class DesignGridItem extends StatelessWidget {
           fit: BoxFit.cover,
           errorBuilder: (context, error, stackTrace) {
             return Container(
-              height: 177.h,
+              height: 200.h,
               width: double.infinity,
               color: Colors.grey[200],
               child: Icon(
@@ -62,7 +62,7 @@ class DesignGridItem extends StatelessWidget {
         );
       } catch (e) {
         return Container(
-          height: 177.h,
+          height: 200.h,
           width: double.infinity,
           color: Colors.grey[200],
           child: Icon(
@@ -82,7 +82,7 @@ class DesignGridItem extends StatelessWidget {
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
           return Container(
-            height: 177.h,
+            height: 200.h,
             width: double.infinity,
             color: Colors.grey[100],
             child: Center(
@@ -157,14 +157,16 @@ class DesignGridItem extends StatelessWidget {
         ),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
+          mainAxisSize: MainAxisSize.min,
           children: [
             // Image with optional favorite icon
-            Stack(
-              children: [
-                ClipRRect(
-                  borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-                  child: _buildImage(),
-                ),
+            Expanded(
+              child: Stack(
+                children: [
+                  ClipRRect(
+                    borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
+                    child: _buildImage(),
+                  ),
                 
                 // Favorite icon overlay
                 if (showFavoriteIcon)
@@ -187,7 +189,8 @@ class DesignGridItem extends StatelessWidget {
                       ),
                     ),
                   ),
-              ],
+                ],
+              ),
             ),
             
             // Project details
@@ -212,7 +215,7 @@ class DesignGridItem extends StatelessWidget {
                     _formatDate(techPack.createdAt),
                     style: TextStyle(
                       color: Colors.grey,
-                      fontSize: 11.sp,
+                      fontSize: 10.sp,
                     ),
                   ),
                 ],
