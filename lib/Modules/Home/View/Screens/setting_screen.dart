@@ -75,6 +75,12 @@ class _SettingScreenState extends State<SettingScreen> {
                         },
                       ),
                       SettingCard(
+                        title: 'Manufacturers',
+                        onTap: () {
+                          Get.toNamed('/recommended_tech_pack');
+                        },
+                      ),
+                      SettingCard(
                         title: 'Logout',
                         onTap: () {
                           showDialog(

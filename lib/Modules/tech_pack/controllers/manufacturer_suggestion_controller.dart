@@ -25,6 +25,10 @@ class ManufacturerSuggestionController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final RxBool isLoadingCustomTab = false.obs;
   final RxString error = ''.obs;
+  
+  // Stream for custom tab data
+  Stream<List<Manufacturer>>? _customTabStream;
+  Stream<List<Manufacturer>> get customTabStream => _customTabStream ?? Stream.value([]);
 
   // Pagination
   final ScrollController scrollController = ScrollController();
@@ -39,6 +43,11 @@ class ManufacturerSuggestionController extends GetxController {
     super.onInit();
     loadRecommendedManufacturers();
     setupScrollListener();
+    _initializeCustomTabStream();
+  }
+  
+  void _initializeCustomTabStream() {
+    _customTabStream = Stream.value(filteredManufacturers);
   }
 
   @override
@@ -75,8 +84,13 @@ class ManufacturerSuggestionController extends GetxController {
       
       hasMoreData = _manufacturerService.hasMoreData;
       
-      // Update filtered manufacturers for custom tab
+      // Update filtered manufacturers for custom tab immediately
       loadFilteredManufacturers();
+      
+      // Ensure custom tab never shows loading if data is ready
+      if (allManufacturersCache.isNotEmpty) {
+        isLoadingCustomTab.value = false;
+      }
     } catch (e) {
       error.value = 'Failed to load manufacturers: $e';
       print('Error loading manufacturers: $e');
@@ -116,6 +130,9 @@ class ManufacturerSuggestionController extends GetxController {
       sourceManufacturers: allManufacturersCache,
     );
     filteredManufacturers.value = filtered;
+    
+    // Update stream for custom tab
+    _customTabStream = Stream.value(filtered);
   }
 
   void updateFilters() {
@@ -139,26 +156,13 @@ class ManufacturerSuggestionController extends GetxController {
     updateFilters();
   }
 
-  // Handle tab switching with loading state
-  void switchToTab(int index) async {
-    
+  // Handle tab switching - instant, no loading delays
+  void switchToTab(int index) {
     tabIndex.value = index;
     
-    if (index == 1) { // Custom tab
-      // Show loading for custom tab
-      isLoadingCustomTab.value = true;
-      
-      // Simulate loading time for custom tab data processing
-      await Future.delayed(const Duration(milliseconds: 800));
-      
-      // Ensure filtered manufacturers are loaded
-      if (allManufacturersCache.isEmpty) {
-        await loadRecommendedManufacturers();
-      } else {
-        loadFilteredManufacturers();
-      }
-      
-      isLoadingCustomTab.value = false;
+    if (index == 1 && allManufacturersCache.isNotEmpty && filteredManufacturers.isEmpty) {
+      // Load filtered data from cache instantly
+      loadFilteredManufacturers();
     }
   }
   

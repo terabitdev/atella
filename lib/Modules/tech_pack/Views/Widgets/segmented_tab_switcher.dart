@@ -22,7 +22,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
           children: [
             // Recommended Manufacturers
             GestureDetector(
-              onTap: () => controller.tabIndex.value = 0,
+              onTap: () => controller.switchToTab(0),
               child: Obx(
                 () => Container(
                   height: 48.h,
@@ -59,7 +59,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
             // Custom
             Expanded(
               child: GestureDetector(
-                onTap: () => controller.tabIndex.value = 1,
+                onTap: () => controller.switchToTab(1),
                 child: Obx(
                   () => Container(
                     height: 48.h,

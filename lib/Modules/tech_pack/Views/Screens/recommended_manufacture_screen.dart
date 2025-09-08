@@ -208,8 +208,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
     ),
   );
 }
-
-Widget customTab(ManufacturerSuggestionController controller) {
+customTab(ManufacturerSuggestionController controller) {
   return RefreshIndicator(
     onRefresh: controller.refreshManufacturers,
     child: SingleChildScrollView(
@@ -226,8 +225,6 @@ Widget customTab(ManufacturerSuggestionController controller) {
             style: mstTextTextStyle184001,
           ),
           SizedBox(height: 18.h),
-
-        // Country or Region label
         Text('Country or Region', style: cstTextTextStyle16500),
         SizedBox(height: 8.h),
 
@@ -298,9 +295,9 @@ Widget customTab(ManufacturerSuggestionController controller) {
 
         SizedBox(height: 18.h),
 
-          // Manufacturer list
+          // Manufacturer list - instant display
           Obx(() {
-            if (controller.isLoading.value) {
+            if (controller.allManufacturersCache.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
