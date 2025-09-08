@@ -144,7 +144,7 @@ class SaveTechPackDialog extends StatelessWidget {
                       padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
                     ),
                     child: Text(
-                      'ADD NEW COLLECTION',
+                      'ADD COLLECTION',
                       style: dbTitleTextTextStyle12500,
                       textAlign: TextAlign.center,
                     ),
