@@ -43,7 +43,13 @@ class AppHeader extends StatelessWidget {
           Row(
             children: [
               GestureDetector(
-                onTap: onBack ?? Get.back,
+                onTap: onBack ?? () {
+                  // Close any active snackbars before navigating back
+                  if (Get.isSnackbarOpen) {
+                    Get.closeCurrentSnackbar();
+                  }
+                  Get.back();
+                },
                 child: Icon(
                   Icons.arrow_back_ios_new,
                   size: 20.sp,
@@ -77,14 +83,28 @@ class AppHeader extends StatelessWidget {
           ),
           SizedBox(height: 24.h),
           // Rebuilds when the getter reads an Rx inside the controller
-          Obx(() => Text(
+          Obx(() {
+            try {
+              return Text(
                 timeTextGetter(),
                 style: TextStyle(
                   fontSize: 14.sp,
                   fontWeight: FontWeight.w400,
                   color: Color(0xFF999999),
                 ),
-              )),
+              );
+            } catch (e) {
+              // Fallback text if reactive variable is not initialized
+              return Text(
+                '',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  fontWeight: FontWeight.w400,
+                  color: Color(0xFF999999),
+                ),
+              );
+            }
+          }),
         ],
       ),
     );

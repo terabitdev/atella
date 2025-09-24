@@ -117,6 +117,24 @@ void showPopup() {
                   ),
                 ),
               ),
+              Container(height: 1, color: Colors.grey.shade300),
+               Expanded(
+                child: InkWell(
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleManufactureSuggestions();
+                  },
+                  child: Container(
+                    width: double.infinity,
+                    child: Center(
+                      child: Text(
+                        'Manufacture suggestions',
+                        style: dbTitleTextTextStyle14400,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
             ],
           ),
         ),
@@ -224,6 +242,16 @@ void showPopup() {
       );
     }
   }
+   void _handleManufactureSuggestions() {
+    print('=== MANUFACTURE SUGGESTIONS BUTTON CLICKED ===');      
+    print('TechPack ID: ${widget.techPack.id}');
+    print('Project Name: ${widget.techPack.projectName}');        
+
+    // Navigate to RecommendedTechPackScreen
+    Get.toNamed('/recommended_tech_pack');
+  
+    print('=== NAVIGATION TO MANUFACTURE SUGGESTIONS TRIGGERED ===');
+  }
 
   // Download all images method
   Future<void> _downloadAllImages(List<String> imageUrls) async {
@@ -322,6 +350,7 @@ void showPopup() {
   }
 
 
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -334,7 +363,7 @@ void showPopup() {
             child: Row(
               children: [
                 InkWell(
-                  onTap: () => Get.back(),
+                  onTap: () => Navigator.of(context).pop(),
                   child: Image.asset('assets/images/Arrow_Left.png', height: 40.h, width: 40.w),
                 ),
                 SizedBox(width: 8.w),

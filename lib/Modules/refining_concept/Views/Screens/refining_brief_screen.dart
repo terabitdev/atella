@@ -33,7 +33,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             title: 'Refining the Concept',
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
-            onBack: () => Get.back()
+            onBack: () => Navigator.of(context).pop(),
           ),
           Expanded(
             child: Padding(

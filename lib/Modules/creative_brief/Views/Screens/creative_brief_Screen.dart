@@ -24,7 +24,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             title: 'Creative Brief',
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
-            onBack: () => Get.back(),
+            onBack: () => Navigator.of(context).pop(),
           ),
           Expanded(
             child: Padding(
