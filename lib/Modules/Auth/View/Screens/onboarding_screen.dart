@@ -34,7 +34,7 @@ class OnboardingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Welcome to AtellA — Your\nFashion Brand Starts Here.\"",
+                    "Welcome to AteliA — Your\nFashion Brand Starts Here.\"",
                     textAlign: TextAlign.center,
                     style: osTextStyle18600,
                   ),

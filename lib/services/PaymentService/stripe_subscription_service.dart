@@ -119,7 +119,7 @@ class StripeSubscriptionService {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: clientSecret,
-            merchantDisplayName: 'Atella',
+            merchantDisplayName: 'Atelia',
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,
@@ -374,7 +374,7 @@ class StripeSubscriptionService {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: clientSecret,
-            merchantDisplayName: 'Atella',
+            merchantDisplayName: 'Atelia',
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,
@@ -438,7 +438,7 @@ class StripeSubscriptionService {
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
             paymentIntentClientSecret: clientSecret,
-            merchantDisplayName: 'Atella',
+            merchantDisplayName: 'Atelia',
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,

@@ -32,7 +32,7 @@ class MyApp extends StatelessWidget {
       minTextAdapt: true,
       // useInheritedMediaQuery: true,
       builder: (context, child) => GetMaterialApp(
-        title: 'Atella',
+        title: 'Atelia',
         theme: AppTheme.lightTheme,
         themeMode: ThemeMode.light,
         debugShowCheckedModeBanner: false,
