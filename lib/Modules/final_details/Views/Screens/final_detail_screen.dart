@@ -1,8 +1,8 @@
 // Modified FinalDetailsScreen with custom text field behavior and Lottie animation
 import 'package:atella/Data/Models/brief_questions_model.dart';
-import 'package:atella/modules/final_details/Views/Widgets/custom_check_boxes_widget.dart';
-import 'package:atella/modules/final_details/Views/Widgets/custom_generate_round_button_widget.dart';
-import 'package:atella/modules/final_details/controllers/final_detail_controller.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/custom_check_boxes_widget.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/custom_generate_round_button_widget.dart';
+import 'package:atella/Modules/final_details/controllers/final_detail_controller.dart';
 import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';

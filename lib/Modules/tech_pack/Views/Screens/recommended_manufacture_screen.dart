@@ -1,13 +1,13 @@
-import 'package:atella/modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
-import 'package:atella/modules/tech_pack/Views/Screens/view_profile_tech_pack_screen.dart';
-import 'package:atella/modules/tech_pack/Views/Widgets/segmented_tab_switcher.dart';
+import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
+import 'package:atella/Modules/tech_pack/Views/Screens/view_profile_tech_pack_screen.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/segmented_tab_switcher.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:lottie/lottie.dart';
-import 'package:atella/modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
   const RecommendedManufactureScreen({super.key});

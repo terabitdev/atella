@@ -1,8 +1,8 @@
-import 'package:atella/modules/creative_brief/controllers/creative_brief_controller.dart';
-import 'package:atella/modules/final_details/controllers/final_detail_controller.dart';
-import 'package:atella/modules/refining_concept/controllers/refining_concept_controller.dart';
-import 'package:atella/modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
-import 'package:atella/modules/tech_pack/controllers/generate_tech_pack_controller.dart';
+import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
+import 'package:atella/Modules/final_details/controllers/final_detail_controller.dart';
+import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
+import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';

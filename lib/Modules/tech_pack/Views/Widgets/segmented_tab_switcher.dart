@@ -1,4 +1,4 @@
-import 'package:atella/modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
+import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';

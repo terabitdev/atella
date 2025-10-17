@@ -1,4 +1,4 @@
-import 'package:atella/modules/final_details/controllers/final_detail_controller.dart';
+import 'package:atella/Modules/final_details/controllers/final_detail_controller.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:get/get.dart';
 

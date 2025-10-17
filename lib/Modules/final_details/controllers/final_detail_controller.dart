@@ -2,9 +2,9 @@ import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
-import 'package:atella/modules/tech_pack/controllers/generate_tech_pack_controller.dart';
+import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
-import 'package:atella/modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 

@@ -1,4 +1,4 @@
-import 'package:atella/modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';

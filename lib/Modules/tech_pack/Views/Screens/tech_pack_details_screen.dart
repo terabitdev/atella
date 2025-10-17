@@ -1,4 +1,4 @@
-import 'package:atella/modules/tech_pack/Views/Widgets/roound_tag_container.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/roound_tag_container.dart';
 import 'package:atella/Widgets/app_header.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
@@ -7,7 +7,7 @@ import 'package:get/get.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 import '../Widgets/tech_pack_question_field.dart';
 import '../Widgets/tech_pack_image_upload_container.dart';
-import 'package:atella/modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/core/themes/app_colors.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
