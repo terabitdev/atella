@@ -1,9 +1,11 @@
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/categorized_chips_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/image_upload_container.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/multi_image_upload_widget.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/color_picker_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -148,6 +150,10 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           const SizedBox(height: 16),
           if (question.type == 'chips')
             _buildChipOptions(question, isAnswered)
+          else if (question.type == 'chips_categorized')
+            _buildCategorizedChipOptions(question, isAnswered)
+          else if (question.type == 'multi_part_color')
+            _buildMultiPartColorSelection(question, isAnswered)
           else if (question.type == 'image')
             _buildImageUploadForQuestion(question, isAnswered)
           else if (question.type == 'text' && isCurrentQuestion && !controller.showLastTwoQuestions)
@@ -207,18 +213,20 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
     return Obx(() {
+      // Recalculate isAnswered inside Obx to ensure reactivity
+      final isQuestionAnswered = controller.isQuestionAnswered(question.id);
       final answer = controller.getAnswer(question.id);
-      
+
       return Wrap(
         children: question.options.map((option) {
           final isSelected = controller.isOptionSelected(option);
-          
+
           // Debug for Custom option
           if (option == 'Custom') {
-            print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
+            print('Custom chip - isSelected: $isSelected, isAnswered: $isQuestionAnswered');
           }
-          
-          if (isAnswered) {
+
+          if (isQuestionAnswered) {
             // Show final answered state for answered questions (with edit capability)
             final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
             return GestureDetector(
@@ -269,7 +277,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               isSelected: isSelected,
               onTap: () {
                 print('Chip tapped: $option'); // Debug
-                controller.selectOption(option);
+                controller.selectOption(option, forQuestionId: question.id);
               },
             );
           }
@@ -278,17 +286,121 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
-  Widget _buildTextInputForQuestion(BriefQuestion question) {
-    final textController = question.id == 'colors'
-        ? controller.colorController
-        : controller.fabricController;
-        
-    String hintText = 'Lorem';
-    if (controller.showLastTwoQuestions) {
-      hintText = question.id == 'colors' 
-          ? 'Enter preferred colors...' 
-          : 'Enter fabric preferences...';
+  Widget _buildCategorizedChipOptions(BriefQuestion question, bool isAnswered) {
+    if (question.categories == null) {
+      return const SizedBox.shrink();
     }
+
+    return Obx(() {
+      // Recalculate isAnswered inside Obx to ensure reactivity
+      final isQuestionAnswered = controller.isQuestionAnswered(question.id);
+      final answer = controller.getAnswer(question.id);
+      final selectedOption = answer?.selectedOptions.isNotEmpty == true
+          ? answer!.selectedOptions.first
+          : null;
+
+      print('=== CATEGORIZED CHIPS REBUILD ===');
+      print('Question: ${question.id}');
+      print('Is answered: $isQuestionAnswered');
+      print('Selected option: $selectedOption');
+
+      if (isQuestionAnswered) {
+        // Show categorized view  chiwith edit icon on selectedp
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: question.categories!.entries.map((category) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                // Category title
+                Padding(
+                  padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+                  child: Text(
+                    category.key,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF666666),
+                    ),
+                  ),
+                ),
+                // Category chips
+                Wrap(
+                  spacing: 8.w,
+                  runSpacing: 8.h,
+                  children: category.value.map((option) {
+                    final isAnswerSelected = selectedOption == option;
+                    return GestureDetector(
+                      onTap: isAnswerSelected ? () {
+                        controller.editAnswer(question.id);
+                      } : null,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                        decoration: BoxDecoration(
+                          color: isAnswerSelected
+                              ? AppColors.buttonColor
+                              : const Color(0xFFF5F5F5),
+                          borderRadius: BorderRadius.circular(25.r),
+                          border: Border.all(
+                            color: isAnswerSelected
+                                ? Colors.transparent
+                                : const Color(0xFFE0E0E0),
+                            width: 1,
+                          ),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Text(
+                              option,
+                              style: TextStyle(
+                                fontSize: 14.sp,
+                                fontWeight: FontWeight.w500,
+                                color: isAnswerSelected
+                                    ? Colors.white
+                                    : const Color(0xFF999999),
+                              ),
+                            ),
+                            if (isAnswerSelected) ...[
+                              SizedBox(width: 4.w),
+                              Icon(
+                                Icons.edit,
+                                size: 14.0,
+                                color: Colors.white,
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                ),
+                SizedBox(height: 16.h),
+              ],
+            );
+          }).toList(),
+        );
+      } else {
+        // Show interactive categorized chips for unanswered questions
+        // Get the selected option from temporary selections
+        final tempSelected = controller.tempSelections[question.id];
+
+        return CategorizedChipsWidget(
+          categories: question.categories!,
+          selectedOption: tempSelected,
+          onOptionSelected: (option) {
+            controller.selectOption(option, forQuestionId: question.id);
+          },
+        );
+      }
+    });
+  }
+
+  Widget _buildTextInputForQuestion(BriefQuestion question) {
+    // Only colors question should use text input now (fabrics is chips_categorized)
+    final textController = controller.colorController;
+
+    String hintText = 'Enter preferred colors...';
         
     return SizedBox(
       height: 45.h,
@@ -338,23 +450,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   Widget _buildBottomInputArea() {
     return Obx(() {
       final currentQuestion = controller.currentQuestion;
+      // Only colors question uses text input at bottom (fabrics is chips_categorized)
       return TextInputWithSend(
-        controller: currentQuestion.id == 'colors'
-            ? controller.colorController
-            : controller.fabricController,
-        placeholder: 'Type something...',
+        controller: controller.colorController,
+        placeholder: 'Enter preferred colors...',
         onSend: () {
-          final answer = controller.getAnswer(currentQuestion.id);
-          if (!controller.isOptionSelected('') &&
-              (answer?.selectedOptions.isEmpty ?? true)) {
-            Get.snackbar('Error', 'Please select an option before proceeding.');
-            return;
-          }
           controller.submitTextAnswer(
             currentQuestion.id,
-            currentQuestion.id == 'colors'
-                ? controller.colorController
-                : controller.fabricController,
+            controller.colorController,
           );
         },
         isLoading: controller.isTextLoading,
@@ -371,20 +474,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           // Submit any pending text answers before proceeding
           if (controller.showLastTwoQuestions) {
             // Submit colors answer if entered and not already saved
-            if (controller.colorController.text.trim().isNotEmpty && 
+            if (controller.colorController.text.trim().isNotEmpty &&
                 !controller.isQuestionAnswered('colors')) {
               controller.submitTextAnswer('colors', controller.colorController);
               await Future.delayed(const Duration(milliseconds: 500)); // Wait for submission
             }
-            
-            // Submit fabrics answer if entered and not already saved
-            if (controller.fabricController.text.trim().isNotEmpty && 
-                !controller.isQuestionAnswered('fabrics')) {
-              controller.submitTextAnswer('fabrics', controller.fabricController);
-              await Future.delayed(const Duration(milliseconds: 500)); // Wait for submission
-            }
+            // Note: fabrics is now chips_categorized, not text, so no text submission needed
           }
-          
+
           // Navigate to next screen with data saving
           controller.proceedToNextScreen();
         },
@@ -456,6 +553,152 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       initialImage: null,
       placeholder: 'Upload image',
     );
+  }
+
+  Widget _buildMultiPartColorSelection(BriefQuestion question, bool isAnswered) {
+    if (question.categories == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Obx(() {
+      // Check if question is answered inside Obx for reactivity
+      final isQuestionAnswered = controller.isQuestionAnswered(question.id);
+      final selectedColors = controller.selectedColors.toList();
+      final selectedPrint = controller.selectedPrint;
+      final selectedTechnique = controller.selectedTechnique;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Part 1: Solid colors with color picker
+          ColorPickerWidget(
+            selectedColors: selectedColors,
+            onColorSelected: (hexCode) {
+              controller.addColorFromPicker(hexCode);
+            },
+            onColorRemoved: (hexCode) {
+              controller.removeColor(hexCode);
+            },
+          ),
+
+          // Part 2: Prints
+          Padding(
+            padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+            child: Text(
+              'Prints',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF666666),
+              ),
+            ),
+          ),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: (question.categories!['Prints'] ?? []).map((print) {
+              final isSelected = selectedPrint == print;
+              return GestureDetector(
+                onTap: isQuestionAnswered
+                  ? (isSelected ? () => controller.editAnswer(question.id) : null)
+                  : () => controller.selectPrint(print),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.buttonColor : const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(25.r),
+                    border: Border.all(
+                      color: isSelected ? Colors.transparent : const Color(0xFFE0E0E0),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        print,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected ? Colors.white : (isQuestionAnswered ? const Color(0xFF999999) : const Color(0xFF333333)),
+                        ),
+                      ),
+                      if (isSelected && isQuestionAnswered) ...[
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.edit,
+                          size: 14.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 16.h),
+
+          // Part 3: Techniques
+          Padding(
+            padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+            child: Text(
+              'Techniques',
+              style: TextStyle(
+                fontSize: 14.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF666666),
+              ),
+            ),
+          ),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: (question.categories!['Techniques'] ?? []).map((technique) {
+              final isSelected = selectedTechnique == technique;
+              return GestureDetector(
+                onTap: isQuestionAnswered
+                  ? (isSelected ? () => controller.editAnswer(question.id) : null)
+                  : () => controller.selectTechnique(technique),
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                  decoration: BoxDecoration(
+                    color: isSelected ? AppColors.buttonColor : const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(25.r),
+                    border: Border.all(
+                      color: isSelected ? Colors.transparent : const Color(0xFFE0E0E0),
+                      width: 1,
+                    ),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        technique,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected ? Colors.white : (isQuestionAnswered ? const Color(0xFF999999) : const Color(0xFF333333)),
+                        ),
+                      ),
+                      if (isSelected && isQuestionAnswered) ...[
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.edit,
+                          size: 14.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            }).toList(),
+          ),
+          SizedBox(height: 16.h),
+        ],
+      );
+    });
   }
 
 }

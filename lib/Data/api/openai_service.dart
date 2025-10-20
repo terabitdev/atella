@@ -271,7 +271,7 @@ class OpenAIService {
   static Future<String> generateVisualPrompt({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
-    required Map<String, dynamic> finalDetails,
+    Map<String, dynamic>? finalDetails,
   }) async {
     try {
       final apiKey = await getApiKey();
@@ -290,30 +290,62 @@ IMPORTANT REQUIREMENTS FOR IMAGE GENERATION:
 - Professional product photography presentation
 
 The prompt should be specific, descriptive, and suitable for DALL-E 3 image generation.
-Include details about:
-- Garment type and style
-- Colors and patterns
-- Materials and textures
-- Fit and silhouette
-- Target audience
-- Occasion/use case
-- Any specific design elements mentioned
+
+CRITICAL: You MUST extract and use ALL the following details from the data provided:
+FROM CREATIVE BRIEF:
+- Garment type (garmentType) - the main type of clothing
+- Style preference (style) - the overall aesthetic
+- Target audience (targetAudience) - who will wear this
+- Occasion/use (occasion) - when it will be worn
+- Solid colors (solidColors array) - specific hex colors to use
+- Print pattern (print) - the pattern type (floral, abstract, etc)
+- Technique (technique) - color technique (ombré, embroidery, etc)
+- Fabric/material (fabrics) - the type of fabric
+
+FROM REFINED CONCEPT:
+- Silhouette/fit (silhouette) - how the garment should fit (slim, oversized, etc)
+- Special features (features) - specific details like necklines, sleeves, closures, pockets, etc
+- Season (season) - seasonal considerations
+- Budget level (budget) - impacts quality and finish
+- Values/functionality (values) - special properties like organic, quick-dry, etc
+
+Create a comprehensive, visually descriptive prompt that incorporates ALL these elements. Be specific about colors (use hex codes if provided), materials, fit, and design details.
 
 Always end the prompt with: "professional product photography, clean white background, no mannequin, no people, ghost mannequin effect"
 
-Make the prompt clear, concise, and visually descriptive.
+Make the prompt clear, detailed, and visually descriptive - include specific colors, textures, patterns, and construction details.
 ''';
 
-      final userMessage = '''
+      // Build user message - only include finalDetails if provided
+      String userMessage = '''
 Please create a detailed visual prompt for fashion design based on these inputs:
 
 Creative Brief: ${jsonEncode(creativeBrief)}
-Refined Concept: ${jsonEncode(refinedConcept)}
-Final Details: ${jsonEncode(finalDetails)}
+Refined Concept: ${jsonEncode(refinedConcept)}''';
 
-CRITICAL: The prompt MUST specify a clean white background with NO mannequins, NO models, and NO people. Use ghost mannequin effect or flat lay style for professional product photography presentation.
+      // Only add Final Details if provided (not skipped)
+      if (finalDetails != null && finalDetails.isNotEmpty) {
+        userMessage += '''
 
-Generate a comprehensive visual prompt that captures all the key design elements and ALWAYS includes the white background requirement.
+Final Details: ${jsonEncode(finalDetails)}''';
+      }
+
+      userMessage += '''
+
+
+CRITICAL INSTRUCTIONS:
+1. Extract the garment type, style, colors, prints, techniques, and fabrics from Creative Brief
+2. Extract the silhouette/fit, special features, season, budget, and values from Refined Concept
+3. Combine ALL these elements into a single, comprehensive visual prompt
+4. Be SPECIFIC about colors (mention hex codes if provided in solidColors array)
+5. Include the print pattern and technique in the description
+6. Describe the fit/silhouette clearly (from Refined Concept)
+7. Mention any special features like necklines, sleeves, closures, pockets
+8. Include material/fabric details and seasonal considerations
+9. Use the budget level from Refined Concept to determine quality/finish
+10. ALWAYS end with: "professional product photography, clean white background, no mannequin, no people, ghost mannequin effect"
+
+Generate a comprehensive visual prompt that captures ALL the design elements from the user's questionnaire answers.
 ''';
 
       final response = await http.post(

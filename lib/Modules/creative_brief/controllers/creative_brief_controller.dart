@@ -32,9 +32,19 @@ class CreativeBriefController extends GetxController {
   Map<String, BriefAnswer> get answers => _answers;
 
   // Text controllers for text input questions
-  final colorController = TextEditingController();
+  final colorController = TextEditingController(); // For solid colors (hex codes)
   final fabricController = TextEditingController();
   final customController = TextEditingController(); // For custom answers
+
+  // Storage for multi-part colors question
+  final RxList<String> _selectedColors = <String>[].obs; // Hex codes for solid colors
+  List<String> get selectedColors => _selectedColors;
+
+  final RxString _selectedPrint = ''.obs; // Selected print option
+  String get selectedPrint => _selectedPrint.value;
+
+  final RxString _selectedTechnique = ''.obs; // Selected technique option
+  String get selectedTechnique => _selectedTechnique.value;
 
   // Loading state for text input
   final RxBool _isTextLoading = false.obs;
@@ -60,9 +70,16 @@ class CreativeBriefController extends GetxController {
   final List<BriefQuestion> questions = [
     BriefQuestion(
       id: 'garment_type',
-      question: 'What type of garment would you like to create?',
-      type: 'chips',
-      options: ['Jacket', 'Dress', 'Pants', 'Set', 'Custom'],
+      question: 'What type of garment are you creating?',
+      type: 'chips_categorized',
+      options: [], // Will use categories instead
+      categories: {
+        'Tops': ['T-shirt', 'Shirt', 'Blouse', 'Hoodie', 'Jacket', 'Coat', 'Vest'],
+        'Bottoms': ['Pants', 'Jeans', 'Skirts', 'Shorts', 'Leggings'],
+        'Dresses': ['Casual dress', 'Evening', 'Cocktail dress', 'Gown'],
+        'Sportswear': ['Tracksuit', 'Activewear', 'Swimwear'],
+        'Accessories': ['Hat', 'Bag', 'Scarf', 'Gloves'],
+      },
     ),
     BriefQuestion(
       id: 'style',
@@ -96,15 +113,29 @@ class CreativeBriefController extends GetxController {
     ),
     BriefQuestion(
       id: 'colors',
-      question: 'Are there any dominant colors or a preferred color palette?',
-      type: 'text',
+      question: 'What colors and patterns should the design include?',
+      type: 'multi_part_color',
       options: [],
+      categories: {
+        'Prints': ['Floral', 'Abstract', 'Camouflage', 'Stripes', 'Polka dots', 'Tie-dye'],
+        'Techniques': ['Color blocking', 'Gradient/Ombré', 'Embroidery', 'Jacquard'],
+      },
     ),
     BriefQuestion(
       id: 'fabrics',
-      question: 'Are there any fabrics you prefer or absolutely want to avoid?',
-      type: 'text',
+      question: 'Which fabric or material would you like to use?',
+      type: 'chips_categorized',
       options: [],
+      categories: {
+        'Cotton': ['Lightweight (poplin, voile)', 'Medium (twill)', 'Heavy (denim, canvas)'],
+        'Wool': ['Merino', 'Cashmere', 'Tweed', 'Felt'],
+        'Silk': ['Satin', 'Chiffon', 'Organza'],
+        'Linen': ['Plain', 'Textured', 'Blended'],
+        'Synthetic': ['Polyester', 'Nylon', 'Spandex', 'Neoprene'],
+        'Eco options': ['Organic cotton', 'Recycled polyester', 'Bamboo', 'Hemp'],
+        'Leather/Faux leather': ['Leather', 'Faux leather'],
+        'Knitwear': ['Jersey', 'Rib knit', 'Interlock'],
+      },
     ),
   ];
 
@@ -217,7 +248,7 @@ class CreativeBriefController extends GetxController {
   
   // Load creative brief answers from Firebase data
   void _loadCreativeBriefAnswers(Map<String, dynamic> creativeBriefData) {
-    print('Loading creative brief answers: $creativeBriefData');
+    // print('Loading creative brief answers: $creativeBriefData');
     
     // Load chip-based answers
     final garmentType = creativeBriefData['garment_type'] as String? ?? '';
@@ -290,22 +321,41 @@ class CreativeBriefController extends GetxController {
       }
     }
     
-    // Load text-based answers
-    final colors = creativeBriefData['colors'] as String? ?? '';
-    if (colors.isNotEmpty) {
-      colorController.text = colors;
-      _answers['colors'] = BriefAnswer(
-        questionId: 'colors',
-        textInput: colors,
-      );
+    // Load multi-part colors answer
+    final solidColors = creativeBriefData['solidColors'];
+    final print = creativeBriefData['print'] as String? ?? '';
+    final technique = creativeBriefData['technique'] as String? ?? '';
+
+    if (solidColors != null || print.isNotEmpty || technique.isNotEmpty) {
+      // Load solid colors
+      if (solidColors is List) {
+        _selectedColors.value = solidColors.cast<String>();
+        colorController.text = _selectedColors.join(', ');
+      } else if (solidColors is String && solidColors.isNotEmpty) {
+        _selectedColors.value = [solidColors];
+        colorController.text = solidColors;
+      }
+
+      // Load print and technique
+      if (print.isNotEmpty) _selectedPrint.value = print;
+      if (technique.isNotEmpty) _selectedTechnique.value = technique;
+
+      // Create the answer if all parts are complete
+      if (_selectedColors.isNotEmpty && print.isNotEmpty && technique.isNotEmpty) {
+        _answers['colors'] = BriefAnswer(
+          questionId: 'colors',
+          selectedOptions: [print, technique],
+          textInput: _selectedColors.join('|||'),
+        );
+      }
     }
-    
+
+    // Load fabrics as chip selection (categorized chips)
     final fabrics = creativeBriefData['fabrics'] as String? ?? '';
     if (fabrics.isNotEmpty) {
-      fabricController.text = fabrics;
       _answers['fabrics'] = BriefAnswer(
         questionId: 'fabrics',
-        textInput: fabrics,
+        selectedOptions: [fabrics],
       );
     }
     
@@ -317,7 +367,7 @@ class CreativeBriefController extends GetxController {
     _answers.refresh();
     update();
     
-    print('Loaded ${_answers.length} answers for creative brief');
+    // print('Loaded ${_answers.length} answers for creative brief');
   }
   
   void _prefillDemoAnswers(TechPackModel? techPack) {
@@ -342,40 +392,42 @@ class CreativeBriefController extends GetxController {
     );
     print('Pre-filled style: ${_answers['style']}');
     
-    // Example: Pre-fill colors (using project name as example)
+    // Example: Pre-fill multi-part colors (using project name as example)
     if (techPack?.projectName.toLowerCase().contains('blue') == true) {
-      colorController.text = 'Blue, Navy';
+      _selectedColors.value = ['#0000FF', '#000080'];
+      _selectedPrint.value = 'Stripes';
+      _selectedTechnique.value = 'Color blocking';
+      colorController.text = _selectedColors.join(', ');
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
-        selectedOptions: [],
-        textInput: 'Blue, Navy',
+        selectedOptions: ['Stripes', 'Color blocking'],
+        textInput: _selectedColors.join('|||'),
       );
     } else {
       // Default colors for edit mode
-      colorController.text = 'Black, White';
+      _selectedColors.value = ['#000000', '#FFFFFF'];
+      _selectedPrint.value = 'Floral';
+      _selectedTechnique.value = 'Embroidery';
+      colorController.text = _selectedColors.join(', ');
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
-        selectedOptions: [],
-        textInput: 'Black, White',
+        selectedOptions: ['Floral', 'Embroidery'],
+        textInput: _selectedColors.join('|||'),
       );
     }
     print('Pre-filled colors: ${_answers['colors']}');
     
-    // Example: Pre-fill fabrics based on collection name
+    // Example: Pre-fill fabrics as chip selection (categorized chips)
     if (techPack?.collectionName.toLowerCase().contains('summer') == true) {
-      fabricController.text = 'Cotton, Linen';
       _answers['fabrics'] = BriefAnswer(
         questionId: 'fabrics',
-        selectedOptions: [],
-        textInput: 'Cotton, Linen',
+        selectedOptions: ['Lightweight (poplin, voile)'], // Cotton category option
       );
     } else {
       // Default fabrics for edit mode
-      fabricController.text = 'Cotton, Polyester';
       _answers['fabrics'] = BriefAnswer(
         questionId: 'fabrics',
-        selectedOptions: [],
-        textInput: 'Cotton, Polyester',
+        selectedOptions: ['Medium (twill)'], // Cotton category option
       );
     }
     print('Pre-filled fabrics: ${_answers['fabrics']}');
@@ -453,26 +505,29 @@ class CreativeBriefController extends GetxController {
     return _customSelectedForQuestion.value == currentQuestion.id;
   }
 
-  void selectOption(String option) async {
-    print('Selecting option: $option'); // Debug
-    
+  void selectOption(String option, {String? forQuestionId}) async {
+    // Determine which question this selection is for
+    final questionId = forQuestionId ?? currentQuestion.id;
+
+    print('Selecting option: $option for question: $questionId'); // Debug
+
     // If "Custom" is selected, show text field
     if (option == 'Custom') {
-      print('Custom selected for question: ${currentQuestion.id}'); // Debug
-      _customSelectedForQuestion.value = currentQuestion.id;
-      
+      print('Custom selected for question: $questionId'); // Debug
+      _customSelectedForQuestion.value = questionId;
+
       // Clear any temporary selection
-      _tempSelections.remove(currentQuestion.id);
-      
+      _tempSelections.remove(questionId);
+
       update();
       return; // Don't advance to next question yet
     }
 
     // For non-custom options, store as temporary selection
-    _tempSelections[currentQuestion.id] = option;
+    _tempSelections[questionId] = option;
 
     // Clear custom selection if user selects a different option
-    if (_customSelectedForQuestion.value == currentQuestion.id) {
+    if (_customSelectedForQuestion.value == questionId) {
       _customSelectedForQuestion.value = '';
     }
 
@@ -480,38 +535,67 @@ class CreativeBriefController extends GetxController {
     update();
 
     // Auto-advance to next question after delay, but only if no answer exists yet
-    if (!isQuestionAnswered(currentQuestion.id)) {
+    if (!isQuestionAnswered(questionId)) {
       await Future.delayed(const Duration(milliseconds: 2000)); // Increased delay to 2 seconds
       // Check if the selection is still the same (user hasn't changed it)
-      if (_tempSelections[currentQuestion.id] == option) {
-        _confirmCurrentSelection();
+      if (_tempSelections[questionId] == option) {
+        _confirmCurrentSelection(questionId);
       }
     }
   }
 
   // Method to confirm current selection and advance
-  void _confirmCurrentSelection() {
-    final tempSelection = _tempSelections[currentQuestion.id];
+  void _confirmCurrentSelection(String questionId) {
+    final tempSelection = _tempSelections[questionId];
     if (tempSelection != null) {
+      print('=== CONFIRMING SELECTION ===');
+      print('Question ID: $questionId');
+      print('Selected option: $tempSelection');
+
       // Create final answer
-      _answers[currentQuestion.id] = BriefAnswer(
-        questionId: currentQuestion.id,
+      _answers[questionId] = BriefAnswer(
+        questionId: questionId,
         selectedOptions: [tempSelection],
       );
-      
+
+      print('Answer created: ${_answers[questionId]}');
+      print('Is question answered: ${isQuestionAnswered(questionId)}');
+
       // Clear temporary selection
-      _tempSelections.remove(currentQuestion.id);
-      
+      _tempSelections.remove(questionId);
+
+      // Trigger multiple updates to ensure reactivity
+      _answers.refresh();
       update();
-      
-      // Advance to next question
-      _nextQuestion();
+
+      print('Answers map size: ${_answers.length}');
+      print('All answered questions: ${_answers.keys.toList()}');
+
+      // Find the question index
+      final questionIndex = questions.indexWhere((q) => q.id == questionId);
+
+      // For the last question, delay advancement to ensure UI updates
+      if (questionIndex == questions.length - 1) {
+        print('Last question answered, delaying next question call');
+        Future.delayed(const Duration(milliseconds: 300), () {
+          _nextQuestion();
+        });
+      } else {
+        // For non-last questions, only advance if it's the current question
+        if (questionId == currentQuestion.id) {
+          _nextQuestion();
+        } else {
+          // If answering a later question while on an earlier one, just update UI
+          print('Answered a later question, staying on current question');
+        }
+      }
     }
   }
 
   // Method to manually confirm selection (if we want to add a confirm button later)
-  void confirmSelection() {
-    _confirmCurrentSelection();
+  void confirmSelection({String? forQuestionId}) {
+    final questionId = forQuestionId ?? currentQuestion.id;
+    _confirmCurrentSelection(questionId);
   }
 
   // Method to allow editing of previously answered questions
@@ -684,30 +768,103 @@ class CreativeBriefController extends GetxController {
     _nextQuestion();
   }
 
+  // Methods for multi-part colors question
+  void addColorFromPicker(String hexCode) {
+    if (hexCode.isNotEmpty && !_selectedColors.contains(hexCode)) {
+      _selectedColors.add(hexCode);
+      // Update text controller to show all colors
+      colorController.text = _selectedColors.join(', ');
+      _checkAndSaveColorsAnswer();
+      update();
+    }
+  }
+
+  void removeColor(String hexCode) {
+    _selectedColors.remove(hexCode);
+    colorController.text = _selectedColors.join(', ');
+    _checkAndSaveColorsAnswer();
+    update();
+  }
+
+  void selectPrint(String print) {
+    _selectedPrint.value = print;
+    _checkAndSaveColorsAnswer();
+    update();
+  }
+
+  void selectTechnique(String technique) {
+    _selectedTechnique.value = technique;
+    _checkAndSaveColorsAnswer();
+    update();
+  }
+
+  bool get isColorsQuestionComplete {
+    return _selectedColors.isNotEmpty &&
+           _selectedPrint.value.isNotEmpty &&
+           _selectedTechnique.value.isNotEmpty;
+  }
+
+  void _checkAndSaveColorsAnswer() async {
+    final wasIncomplete = !_answers.containsKey('colors');
+
+    if (isColorsQuestionComplete) {
+      // Create answer with all three parts
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        selectedOptions: [_selectedPrint.value, _selectedTechnique.value],
+        textInput: _selectedColors.join('|||'), // Store colors with delimiter
+      );
+      _answers.refresh();
+      print('Colors answer saved: Solid=${_selectedColors.join(", ")}, Print=${_selectedPrint.value}, Technique=${_selectedTechnique.value}');
+
+      // Auto-advance to next question if this is the first time completing it
+      if (wasIncomplete && currentQuestion.id == 'colors') {
+        print('Colors question completed, auto-advancing to next question');
+        await Future.delayed(const Duration(milliseconds: 2000));
+        _nextQuestion();
+      }
+    } else {
+      // Remove answer if incomplete
+      _answers.remove('colors');
+      _answers.refresh();
+    }
+  }
+
+  void clearColorsSelection() {
+    _selectedColors.clear();
+    _selectedPrint.value = '';
+    _selectedTechnique.value = '';
+    colorController.clear();
+    _answers.remove('colors');
+    _answers.refresh();
+    update();
+  }
+
   void _nextQuestion() {
+    print('=== NEXT QUESTION CALLED ===');
+    print('Current question index: $currentQuestionIndex');
+    print('Total questions: ${questions.length}');
+    print('All questions completed: $isAllQuestionsCompleted');
+
     // Clear custom selection when moving to next question
     _customSelectedForQuestion.value = '';
-    
+
     // Clear any temporary selections for the current question
     _tempSelections.remove(currentQuestion.id);
-    
-    // Special case: if we just answered question 5 (index 4), show last two questions
-    if (currentQuestionIndex == 4) {
-      _showLastTwoQuestions.value = true;
-      _currentQuestionIndex.value = 5; // Move to first text question
-      update();
-      return;
-    }
 
     if (currentQuestionIndex < questions.length - 1) {
+      print('Moving to next question');
       _currentQuestionIndex.value++;
       update();
     } else {
+      print('At last question or beyond');
       // Check if all questions are actually answered
       if (isAllQuestionsCompleted) {
+        print('All questions completed, showing completion screen');
         update(); // Update UI to show Next Steps button
         _showCompletionScreen();
       } else {
+        print('Not all questions completed yet');
         update();
       }
     }
@@ -785,19 +942,40 @@ class CreativeBriefController extends GetxController {
   void _showEditDialog(String questionId) {
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
-    
+
+    // Special handling for multi-part color question
+    if (question.type == 'multi_part_color') {
+      _showMultiPartColorEditDialog(questionId);
+      return;
+    }
+
     // Create a temporary list to track changes
     RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
-    
+
     // Create a temporary controller for custom text
     final tempCustomController = TextEditingController();
     if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
       tempCustomController.text = currentAnswer.textInput!;
     }
-    
+
     // Track if custom is selected
     RxBool isCustomSelected = tempSelectedOptions.contains('Custom').obs;
-    
+
+    // Get all options (either from options list or flattened from categories)
+    List<String> allOptions = [];
+    Map<String, List<String>>? categoriesMap;
+
+    if (question.type == 'chips_categorized' && question.categories != null) {
+      // For categorized questions, flatten all category options
+      categoriesMap = question.categories;
+      for (var category in question.categories!.values) {
+        allOptions.addAll(category);
+      }
+    } else {
+      // For regular chip questions, use options list
+      allOptions = question.options;
+    }
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
@@ -807,84 +985,150 @@ class CreativeBriefController extends GetxController {
         ),
         content: SizedBox(
           width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                question.question,
-                style: TextStyle(fontSize: 14, color: Colors.grey[600]),
-              ),
-              SizedBox(height: 16),
-              Text(
-                'Select your answer:',
-                style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
-              ),
-              SizedBox(height: 12),
-              Obx(() => Wrap(
-                children: question.options.map((option) {
-                  final isSelected = tempSelectedOptions.contains(option);
-                  return GestureDetector(
-                    onTap: () {
-                      if (question.allowMultiple) {
-                        if (isSelected) {
-                          tempSelectedOptions.remove(option);
-                        } else {
-                          tempSelectedOptions.add(option);
-                        }
-                      } else {
-                        tempSelectedOptions.value = [option];
-                      }
-                      
-                      // Update custom selected state
-                      isCustomSelected.value = tempSelectedOptions.contains('Custom');
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8, bottom: 8),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.black : Colors.grey[100],
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(
-                          color: isSelected ? Colors.black : Colors.grey[300]!,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  question.question,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 16),
+                Text(
+                  'Select your answer:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 12),
+                // Show categorized chips if applicable
+                if (question.type == 'chips_categorized' && categoriesMap != null)
+                  ...categoriesMap.entries.map((category) {
+                    return Obx(() => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Category title
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 8, top: 8),
+                          child: Text(
+                            category.key,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
                         ),
-                      ),
-                      child: Text(
-                        option,
-                        style: TextStyle(
-                          color: isSelected ? Colors.white : Colors.black,
-                          fontSize: 14,
-                          fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                        // Category options
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: category.value.map((option) {
+                            final isSelected = tempSelectedOptions.contains(option);
+                            return GestureDetector(
+                              onTap: () {
+                                if (question.allowMultiple) {
+                                  if (isSelected) {
+                                    tempSelectedOptions.remove(option);
+                                  } else {
+                                    tempSelectedOptions.add(option);
+                                  }
+                                } else {
+                                  tempSelectedOptions.value = [option];
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.black : Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected ? Colors.black : Colors.grey[300]!,
+                                  ),
+                                ),
+                                child: Text(
+                                  option,
+                                  style: TextStyle(
+                                    color: isSelected ? Colors.white : Colors.black,
+                                    fontSize: 13,
+                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
                         ),
-                      ),
+                        SizedBox(height: 8),
+                      ],
+                    ));
+                  }).toList()
+                else
+                  // Show regular chips
+                  Obx(() => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: allOptions.map((option) {
+                      final isSelected = tempSelectedOptions.contains(option);
+                      return GestureDetector(
+                        onTap: () {
+                          if (question.allowMultiple) {
+                            if (isSelected) {
+                              tempSelectedOptions.remove(option);
+                            } else {
+                              tempSelectedOptions.add(option);
+                            }
+                          } else {
+                            tempSelectedOptions.value = [option];
+                          }
+
+                          // Update custom selected state
+                          isCustomSelected.value = tempSelectedOptions.contains('Custom');
+                        },
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.black : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(
+                              color: isSelected ? Colors.black : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: Text(
+                            option,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontSize: 14,
+                              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                            ),
+                          ),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+                SizedBox(height: 16),
+                // Show custom text field if Custom is selected
+                Obx(() => isCustomSelected.value ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Enter custom answer:',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
-                  );
-                }).toList(),
-              )),
-              SizedBox(height: 16),
-              // Show custom text field if Custom is selected
-              Obx(() => isCustomSelected.value ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Enter custom answer:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: tempCustomController,
-                    decoration: InputDecoration(
-                      hintText: 'Type your custom answer...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: tempCustomController,
+                      decoration: InputDecoration(
+                        hintText: 'Type your custom answer...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      maxLines: 2,
                     ),
-                    maxLines: 2,
-                  ),
-                ],
-              ) : SizedBox.shrink()),
-            ],
+                  ],
+                ) : SizedBox.shrink()),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -959,9 +1203,164 @@ class CreativeBriefController extends GetxController {
     );
   }
 
+  // Show edit dialog for multi-part color question
+  void _showMultiPartColorEditDialog(String questionId) {
+    final question = questions.firstWhere((q) => q.id == questionId);
+
+    // Create temporary observables for editing (only prints and techniques)
+    final RxString tempPrint = _selectedPrint.value.obs;
+    final RxString tempTechnique = _selectedTechnique.value.obs;
+
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
+        title: Text(
+          'Edit Prints & Techniques',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
+        content: SizedBox(
+          width: double.maxFinite,
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'Select your prints and techniques',
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
+                SizedBox(height: 16),
+
+                // Prints Section
+                Text(
+                  'Prints',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 8),
+                Obx(() => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: (question.categories!['Prints'] ?? []).map((print) {
+                    final isSelected = tempPrint.value == print;
+                    return GestureDetector(
+                      onTap: () => tempPrint.value = print,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.black : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          print,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontSize: 13,
+                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                )),
+                SizedBox(height: 16),
+
+                // Techniques Section
+                Text(
+                  'Techniques',
+                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700]),
+                ),
+                SizedBox(height: 8),
+                Obx(() => Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: (question.categories!['Techniques'] ?? []).map((technique) {
+                    final isSelected = tempTechnique.value == technique;
+                    return GestureDetector(
+                      onTap: () => tempTechnique.value = technique,
+                      child: Container(
+                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                        decoration: BoxDecoration(
+                          color: isSelected ? Colors.black : Colors.grey[100],
+                          borderRadius: BorderRadius.circular(20),
+                          border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
+                        ),
+                        child: Text(
+                          technique,
+                          style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontSize: 13,
+                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                          ),
+                        ),
+                      ),
+                    );
+                  }).toList(),
+                )),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(Get.overlayContext!).pop(),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+          ),
+          ElevatedButton(
+            onPressed: () {
+              // Validate that print and technique are filled
+              if (tempPrint.value.isEmpty || tempTechnique.value.isEmpty) {
+                Get.snackbar(
+                  'Incomplete Selection',
+                  'Please select both a print and a technique',
+                  backgroundColor: Colors.black,
+                  colorText: Colors.white,
+                  snackPosition: SnackPosition.TOP,
+                  duration: Duration(seconds: 2),
+                );
+                return;
+              }
+
+              // Update the main selections
+              _selectedPrint.value = tempPrint.value;
+              _selectedTechnique.value = tempTechnique.value;
+
+              // Save the answer
+              _checkAndSaveColorsAnswer();
+
+              // Close dialog
+              Navigator.of(Get.overlayContext!).pop();
+
+              // Update UI and show success message
+              update();
+              Get.snackbar(
+                'Answer Updated',
+                'Your prints and techniques have been updated successfully',
+                backgroundColor: Colors.black,
+                colorText: Colors.white,
+                duration: Duration(seconds: 2),
+                margin: EdgeInsets.all(16),
+                snackPosition: SnackPosition.TOP,
+              );
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+            ),
+            child: Text('Save Changes'),
+          ),
+        ],
+      ),
+    );
+  }
+
   // New methods for the updated UI
   bool isQuestionAnswered(String questionId) {
-    return _answers.containsKey(questionId);
+    final answered = _answers.containsKey(questionId);
+    // Access the observable to ensure Obx detects changes
+    _answers.isEmpty; // This triggers reactivity
+    return answered;
   }
 
   BriefAnswer? getAnswer(String questionId) {
@@ -1054,7 +1453,7 @@ class CreativeBriefController extends GetxController {
   }
 
   // Save creative brief data to DesignDataService
-  void _saveCreativeBriefData() {
+  void saveCreativeBriefData() {
     // Convert answers to a format suitable for design generation
     Map<String, dynamic> creativeBriefData = {};
     
@@ -1124,10 +1523,27 @@ class CreativeBriefController extends GetxController {
           }
           break;
         case 'colors':
-          creativeBriefData['colors'] = answer.textInput ?? '';
+          // Multi-part colors: solid colors, print, technique
+          // textInput contains solid colors separated by |||
+          // selectedOptions contains [print, technique]
+          if (answer.textInput?.isNotEmpty == true) {
+            final solidColors = answer.textInput!.split('|||');
+            creativeBriefData['solidColors'] = solidColors; // Save as array
+          } else {
+            creativeBriefData['solidColors'] = [];
+          }
+          if (answer.selectedOptions.isNotEmpty) {
+            creativeBriefData['print'] = answer.selectedOptions.first;
+            if (answer.selectedOptions.length > 1) {
+              creativeBriefData['technique'] = answer.selectedOptions[1];
+            }
+          }
           break;
         case 'fabrics':
-          creativeBriefData['fabrics'] = answer.textInput ?? '';
+          // Fabrics is now a categorized chips question (selectedOptions)
+          creativeBriefData['fabrics'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
+              : '';
           break;
       }
     }
@@ -1140,7 +1556,7 @@ class CreativeBriefController extends GetxController {
 
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
-    _saveCreativeBriefData();
+    saveCreativeBriefData();
     
     // Pass edit mode data to next screen
     if (_isEditMode.value && _editingTechPack != null) {

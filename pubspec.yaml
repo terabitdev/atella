@@ -60,6 +60,7 @@ dependencies:
   dotted_border: ^3.1.0
   device_preview_plus: ^2.3.2
   flutter_image_compress: ^2.4.0
+  flutter_colorpicker: ^1.1.0
 
 
 dev_dependencies:

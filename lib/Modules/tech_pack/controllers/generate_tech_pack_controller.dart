@@ -116,14 +116,12 @@ class TechPackController extends GetxController {
       
       print('Creative Brief Data: ${_dataService.getCreativeBriefData()}');
       print('Refined Concept Data: ${_dataService.getRefinedConceptData()}');
-      print('Final Details Data: ${_dataService.getFinalDetailsData()}');
-      
+
       print('Generating visual prompt with OpenAI GPT-4...');
-      // Generate visual prompt using OpenAI
+      // Generate visual prompt using OpenAI (without Final Details - skipped screen)
       currentPrompt.value = await OpenAIService.generateVisualPrompt(
         creativeBrief: _dataService.getCreativeBriefData(),
         refinedConcept: _dataService.getRefinedConceptData(),
-        finalDetails: _dataService.getFinalDetailsData(),
       );
       
       print('Generated Visual Prompt: ${currentPrompt.value}');
@@ -133,12 +131,21 @@ class TechPackController extends GetxController {
       // Get inspiration image path from creative brief data
       final creativeBriefData = _dataService.getCreativeBriefData();
       String? inspirationImagePath;
-      
-      if (creativeBriefData['inspirationType'] == 'image' && 
-          creativeBriefData['inspiration'] != null && 
+
+      if (creativeBriefData['inspirationType'] == 'image' &&
+          creativeBriefData['inspiration'] != null &&
           creativeBriefData['inspiration'].isNotEmpty) {
-        inspirationImagePath = creativeBriefData['inspiration'];
-        print('Using inspiration image: $inspirationImagePath');
+        // Handle both List<String> (new format) and String (legacy format)
+        final inspiration = creativeBriefData['inspiration'];
+        if (inspiration is List) {
+          // New format: array of image paths, use the first one
+          inspirationImagePath = inspiration.isNotEmpty ? inspiration[0] : null;
+          print('Using first inspiration image from list: $inspirationImagePath');
+        } else if (inspiration is String) {
+          // Legacy format: single image path
+          inspirationImagePath = inspiration;
+          print('Using inspiration image (legacy): $inspirationImagePath');
+        }
       }
       
       // Generate design images (now returns base64-encoded images)

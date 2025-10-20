@@ -1,5 +1,6 @@
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/categorized_chips_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -186,9 +187,13 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           // Answer Options
           if (question.type == 'chips')
             _buildChipOptions(question, isAnswered, isCurrentQuestion),
-          
+
+          // Answer Options for categorized chips
+          if (question.type == 'chips_categorized')
+            _buildCategorizedChipOptions(question, isAnswered, isCurrentQuestion),
+
           // Show custom answer if answered with custom text
-          if (isAnswered && question.type == 'chips')
+          if (isAnswered && (question.type == 'chips' || question.type == 'chips_categorized'))
             _buildCustomAnswerDisplay(question),
         ],
       ),
@@ -271,6 +276,121 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     });
   }
 
+  Widget _buildCategorizedChipOptions(
+    BriefQuestion question,
+    bool isAnswered,
+    bool isCurrentQuestion,
+  ) {
+    if (question.categories == null) {
+      return const SizedBox.shrink();
+    }
+
+    return Obx(() {
+      final answer = controller.getAnswer(question.id);
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: question.categories!.entries.map((category) {
+          return _buildCategorySection(
+            categoryName: category.key,
+            options: category.value,
+            question: question,
+            isAnswered: isAnswered,
+            answer: answer,
+          );
+        }).toList(),
+      );
+    });
+  }
+
+  Widget _buildCategorySection({
+    required String categoryName,
+    required List<String> options,
+    required BriefQuestion question,
+    required bool isAnswered,
+    required BriefAnswer? answer,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Category title
+        Padding(
+          padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+          child: Text(
+            categoryName,
+            style: TextStyle(
+              fontSize: 14.sp,
+              fontWeight: FontWeight.w600,
+              color: const Color(0xFF666666),
+            ),
+          ),
+        ),
+        // Category options as chips
+        Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: options.map((option) {
+            final isSelected = controller.isOptionSelected(option);
+
+            if (isAnswered) {
+              // Show final answered state for answered questions (with edit capability)
+              final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
+              return GestureDetector(
+                onTap: isAnswerSelected ? () {
+                  // Allow editing of answered questions
+                  controller.editAnswer(question.id);
+                } : null,
+                child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  decoration: BoxDecoration(
+                    color: isAnswerSelected
+                        ? AppColors.buttonColor
+                        : const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(20.r),
+                    border: isAnswerSelected
+                        ? null
+                        : Border.all(color: const Color(0xFFE0E0E0)),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        option,
+                        style: TextStyle(
+                          color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
+                          fontSize: 14.sp,
+                          fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+                        ),
+                      ),
+                      if (isAnswerSelected) ...[
+                        SizedBox(width: 4.w),
+                        Icon(
+                          Icons.edit,
+                          size: 14.0,
+                          color: Colors.white,
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              );
+            } else {
+              // Show interactive chips for unanswered questions
+              return SelectionChipWidget(
+                text: option,
+                isSelected: isSelected,
+                onTap: () {
+                  controller.selectOption(option);
+                },
+              );
+            }
+          }).toList(),
+        ),
+        SizedBox(height: 16.h),
+      ],
+    );
+  }
+
   Widget _buildBottomInputArea() {
     return Obx(() {
       // FIXED: Only show custom input when custom is selected
@@ -294,11 +414,11 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: RoundButton(
-        title: 'Next Steps', 
+        title: 'Generate Design',
         onTap: (){
-          controller.proceedToNextScreen(); 
-        }, 
-        color: AppColors.buttonColor, 
+          controller.proceedToDesignGeneration();
+        },
+        color: AppColors.buttonColor,
         isloading: false
       ),
     );

@@ -2,8 +2,9 @@ class BriefQuestion {
   final String id;
   final String question;
   final List<String> options;
-  final String type; // 'chips' or 'text'
+  final String type; // 'chips', 'chips_categorized', 'text', 'image', 'checkbox'
   final bool allowMultiple;
+  final Map<String, List<String>>? categories; // Optional: for categorized chips
 
   BriefQuestion({
     required this.id,
@@ -11,6 +12,7 @@ class BriefQuestion {
     required this.options,
     required this.type,
     this.allowMultiple = false,
+    this.categories,
   });
 }
 

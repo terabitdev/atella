@@ -2,12 +2,17 @@ import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
+import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
+import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
-  
+  final StripeSubscriptionService _stripeService = StripeSubscriptionService();
+
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
@@ -52,24 +57,23 @@ class RefiningConceptController extends GetxController {
   final List<BriefQuestion> questions = [
     BriefQuestion(
       id: 'garment_type',
-      question: 'What type of garment would you like to create?',
+      question: 'What fit are you aiming for?',
       type: 'chips',
-      options: ['Oversized', 'Straight', 'Fitted', 'Cropped', 'Long', 'Custom'],
+      options: ['Slim','Oversized', 'Regular', 'Straight', 'Fitted', 'Tailored', 'Cropped', 'Relaxed', 'Long', 'Custom'],
     ),
     BriefQuestion(
       id: 'specific_features',
-      question: 'Do you want any specific features?',
-      type: 'chips',
-      options: [
-        'Chest',
-        'Pockets',
-        'Embroidery',
-        'Mother-Of-Pearl Buttons',
-        'Cuban collar',
-        'Short Or Long Sleeves',
-        'Slits',
-        'Custom',
-      ],
+      question: 'Do you want to add special details?',
+      type: 'chips_categorized',
+      options: [],
+      categories: {
+        'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder'],
+        'Sleeves': ['Sleeveless', 'Short ¾', 'Long', 'Puff', 'Raglan'],
+        'Closures': ['Zipper (metal/plastic/invisible)', 'Buttons', 'Hooks', 'Velcro', 'Snaps'],
+        'Pockets': ['Patch', 'Welt', 'Flap', 'Hidden', 'Cargo'],
+        'Waist': ['Elastic', 'High-waist', 'Low-rise', 'Belted'],
+        'Finishes': ['Lining', 'Topstitching', 'Embroidery', 'Lace', 'Sequins', 'Appliqués'],
+      },
     ),
     BriefQuestion(
       id: 'seasonal_constraint',
@@ -584,7 +588,7 @@ class RefiningConceptController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     _saveRefinedConceptData();
-    
+
     // Pass edit mode data to next screen
     if (_isEditMode.value && _editingTechPack != null) {
       // In edit mode, skip onboarding and go directly to questionnaire
@@ -596,87 +600,301 @@ class RefiningConceptController extends GetxController {
       Get.toNamed('/final_detail_onboard');
     }
   }
+
+  // Method to proceed directly to design generation (skipping Final Details)
+  void proceedToDesignGeneration() async {
+    // Ensure Creative Brief data is saved (if controller still exists)
+    if (Get.isRegistered<CreativeBriefController>()) {
+      final creativeBriefController = Get.find<CreativeBriefController>();
+      // Call the save method directly without navigating
+      creativeBriefController.saveCreativeBriefData();
+      print('Creative Brief data saved from existing controller');
+    } else {
+      print('WARNING: Creative Brief controller not found - data may not be saved');
+    }
+
+    // Save refined concept data
+    _saveRefinedConceptData();
+
+    // Save empty/default final details data since we're skipping that screen
+    _saveDefaultFinalDetailsData();
+
+    // Check if user can generate designs (only for non-edit mode)
+    if (!_isEditMode.value) {
+      bool canGenerate = await _stripeService.canGenerateDesign();
+      if (!canGenerate) {
+        _showLimitExceededDialog();
+        return;
+      }
+      // Increment design usage count for new generations ONLY if we can generate
+      await _stripeService.incrementDesignUsage();
+    }
+
+    // Proceed with actual generation
+    _proceedWithGeneration();
+  }
+
+  // Show limit exceeded dialog
+  void _showLimitExceededDialog() {
+    Get.dialog(
+      LimitExceededDialog(
+        onGetExtraDesigns: () async {
+          Get.back(); // Close dialog
+          bool success = await _stripeService.purchaseExtraDesigns();
+          if (success) {
+            Get.snackbar(
+              'Extra Designs Added!',
+              '20 extra designs have been added to your account.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.black,
+              colorText: Colors.white,
+            );
+            await Future.delayed(Duration(seconds: 2));
+            // First increment the usage count since we now have extra designs
+            await _stripeService.incrementDesignUsage();
+            // Then proceed with generation directly without checking again
+            _proceedWithGeneration();
+          }
+        },
+        onUpgradePlan: () {
+          Get.back(); // Close dialog
+          Get.toNamed('/subscribe');
+        },
+        onMaybeLater: () {
+          Get.back(); // Close dialog
+        },
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  // Separate method for the actual generation logic
+  void _proceedWithGeneration() async {
+    // Force delete existing TechPackController to ensure fresh generation
+    if (Get.isRegistered<TechPackController>()) {
+      try {
+        // Force delete even if it's permanent
+        Get.delete<TechPackController>(force: true);
+        print('Deleted existing TechPackController for fresh generation');
+      } catch (e) {
+        print('Error deleting TechPackController: $e');
+      }
+    }
+
+    // Navigate to tech pack generation screen with edit mode data
+    if (_isEditMode.value && _editingTechPack != null) {
+      Get.toNamed('/generate_tech_pack', arguments: {
+        'editMode': true,
+        'techPackModel': _editingTechPack,
+        'forceRegenerate': true, // Add flag to force regeneration
+      });
+
+      Get.snackbar(
+        'Regenerating Designs!',
+        'Creating 3 new designs based on your updated preferences...',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    } else {
+      Get.toNamed('/generate_tech_pack', arguments: {
+        'forceRegenerate': true, // Add flag to force regeneration
+      });
+
+      Get.snackbar(
+        'Generating Designs!',
+        'Creating 3 unique designs based on your preferences...',
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Save default/empty final details data when skipping Final Details screen
+  void _saveDefaultFinalDetailsData() {
+    Map<String, dynamic> finalDetailsData = {
+      'season': 'All-Season (Layer-Friendly)', // Default to all-season
+      'budget': 'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
+      'features': '', // No special features by default
+      'customFeatures': '',
+      'additionalDetails': '', // No additional details
+    };
+
+    // Save to design data service
+    _dataService.setFinalDetailsData(finalDetailsData);
+
+    print('Default Final Details data saved: $finalDetailsData');
+  }
   
   // Edit answer method - allows editing a specific question's answer
   void editAnswer(String questionId) {
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
     RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
-    
+
     // Create a temporary controller for custom text
     final tempCustomController = TextEditingController();
     if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
       tempCustomController.text = currentAnswer.textInput!;
     }
-    
+
     // Track if custom is selected
     RxBool isCustomSelected = tempSelectedOptions.contains('Custom').obs;
-    
+
+    // Get all options (either from options list or flattened from categories)
+    List<String> allOptions = [];
+    Map<String, List<String>>? categoriesMap;
+
+    if (question.type == 'chips_categorized' && question.categories != null) {
+      // For categorized questions, flatten all category options
+      categoriesMap = question.categories;
+      for (var category in question.categories!.values) {
+        allOptions.addAll(category);
+      }
+    } else {
+      // For regular chip questions, use options list
+      allOptions = question.options;
+    }
+
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text('Edit Answer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
         content: SizedBox(
           width: double.maxFinite,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(question.question, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
-              SizedBox(height: 16),
-              Obx(() => Wrap(
-                children: question.options.map((option) {
-                  final isSelected = tempSelectedOptions.contains(option);
-                  return GestureDetector(
-                    onTap: () {
-                      if (question.allowMultiple) {
-                        isSelected ? tempSelectedOptions.remove(option) : tempSelectedOptions.add(option);
-                      } else {
-                        tempSelectedOptions.value = [option];
-                      }
-                      
-                      // Update custom selected state
-                      isCustomSelected.value = tempSelectedOptions.contains('Custom');
-                    },
-                    child: Container(
-                      margin: EdgeInsets.only(right: 8, bottom: 8),
-                      padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                      decoration: BoxDecoration(
-                        color: isSelected ? Colors.black : Colors.grey[100],
-                        borderRadius: BorderRadius.circular(25),
-                        border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
-                      ),
-                      child: Text(option, style: TextStyle(
-                        color: isSelected ? Colors.white : Colors.black,
-                        fontSize: 14, fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                      )),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(question.question, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                SizedBox(height: 16),
+                Text(
+                  'Select your answer:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
+                ),
+                SizedBox(height: 12),
+                // Show categorized chips if applicable
+                if (question.type == 'chips_categorized' && categoriesMap != null)
+                  ...categoriesMap.entries.map((category) {
+                    return Obx(() => Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Category title
+                        Padding(
+                          padding: EdgeInsets.only(bottom: 8, top: 8),
+                          child: Text(
+                            category.key,
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w600,
+                              color: Colors.grey[700],
+                            ),
+                          ),
+                        ),
+                        // Category options
+                        Wrap(
+                          spacing: 8,
+                          runSpacing: 8,
+                          children: category.value.map((option) {
+                            final isSelected = tempSelectedOptions.contains(option);
+                            return GestureDetector(
+                              onTap: () {
+                                if (question.allowMultiple) {
+                                  if (isSelected) {
+                                    tempSelectedOptions.remove(option);
+                                  } else {
+                                    tempSelectedOptions.add(option);
+                                  }
+                                } else {
+                                  tempSelectedOptions.value = [option];
+                                }
+                              },
+                              child: Container(
+                                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+                                decoration: BoxDecoration(
+                                  color: isSelected ? Colors.black : Colors.grey[100],
+                                  borderRadius: BorderRadius.circular(20),
+                                  border: Border.all(
+                                    color: isSelected ? Colors.black : Colors.grey[300]!,
+                                  ),
+                                ),
+                                child: Text(
+                                  option,
+                                  style: TextStyle(
+                                    color: isSelected ? Colors.white : Colors.black,
+                                    fontSize: 13,
+                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                                  ),
+                                ),
+                              ),
+                            );
+                          }).toList(),
+                        ),
+                        SizedBox(height: 8),
+                      ],
+                    ));
+                  }).toList()
+                else
+                  // Show regular chips
+                  Obx(() => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: allOptions.map((option) {
+                      final isSelected = tempSelectedOptions.contains(option);
+                      return GestureDetector(
+                        onTap: () {
+                          if (question.allowMultiple) {
+                            isSelected ? tempSelectedOptions.remove(option) : tempSelectedOptions.add(option);
+                          } else {
+                            tempSelectedOptions.value = [option];
+                          }
+
+                          // Update custom selected state
+                          isCustomSelected.value = tempSelectedOptions.contains('Custom');
+                        },
+                        child: Container(
+                          margin: EdgeInsets.only(right: 8, bottom: 8),
+                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.black : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(25),
+                            border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
+                          ),
+                          child: Text(option, style: TextStyle(
+                            color: isSelected ? Colors.white : Colors.black,
+                            fontSize: 14, fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                          )),
+                        ),
+                      );
+                    }).toList(),
+                  )),
+                SizedBox(height: 16),
+                // Show custom text field if Custom is selected
+                Obx(() => isCustomSelected.value ? Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      'Enter custom answer:',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
                     ),
-                  );
-                }).toList(),
-              )),
-              SizedBox(height: 16),
-              // Show custom text field if Custom is selected
-              Obx(() => isCustomSelected.value ? Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    'Enter custom answer:',
-                    style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                  ),
-                  SizedBox(height: 8),
-                  TextField(
-                    controller: tempCustomController,
-                    decoration: InputDecoration(
-                      hintText: 'Type your custom answer...',
-                      border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(8),
+                    SizedBox(height: 8),
+                    TextField(
+                      controller: tempCustomController,
+                      decoration: InputDecoration(
+                        hintText: 'Type your custom answer...',
+                        border: OutlineInputBorder(
+                          borderRadius: BorderRadius.circular(8),
+                        ),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
                       ),
-                      contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      maxLines: 2,
                     ),
-                    maxLines: 2,
-                  ),
-                ],
-              ) : SizedBox.shrink()),
-            ],
+                  ],
+                ) : SizedBox.shrink()),
+              ],
+            ),
           ),
         ),
         actions: [
@@ -687,8 +905,8 @@ class RefiningConceptController extends GetxController {
               Future.delayed(Duration(milliseconds: 100), () {
                 tempCustomController.dispose();
               });
-            }, 
-            child: Text('Cancel',style: TextStyle(color: Colors.black)),
+            },
+            child: Text('Cancel',style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
@@ -700,30 +918,44 @@ class RefiningConceptController extends GetxController {
                   backgroundColor: Colors.black,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.TOP,
-                  duration: Duration(seconds: 3),
+                  duration: Duration(seconds: 2),
                 );
                 return;
               }
-              
+
               _answers[questionId] = BriefAnswer(
-                questionId: questionId, 
+                questionId: questionId,
                 selectedOptions: tempSelectedOptions.toList(),
-                textInput: tempSelectedOptions.contains('Custom') 
-                    ? tempCustomController.text.trim() 
+                textInput: tempSelectedOptions.contains('Custom')
+                    ? tempCustomController.text.trim()
                     : null,
               );
-              
+
               Navigator.of(Get.overlayContext!).pop();
-              
+
               // Dispose temporary controller after dialog is closed
               Future.delayed(Duration(milliseconds: 100), () {
                 tempCustomController.dispose();
               });
               update();
-              Get.snackbar('Answer Updated', 'Successfully updated', backgroundColor: Colors.black, colorText: Colors.white, snackPosition: SnackPosition.TOP, duration: Duration(seconds: 3));
+              Get.snackbar(
+                'Answer Updated',
+                'Your answer has been updated successfully',
+                backgroundColor: Colors.black,
+                colorText: Colors.white,
+                snackPosition: SnackPosition.TOP,
+                duration: Duration(seconds: 2),
+                margin: EdgeInsets.all(16),
+              );
             },
-            style: ElevatedButton.styleFrom(backgroundColor: Colors.black),
-            child: Text('Save Changes',style: TextStyle(color: Colors.white),),
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
+            ),
+            child: Text('Save Changes'),
           ),
         ],
       ),
