@@ -3,6 +3,7 @@ import 'package:atella/Modules/creative_brief/controllers/creative_brief_control
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/image_upload_container.dart';
+import 'package:atella/Modules/creative_brief/Views/Widgets/multi_image_upload_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/Widgets/questionare_app_header.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -394,19 +395,67 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildImageUploadForQuestion(BriefQuestion question, bool isAnswered) {
-    return Obx(() {
-      final currentImage = question.id == 'inspiration' ? controller.inspirationImage : '';
-      
-      return ImageUploadContainer(
-        onImageSelected: (imagePath) {
-          if (question.id == 'inspiration') {
-            controller.selectImage(imagePath);
-          }
-        },
-        initialImage: currentImage.isNotEmpty ? currentImage : null,
-        placeholder: 'Upload your visual inspiration',
-      );
-    });
+    if (question.id == 'inspiration') {
+      return Obx(() {
+        // Access the observable list to trigger reactivity
+        final images = controller.inspirationImages.toList();
+        // Check if question is answered reactively
+        final questionAnswered = controller.isQuestionAnswered(question.id);
+
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Multi-image upload widget
+            MultiImageUploadWidget(
+              selectedImages: images,
+              onImageAdded: (imagePath) {
+                controller.addImage(imagePath);
+              },
+              onImageRemoved: (imagePath) {
+                controller.removeImage(imagePath);
+              },
+              placeholder: 'Upload your visual inspiration images',
+            ),
+
+            // Skip button - only show if question is not answered and no images selected
+            if (!questionAnswered && images.isEmpty) ...[
+              SizedBox(height: 16.h),
+              Center(
+                child: TextButton(
+                  onPressed: () {
+                    controller.skipInspirationQuestion();
+                  },
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.r),
+                      side: BorderSide(color: const Color(0xFFE0E0E0), width: 1.5),
+                    ),
+                  ),
+                  child: Text(
+                    'Skip - No reference images',
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: const Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ],
+        );
+      });
+    }
+
+    // Fallback for other image questions (if any)
+    return ImageUploadContainer(
+      onImageSelected: (imagePath) {
+        controller.selectImage(imagePath);
+      },
+      initialImage: null,
+      placeholder: 'Upload image',
+    );
   }
 
 }

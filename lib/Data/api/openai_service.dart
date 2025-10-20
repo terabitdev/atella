@@ -182,11 +182,18 @@ class OpenAIService {
           print('OpenAI: Including inspiration image in generation request');
         }
       }
-      
+
+      // Ensure white background requirement is in the prompt
+      String enhancedPrompt = prompt;
+      if (!enhancedPrompt.toLowerCase().contains('white background')) {
+        enhancedPrompt += '. Professional product photography on clean white background, no mannequin, no people, ghost mannequin effect.';
+        print('OpenAI: Added white background requirement to prompt');
+      }
+
       // Truncate prompt to 1000 characters if necessary
-      String safePrompt = prompt.length > 1000 ? prompt.substring(0, 1000) : prompt;
-      if (prompt.length > 1000) {
-        print('OpenAI: Prompt was too long (${prompt.length}), truncated to 1000 characters.');
+      String safePrompt = enhancedPrompt.length > 1000 ? enhancedPrompt.substring(0, 1000) : enhancedPrompt;
+      if (enhancedPrompt.length > 1000) {
+        print('OpenAI: Prompt was too long (${enhancedPrompt.length}), truncated to 1000 characters.');
       }
 
       print('OpenAI: API key found, making request to DALL-E 3...');
@@ -275,15 +282,24 @@ class OpenAIService {
       final systemPrompt = '''
 You are a fashion design assistant. Based on user inputs from creative brief, refined concept, and final details, create a detailed visual prompt for generating fashion design images.
 
+IMPORTANT REQUIREMENTS FOR IMAGE GENERATION:
+- ALWAYS specify "clean white background" or "pure white background"
+- NEVER include mannequins, models, or people
+- Use "ghost mannequin effect" or "flat lay style" or "product photography style"
+- The garment should be photographed as if floating or laid flat
+- Professional product photography presentation
+
 The prompt should be specific, descriptive, and suitable for DALL-E 3 image generation.
 Include details about:
 - Garment type and style
 - Colors and patterns
-- Materials and textures  
+- Materials and textures
 - Fit and silhouette
 - Target audience
 - Occasion/use case
 - Any specific design elements mentioned
+
+Always end the prompt with: "professional product photography, clean white background, no mannequin, no people, ghost mannequin effect"
 
 Make the prompt clear, concise, and visually descriptive.
 ''';
@@ -295,7 +311,9 @@ Creative Brief: ${jsonEncode(creativeBrief)}
 Refined Concept: ${jsonEncode(refinedConcept)}
 Final Details: ${jsonEncode(finalDetails)}
 
-Generate a comprehensive visual prompt that captures all the key design elements.
+CRITICAL: The prompt MUST specify a clean white background with NO mannequins, NO models, and NO people. Use ghost mannequin effect or flat lay style for professional product photography presentation.
+
+Generate a comprehensive visual prompt that captures all the key design elements and ALWAYS includes the white background requirement.
 ''';
 
       final response = await http.post(

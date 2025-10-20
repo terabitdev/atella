@@ -1,0 +1,186 @@
+import 'dart:io';
+import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:get/get.dart';
+
+class MultiImageUploadWidget extends StatelessWidget {
+  final List<String> selectedImages;
+  final Function(String) onImageAdded;
+  final Function(String) onImageRemoved;
+  final String placeholder;
+
+  const MultiImageUploadWidget({
+    Key? key,
+    required this.selectedImages,
+    required this.onImageAdded,
+    required this.onImageRemoved,
+    this.placeholder = 'Upload visual inspiration images',
+  }) : super(key: key);
+
+  Future<void> _pickImageFromGallery() async {
+    try {
+      final ImagePicker picker = ImagePicker();
+      final XFile? image = await picker.pickImage(source: ImageSource.gallery);
+
+      if (image != null) {
+        onImageAdded(image.path);
+
+        Get.snackbar(
+          'Image Added',
+          'Image added successfully',
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: Duration(seconds: 2),
+        );
+      }
+    } catch (e) {
+      print('Error picking image: $e');
+      Get.snackbar(
+        'Error',
+        'Failed to pick image. Please try again.',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: Duration(seconds: 3),
+      );
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        // Upload button - always visible to add more images
+        GestureDetector(
+          onTap: _pickImageFromGallery,
+          child: Container(
+            width: double.infinity,
+            height: 100.h,
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: const Color(0xFFE0E0E0),
+                width: 1.5,
+                style: BorderStyle.solid,
+              ),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.add_photo_alternate_outlined,
+                  size: 28.w,
+                  color: const Color(0xFF666666),
+                ),
+                SizedBox(height: 6.h),
+                Text(
+                  selectedImages.isEmpty ? placeholder : 'Add more images',
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: const Color(0xFF666666),
+                    fontWeight: FontWeight.w500,
+                  ),
+                  textAlign: TextAlign.center,
+                ),
+                SizedBox(height: 2.h),
+                Text(
+                  'Tap to select from gallery',
+                  style: TextStyle(
+                    fontSize: 11.sp,
+                    color: const Color(0xFF999999),
+                    fontWeight: FontWeight.w400,
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
+
+        // Display selected images in a grid/wrap
+        if (selectedImages.isNotEmpty) ...[
+          SizedBox(height: 12.h),
+          Wrap(
+            spacing: 8.w,
+            runSpacing: 8.h,
+            children: selectedImages.map((imagePath) {
+              return _buildImageContainer(imagePath);
+            }).toList(),
+          ),
+        ],
+      ],
+    );
+  }
+
+  Widget _buildImageContainer(String imagePath) {
+    return Stack(
+      children: [
+        Container(
+          width: 100.w,
+          height: 100.w,
+          decoration: BoxDecoration(
+            borderRadius: BorderRadius.circular(12.r),
+            border: Border.all(
+              color: const Color(0xFFE0E0E0),
+              width: 1.5,
+            ),
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(12.r),
+            child: Image.file(
+              File(imagePath),
+              fit: BoxFit.cover,
+              errorBuilder: (context, error, stackTrace) {
+                return Container(
+                  color: const Color(0xFFF5F5F5),
+                  child: Column(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Icon(
+                        Icons.broken_image,
+                        color: const Color(0xFF999999),
+                        size: 24.w,
+                      ),
+                      SizedBox(height: 4.h),
+                      Text(
+                        'Error',
+                        style: TextStyle(
+                          fontSize: 10.sp,
+                          color: const Color(0xFF999999),
+                        ),
+                      ),
+                    ],
+                  ),
+                );
+              },
+            ),
+          ),
+        ),
+        // Remove button (cross icon)
+        Positioned(
+          top: 4,
+          right: 4,
+          child: GestureDetector(
+            onTap: () => onImageRemoved(imagePath),
+            child: Container(
+              width: 24.w,
+              height: 24.w,
+              decoration: BoxDecoration(
+                color: Colors.black.withOpacity(0.7),
+                shape: BoxShape.circle,
+              ),
+              child: Icon(
+                Icons.close,
+                color: Colors.white,
+                size: 14.w,
+              ),
+            ),
+          ),
+        ),
+      ],
+    );
+  }
+}

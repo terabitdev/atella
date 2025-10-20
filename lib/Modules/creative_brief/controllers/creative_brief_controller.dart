@@ -40,9 +40,9 @@ class CreativeBriefController extends GetxController {
   final RxBool _isTextLoading = false.obs;
   bool get isTextLoading => _isTextLoading.value;
 
-  // Image storage for inspiration question
-  final RxString _inspirationImage = ''.obs;
-  String get inspirationImage => _inspirationImage.value;
+  // Image storage for inspiration question - now supports multiple images
+  final RxList<String> _inspirationImages = <String>[].obs;
+  List<String> get inspirationImages => _inspirationImages;
 
   // Track which question has custom selected - FIXED: Now properly observable
   final RxString _customSelectedForQuestion = ''.obs;
@@ -252,24 +252,41 @@ class CreativeBriefController extends GetxController {
       );
     }
     
-    // Load image-based inspiration
-    final inspiration = creativeBriefData['inspiration'] as String? ?? '';
-    if (inspiration.isNotEmpty) {
-      // Check if it's an image path or regular text
-      if (inspiration.contains('/') || inspiration.contains('\\')) {
-        // It's an image path
-        _inspirationImage.value = inspiration;
+    // Load image-based inspiration (support both single and multiple images)
+    final inspiration = creativeBriefData['inspiration'];
+    if (inspiration != null) {
+      if (inspiration is List) {
+        // Multiple images
+        final imagePaths = inspiration.cast<String>();
+        _inspirationImages.value = imagePaths;
         _answers['inspiration'] = BriefAnswer(
           questionId: 'inspiration',
           selectedOptions: ['Image'],
-          textInput: inspiration,
+          textInput: imagePaths.join('|||'), // Use delimiter to store multiple paths
         );
-      } else {
-        // It's regular text (legacy data)
-        _answers['inspiration'] = BriefAnswer(
-          questionId: 'inspiration',
-          selectedOptions: [inspiration],
-        );
+      } else if (inspiration is String && inspiration.isNotEmpty) {
+        // Single image or text
+        if (inspiration.contains('/') || inspiration.contains('\\')) {
+          // Check if it contains multiple images separated by delimiter
+          if (inspiration.contains('|||')) {
+            final imagePaths = inspiration.split('|||');
+            _inspirationImages.value = imagePaths;
+          } else {
+            // Single image path
+            _inspirationImages.value = [inspiration];
+          }
+          _answers['inspiration'] = BriefAnswer(
+            questionId: 'inspiration',
+            selectedOptions: ['Image'],
+            textInput: inspiration,
+          );
+        } else {
+          // Legacy text data
+          _answers['inspiration'] = BriefAnswer(
+            questionId: 'inspiration',
+            selectedOptions: [inspiration],
+          );
+        }
       }
     }
     
@@ -582,30 +599,89 @@ class CreativeBriefController extends GetxController {
     _nextQuestion();
   }
 
-  void selectImage(String? imagePath) async {
-    if (imagePath == null || imagePath.isEmpty) {
-      // Remove image
-      _inspirationImage.value = '';
-      _answers.remove('inspiration');
-    } else {
-      // Set image
-      _inspirationImage.value = imagePath;
-      
-      // Create answer for inspiration question
-      _answers['inspiration'] = BriefAnswer(
-        questionId: 'inspiration',
-        selectedOptions: ['Image'],
-        textInput: imagePath, // Store image path as text input
-      );
+  // Add a new image to the inspiration images list
+  void addImage(String imagePath) async {
+    if (imagePath.isEmpty) return;
+
+    // Check if this is the first image being added
+    final isFirstImage = _inspirationImages.isEmpty;
+
+    // Add image to list if not already present
+    if (!_inspirationImages.contains(imagePath)) {
+      _inspirationImages.add(imagePath);
+
+      // Update answer with all image paths
+      _updateInspirationAnswer();
     }
-    
+
     update();
-    
-    // Auto-advance to next question if image is selected
-    if (imagePath != null && imagePath.isNotEmpty) {
+
+    // Auto-advance to next question when first image is selected
+    if (isFirstImage && currentQuestion.id == 'inspiration') {
       await Future.delayed(const Duration(milliseconds: 800));
       _nextQuestion();
     }
+  }
+
+  // Remove a specific image from the inspiration images list
+  void removeImage(String imagePath) {
+    _inspirationImages.remove(imagePath);
+
+    // Update answer
+    if (_inspirationImages.isEmpty) {
+      _answers.remove('inspiration');
+    } else {
+      _updateInspirationAnswer();
+    }
+
+    update();
+  }
+
+  // Update the inspiration answer with current images
+  void _updateInspirationAnswer() {
+    if (_inspirationImages.isEmpty) {
+      _answers.remove('inspiration');
+      _answers.refresh(); // Trigger reactive update
+      return;
+    }
+
+    _answers['inspiration'] = BriefAnswer(
+      questionId: 'inspiration',
+      selectedOptions: ['Image'],
+      textInput: _inspirationImages.join('|||'), // Store all paths with delimiter
+    );
+
+    // Trigger reactive update for the map
+    _answers.refresh();
+  }
+
+  // Legacy method for backward compatibility - now adds image instead of replacing
+  void selectImage(String? imagePath) async {
+    if (imagePath != null && imagePath.isNotEmpty) {
+      addImage(imagePath);
+    }
+  }
+
+  // Skip the inspiration question
+  void skipInspirationQuestion() async {
+    // Clear any selected images
+    _inspirationImages.clear();
+    _answers.remove('inspiration');
+
+    // Mark question as skipped by creating an empty answer
+    _answers['inspiration'] = BriefAnswer(
+      questionId: 'inspiration',
+      selectedOptions: ['Skipped'],
+      textInput: null,
+    );
+
+    // Trigger reactive update for the map
+    _answers.refresh();
+    update();
+
+    // Auto-advance to next question
+    await Future.delayed(const Duration(milliseconds: 400));
+    _nextQuestion();
   }
 
   void _nextQuestion() {
@@ -1020,14 +1096,26 @@ class CreativeBriefController extends GetxController {
           }
           break;
         case 'inspiration':
-          // For image type, save the image path directly
-          if (answer.textInput?.isNotEmpty == true && answer.selectedOptions.contains('Image')) {
-            creativeBriefData['inspiration'] = answer.textInput; // Save image path
+          // Check if question was skipped
+          if (answer.selectedOptions.contains('Skipped')) {
+            creativeBriefData['inspiration'] = [];
+            creativeBriefData['inspirationType'] = 'skipped';
+          }
+          // For image type, save the image paths
+          else if (answer.textInput?.isNotEmpty == true && answer.selectedOptions.contains('Image')) {
+            // Multiple images stored with delimiter
+            if (answer.textInput!.contains('|||')) {
+              final imagePaths = answer.textInput!.split('|||');
+              creativeBriefData['inspiration'] = imagePaths; // Save as array
+            } else {
+              // Single image (backward compatibility)
+              creativeBriefData['inspiration'] = [answer.textInput!]; // Save as array
+            }
             creativeBriefData['inspirationType'] = 'image';
           } else {
             // Legacy text-based inspiration
-            creativeBriefData['inspiration'] = answer.selectedOptions.isNotEmpty 
-                ? answer.selectedOptions.first 
+            creativeBriefData['inspiration'] = answer.selectedOptions.isNotEmpty
+                ? answer.selectedOptions.first
                 : '';
             creativeBriefData['inspirationType'] = 'text';
             if (answer.textInput?.isNotEmpty == true) {
