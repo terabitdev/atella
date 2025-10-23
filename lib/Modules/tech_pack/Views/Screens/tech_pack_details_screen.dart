@@ -151,7 +151,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
                                   label:
-                                      'What size range do you plan to produce? (e.g. XS–XL)',
+                                      'Do you want to use standard size charts or enter custom measurements? (e.g. XS–XL)',
                                   hint: '',
                                   controller: controller.sizeRangeController,
                                   onChanged: (_) =>
@@ -250,8 +250,8 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 ),
                                 TechPackQuestionField(
                                   label:
-                                      'Any specific assembly or stitching instructions?',
-                                  hint: 'Reinforced double stitch',
+                                      'Which stitch type should be used?',
+                                  hint: 'Single, double, overlock etc',
                                   controller: controller.stitchingController,
                                   onChanged: (_) =>
                                       controller.checkTechnicalBlockComplete(),
@@ -451,6 +451,43 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   controller: controller.deliveryDateController,
                                   onChanged: (_) =>
                                       controller.checkProductionBlockComplete(),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
+                      )
+                    : const SizedBox.shrink(),
+              ),
+              // Manufacturers Block
+              Obx(
+                () => controller.showManufacturersBlock.value
+                    ? Column(
+                        children: [
+                          SizedBox(height: 18.h),
+                          Container(
+                            width: double.infinity,
+                            padding: const EdgeInsets.symmetric(
+                              vertical: 18,
+                              horizontal: 14,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(18.r),
+                            ),
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                const RoundedTagContainer(
+                                  text: 'Manufacturers',
+                                ),
+                                SizedBox(height: 10.h),
+                                TechPackQuestionField(
+                                  label: 'Would you like me to suggest manufacturers?',
+                                  hint: 'Country name',
+                                  controller: controller.manufacturerCountryController,
+                                  onChanged: (_) =>
+                                      controller.checkManufacturersBlockComplete(),
                                 ),
                                 SizedBox(height: 20.h),
                                 OutlineGenerateRoundButton(

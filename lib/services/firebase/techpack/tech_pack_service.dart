@@ -116,8 +116,33 @@ class TechPackService {
   // Request storage permission for Android
   static Future<bool> _requestStoragePermission() async {
     if (Platform.isAndroid) {
-      final status = await Permission.storage.request();
-      return status.isGranted;
+      // For Android 13+ (API 33+), we need to request photos permission
+      // For Android 11-12 (API 30-32), we can use app-specific storage without permission
+      // For Android 10 and below, we need storage permission
+
+      // Check Android version
+      final androidInfo = await Permission.storage.status;
+
+      // For Android 11+ (API 30+), we don't need MANAGE_EXTERNAL_STORAGE
+      // We can use app-specific storage which doesn't require permission
+      if (androidInfo.isDenied || androidInfo.isPermanentlyDenied) {
+        final status = await Permission.storage.request();
+
+        // If still denied, try using photos permission for Android 13+
+        if (status.isDenied || status.isPermanentlyDenied) {
+          // Try photos permission (for Android 13+)
+          final photosStatus = await Permission.photos.request();
+          if (photosStatus.isGranted) {
+            return true;
+          }
+
+          // For Android 11+, we can still save to app-specific directory
+          // which doesn't require permission
+          return true;
+        }
+        return status.isGranted;
+      }
+      return true;
     }
     return true; // iOS doesn't need this permission
   }
@@ -127,6 +152,7 @@ class TechPackService {
     required List<String> base64Images,
     required String techPackSummary,
     required String projectName,
+    bool withLogo = true,
   }) async {
     try {
       // Request permission first
@@ -152,14 +178,18 @@ class TechPackService {
         }
       }
 
-// Load images before adding the page
-final titleImage = pw.MemoryImage(
-  (await rootBundle.load('assets/images/title.png')).buffer.asUint8List(),
-);
+// Load images before adding the page (only if withLogo is true)
+pw.MemoryImage? titleImage;
+pw.MemoryImage? logoImage;
 
-final logoImage = pw.MemoryImage(
-  (await rootBundle.load('assets/images/logo.png')).buffer.asUint8List(),
-);
+if (withLogo) {
+  titleImage = pw.MemoryImage(
+    (await rootBundle.load('assets/images/title.png')).buffer.asUint8List(),
+  );
+  logoImage = pw.MemoryImage(
+    (await rootBundle.load('assets/images/logo.png')).buffer.asUint8List(),
+  );
+}
 
 // Add cover page
 pdf.addPage(
@@ -170,16 +200,17 @@ pdf.addPage(
       return pw.Column(
         crossAxisAlignment: pw.CrossAxisAlignment.start,
         children: [
-          // Top row with title image (left) and logo image (right)
-          pw.Row(
-            mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
-            children: [
-              pw.Image(titleImage, height: 40, width: 120),
-              pw.Image(logoImage, height: 40, width: 40),
-            ],
-          ),
+          // Top row with title image (left) and logo image (right) - only if withLogo is true
+          if (withLogo && titleImage != null && logoImage != null)
+            pw.Row(
+              mainAxisAlignment: pw.MainAxisAlignment.spaceBetween,
+              children: [
+                pw.Image(titleImage, height: 40, width: 120),
+                pw.Image(logoImage, height: 40, width: 40),
+              ],
+            ),
 
-          pw.SizedBox(height: 20),
+          if (withLogo) pw.SizedBox(height: 20),
 
           pw.Center(
             child: pw.Text(
@@ -251,21 +282,50 @@ pdf.addPage(
       String folderName;
 
       if (Platform.isAndroid) {
-        // Use external storage directory for Android
-        directory =
-            await getExternalStorageDirectory() ??
+        // For Android 11+ (API 30+), use app-specific storage
+        // This doesn't require permissions and files are accessible via Files app
+        directory = await getExternalStorageDirectory() ??
             await getApplicationDocumentsDirectory();
-        folderName = 'TechPack Downloads';
+
+        // Navigate to a user-accessible location
+        // From: /storage/emulated/0/Android/data/com.app/files
+        // To: /storage/emulated/0/Download/ATELIA
+        final List<String> paths = directory.path.split('/');
+        final int index = paths.indexWhere((element) => element == 'Android');
+
+        if (index != -1) {
+          // Build path to Downloads/ATELIA
+          final basePath = paths.sublist(0, index).join('/');
+          directory = Directory('$basePath/Download/ATELIA');
+
+          // Create directory if it doesn't exist
+          if (!await directory.exists()) {
+            try {
+              await directory.create(recursive: true);
+            } catch (e) {
+              // If we can't create in Downloads, fall back to app-specific storage
+              print('Could not create Downloads folder, using app storage: $e');
+              directory = await getExternalStorageDirectory() ??
+                  await getApplicationDocumentsDirectory();
+            }
+          }
+          folderName = '';
+        } else {
+          folderName = 'TechPack';
+        }
       } else {
         // Use documents directory for iOS
         directory = await getApplicationDocumentsDirectory();
         folderName = 'TechPack';
       }
 
-      // Create TechPack folder inside the directory
-      final techPackDir = Directory('${directory.path}/$folderName');
-      if (!await techPackDir.exists()) {
-        await techPackDir.create(recursive: true);
+      // Create TechPack folder if needed
+      Directory techPackDir = directory;
+      if (folderName.isNotEmpty) {
+        techPackDir = Directory('${directory.path}/$folderName');
+        if (!await techPackDir.exists()) {
+          await techPackDir.create(recursive: true);
+        }
       }
 
       final fileName = 'TechPack_${DateTime.now().millisecondsSinceEpoch}.pdf';

@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:shimmer/shimmer.dart';
 import '../Data/Models/tech_pack_model.dart';
 import 'dart:convert';
 
@@ -81,31 +82,16 @@ class DesignGridItem extends StatelessWidget {
         fit: BoxFit.cover,
         loadingBuilder: (context, child, loadingProgress) {
           if (loadingProgress == null) return child;
-          return Container(
-            height: 200.h,
-            width: double.infinity,
-            color: Colors.grey[100],
-            child: Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  CircularProgressIndicator(
-                    value: loadingProgress.expectedTotalBytes != null
-                        ? loadingProgress.cumulativeBytesLoaded /
-                            loadingProgress.expectedTotalBytes!
-                        : null,
-                    strokeWidth: 2,
-                    color: Colors.black54,
-                  ),
-                  SizedBox(height: 8.h),
-                  Text(
-                    'Loading...',
-                    style: TextStyle(
-                      fontSize: 12.sp,
-                      color: Colors.grey[600],
-                    ),
-                  ),
-                ],
+          return Shimmer.fromColors(
+            baseColor: Colors.grey[300]!,
+            highlightColor: Colors.grey[100]!,
+            direction: ShimmerDirection.ltr,
+            child: Container(
+              height: 177.h,
+              width: double.infinity,
+              decoration: BoxDecoration(
+                color: Colors.grey[300],
+                borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
               ),
             ),
           );

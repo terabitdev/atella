@@ -5,6 +5,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../Widgets/save_export_button_row.dart';
 import '../Widgets/save_tech_pack_dialog.dart';
+import '../Widgets/export_options_dialog.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
@@ -80,6 +81,23 @@ class TechPackReadyScreen extends StatelessWidget {
               projectName,
               collectionName,
             );
+          },
+        );
+      },
+    );
+  }
+
+  void _showExportDialog(
+    BuildContext context,
+    TechPackReadyController controller,
+  ) {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (context) {
+        return ExportOptionsDialog(
+          onExport: (withLogo) async {
+            await controller.exportTechPackPDF(withLogo: withLogo);
           },
         );
       },
@@ -273,7 +291,12 @@ class TechPackReadyScreen extends StatelessWidget {
               RoundButton(
                 title: 'Get Manufacturer Suggestions',
                 onTap: ()  {
-                  Get.to(() => RecommendedManufactureScreen());
+                  Get.to(
+                    () => RecommendedManufactureScreen(),
+                    arguments: {
+                      'manufacturerCountry': controller.manufacturerCountry,
+                    },
+                  );
                 },
                 color: AppColors.buttonColor,
                 isloading: false,
@@ -282,7 +305,7 @@ class TechPackReadyScreen extends StatelessWidget {
               Obx(
                 () => SaveExportButtonRow(
                   onSave: () => _showSaveDialog(context, controller),
-                  onExport: () => controller.exportTechPackPDF(),
+                  onExport: () => _showExportDialog(context, controller),
                   isSaving: controller
                       .isSaving
                       .value, // Show loading on screen save button

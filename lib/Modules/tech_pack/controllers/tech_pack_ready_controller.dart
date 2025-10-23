@@ -40,6 +40,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
     ''';
   }
 
+  // Get manufacturer country preference
+  String get manufacturerCountry => _detailsController.manufacturerCountryController.text;
+
   String _getProjectName() {
     // Extract garment type for project name
     String garmentType = 'Fashion';
@@ -194,6 +197,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
           'quantity': _detailsController.quantityController.text,
           'deliveryDate': _detailsController.deliveryDateController.text,
         },
+        'manufacturers': {
+          'country': _detailsController.manufacturerCountryController.text,
+        },
       };
       
       if (isEditMode && editingTechPack != null) {
@@ -273,8 +279,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
     await saveTechPackWithDetails(_getProjectName(), 'GENERAL COLLECTION');
   }
 
-  // Export tech pack as PDF
-  Future<void> exportTechPackPDF() async {
+  // Export tech pack as PDF with logo option
+  Future<void> exportTechPackPDF({bool withLogo = true}) async {
     if (!hasGeneratedImages) {
       Get.snackbar(
         'No Images',
@@ -289,12 +295,13 @@ Delivery: ${_detailsController.deliveryDateController.text}
     try {
       isExporting.value = true;
 
-      // Generate PDF with dynamic project name
+      // Generate PDF with dynamic project name and logo option
       final projectName = _getProjectName();
       final pdfPath = await TechPackService.generateTechPackPDF(
         base64Images: generatedImages,
         techPackSummary: techPackSummary,
         projectName: projectName,
+        withLogo: withLogo,
       );
 
       // Download PDF to Downloads folder
@@ -302,7 +309,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
 
       Get.snackbar(
         'Success',
-        'Tech pack PDF saved successfully!',
+        withLogo
+          ? 'Tech pack PDF with branding saved successfully!'
+          : 'Neutral tech pack PDF saved successfully!',
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

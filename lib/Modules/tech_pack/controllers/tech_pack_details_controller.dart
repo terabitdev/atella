@@ -59,6 +59,9 @@ class TechPackDetailsController extends GetxController {
   final quantityController = TextEditingController();
   final deliveryDateController = TextEditingController();
 
+  // Manufacturers
+  final manufacturerCountryController = TextEditingController();
+
   // Block visibility
   final RxBool showColorsBlock = false.obs;
   final RxBool showSizesBlock = false.obs;
@@ -66,6 +69,7 @@ class TechPackDetailsController extends GetxController {
   final RxBool showLabelingBlock = false.obs;
   final RxBool showPackagingBlock = false.obs;
   final RxBool showProductionBlock = false.obs;
+  final RxBool showManufacturersBlock = false.obs;
 
   // Image picker instance
   final ImagePicker _picker = ImagePicker();
@@ -258,6 +262,11 @@ class TechPackDetailsController extends GetxController {
     quantityController.text = production['quantity'] ?? '';
     deliveryDateController.text = production['deliveryDate'] ?? '';
 
+    // Manufacturers
+    final manufacturers =
+        techPackDetails['manufacturers'] as Map<String, dynamic>? ?? {};
+    manufacturerCountryController.text = manufacturers['country'] ?? '';
+
     update();
   }
 
@@ -269,6 +278,7 @@ class TechPackDetailsController extends GetxController {
     showLabelingBlock.value = true;
     showPackagingBlock.value = true;
     showProductionBlock.value = true;
+    showManufacturersBlock.value = true;
   }
 
 
@@ -325,7 +335,16 @@ class TechPackDetailsController extends GetxController {
   }
 
   void checkProductionBlockComplete() {
-    // No further block, but could trigger a summary or enable submit
+    if (costPerPieceController.text.isNotEmpty &&
+        quantityController.text.isNotEmpty &&
+        deliveryDateController.text.isNotEmpty) {
+      showManufacturersBlock.value = true;
+    }
+  }
+
+  void checkManufacturersBlockComplete() {
+    // Optional field - no further block needed
+    // User can proceed to generate even if this is empty
   }
 
   Map<String, String> _collectReferenceImages() {
@@ -1304,6 +1323,9 @@ class TechPackDetailsController extends GetxController {
         'quantity': quantityController.text,
         'deliveryDate': deliveryDateController.text,
       },
+      'manufacturers': {
+        'country': manufacturerCountryController.text,
+      },
     };
   }
 
@@ -1329,6 +1351,7 @@ class TechPackDetailsController extends GetxController {
     costPerPieceController.dispose();
     quantityController.dispose();
     deliveryDateController.dispose();
+    manufacturerCountryController.dispose();
     super.onClose();
   }
 }

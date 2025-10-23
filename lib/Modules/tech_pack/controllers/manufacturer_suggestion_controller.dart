@@ -49,10 +49,40 @@ class ManufacturerSuggestionController extends GetxController {
   void onInit() {
     super.onInit();
     _initializeStreams();
+    _checkForPrefilter();
     loadRecommendedManufacturers();
     setupScrollListener();
   }
-  
+
+  void _checkForPrefilter() {
+    // Check if manufacturer country was passed from tech pack details
+    final arguments = Get.arguments as Map<String, dynamic>?;
+    if (arguments != null && arguments.containsKey('manufacturerCountry')) {
+      final countryName = arguments['manufacturerCountry'] as String?;
+      if (countryName != null && countryName.isNotEmpty) {
+        // Immediately switch to custom tab BEFORE data loads
+        tabIndex.value = 1;
+        _shouldSwitchToCustomTab = true;
+        _prefilterCountryName = countryName;
+        // Set country name immediately so UI shows it
+        selectedCountryName.value = countryName;
+
+        print('Pre-filter detected: $countryName, switching to Custom tab');
+      }
+    }
+  }
+
+  bool _shouldSwitchToCustomTab = false;
+  String _prefilterCountryName = '';
+
+  void _applyPrefilter() {
+    // Tab is already switched in _checkForPrefilter
+    // Just apply the actual filtering now that data is loaded
+    loadFilteredManufacturers();
+
+    print('Pre-filter applied: ${_prefilterCountryName}, found ${filteredManufacturers.length} manufacturers');
+  }
+
   void _initializeStreams() {
     // Initialize with empty lists
     _recommendedStreamController.add([]);
@@ -102,13 +132,18 @@ class ManufacturerSuggestionController extends GetxController {
       
       // Pre-load ALL manufacturers for instant custom tab switching
       filteredManufacturers.assignAll(allManufacturers);
-      
+
       // Mark data as ready for instant tab switching
       isDataReady.value = true;
-      
+
       // Update loading state
       _loadingStreamController.add(false);
       isLoadingCustomTab.value = false;
+
+      // Apply pre-filter if specified
+      if (_shouldSwitchToCustomTab && _prefilterCountryName.isNotEmpty) {
+        _applyPrefilter();
+      }
     } catch (e) {
       error.value = 'Failed to load manufacturers: $e';
       print('Error loading manufacturers: $e');
