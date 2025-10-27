@@ -447,6 +447,7 @@ class TechPackDetailsController extends GetxController {
           size: '1024x1024',
         );
         print('✅ Manufacturing image generated successfully');
+        print('   Base64 preview: ${manufacturingImages.isNotEmpty ? manufacturingImages[0].substring(0, 50) : "EMPTY"}...');
       } catch (e) {
         print('❌ Manufacturing image generation failed: $e');
         throw Exception('Failed to generate manufacturing image');
@@ -463,6 +464,7 @@ class TechPackDetailsController extends GetxController {
           size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
         );
         print('✅ Technical flat drawing generated successfully');
+        print('   Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...');
       } catch (e) {
         print('❌ Technical image generation failed, trying fallback: $e');
 
@@ -474,11 +476,31 @@ class TechPackDetailsController extends GetxController {
           numberOfImages: 1,
           size: '1024x1024',
         );
+        print('   Fallback Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...');
+      }
+
+      // CRITICAL CHECK: Verify images are different before adding to list
+      if (manufacturingImages.isNotEmpty && technicalImages.isNotEmpty) {
+        final areIdentical = manufacturingImages[0] == technicalImages[0];
+        print('⚠️ COMPARING GENERATED IMAGES:');
+        print('   Manufacturing: ${manufacturingImages[0].substring(0, 50)}...');
+        print('   Technical: ${technicalImages[0].substring(0, 50)}...');
+        print('   Are identical: $areIdentical');
+        
+        if (areIdentical) {
+          print('❌ ERROR: AI generated IDENTICAL images for manufacturing and technical!');
+          print('This is likely an OpenAI API issue or both prompts are too similar.');
+        }
       }
 
       // Add images to the list
       generatedTechPackImages.addAll(manufacturingImages);
       generatedTechPackImages.addAll(technicalImages);
+      
+      print('📦 Final image list:');
+      for (int i = 0; i < generatedTechPackImages.length; i++) {
+        print('   Image[$i]: ${generatedTechPackImages[i].substring(0, 50)}...');
+      }
 
       print('=== DETAILED TECH PACK GENERATION COMPLETED ===');
       print(

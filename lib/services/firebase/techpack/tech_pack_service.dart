@@ -459,17 +459,40 @@ pdf.addPage(
         ..add(TextContent("generation_date", DateTime.now().toString().split(' ')[0]));
 
       // Add images as base64
+      print('=== WORD DOCUMENT IMAGES ===');
+      print('Total images received: ${base64Images.length}');
+      
       if (base64Images.isNotEmpty) {
-        // First image - Tech Pack Details
-        content.add(ImageContent("tech_pack_image_1", base64Decode(base64Images[0])));
+        // First image - Tech Pack Details (Manufacturing image)
+        final firstImageBytes = base64Decode(base64Images[0]);
+        final firstImagePreview = base64Images[0].substring(0, 50);
+        print('Image[0] → {{tech_pack_image_1}} (Tech Pack Details)');
+        print('  Base64 preview: $firstImagePreview...');
+        print('  Size: ${firstImageBytes.length} bytes');
+        content.add(ImageContent("tech_pack_image_1", firstImageBytes));
       }
-      print('Base64 image 1 added: ${base64Images[1]}');
 
       if (base64Images.length > 1) {
         // Second image - Technical Flat Drawing
-        content.add(ImageContent("tech_pack_image_2", base64Decode(base64Images[1])));
+        final secondImageBytes = base64Decode(base64Images[1]);
+        final secondImagePreview = base64Images[1].substring(0, 50);
+        print('Image[1] → {{tech_pack_image_2}} (Technical Flat)');
+        print('  Base64 preview: $secondImagePreview...');
+        print('  Size: ${secondImageBytes.length} bytes');
+        content.add(ImageContent("tech_pack_image_2", secondImageBytes));
+        
+        // CRITICAL: Verify images are different
+        final areImagesIdentical = base64Images[0] == base64Images[1];
+        print('⚠️ ARE IMAGES IDENTICAL? $areImagesIdentical');
+        if (areImagesIdentical) {
+          print('❌ ERROR: Both images have the same base64 string!');
+          print('This means the AI generated the same image twice or there is an issue with image order.');
+        }
+      } else {
+        print('⚠️ Only one image available, {{tech_pack_image_2}} will be empty');
       }
-      print('Base64 image 2 added: ${base64Images[1]}');
+      
+      print('===========================');
 
       print('Generating Word document with content...');
 
