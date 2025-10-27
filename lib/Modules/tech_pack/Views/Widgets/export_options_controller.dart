@@ -1,18 +1,25 @@
 import 'package:get/get.dart';
 
+enum ExportType { pdfWithLogo, neutralPdf, word }
+
 class ExportOptionsController extends GetxController {
-  final RxBool pdfWithLogo = true.obs;
-  final RxBool neutralPdf = false.obs;
+  final Rx<ExportType> selectedExportType = ExportType.pdfWithLogo.obs;
 
   void selectPdfWithLogo() {
-    pdfWithLogo.value = true;
-    neutralPdf.value = false;
+    selectedExportType.value = ExportType.pdfWithLogo;
   }
 
   void selectNeutralPdf() {
-    pdfWithLogo.value = false;
-    neutralPdf.value = true;
+    selectedExportType.value = ExportType.neutralPdf;
   }
 
-  bool get shouldExportWithLogo => pdfWithLogo.value;
+  void selectWord() {
+    selectedExportType.value = ExportType.word;
+  }
+
+  bool get isPdfWithLogo => selectedExportType.value == ExportType.pdfWithLogo;
+  bool get isNeutralPdf => selectedExportType.value == ExportType.neutralPdf;
+  bool get isWord => selectedExportType.value == ExportType.word;
+
+  bool get shouldExportWithLogo => isPdfWithLogo;
 }

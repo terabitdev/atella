@@ -177,6 +177,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "2.3.2"
+  docx_template_fork:
+    dependency: "direct main"
+    description:
+      name: docx_template_fork
+      sha256: a498d466c71d61e9604973ef81d7f8d29734d336be2488ea650e1c07cc9d1edb
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.5.0"
   dotted_border:
     dependency: "direct main"
     description:
@@ -965,6 +973,22 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "0.28.0"
+  share_plus:
+    dependency: "direct main"
+    description:
+      name: share_plus
+      sha256: "14c8860d4de93d3a7e53af51bff479598c4e999605290756bbbe45cf65b37840"
+      url: "https://pub.dev"
+    source: hosted
+    version: "12.0.1"
+  share_plus_platform_interface:
+    dependency: transitive
+    description:
+      name: share_plus_platform_interface
+      sha256: "88023e53a13429bd65d8e85e11a9b484f49d4c190abbd96c7932b74d6927cc9a"
+      url: "https://pub.dev"
+    source: hosted
+    version: "6.1.0"
   shared_preferences:
     dependency: transitive
     description:

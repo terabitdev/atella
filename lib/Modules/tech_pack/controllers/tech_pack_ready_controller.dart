@@ -3,6 +3,7 @@ import 'tech_pack_details_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
 import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
+import 'package:share_plus/share_plus.dart';
 
 class TechPackReadyController extends GetxController {
   final TechPackDetailsController _detailsController = Get.find<TechPackDetailsController>();
@@ -304,19 +305,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
         withLogo: withLogo,
       );
 
-      // Download PDF to Downloads folder
-      await TechPackService.downloadPDF(pdfPath);
-
-      Get.snackbar(
-        'Success',
-        withLogo
-          ? 'Tech pack PDF with branding saved successfully!'
-          : 'Neutral tech pack PDF saved successfully!',
-        backgroundColor: Colors.black,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
-      );
+      // Open share sheet instead of downloading
+      await _shareFile(pdfPath);
+      
     } catch (e) {
       print('Error exporting PDF: ${e.toString()}');
       Get.snackbar(
@@ -329,6 +320,68 @@ Delivery: ${_detailsController.deliveryDateController.text}
       );
     } finally {
       isExporting.value = false;
+    }
+  }
+
+  // Export tech pack as Word document
+  Future<void> exportTechPackWord() async {
+    if (!hasGeneratedImages) {
+      Get.snackbar(
+        'No Images',
+        'Please generate tech pack images first',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+      return;
+    }
+
+    try {
+      isExporting.value = true;
+
+      // Generate Word document with dynamic project name
+      final projectName = _getProjectName();
+      final wordPath = await TechPackService.generateTechPackWord(
+        base64Images: generatedImages,
+        techPackSummary: techPackSummary,
+        projectName: projectName,
+      );
+
+      // Open share sheet instead of downloading
+      await _shareFile(wordPath);
+      
+    } catch (e) {
+      print('Error exporting Word: ${e.toString()}');
+      Get.snackbar(
+        'Error',
+        'Failed to export Word document: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isExporting.value = false;
+    }
+  }
+
+  // Share file using share_plus
+  Future<void> _shareFile(String filePath) async {
+    try {
+      final file = XFile(filePath);
+      await Share.shareXFiles(
+        [file],
+        text: 'Tech Pack Document',
+      );
+    } catch (e) {
+      print('Error sharing file: ${e.toString()}');
+      Get.snackbar(
+        'Error',
+        'Failed to share file: ${e.toString()}',
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
     }
   }
 }

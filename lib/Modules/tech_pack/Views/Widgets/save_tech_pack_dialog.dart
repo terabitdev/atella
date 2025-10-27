@@ -7,12 +7,12 @@ import '../../controllers/tech_pack_ready_controller.dart';
 class SaveTechPackDialog extends StatelessWidget {
   final Function(String projectName, String collectionName) onSave;
 
-  const SaveTechPackDialog({
-    super.key,
-    required this.onSave,
-  });
+  const SaveTechPackDialog({super.key, required this.onSave});
 
-  void _showAddCollectionDialog(BuildContext context, TechPackReadyController controller) {
+  void _showAddCollectionDialog(
+    BuildContext context,
+    TechPackReadyController controller,
+  ) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -28,8 +28,10 @@ class SaveTechPackDialog extends StatelessWidget {
       },
       transitionBuilder: (context, animation1, animation2, child) {
         return SlideTransition(
-          position: Tween(begin: const Offset(0, 1), end: const Offset(0, 0))
-              .animate(animation1),
+          position: Tween(
+            begin: const Offset(0, 1),
+            end: const Offset(0, 0),
+          ).animate(animation1),
           child: child,
         );
       },
@@ -39,11 +41,9 @@ class SaveTechPackDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<TechPackReadyController>();
-    
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Padding(
         padding: EdgeInsets.all(24.w),
@@ -51,26 +51,17 @@ class SaveTechPackDialog extends StatelessWidget {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              'Save Tech Pack',
-              style: dbTitleTextTextStyle18700,
-            ),
+            Text('Save Tech Pack', style: dbTitleTextTextStyle18700),
             SizedBox(height: 20.h),
-            
+
             // Project Name Field
-            Text(
-              'Project Name',
-              style: dbTitleTextTextStyle12400
-            ),
+            Text('Project Name', style: dbTitleTextTextStyle12400),
             SizedBox(height: 8.h),
             TextField(
               controller: controller.projectNameController,
               decoration: InputDecoration(
                 hintText: 'Enter project name',
-                hintStyle: TextStyle(
-                  color: Color(0xFF999999),
-                  fontSize: 14.sp,
-                ),
+                hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: Color(0xFFE0E0E0)),
@@ -90,58 +81,61 @@ class SaveTechPackDialog extends StatelessWidget {
               ),
             ),
             SizedBox(height: 20.h),
-            
+
             // Collection Name Field
-            Text(
-              'Collection Name',
-              style: dbTitleTextTextStyle12400,
-            ),
+            Text('Collection Name', style: dbTitleTextTextStyle12400),
             SizedBox(height: 8.h),
-            Obx(() => Container(
-              width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-              decoration: BoxDecoration(
-                border: Border.all(color: Color(0xFFE0E0E0)),
-                borderRadius: BorderRadius.circular(12.r),
-              ),
-              child: DropdownButtonHideUnderline(
-                child: DropdownButton<String>(
-                  value: controller.selectedCollection.value,
-                  items: controller.collections.map((String collection) {
-                    return DropdownMenuItem<String>(
-                      value: collection,
-                      child: Text(
-                        collection,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Color(0xFF333333),
+            Obx(
+              () => Container(
+                width: double.infinity,
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                decoration: BoxDecoration(
+                  border: Border.all(color: Color(0xFFE0E0E0)),
+                  borderRadius: BorderRadius.circular(12.r),
+                ),
+                child: DropdownButtonHideUnderline(
+                  child: DropdownButton<String>(
+                    value: controller.selectedCollection.value,
+                    items: controller.collections.map((String collection) {
+                      return DropdownMenuItem<String>(
+                        value: collection,
+                        child: Text(
+                          collection,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: Color(0xFF333333),
+                          ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                  onChanged: (String? newValue) {
-                    if (newValue != null) {
-                      controller.updateSelectedCollection(newValue);
-                    }
-                  },
-                  isExpanded: true,
+                      );
+                    }).toList(),
+                    onChanged: (String? newValue) {
+                      if (newValue != null) {
+                        controller.updateSelectedCollection(newValue);
+                      }
+                    },
+                    isExpanded: true,
+                  ),
                 ),
               ),
-            )),
+            ),
             SizedBox(height: 20.h),
-            
+
             // Action Buttons
             Row(
               children: [
                 Expanded(
                   child: OutlinedButton(
-                    onPressed: () => _showAddCollectionDialog(context, controller),
+                    onPressed: () =>
+                        _showAddCollectionDialog(context, controller),
                     style: OutlinedButton.styleFrom(
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12.r),
                       ),
                       side: BorderSide(color: Color(0xFF1A1A1A)),
-                      padding: EdgeInsets.symmetric(vertical: 16.h, horizontal: 20.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 16.h,
+                        horizontal: 20.w,
+                      ),
                     ),
                     child: Text(
                       'ADD',
@@ -154,7 +148,9 @@ class SaveTechPackDialog extends StatelessWidget {
                 Expanded(
                   child: ElevatedButton(
                     onPressed: () async {
-                      if (controller.projectNameController.text.trim().isEmpty) {
+                      if (controller.projectNameController.text
+                          .trim()
+                          .isEmpty) {
                         Get.snackbar(
                           'Error',
                           'Please enter a project name',
@@ -163,13 +159,13 @@ class SaveTechPackDialog extends StatelessWidget {
                         );
                         return;
                       }
-                      
+
                       // Close dialog first using Navigator to ensure it closes
                       Navigator.of(context).pop();
-                      
+
                       // Add small delay to ensure dialog closes before calling onSave
                       await Future.delayed(Duration(milliseconds: 100));
-                      
+
                       onSave(
                         controller.projectNameController.text.trim(),
                         controller.selectedCollection.value,
@@ -202,10 +198,7 @@ class SaveTechPackDialog extends StatelessWidget {
 class AddCollectionDialog extends StatefulWidget {
   final Function(String) onAdd;
 
-  const AddCollectionDialog({
-    super.key,
-    required this.onAdd,
-  });
+  const AddCollectionDialog({super.key, required this.onAdd});
 
   @override
   State<AddCollectionDialog> createState() => _AddCollectionDialogState();
@@ -223,9 +216,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
   @override
   Widget build(BuildContext context) {
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16.r),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Padding(
         padding: EdgeInsets.all(24.w),
@@ -242,15 +233,12 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
               ),
             ),
             SizedBox(height: 20.h),
-            
+
             TextField(
               controller: _collectionController,
               decoration: InputDecoration(
                 hintText: 'Enter collection name',
-                hintStyle: TextStyle(
-                  color: Color(0xFF999999),
-                  fontSize: 14.sp,
-                ),
+                hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
                   borderSide: BorderSide(color: Color(0xFFE0E0E0)),
@@ -270,7 +258,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
               ),
             ),
             SizedBox(height: 20.h),
-            
+
             SizedBox(
               width: double.infinity,
               child: ElevatedButton(

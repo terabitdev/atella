@@ -5,7 +5,7 @@ import 'package:get/get.dart';
 import 'export_options_controller.dart';
 
 class ExportOptionsDialog extends StatelessWidget {
-  final Function(bool withLogo) onExport;
+  final Function(ExportType exportType) onExport;
 
   const ExportOptionsDialog({
     super.key,
@@ -53,14 +53,14 @@ class ExportOptionsDialog extends StatelessWidget {
                       width: 24.w,
                       height: 24.h,
                       decoration: BoxDecoration(
-                        color: controller.pdfWithLogo.value ? Colors.black : Colors.transparent,
+                        color: controller.isPdfWithLogo ? Colors.black : Colors.transparent,
                         border: Border.all(
                           color: Colors.black,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(4.r),
                       ),
-                      child: controller.pdfWithLogo.value
+                      child: controller.isPdfWithLogo
                           ? Icon(
                               Icons.check,
                               color: Colors.white,
@@ -109,14 +109,14 @@ class ExportOptionsDialog extends StatelessWidget {
                       width: 24.w,
                       height: 24.h,
                       decoration: BoxDecoration(
-                        color: controller.neutralPdf.value ? Colors.black : Colors.transparent,
+                        color: controller.isNeutralPdf ? Colors.black : Colors.transparent,
                         border: Border.all(
                           color: Colors.black,
                           width: 2,
                         ),
                         borderRadius: BorderRadius.circular(4.r),
                       ),
-                      child: controller.neutralPdf.value
+                      child: controller.isNeutralPdf
                           ? Icon(
                               Icons.check,
                               color: Colors.white,
@@ -153,6 +153,62 @@ class ExportOptionsDialog extends StatelessWidget {
               ),
             ),
 
+            SizedBox(height: 20.h),
+
+            // Word export option
+            Obx(
+              () => InkWell(
+                onTap: controller.selectWord,
+                child: Row(
+                  children: [
+                    Container(
+                      width: 24.w,
+                      height: 24.h,
+                      decoration: BoxDecoration(
+                        color: controller.isWord ? Colors.black : Colors.transparent,
+                        border: Border.all(
+                          color: Colors.black,
+                          width: 2,
+                        ),
+                        borderRadius: BorderRadius.circular(4.r),
+                      ),
+                      child: controller.isWord
+                          ? Icon(
+                              Icons.check,
+                              color: Colors.white,
+                              size: 18.sp,
+                            )
+                          : null,
+                    ),
+                    SizedBox(width: 12.w),
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            'Editable Format (Word)',
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              color: Colors.black,
+                              fontSize: 16.sp,
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                          SizedBox(height: 4.h),
+                          Text(
+                            'Editable Word document with cover page and images',
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              color: Colors.grey[600],
+                              fontSize: 12.sp,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+
             SizedBox(height: 32.h),
 
             // Buttons
@@ -173,8 +229,8 @@ class ExportOptionsDialog extends StatelessWidget {
                 SizedBox(width: 16.w),
                 ElevatedButton(
                   onPressed: () {
-                    Navigator.of(context).pop();
-                    onExport(controller.shouldExportWithLogo);
+                    // Just call onExport, dialog will be closed by the callback
+                    onExport(controller.selectedExportType.value);
                   },
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Colors.black,

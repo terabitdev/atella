@@ -6,6 +6,7 @@ import 'package:get/get.dart';
 import '../Widgets/save_export_button_row.dart';
 import '../Widgets/save_tech_pack_dialog.dart';
 import '../Widgets/export_options_dialog.dart';
+import '../Widgets/export_options_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
@@ -96,8 +97,25 @@ class TechPackReadyScreen extends StatelessWidget {
       barrierDismissible: true,
       builder: (context) {
         return ExportOptionsDialog(
-          onExport: (withLogo) async {
-            await controller.exportTechPackPDF(withLogo: withLogo);
+          onExport: (exportType) async {
+            // Close dialog first
+            Navigator.of(context).pop();
+            
+            // Wait a moment for dialog to close
+            await Future.delayed(const Duration(milliseconds: 300));
+            
+            // Then export and show share sheet
+            switch (exportType) {
+              case ExportType.pdfWithLogo:
+                await controller.exportTechPackPDF(withLogo: true);
+                break;
+              case ExportType.neutralPdf:
+                await controller.exportTechPackPDF(withLogo: false);
+                break;
+              case ExportType.word:
+                await controller.exportTechPackWord();
+                break;
+            }
           },
         );
       },

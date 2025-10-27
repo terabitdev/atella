@@ -8,6 +8,7 @@ import 'package:pdf/widgets.dart' as pw;
 import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart' show rootBundle;
+import 'package:docx_template_fork/docx_template_fork.dart';
 
 class TechPackService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -397,7 +398,7 @@ pdf.addPage(
 
       final data = userDesignDoc.data();
       final designs = data?['designs'] as List<dynamic>? ?? [];
-      
+
       print('Found ${designs.length} designs');
 
       // With new optimized structure, get the most recent design
@@ -405,15 +406,15 @@ pdf.addPage(
       if (designs.isNotEmpty) {
         // Get the most recent design (last in array or by timestamp)
         final latestDesign = designs.last as Map<String, dynamic>;
-        
+
         // Use the new field name from optimized structure
         final designImageUrl = latestDesign['selectedDesignImageUrl'] as String?;
-        
+
         if (designImageUrl != null) {
           print('Found selected design with URL: $designImageUrl');
           return designImageUrl;
         }
-        
+
         // Fallback for old structure
         final oldImageUrl = latestDesign['designImageUrl'] as String?;
         if (oldImageUrl != null) {
@@ -421,12 +422,149 @@ pdf.addPage(
           return oldImageUrl;
         }
       }
-      
+
       print('No selected design found');
       return null;
     } catch (e) {
       print('Error getting selected design: $e');
       return null;
+    }
+  }
+
+  // Generate and save Word document from tech pack images
+  static Future<String> generateTechPackWord({
+    required List<String> base64Images,
+    required String techPackSummary,
+    required String projectName,
+  }) async {
+    try {
+      // Request permission first
+      final hasPermission = await _requestStoragePermission();
+      if (!hasPermission) {
+        throw Exception('Storage permission denied');
+      }
+
+      // Load the Word template from assets
+      final data = await rootBundle.load('assets/tech_pack_template.docx');
+      final bytes = data.buffer.asUint8List();
+      final docx = await DocxTemplate.fromBytes(bytes);
+
+      // Prepare content for template
+      final content = Content();
+
+      // Add text content
+      content
+        ..add(TextContent("project_name", projectName.isNotEmpty ? projectName : 'Fashion Project'))
+        ..add(TextContent("tech_pack_summary", techPackSummary))
+        ..add(TextContent("generation_date", DateTime.now().toString().split(' ')[0]));
+
+      // Add images as base64
+      if (base64Images.isNotEmpty) {
+        // First image - Tech Pack Details
+        content.add(ImageContent("tech_pack_image_1", base64Decode(base64Images[0])));
+      }
+      print('Base64 image 1 added: ${base64Images[1]}');
+
+      if (base64Images.length > 1) {
+        // Second image - Technical Flat Drawing
+        content.add(ImageContent("tech_pack_image_2", base64Decode(base64Images[1])));
+      }
+      print('Base64 image 2 added: ${base64Images[1]}');
+
+      print('Generating Word document with content...');
+
+      // Generate the final document
+      final generated = await docx.generate(content);
+
+      if (generated == null) {
+        throw Exception('Failed to generate Word document');
+      }
+
+      print('Word document generated, size: ${generated.length} bytes');
+
+      // Get appropriate directory for saving Word document
+      Directory directory;
+      String folderName;
+
+      if (Platform.isAndroid) {
+        directory = await getExternalStorageDirectory() ??
+            await getApplicationDocumentsDirectory();
+
+        final List<String> paths = directory.path.split('/');
+        final int index = paths.indexWhere((element) => element == 'Android');
+
+        if (index != -1) {
+          final basePath = paths.sublist(0, index).join('/');
+          directory = Directory('$basePath/Download/ATELIA');
+
+          if (!await directory.exists()) {
+            try {
+              await directory.create(recursive: true);
+            } catch (e) {
+              print('Could not create Downloads folder, using app storage: $e');
+              directory = await getExternalStorageDirectory() ??
+                  await getApplicationDocumentsDirectory();
+            }
+          }
+          folderName = '';
+        } else {
+          folderName = 'TechPack';
+        }
+      } else {
+        directory = await getApplicationDocumentsDirectory();
+        folderName = 'TechPack';
+      }
+
+      // Create TechPack folder if needed
+      Directory techPackDir = directory;
+      if (folderName.isNotEmpty) {
+        techPackDir = Directory('${directory.path}/$folderName');
+        if (!await techPackDir.exists()) {
+          await techPackDir.create(recursive: true);
+        }
+      }
+
+      final fileName = 'TechPack_${DateTime.now().millisecondsSinceEpoch}.docx';
+      final file = File('${techPackDir.path}/$fileName');
+
+      await file.writeAsBytes(generated);
+
+      // Verify file was created
+      if (!await file.exists()) {
+        throw Exception('Word file was not created successfully');
+      }
+
+      print('Word document saved to: ${file.path}');
+      return file.path;
+    } catch (e) {
+      print('Error in generateTechPackWord: $e');
+      throw Exception('Failed to generate Word document: $e');
+    }
+  }
+
+  // Download Word document to Downloads folder
+  static Future<String> downloadWord(String filePath) async {
+    try {
+      final file = File(filePath);
+
+      // Verify file exists
+      if (!await file.exists()) {
+        throw Exception('Word file not found at path: $filePath');
+      }
+
+      // Get file size to ensure it's valid
+      final fileSize = await file.length();
+      if (fileSize == 0) {
+        throw Exception('Word file is empty');
+      }
+
+      print('Word document downloaded successfully: $filePath (${fileSize} bytes)');
+
+      // Return the file path for success message
+      return filePath;
+    } catch (e) {
+      print('Error downloading Word: $e');
+      throw Exception('Failed to download Word document: $e');
     }
   }
 }
