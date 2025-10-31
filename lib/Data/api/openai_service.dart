@@ -395,7 +395,8 @@ static Future<Map<String, String>> generateTechPackPrompts({
   final stitching = techPackDetails['technical']?['stitching'] ?? 'single stitch';
   final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? 'contrast topstitch';
   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? 'chest';
-  // final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? 'brand';
+  final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
   final packagingType = techPackDetails['packaging']?['packagingType'] ?? 'polybag';
   // final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? 'fold neatly';
   final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '\$25';
@@ -404,9 +405,21 @@ static Future<Map<String, String>> generateTechPackPrompts({
   // final style = creativeBrief['style'] ?? 'casual';
   final features = refinedConcept['features'] ?? 'standard collar';
 
-  // Manufacturing prompt - clean and organized
-  final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible.''';
+  // Create logo instruction based on what user provided
+  String logoInstruction = '';
+  if (labelImage.isNotEmpty) {
+    // User uploaded a logo reference image
+    logoInstruction = 'Show the logo/label from the reference image placed on the ${logoPlacement} area of the ${garmentType}. The logo should be clearly visible and properly scaled.';
+  } else if (labelsNeeded.isNotEmpty) {
+    // User provided text for logo
+    logoInstruction = 'Show a text-based logo with "${labelsNeeded}" placed on the ${logoPlacement} area of the ${garmentType}. The text should be clearly legible, properly sized, and integrated into the design.';
+  } else if (logoPlacement.isNotEmpty) {
+    // Only placement provided, show generic logo
+    logoInstruction = 'Show logo placement on the ${logoPlacement} area.';
+  }
 
+  // Manufacturing prompt - clean and organized
+  final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement${logoInstruction.isNotEmpty ? ', with logo/branding visible on garment' : ''}), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. ${logoInstruction}''';
 final technicalFlatPrompt = '''
 Professional technical flat drawing layout for ${garmentType} on a clean white background.
 
@@ -422,6 +435,7 @@ Style:
 
 Annotations & Measurements:
 - Show ${features} construction, ${accessories} placement, ${stitching} details, ${decorativeStitching}.
+- If ${features} or ${accessories} are not provided, do NOT add any additional garment elements such as pockets, buttons, or zippers unless explicitly mentioned by the user.
 - Include dimension arrows with measurement text in centimeters (cm) for *all garment parts*:
   - Shoulder width:
   - Chest width:
@@ -470,11 +484,22 @@ static Map<String, String> getDetailedSingleViewPrompts(Map<String, dynamic> tec
   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
   final accessories = techPackDetails['technical']?['accessories'] ?? 'zipper';
   final stitching = techPackDetails['technical']?['stitching'] ?? 'single stitch';
-  
+  final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+
+  // Create logo instruction
+  String logoInstruction = '';
+  if (labelImage.isNotEmpty) {
+    logoInstruction = 'Show the logo from reference image on ${logoPlacement}. ';
+  } else if (labelsNeeded.isNotEmpty) {
+    logoInstruction = 'Show text logo "${labelsNeeded}" on ${logoPlacement}. ';
+  }
+
   return {
-    'manufacturing_prompt': 'Professional fashion tech pack specification sheet for ${garmentType}. Organized sections: materials, colors with swatches, sizes chart, technical details, production info. Clean grid layout, white background.',
-    
-    'technical_flat_prompt': 'Detailed technical flat drawing of ${garmentType}, large front view centered on white background. Black line art with comprehensive annotations: measurement arrows (A, B, C, D), seam allowances labeled, ${accessories} details, ${stitching} callouts, construction notes, dimension lines. Professional fashion industry flat with detailed labeling. Complete drawing visible with wide margins.',
+    'manufacturing_prompt': 'Professional fashion tech pack specification sheet for ${garmentType}. Organized sections: materials, colors with swatches, sizes chart, technical details, production info. Clean grid layout, white background. ${logoInstruction}',
+
+    'technical_flat_prompt': 'Detailed technical flat drawing of ${garmentType}, large front view centered on white background. Black line art with comprehensive annotations: measurement arrows (A, B, C, D), seam allowances labeled, ${accessories} details, ${stitching} callouts, construction notes, dimension lines. ${logoInstruction}Professional fashion industry flat with detailed labeling. Complete drawing visible with wide margins.',
   };
 }
 
@@ -485,11 +510,22 @@ static Map<String, String> getAdvancedDetailedPrompts(Map<String, dynamic> techP
   final stitching = techPackDetails['technical']?['stitching'] ?? 'single stitch';
   final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? 'contrast topstitch';
   final features = creativeBrief['features'] ?? 'collar';
-  
+  final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+
+  // Create logo instruction
+  String logoInstruction = '';
+  if (labelImage.isNotEmpty) {
+    logoInstruction = 'Show logo from reference image on ${logoPlacement}. ';
+  } else if (labelsNeeded.isNotEmpty) {
+    logoInstruction = 'Show text logo "${labelsNeeded}" on ${logoPlacement}. ';
+  }
+
   return {
-    'manufacturing_prompt': 'Complete fashion tech pack layout for ${garmentType}. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL (${accessories}, ${stitching}), LABELS, PACKAGING, PRODUCTION. Professional format, white background, all content within frame.',
-    
-    'technical_flat_prompt': 'Technical flat drawing sheet for ${garmentType}. Layout: Front view (upper left), back view (upper right), detail callouts (bottom). Black lines on white. Show: ${features}, ${accessories}, ${stitching}, ${decorativeStitching}. Include: measurement points A-F with arrows, seam allowances, construction details, topstitching circles. Professional annotations. Complete sheet layout with 10% margin border.',
+    'manufacturing_prompt': 'Complete fashion tech pack layout for ${garmentType}. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL (${accessories}, ${stitching}), LABELS, PACKAGING, PRODUCTION. Professional format, white background, all content within frame. ${logoInstruction}',
+
+    'technical_flat_prompt': 'Technical flat drawing sheet for ${garmentType}. Layout: Front view (upper left), back view (upper right), detail callouts (bottom). Black lines on white. Show: ${features}, ${accessories}, ${stitching}, ${decorativeStitching}. ${logoInstruction}Include: measurement points A-F with arrows, seam allowances, construction details, topstitching circles. Professional annotations. Complete sheet layout with 10% margin border.',
   };
 }
 
@@ -497,11 +533,22 @@ static Map<String, String> getAdvancedDetailedPrompts(Map<String, dynamic> techP
 static Map<String, String> getSimplifiedDetailedPrompts(Map<String, dynamic> techPackDetails, Map<String, dynamic> creativeBrief) {
   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
   final accessories = techPackDetails['technical']?['accessories'] ?? 'zipper';
-  
+  final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+
+  // Create logo instruction
+  String logoInstruction = '';
+  if (labelImage.isNotEmpty) {
+    logoInstruction = 'Show logo from reference on ${logoPlacement}. ';
+  } else if (labelsNeeded.isNotEmpty) {
+    logoInstruction = 'Show "${labelsNeeded}" logo on ${logoPlacement}. ';
+  }
+
   return {
-    'manufacturing_prompt': 'Fashion tech pack for ${garmentType}: materials, colors, sizes, production details. Professional layout, white background, organized sections.',
-    
-    'technical_flat_prompt': 'Technical drawing ${garmentType} with detailed labels. Front view, black lines, measurement arrows, ${accessories} details, construction notes. Complete drawing with margins.',
+    'manufacturing_prompt': 'Fashion tech pack for ${garmentType}: materials, colors, sizes, production details. Professional layout, white background, organized sections. ${logoInstruction}',
+
+    'technical_flat_prompt': 'Technical drawing ${garmentType} with detailed labels. Front view, black lines, measurement arrows, ${accessories} details, construction notes. ${logoInstruction}Complete drawing with margins.',
   };
 }
 }
