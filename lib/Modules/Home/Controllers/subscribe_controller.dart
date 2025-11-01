@@ -39,13 +39,31 @@ class SubscribeController extends GetxController {
   Future<void> loadCurrentSubscription() async {
     isLoading.value = true;
     try {
-      currentSubscription.value = await _stripeService.getCurrentUserSubscription();
+      print('📥 Loading subscription from Firebase...');
+      final loadedSubscription = await _stripeService.getCurrentUserSubscription();
+      print('📥 Loaded subscription: ${loadedSubscription?.subscriptionPlan ?? "null (FREE)"}');
+
+      // Force reactive update by setting to null first, then to new value
+      print('🔄 Resetting currentSubscription to null...');
+      currentSubscription.value = null;
+      await Future.delayed(Duration(milliseconds: 50)); // Small delay to ensure rebuild
+      print('🔄 Setting currentSubscription to new value...');
+      currentSubscription.value = loadedSubscription;
+
       if (currentSubscription.value != null) {
         selectedPlan.value = currentSubscription.value!.subscriptionPlan;
+        print('📌 Updated selectedPlan to: ${selectedPlan.value}');
       } else {
         selectedPlan.value = 'FREE';
+        print('📌 Updated selectedPlan to: FREE (no subscription)');
       }
+
+      // Force UI update
+      print('🔄 Forcing UI update...');
+      update();
+      print('✅ loadCurrentSubscription completed');
     } catch (e) {
+      print('❌ Error loading subscription: $e');
       Get.snackbar('Error', 'Failed to load subscription details',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
@@ -194,19 +212,25 @@ class SubscribeController extends GetxController {
     try {
       bool success = await _stripeService.cancelSubscription();
       if (success) {
+        print('✅ Subscription cancelled successfully');
+
+        // Wait for webhook to process (Firebase update might take a moment)
+        print('⏳ Waiting 2 seconds for webhook to process...');
+        await Future.delayed(Duration(seconds: 2));
+
+        // Reload subscription data (no navigation needed - already on subscribe screen)
+        print('🔄 Reloading subscription data after cancellation...');
+        await loadCurrentSubscription();
+        print('🔄 Subscription data reloaded. Current plan: ${selectedPlan.value}');
+
         Get.snackbar(
-          'Success', 
+          'Success',
           'Subscription cancelled successfully',
           snackPosition: SnackPosition.TOP,
           duration: Duration(seconds: 3),
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );
-        await loadCurrentSubscription();
-        
-        // Navigate back to subscribe screen after successful cancellation
-        await Future.delayed(Duration(milliseconds: 500));
-        Get.offAllNamed('/subscribe');
       } else {
         Get.snackbar(
           'Error', 

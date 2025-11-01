@@ -26,9 +26,20 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: Colors.black,
-      body: SafeArea(
+    return WillPopScope(
+      onWillPop: () async {
+        // Handle Android back button
+        if (Get.previousRoute.isNotEmpty && Get.previousRoute != '/subscribe') {
+          return true; // Allow normal back navigation
+        } else {
+          // Go to Settings tab (index 4) in nav_bar
+          Get.offAllNamed('/nav_bar', arguments: {'initialIndex': 4});
+          return false; // Prevent default back behavior
+        }
+      },
+      child: Scaffold(
+        backgroundColor: Colors.black,
+        body: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -36,7 +47,15 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () {
+                      // Check if there's a route to go back to
+                      if (Get.previousRoute.isNotEmpty && Get.previousRoute != '/subscribe') {
+                        Get.back();
+                      } else {
+                        // Go to Settings tab (index 4) in nav_bar
+                        Get.offAllNamed('/nav_bar', arguments: {'initialIndex': 4});
+                      }
+                    },
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
                       height: 40.h,
@@ -112,7 +131,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
           ],
         ),
       ),
-    );
+    ));
   }
 
   Widget _buildPlanCard({
