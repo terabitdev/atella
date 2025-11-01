@@ -44,6 +44,13 @@ Delivery: ${_detailsController.deliveryDateController.text}
   // Get manufacturer country preference
   String get manufacturerCountry => _detailsController.manufacturerCountryController.text;
 
+  // Get logo/label reference image data
+  String get labelImagePath => _detailsController.labelImagePath.value;
+  String get logoPlacement => _detailsController.logoPlacementController.text;
+  String get labelsNeededText => _detailsController.labelsNeededController.text;
+
+  bool get hasLabelImage => _detailsController.labelImagePath.value.isNotEmpty;
+
   String _getProjectName() {
     // Extract garment type for project name
     String garmentType = 'Fashion';
@@ -303,6 +310,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
         techPackSummary: techPackSummary,
         projectName: projectName,
         withLogo: withLogo,
+        labelImagePath: labelImagePath.isNotEmpty ? labelImagePath : null,
+        logoPlacement: logoPlacement.isNotEmpty ? logoPlacement : null,
       );
 
       // Open share sheet instead of downloading

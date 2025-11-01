@@ -93,7 +93,6 @@ flutter:
   assets:
     - assets/images/
     - assets/lottie/
-    - assets/template.docx
     - assets/tech_pack_template.docx
     - .env
 

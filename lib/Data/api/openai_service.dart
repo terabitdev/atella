@@ -418,8 +418,24 @@ static Future<Map<String, String>> generateTechPackPrompts({
     logoInstruction = 'Show logo placement on the ${logoPlacement} area.';
   }
 
-  // Manufacturing prompt - clean and organized
-  final manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement${logoInstruction.isNotEmpty ? ', with logo/branding visible on garment' : ''}), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. ${logoInstruction}''';
+  // Manufacturing prompt - conditional based on logo type
+  // If IMAGE logo uploaded: Simple prompt (logo will be shown as reference, not rendered)
+  // If TEXT logo provided: Full prompt (AI will render the text logo)
+  print('🎨 DEBUG: Determining manufacturing prompt type...');
+  print('   📷 labelImage.isNotEmpty: ${labelImage.isNotEmpty}');
+  print('   📝 labelsNeeded.isNotEmpty: ${labelsNeeded.isNotEmpty}');
+
+  String manufacturingPrompt;
+
+  if (labelImage.isNotEmpty) {
+    // IMAGE logo - Don't ask AI to render it (will be shown as reference)
+    print('   ✅ Using SIMPLE prompt (image logo - shown as reference)');
+    manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement always write that ${logoPlacement} in text), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible.''';
+  } else {
+    // TEXT logo or no logo - AI should render it if provided
+    print('   ✅ Using FULL prompt (text logo - AI will render)');
+    manufacturingPrompt = '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement${logoInstruction.isNotEmpty ? ', with logo/branding visible on garment' : ''}), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. ${logoInstruction}''';
+  }
 final technicalFlatPrompt = '''
 Professional technical flat drawing layout for ${garmentType} on a clean white background.
 

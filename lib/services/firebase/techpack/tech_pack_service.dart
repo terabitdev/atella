@@ -154,6 +154,8 @@ class TechPackService {
     required String techPackSummary,
     required String projectName,
     bool withLogo = true,
+    String? labelImagePath,
+    String? logoPlacement,
   }) async {
     try {
       // Request permission first
@@ -252,6 +254,21 @@ pdf.addPage(
 );
 
 
+      // Load label image if provided
+      pw.MemoryImage? labelImage;
+      if (labelImagePath != null && labelImagePath.isNotEmpty) {
+        try {
+          final labelFile = File(labelImagePath);
+          if (await labelFile.exists()) {
+            final labelBytes = await labelFile.readAsBytes();
+            labelImage = pw.MemoryImage(labelBytes);
+            print('✅ Label image loaded for PDF overlay');
+          }
+        } catch (e) {
+          print('⚠️ Could not load label image: $e');
+        }
+      }
+
       // Add image pages
       for (int i = 0; i < pdfImages.length; i++) {
         pdf.addPage(
@@ -267,9 +284,36 @@ pdf.addPage(
                   ),
                   pw.SizedBox(height: 16),
                   pw.Expanded(
-                    child: pw.Center(
-                      child: pw.Image(pdfImages[i], fit: pw.BoxFit.contain),
-                    ),
+                    child: (i == 1 && labelImage != null)
+                        ? pw.Stack(
+                            children: [
+                              // Main technical flat drawing (full size)
+                              pw.Positioned.fill(
+                                child: pw.Image(pdfImages[i], fit: pw.BoxFit.contain),
+                              ),
+                              // Logo overlay (top-right corner, bigger size)
+                              pw.Positioned(
+                                top: 20,
+                                right: 20,
+                                child: pw.Container(
+                                  width: 60,
+                                  height: 60,
+                                  decoration: pw.BoxDecoration(
+                                    color: PdfColors.white,
+                                    borderRadius: pw.BorderRadius.circular(4),
+                                  ),
+                                  padding: const pw.EdgeInsets.all(4),
+                                  child: pw.Image(
+                                    labelImage,
+                                    fit: pw.BoxFit.contain,
+                                  ),
+                                ),
+                              ),
+                            ],
+                          )
+                        : pw.Center(
+                            child: pw.Image(pdfImages[i], fit: pw.BoxFit.contain),
+                          ),
                   ),
                 ],
               );
@@ -333,14 +377,29 @@ pdf.addPage(
       final file = File('${techPackDir.path}/$fileName');
 
       final pdfBytes = await pdf.save();
-      await file.writeAsBytes(pdfBytes);
 
-      // Verify file was created
+      // Write bytes with flush to ensure file is written to disk immediately
+      await file.writeAsBytes(pdfBytes, flush: true);
+
+      // Add small delay to ensure file system has caught up
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // Verify file was created and has content
       if (!await file.exists()) {
         throw Exception('PDF file was not created successfully');
       }
 
-      print('PDF saved to: ${file.path}');
+      // Verify file size matches expected
+      final fileSize = await file.length();
+      if (fileSize == 0) {
+        throw Exception('PDF file is empty');
+      }
+
+      if (fileSize != pdfBytes.length) {
+        print('⚠️ Warning: File size mismatch. Expected: ${pdfBytes.length}, Got: $fileSize');
+      }
+
+      print('✅ PDF saved successfully: ${file.path} (${fileSize} bytes)');
       return file.path;
     } catch (e) {
       print('Error in generateTechPackPDF: $e');
@@ -463,23 +522,27 @@ pdf.addPage(
       print('Total images received: ${base64Images.length}');
       
       if (base64Images.isNotEmpty) {
-        // First image - Tech Pack Details (Manufacturing image)
-        final firstImageBytes = base64Decode(base64Images[0]);
-        final firstImagePreview = base64Images[0].substring(0, 50);
-        print('Image[0] → {{tech_pack_image_1}} (Tech Pack Details)');
+        // SWAPPED FOR TESTING - Send Technical Flat to placeholder 1
+        final firstImageBytes = base64Decode(base64Images[1]);
+        final firstImagePreview = base64Images[1].substring(0, 50);
+        print('🔄 TEST: Sending Image[1] (Technical Flat) → TITLE=tech_pack_image_1');
         print('  Base64 preview: $firstImagePreview...');
         print('  Size: ${firstImageBytes.length} bytes');
+        print('  Adding ImageContent with TITLE: tech_pack_image_1');
         content.add(ImageContent("tech_pack_image_1", firstImageBytes));
+        print('  ✅ Added to content');
       }
 
       if (base64Images.length > 1) {
-        // Second image - Technical Flat Drawing
-        final secondImageBytes = base64Decode(base64Images[1]);
-        final secondImagePreview = base64Images[1].substring(0, 50);
-        print('Image[1] → {{tech_pack_image_2}} (Technical Flat)');
+        // SWAPPED FOR TESTING - Send Manufacturing to placeholder 2
+        final secondImageBytes = base64Decode(base64Images[0]);
+        final secondImagePreview = base64Images[0].substring(0, 50);
+        print('🔄 TEST: Sending Image[0] (Manufacturing) → TITLE=tech_pack_image_2');
         print('  Base64 preview: $secondImagePreview...');
         print('  Size: ${secondImageBytes.length} bytes');
+        print('  Adding ImageContent with TITLE: tech_pack_image_2');
         content.add(ImageContent("tech_pack_image_2", secondImageBytes));
+        print('  ✅ Added to content');
         
         // CRITICAL: Verify images are different
         final areImagesIdentical = base64Images[0] == base64Images[1];
@@ -550,14 +613,28 @@ pdf.addPage(
       final fileName = 'TechPack_${DateTime.now().millisecondsSinceEpoch}.docx';
       final file = File('${techPackDir.path}/$fileName');
 
-      await file.writeAsBytes(generated);
+      // Write bytes with flush to ensure file is written to disk immediately
+      await file.writeAsBytes(generated, flush: true);
 
-      // Verify file was created
+      // Add small delay to ensure file system has caught up
+      await Future.delayed(const Duration(milliseconds: 300));
+
+      // Verify file was created and has content
       if (!await file.exists()) {
         throw Exception('Word file was not created successfully');
       }
 
-      print('Word document saved to: ${file.path}');
+      // Verify file size
+      final fileSize = await file.length();
+      if (fileSize == 0) {
+        throw Exception('Word file is empty');
+      }
+
+      if (fileSize != generated.length) {
+        print('⚠️ Warning: File size mismatch. Expected: ${generated.length}, Got: $fileSize');
+      }
+
+      print('✅ Word document saved successfully: ${file.path} (${fileSize} bytes)');
       return file.path;
     } catch (e) {
       print('Error in generateTechPackWord: $e');

@@ -11,6 +11,7 @@ import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
 import 'dart:convert';
+import 'dart:io';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -36,7 +37,7 @@ class TechPackReadyScreen extends StatelessWidget {
     }
   }
 
-  void _showImagePopup(BuildContext context, String base64Image, String title) {
+  void _showImagePopup(BuildContext context, String base64Image, String title, {String? logoImagePath, String? logoPlacement}) {
     showDialog(
       context: context,
       barrierDismissible: true,
@@ -46,22 +47,77 @@ class TechPackReadyScreen extends StatelessWidget {
           insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 60.h),
           child: ClipRRect(
             borderRadius: BorderRadius.circular(28.r),
-            child: Image.memory(
-              base64Decode(base64Image),
-              fit: BoxFit.cover,
-              errorBuilder: (context, error, stackTrace) {
-                return Container(
-                  color: Colors.grey.shade200,
-                  child: Center(
-                    child: Icon(
-                      Icons.error_outline,
-                      size: 48.w,
-                      color: Colors.grey.shade400,
-                    ),
+            child: logoImagePath != null && logoImagePath.isNotEmpty
+                ? Stack(
+                    children: [
+                      // Main image
+                      Image.memory(
+                        base64Decode(base64Image),
+                        fit: BoxFit.cover,
+                        errorBuilder: (context, error, stackTrace) {
+                          return Container(
+                            color: Colors.grey.shade200,
+                            child: Center(
+                              child: Icon(
+                                Icons.error_outline,
+                                size: 48.w,
+                                color: Colors.grey.shade400,
+                              ),
+                            ),
+                          );
+                        },
+                      ),
+                      // Logo overlay (top-right)
+                      Positioned(
+                        top: 16.h,
+                        right: 16.w,
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            // Logo image
+                            Image.file(
+                              File(logoImagePath),
+                              width: 30.w,
+                              height: 30.w,
+                              fit: BoxFit.contain,
+                              errorBuilder: (context, error, stackTrace) {
+                                return SizedBox.shrink();
+                              },
+                            ),
+                            // Logo placement text
+                            if (logoPlacement != null && logoPlacement.isNotEmpty) ...[
+                              SizedBox(height: 4.h),
+                              Text(
+                                'Logo / $logoPlacement',
+                                style: TextStyle(
+                                  fontSize: 10.sp,
+                                  color: Colors.black54,
+                                  backgroundColor: Colors.white70,
+                                ),
+                              ),
+                            ],
+                          ],
+                        ),
+                      ),
+                    ],
+                  )
+                : Image.memory(
+                    base64Decode(base64Image),
+                    fit: BoxFit.cover,
+                    errorBuilder: (context, error, stackTrace) {
+                      return Container(
+                        color: Colors.grey.shade200,
+                        child: Center(
+                          child: Icon(
+                            Icons.error_outline,
+                            size: 48.w,
+                            color: Colors.grey.shade400,
+                          ),
+                        ),
+                      );
+                    },
                   ),
-                );
-              },
-            ),
           ),
         );
       },
@@ -251,23 +307,60 @@ class TechPackReadyScreen extends StatelessWidget {
                         ),
                       ),
 
-                      // Second Image - Technical Flat Drawing
+                      // Second Image - Technical Flat Drawing with Logo Overlay
                       GestureDetector(
                         onTap: () => _showImagePopup(
                           context,
                           controller.generatedImages[1],
                           'Technical Flat Drawing',
+                          logoImagePath: controller.hasLabelImage ? controller.labelImagePath : null,
+                          logoPlacement: controller.logoPlacement.isNotEmpty ? controller.logoPlacement : null,
                         ),
                         child: Container(
                           width: double.infinity,
                           decoration: BoxDecoration(
                             borderRadius: BorderRadius.circular(0),
                           ),
-                          child: ClipRRect(
-                            borderRadius: BorderRadius.circular(0),
-                            child: _buildImageFromBase64(
-                              controller.generatedImages[1],
-                            ),
+                          child: Stack(
+                            children: [
+                              // Main Technical Flat Drawing
+                              ClipRRect(
+                                borderRadius: BorderRadius.circular(0),
+                                child: _buildImageFromBase64(
+                                  controller.generatedImages[1],
+                                ),
+                              ),
+
+                              // Small Logo Reference Overlay (top-right)
+                              if (controller.hasLabelImage)
+                                Positioned(
+                                  top: 8.h,
+                                  right: 8.w,
+                                  child: Row(
+                                    children: [
+                                      Text(
+                                        'Logo / ${controller.logoPlacement}',
+                                        style: TextStyle(
+                                          fontSize: 10.sp,
+                                          color: Colors.black54,
+                                          backgroundColor:
+                                              Colors.white70,
+                                        ),
+                                      ),
+                                      SizedBox(width: 4.w),
+                                      Image.file(
+                                    File(controller.labelImagePath),
+                                    width: 30.w,
+                                    height: 30.w,
+                                    fit: BoxFit.contain,
+                                    errorBuilder: (context, error, stackTrace) {
+                                      return SizedBox.shrink();
+                                    },
+                                  ),
+                                    ],
+                                  ),
+                                ),
+                            ],
                           ),
                         ),
                       ),
