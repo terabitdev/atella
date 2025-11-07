@@ -154,7 +154,10 @@ class EditDataService {
         'target_audience': creativeBrief['targetAudience'] ?? '',
         'occasion': creativeBrief['occasion'] ?? '',
         'inspiration': creativeBrief['inspiration'] ?? '',
-        'colors': creativeBrief['colors'] ?? '',
+        // Colors should be parsed as separate fields: solidColors, print, technique
+        'solidColors': creativeBrief['solidColors'] ?? [],
+        'print': creativeBrief['print'] ?? '',
+        'technique': creativeBrief['technique'] ?? '',
         'fabrics': creativeBrief['fabrics'] ?? '',
       };
     }

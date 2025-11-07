@@ -326,28 +326,47 @@ class CreativeBriefController extends GetxController {
     final print = creativeBriefData['print'] as String? ?? '';
     final technique = creativeBriefData['technique'] as String? ?? '';
 
+    debugPrint('🎨 Loading colors data:');
+    debugPrint('   solidColors: $solidColors');
+    debugPrint('   print: $print');
+    debugPrint('   technique: $technique');
+
     if (solidColors != null || print.isNotEmpty || technique.isNotEmpty) {
       // Load solid colors
-      if (solidColors is List) {
+      if (solidColors is List && solidColors.isNotEmpty) {
         _selectedColors.value = solidColors.cast<String>();
         colorController.text = _selectedColors.join(', ');
+        debugPrint('   ✅ Loaded ${_selectedColors.length} solid colors');
       } else if (solidColors is String && solidColors.isNotEmpty) {
         _selectedColors.value = [solidColors];
         colorController.text = solidColors;
+        debugPrint('   ✅ Loaded 1 solid color (string)');
       }
 
       // Load print and technique
-      if (print.isNotEmpty) _selectedPrint.value = print;
-      if (technique.isNotEmpty) _selectedTechnique.value = technique;
-
-      // Create the answer if all parts are complete
-      if (_selectedColors.isNotEmpty && print.isNotEmpty && technique.isNotEmpty) {
-        _answers['colors'] = BriefAnswer(
-          questionId: 'colors',
-          selectedOptions: [print, technique],
-          textInput: _selectedColors.join('|||'),
-        );
+      if (print.isNotEmpty) {
+        _selectedPrint.value = print;
+        debugPrint('   ✅ Loaded print: $print');
       }
+      if (technique.isNotEmpty) {
+        _selectedTechnique.value = technique;
+        debugPrint('   ✅ Loaded technique: $technique');
+      }
+
+      // Create the answer with whatever parts are available
+      // Don't require all three parts - load partial data too
+      List<String> selectedOptions = [];
+      if (print.isNotEmpty) selectedOptions.add(print);
+      if (technique.isNotEmpty) selectedOptions.add(technique);
+
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        selectedOptions: selectedOptions,
+        textInput: _selectedColors.isNotEmpty ? _selectedColors.join('|||') : null,
+      );
+      debugPrint('   ✅ Created colors answer with ${selectedOptions.length} options and ${_selectedColors.length} colors');
+    } else {
+      debugPrint('   ⚠️ No color data found');
     }
 
     // Load fabrics as chip selection (categorized chips)
