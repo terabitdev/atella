@@ -128,19 +128,16 @@ class TechPackReadyScreen extends StatelessWidget {
     BuildContext context,
     TechPackReadyController controller,
   ) {
-    showDialog(
-      context: context,
+    Get.dialog(
+      SaveTechPackDialog(
+        onSave: (projectName, collectionName) async {
+          await controller.saveTechPackWithDetails(
+            projectName,
+            collectionName,
+          );
+        },
+      ),
       barrierDismissible: true, // Allow dismissing by clicking outside
-      builder: (context) {
-        return SaveTechPackDialog(
-          onSave: (projectName, collectionName) async {
-            await controller.saveTechPackWithDetails(
-              projectName,
-              collectionName,
-            );
-          },
-        );
-      },
     );
   }
 

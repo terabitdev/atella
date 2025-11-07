@@ -42,153 +42,160 @@ class SaveTechPackDialog extends StatelessWidget {
   Widget build(BuildContext context) {
     final controller = Get.find<TechPackReadyController>();
 
-    return Dialog(
-      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
-      insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
-      child: Padding(
-        padding: EdgeInsets.all(24.w),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Save Tech Pack', style: dbTitleTextTextStyle18700),
-            SizedBox(height: 20.h),
+    return Material(
+      type: MaterialType.transparency,
+      child: Dialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
+        insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
+        child: Container(
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16.r),
+          ),
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Save Tech Pack', style: dbTitleTextTextStyle18700),
+              SizedBox(height: 20.h),
 
-            // Project Name Field
-            Text('Project Name', style: dbTitleTextTextStyle12400),
-            SizedBox(height: 8.h),
-            TextField(
-              controller: controller.projectNameController,
-              decoration: InputDecoration(
-                hintText: 'Enter project name',
-                hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: Color(0xFFE0E0E0)),
-                ),
-                enabledBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: Color(0xFFE0E0E0)),
-                ),
-                focusedBorder: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(12.r),
-                  borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 2),
-                ),
-                contentPadding: EdgeInsets.symmetric(
-                  horizontal: 16.w,
-                  vertical: 12.h,
+              // Project Name Field
+              Text('Project Name', style: dbTitleTextTextStyle12400),
+              SizedBox(height: 8.h),
+              TextField(
+                controller: controller.projectNameController,
+                decoration: InputDecoration(
+                  hintText: 'Enter project name',
+                  hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
+                  border: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+                  ),
+                  enabledBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Color(0xFFE0E0E0)),
+                  ),
+                  focusedBorder: OutlineInputBorder(
+                    borderRadius: BorderRadius.circular(12.r),
+                    borderSide: BorderSide(color: Color(0xFF1A1A1A), width: 2),
+                  ),
+                  contentPadding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 12.h,
+                  ),
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
 
-            // Collection Name Field
-            Text('Collection Name', style: dbTitleTextTextStyle12400),
-            SizedBox(height: 8.h),
-            Obx(
-              () => Container(
-                width: double.infinity,
-                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
-                decoration: BoxDecoration(
-                  border: Border.all(color: Color(0xFFE0E0E0)),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: DropdownButtonHideUnderline(
-                  child: DropdownButton<String>(
-                    value: controller.selectedCollection.value,
-                    items: controller.collections.map((String collection) {
-                      return DropdownMenuItem<String>(
-                        value: collection,
-                        child: Text(
-                          collection,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Color(0xFF333333),
+              // Collection Name Field
+              Text('Collection Name', style: dbTitleTextTextStyle12400),
+              SizedBox(height: 8.h),
+              Obx(
+                () => Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 4.h),
+                  decoration: BoxDecoration(
+                    border: Border.all(color: Color(0xFFE0E0E0)),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: DropdownButtonHideUnderline(
+                    child: DropdownButton<String>(
+                      value: controller.selectedCollection.value,
+                      items: controller.collections.map((String collection) {
+                        return DropdownMenuItem<String>(
+                          value: collection,
+                          child: Text(
+                            collection,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Color(0xFF333333),
+                            ),
                           ),
-                        ),
-                      );
-                    }).toList(),
-                    onChanged: (String? newValue) {
-                      if (newValue != null) {
-                        controller.updateSelectedCollection(newValue);
-                      }
-                    },
-                    isExpanded: true,
+                        );
+                      }).toList(),
+                      onChanged: (String? newValue) {
+                        if (newValue != null) {
+                          controller.updateSelectedCollection(newValue);
+                        }
+                      },
+                      isExpanded: true,
+                    ),
                   ),
                 ),
               ),
-            ),
-            SizedBox(height: 20.h),
+              SizedBox(height: 20.h),
 
-            // Action Buttons
-            Row(
-              children: [
-                Expanded(
-                  child: OutlinedButton(
-                    onPressed: () =>
-                        _showAddCollectionDialog(context, controller),
-                    style: OutlinedButton.styleFrom(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+              // Action Buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () =>
+                          _showAddCollectionDialog(context, controller),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        side: BorderSide(color: Color(0xFF1A1A1A)),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 16.h,
+                          horizontal: 20.w,
+                        ),
                       ),
-                      side: BorderSide(color: Color(0xFF1A1A1A)),
-                      padding: EdgeInsets.symmetric(
-                        vertical: 16.h,
-                        horizontal: 20.w,
+                      child: Text(
+                        'ADD',
+                        style: dbTitleTextTextStyle12500,
+                        textAlign: TextAlign.center,
                       ),
-                    ),
-                    child: Text(
-                      'ADD',
-                      style: dbTitleTextTextStyle12500,
-                      textAlign: TextAlign.center,
                     ),
                   ),
-                ),
-                SizedBox(width: 8.w),
-                Expanded(
-                  child: ElevatedButton(
-                    onPressed: () async {
-                      if (controller.projectNameController.text
-                          .trim()
-                          .isEmpty) {
-                        Get.snackbar(
-                          'Error',
-                          'Please enter a project name',
-                          backgroundColor: Colors.red,
-                          colorText: Colors.white,
+                  SizedBox(width: 8.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () async {
+                        if (controller.projectNameController.text
+                            .trim()
+                            .isEmpty) {
+                          Get.snackbar(
+                            'Error',
+                            'Please enter a project name',
+                            backgroundColor: Colors.red,
+                            colorText: Colors.white,
+                          );
+                          return;
+                        }
+
+                        // Close dialog first using Navigator to ensure it closes
+                        Navigator.of(context).pop();
+
+                        // Add small delay to ensure dialog closes before calling onSave
+                        await Future.delayed(Duration(milliseconds: 100));
+
+                        onSave(
+                          controller.projectNameController.text.trim(),
+                          controller.selectedCollection.value,
                         );
-                        return;
-                      }
-
-                      // Close dialog first using Navigator to ensure it closes
-                      Navigator.of(context).pop();
-
-                      // Add small delay to ensure dialog closes before calling onSave
-                      await Future.delayed(Duration(milliseconds: 100));
-
-                      onSave(
-                        controller.projectNameController.text.trim(),
-                        controller.selectedCollection.value,
-                      );
-                    },
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Color(0xFF1A1A1A),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12.r),
+                      },
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Color(0xFF1A1A1A),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
-                    ),
-                    child: Text(
-                      'SAVE',
-                      style: dbTitleTextTextStyle12500.copyWith(
-                        color: Colors.white,
+                      child: Text(
+                        'SAVE',
+                        style: dbTitleTextTextStyle12500.copyWith(
+                          color: Colors.white,
+                        ),
                       ),
                     ),
                   ),
-                ),
-              ],
-            ),
-          ],
+                ],
+              ),
+            ],
+          ),
         ),
       ),
     );

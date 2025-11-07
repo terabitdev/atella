@@ -120,16 +120,32 @@ class RefiningConceptController extends GetxController {
   
   void _checkForEditMode() {
     final arguments = Get.arguments;
-    print('Refining Concept Controller - Arguments received: $arguments');
-    
+    print('=== REFINING CONCEPT EDIT MODE CHECK ===');
+    print('Arguments received: $arguments');
+
     if (arguments != null && arguments is Map<String, dynamic>) {
+      // Check for "edit current session" mode (from generate_tech_pack screen)
+      final editCurrentSession = arguments['editCurrentSession'] == true;
+      final preserveAnswers = arguments['preserveAnswers'] == true;
+
+      // Check for "edit existing tech pack" mode (from preview screen)
       final isEditMode = arguments['editMode'] == true;
+
+      print('Edit current session flag: $editCurrentSession');
+      print('Preserve answers flag: $preserveAnswers');
       print('Edit mode detected: $isEditMode');
-      
-      if (isEditMode) {
+
+      if (editCurrentSession || preserveAnswers) {
+        // User wants to edit the current session - DON'T reset answers
+        print('🟢 EDITING CURRENT SESSION - Preserving existing answers');
+        // Answers are already in memory, no need to reload
+      } else if (isEditMode) {
+        print('🟢 ENTERING EDIT MODE (from saved tech pack)');
         _isEditMode.value = true;
         _editingTechPack = arguments['techPackModel'] as TechPackModel?;
         _loadExistingRefinedConceptData();
+      } else {
+        print('🔴 NORMAL MODE - Fresh start');
       }
     }
   }

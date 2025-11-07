@@ -13,6 +13,10 @@ class CreativeBriefController extends GetxController {
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
   TechPackModel? _editingTechPack;
+
+  // Edit current session mode (when user clicks "Yes, I'd like to make changes")
+  final RxBool _isEditingCurrentSession = false.obs;
+  bool get isEditingCurrentSession => _isEditingCurrentSession.value;
   
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
@@ -154,24 +158,39 @@ class CreativeBriefController extends GetxController {
     print('=== CREATIVE BRIEF EDIT MODE CHECK ===');
     print('Arguments received: $arguments');
     print('Arguments type: ${arguments.runtimeType}');
-    
+
     if (arguments != null && arguments is Map<String, dynamic>) {
       print('Arguments keys: ${arguments.keys}');
+
+      // Check for "edit current session" mode (from generate_tech_pack screen)
+      final editCurrentSession = arguments['editCurrentSession'] == true;
+      final preserveAnswers = arguments['preserveAnswers'] == true;
+
+      // Check for "edit existing tech pack" mode (from preview screen)
       final isEditMode = arguments['editMode'] == true;
       final techPackModel = arguments['techPackModel'] as TechPackModel?;
-      
+
+      print('Edit current session flag: $editCurrentSession');
+      print('Preserve answers flag: $preserveAnswers');
       print('Edit mode flag: ${arguments['editMode']}');
       print('Edit mode detected: $isEditMode');
       print('TechPack model: ${techPackModel?.toString()}');
-      
-      if (isEditMode) {
-        print('🟢 ENTERING EDIT MODE');
+
+      if (editCurrentSession || preserveAnswers) {
+        // User wants to edit the current session - DON'T reset answers
+        print('🟢 EDITING CURRENT SESSION - Preserving existing answers');
+        _isEditingCurrentSession.value = true;
+        // Answers are already in memory from previous screens, just show them
+        _showLastTwoQuestions.value = true;
+        _currentQuestionIndex.value = questions.length - 1;
+      } else if (isEditMode) {
+        print('🟢 ENTERING EDIT MODE (from saved tech pack)');
         _isEditMode.value = true;
         _editingTechPack = techPackModel;
         print('Stored TechPack: ${_editingTechPack?.projectName}');
         _loadExistingDataFromFirebase();
       } else {
-        print('🔴 EDIT MODE FLAG IS FALSE');
+        print('🔴 NORMAL MODE - Fresh start');
       }
     } else {
       print('🔴 NO ARGUMENTS OR WRONG FORMAT RECEIVED');
@@ -1576,9 +1595,16 @@ class CreativeBriefController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     saveCreativeBriefData();
-    
+
     // Pass edit mode data to next screen
-    if (_isEditMode.value && _editingTechPack != null) {
+    if (_isEditingCurrentSession.value) {
+      // Editing current session - skip onboarding and preserve answers
+      print('🔄 Continuing to Refining Concept in edit current session mode');
+      Get.toNamed('/refining_concept', arguments: {
+        'editCurrentSession': true,
+        'preserveAnswers': true,
+      });
+    } else if (_isEditMode.value && _editingTechPack != null) {
       // In edit mode, skip onboarding and go directly to questionnaire
       Get.toNamed('/refining_concept', arguments: {
         'editMode': true,

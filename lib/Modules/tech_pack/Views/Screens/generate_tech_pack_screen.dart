@@ -1,6 +1,6 @@
-import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
-import 'package:atella/Modules/final_details/controllers/final_detail_controller.dart';
-import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
+// import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
+// import 'package:atella/Modules/final_details/controllers/final_detail_controller.dart';
+// import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -415,21 +415,20 @@ class GenerateTechPackScreen extends StatelessWidget {
         RoundButton(
           title: 'Yes, I\'d like to make changes',
           onTap: (){
-            // Reset all questionnaire answers before going back
-            if (Get.isRegistered<CreativeBriefController>()) {
-              Get.find<CreativeBriefController>().resetAllAnswers();
-            }
-            if (Get.isRegistered<RefiningConceptController>()) {
-              Get.find<RefiningConceptController>().resetAllAnswers();
-            }
-            if (Get.isRegistered<FinalDetailsController>()) {
-              Get.find<FinalDetailsController>().resetAllAnswers();
-            }
+            // DON'T reset - keep the current answers for editing
+            // Instead, navigate to creative_brief in "edit current session" mode
+            print('🔄 User wants to make changes - preserving current answers');
+
             // Delete the TechPackController so it will be recreated fresh next time
             if (Get.isRegistered<TechPackController>()) {
               Get.delete<TechPackController>();
             }
-            Get.toNamed('/creative_brief');
+
+            // Navigate back to creative brief with flag to preserve current session data
+            Get.toNamed('/creative_brief', arguments: {
+              'editCurrentSession': true, // New flag to indicate editing current session
+              'preserveAnswers': true,
+            });
           },
           color: const Color(0xFF1A1A1A),
           isloading: false,

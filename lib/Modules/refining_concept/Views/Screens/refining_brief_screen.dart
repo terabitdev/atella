@@ -1,6 +1,6 @@
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
-import 'package:atella/Modules/creative_brief/Views/Widgets/categorized_chips_widget.dart';
+// import 'package:atella/Modules/creative_brief/Views/Widgets/categorized_chips_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
