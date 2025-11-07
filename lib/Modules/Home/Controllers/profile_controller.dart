@@ -45,13 +45,20 @@ class ProfileController extends GetxController {
   }
   Future<void> updateProfile() async {
     if (validateForm()) {
+      print('🔄 Starting profile update...');
       isLoading.value = true;
-      
+      print('✅ isLoading set to true: ${isLoading.value}');
+
       try {
+        // Ensure UI has time to show "Updating..." state
+        await Future.delayed(Duration(milliseconds: 300));
+
+        print('📤 Calling updateUserProfile...');
         final success = await _authService.updateUserProfile(
           name: fullNameController.text.trim(),
         );
-        
+        print('📥 Update result: $success');
+
         if (success) {
           Get.snackbar(
             'Success',
@@ -70,7 +77,7 @@ class ProfileController extends GetxController {
           );
         }
       } catch (e) {
-        print('Error updating profile: $e');
+        print('❌ Error updating profile: $e');
         Get.snackbar(
           'Error',
           'An error occurred while updating profile',
@@ -79,8 +86,11 @@ class ProfileController extends GetxController {
           colorText: Colors.red.shade800,
         );
       } finally {
+        print('✅ isLoading set to false');
         isLoading.value = false;
       }
+    } else {
+      print('⚠️ Form validation failed');
     }
   }
 

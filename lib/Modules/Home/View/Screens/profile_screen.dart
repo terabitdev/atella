@@ -4,7 +4,6 @@ import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import '../../../../core/themes/app_colors.dart';
 import '../../../../Widgets/app_header.dart';
-import '../../../../Widgets/custom_roundbutton.dart';
 import '../../../auth/View/Widgets/auth_textfield.dart';
 import '../../Controllers/profile_controller.dart';
 
@@ -43,12 +42,53 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
               ProfileTextfield(label: 'Email', controller: controller.emailController, enabled: false),
               Spacer(),
+              // Custom Update Button with Loading State
               Obx(
-                () => RoundButton(
-                  title: 'Update',
-                  onTap: controller.updateProfile,
-                  color: AppColors.buttonColor,
-                  isloading: controller.isLoading.value,
+                () => InkWell(
+                  onTap: controller.isLoading.value ? null : controller.updateProfile,
+                  child: Container(
+                    height: 50.h,
+                    width: 375.w,
+                    decoration: BoxDecoration(
+                      color: controller.isLoading.value
+                          ? AppColors.buttonColor.withOpacity(0.6)
+                          : AppColors.buttonColor,
+                      borderRadius: BorderRadius.circular(10.r),
+                    ),
+                    child: Center(
+                      child: controller.isLoading.value
+                          ? Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                SizedBox(
+                                  height: 20.h,
+                                  width: 20.w,
+                                  child: CircularProgressIndicator(
+                                    color: Colors.white,
+                                    strokeWidth: 2,
+                                  ),
+                                ),
+                                SizedBox(width: 12.w),
+                                Text(
+                                  'Updating...',
+                                  style: TextStyle(
+                                    color: Colors.white,
+                                    fontSize: 16.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ],
+                            )
+                          : Text(
+                              'Update',
+                              style: TextStyle(
+                                color: Colors.white,
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                              ),
+                            ),
+                    ),
+                  ),
                 ),
               ),
               SizedBox(height: 40.h),

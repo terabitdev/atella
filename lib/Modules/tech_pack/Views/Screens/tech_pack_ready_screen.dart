@@ -130,7 +130,7 @@ class TechPackReadyScreen extends StatelessWidget {
   ) {
     showDialog(
       context: context,
-      barrierDismissible: false,
+      barrierDismissible: true, // Allow dismissing by clicking outside
       builder: (context) {
         return SaveTechPackDialog(
           onSave: (projectName, collectionName) async {
