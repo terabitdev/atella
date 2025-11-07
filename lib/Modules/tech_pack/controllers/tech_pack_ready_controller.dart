@@ -193,6 +193,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         'labeling': {
           'logoPlacement': _detailsController.logoPlacementController.text,
           'labelsNeeded': _detailsController.labelsNeededController.text,
+          'labelImage': _detailsController.labelImagePath.value,
           'qrCode': _detailsController.qrCodeController.text,
         },
         'packaging': {
@@ -209,7 +210,11 @@ Delivery: ${_detailsController.deliveryDateController.text}
           'country': _detailsController.manufacturerCountryController.text,
         },
       };
-      
+
+      print('💾 Saving tech pack with labelImage: ${_detailsController.labelImagePath.value}');
+      print('   Logo placement: ${_detailsController.logoPlacementController.text}');
+      print('   Measurement image: ${_detailsController.measurementImagePath.value}');
+
       if (isEditMode && editingTechPack != null) {
         // EDIT MODE: Update existing tech pack
         print('=== EDIT MODE: Updating existing tech pack ===');

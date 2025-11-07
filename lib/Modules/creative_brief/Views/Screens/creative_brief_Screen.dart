@@ -511,7 +511,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               onImageRemoved: (imagePath) {
                 controller.removeImage(imagePath);
               },
-              placeholder: 'Upload your visual inspiration images',
+              placeholder: 'Upload visual inspiration images (optional)',
             ),
 
             // Skip button - only show if question is not answered and no images selected

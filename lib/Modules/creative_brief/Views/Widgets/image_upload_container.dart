@@ -13,7 +13,7 @@ class ImageUploadContainer extends StatelessWidget {
     Key? key,
     required this.onImageSelected,
     this.initialImage,
-    this.placeholder = 'Upload visual inspiration image',
+    this.placeholder = 'Upload visual inspiration image (optional)',
   }) : super(key: key);
 
   Future<void> _pickImageFromGallery() async {

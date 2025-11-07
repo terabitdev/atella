@@ -190,6 +190,10 @@ class EditDataService {
 
   // Parse tech pack details from Firebase into UI-friendly format
   Map<String, dynamic> parseTechPackDetailsForEdit(Map<String, dynamic> techPackDetails) {
+    print('🔍 EditDataService - Raw Firebase data:');
+    print('   Raw sizes: ${techPackDetails['sizes']}');
+    print('   Raw labeling: ${techPackDetails['labeling']}');
+
     return {
       'materials': {
         'mainFabric': techPackDetails['materials']?['mainFabric'] ?? '',
@@ -214,6 +218,7 @@ class EditDataService {
       'labeling': {
         'logoPlacement': techPackDetails['labeling']?['logoPlacement'] ?? '',
         'labelsNeeded': techPackDetails['labeling']?['labelsNeeded'] ?? '',
+        'labelImage': techPackDetails['labeling']?['labelImage'] ?? '',
         'qrCode': techPackDetails['labeling']?['qrCode'] ?? '',
       },
       'packaging': {
@@ -225,6 +230,9 @@ class EditDataService {
         'costPerPiece': techPackDetails['production']?['costPerPiece'] ?? '',
         'quantity': techPackDetails['production']?['quantity'] ?? '',
         'deliveryDate': techPackDetails['production']?['deliveryDate'] ?? '',
+      },
+      'manufacturers': {
+        'country': techPackDetails['manufacturers']?['country'] ?? '',
       },
     };
   }
