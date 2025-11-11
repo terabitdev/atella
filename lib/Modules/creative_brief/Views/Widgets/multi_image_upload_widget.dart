@@ -15,7 +15,7 @@ class MultiImageUploadWidget extends StatelessWidget {
     required this.selectedImages,
     required this.onImageAdded,
     required this.onImageRemoved,
-    this.placeholder = 'Upload visual inspiration images',
+    this.placeholder = 'Upload visual inspiration images (optional)',
   }) : super(key: key);
 
   Future<void> _pickImageFromGallery() async {

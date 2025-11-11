@@ -97,17 +97,19 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
           SizedBox(height: 8.h),
           Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
           SizedBox(height: 8.h),
-          Obx(() => Text(
-            controller.isLoading.value 
-              ? 'Loading manufacturers...'
-              : 'We found ${controller.allManufacturersCache.length} manufacturers from around the world.',
-            style: mstTextTextStyle184001,
-          )),
+          Obx(
+            () => Text(
+              controller.isLoading.value
+                  ? 'Loading manufacturers...'
+                  : 'We found ${controller.allManufacturersCache.length} manufacturers from around the world.',
+              style: mstTextTextStyle184001,
+            ),
+          ),
           SizedBox(height: 8.h),
           SizedBox(height: 18.h),
           Obx(() {
             final manufacturers = controller.displayedManufacturers;
-            
+
             if (controller.isLoading.value && manufacturers.isEmpty) {
               return Center(
                 child: Column(
@@ -157,10 +159,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                     SizedBox(height: 16.h),
                     Text(
                       'No manufacturers available',
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: Colors.grey,
-                      ),
+                      style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                     ),
                   ],
                 ),
@@ -172,7 +171,8 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                     (manufacturer) => ManufacturerSuggestionCard(
                       manufacturer: manufacturer,
                       onViewProfile: () {},
-                      onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
+                      onSendEmail: () =>
+                          controller.previewEmailToManufacturer(manufacturer),
                     ),
                   ),
                   if (controller.isLoadingMore.value)
@@ -193,10 +193,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                       child: Center(
                         child: Text(
                           'All manufacturers loaded',
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey,
-                          ),
+                          style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                         ),
                       ),
                     ),
@@ -210,6 +207,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
     ),
   );
 }
+
 customTab(ManufacturerSuggestionController controller) {
   return RefreshIndicator(
     onRefresh: controller.refreshManufacturers,
@@ -227,81 +225,86 @@ customTab(ManufacturerSuggestionController controller) {
             style: mstTextTextStyle184001,
           ),
           SizedBox(height: 18.h),
-        Text('Country or Region', style: cstTextTextStyle16500),
-        SizedBox(height: 8.h),
+          Text('Country or Region', style: cstTextTextStyle16500),
+          SizedBox(height: 8.h),
 
-        // Country Picker
-        Builder(
-          builder: (BuildContext ctx) => Obx(
-            () => InkWell(
-              onTap: () {
-                showCountryPicker(
-                  context: ctx,
-                  showPhoneCode: false,
-                  onSelect: (Country country) {
-                    controller.selectCountry(country);
-                  },
-                  countryListTheme: CountryListThemeData(
-                    backgroundColor: Colors.white,
-                    textStyle: TextStyle(fontSize: 16.sp),
-                    searchTextStyle: TextStyle(fontSize: 16.sp),
-                    inputDecoration: InputDecoration(
-                      labelText: 'Search',
-                      hintText: 'Start typing to search',
-                      prefixIcon: const Icon(Icons.search),
-                      border: OutlineInputBorder(
-                        borderSide: BorderSide(
-                          color: const Color(0xFF8C98A8).withValues(alpha: 0.2),
+          // Country Picker
+          Builder(
+            builder: (BuildContext ctx) => Obx(
+              () => InkWell(
+                onTap: () {
+                  showCountryPicker(
+                    context: ctx,
+                    showPhoneCode: false,
+                    onSelect: (Country country) {
+                      controller.selectCountry(country);
+                    },
+                    countryListTheme: CountryListThemeData(
+                      backgroundColor: Colors.white,
+                      textStyle: TextStyle(fontSize: 16.sp),
+                      searchTextStyle: TextStyle(fontSize: 16.sp),
+                      inputDecoration: InputDecoration(
+                        labelText: 'Search',
+                        hintText: 'Start typing to search',
+                        prefixIcon: const Icon(Icons.search),
+                        border: OutlineInputBorder(
+                          borderSide: BorderSide(
+                            color: const Color(
+                              0xFF8C98A8,
+                            ).withValues(alpha: 0.2),
+                          ),
                         ),
                       ),
                     ),
+                  );
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    vertical: 14.h,
+                    horizontal: 16.w,
                   ),
-                );
-              },
-              child: Container(
-                padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-                decoration: BoxDecoration(
-                  color: const Color.fromARGB(255, 227, 225, 251),
-                  borderRadius: BorderRadius.circular(12.r),
-                ),
-                child: Row(
-                  children: [
-                    Expanded(
-                      child: Text(
-                        controller.selectedCountryName.value,
-                        style: TextStyle(fontSize: 16.sp),
+                  decoration: BoxDecoration(
+                    color: const Color.fromARGB(255, 227, 225, 251),
+                    borderRadius: BorderRadius.circular(12.r),
+                  ),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: Text(
+                          controller.selectedCountryName.value,
+                          style: TextStyle(fontSize: 16.sp),
+                        ),
                       ),
-                    ),
-                    const Icon(Icons.arrow_drop_down),
-                  ],
+                      const Icon(Icons.arrow_drop_down),
+                    ],
+                  ),
                 ),
               ),
             ),
           ),
-        ),
 
-        SizedBox(height: 8.h),
+          SizedBox(height: 8.h),
 
-        // Clear Filter button
-        Obx(() => controller.selectedCountry.value != null
-            ? TextButton(
-                onPressed: controller.clearCountryFilter,
-                child: Text(
-                  'Clear Filter',
-                  style: cstTextTextStyle16500.copyWith(
-                    color: Colors.red,
-                  ),
-                ),
-              )
-            : const SizedBox.shrink()),
+          // Clear Filter button
+          Obx(
+            () => controller.selectedCountry.value != null
+                ? TextButton(
+                    onPressed: controller.clearCountryFilter,
+                    child: Text(
+                      'Clear Filter',
+                      style: cstTextTextStyle16500.copyWith(color: Colors.red),
+                    ),
+                  )
+                : const SizedBox.shrink(),
+          ),
 
-        SizedBox(height: 18.h),
+          SizedBox(height: 18.h),
 
           // Manufacturer list - instant display with reactive updates
           Obx(() {
             final filteredManufacturers = controller.filteredManufacturers;
-              
-              if (controller.allManufacturersCache.isEmpty) {
+
+            if (controller.allManufacturersCache.isEmpty) {
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -323,25 +326,18 @@ customTab(ManufacturerSuggestionController controller) {
                   ],
                 ),
               );
-              } else if (filteredManufacturers.isEmpty) {
+            } else if (filteredManufacturers.isEmpty) {
               return Center(
                 child: Padding(
                   padding: EdgeInsets.symmetric(vertical: 40.h),
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(
-                        Icons.search_off,
-                        size: 64.sp,
-                        color: Colors.grey,
-                      ),
+                      Icon(Icons.search_off, size: 64.sp, color: Colors.grey),
                       SizedBox(height: 16.h),
                       Text(
                         'No manufacturers found',
-                        style: TextStyle(
-                          fontSize: 16.sp,
-                          color: Colors.grey,
-                        ),
+                        style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                       ),
                       if (controller.selectedCountry.value != null)
                         Padding(
@@ -358,19 +354,22 @@ customTab(ManufacturerSuggestionController controller) {
                   ),
                 ),
               );
-              } else {
-                return Column(
-                  children: filteredManufacturers.map(
-                    (manufacturer) => ManufacturerSuggestionCard(
-                      manufacturer: manufacturer,
-                      onViewProfile: () {
-                        Get.to(ViewProfileTechPackScreen());
-                      },
-                      onSendEmail: () => controller.sendEmailToManufacturer(manufacturer),
-                    ),
-                  ).toList(),
-                );
-              }
+            } else {
+              return Column(
+                children: filteredManufacturers
+                    .map(
+                      (manufacturer) => ManufacturerSuggestionCard(
+                        manufacturer: manufacturer,
+                        onViewProfile: () {
+                          Get.to(ViewProfileTechPackScreen());
+                        },
+                        onSendEmail: () =>
+                            controller.previewEmailToManufacturer(manufacturer),
+                      ),
+                    )
+                    .toList(),
+              );
+            }
           }),
 
           SizedBox(height: 18.h),

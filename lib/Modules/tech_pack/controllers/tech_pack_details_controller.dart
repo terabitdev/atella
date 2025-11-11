@@ -213,7 +213,12 @@ class TechPackDetailsController extends GetxController {
   }
 
   void _populateTechPackFields(Map<String, dynamic> techPackDetails) {
-    print('Populating tech pack fields with: $techPackDetails');
+    print('🔍 ===== POPULATING TECH PACK FIELDS =====');
+    print('Full tech pack details structure:');
+    print('  Materials: ${techPackDetails['materials']}');
+    print('  Sizes: ${techPackDetails['sizes']}');
+    print('  Labeling: ${techPackDetails['labeling']}');
+    print('=========================================');
 
     // Materials & Fabrics
     final materials =
@@ -234,6 +239,10 @@ class TechPackDetailsController extends GetxController {
     measurementChartController.text = sizes['measurementChart'] ?? '';
     measurementImagePath.value = sizes['measurementImage'] ?? '';
 
+    print('📏 Measurement data from Firebase:');
+    print('   measurementImage field exists: ${sizes.containsKey('measurementImage')}');
+    print('   measurementImage value: ${sizes['measurementImage']}');
+
     // Technical Details
     final technical =
         techPackDetails['technical'] as Map<String, dynamic>? ?? {};
@@ -243,10 +252,19 @@ class TechPackDetailsController extends GetxController {
 
     // Labeling & Branding
     final labeling = techPackDetails['labeling'] as Map<String, dynamic>? ?? {};
+    print('🏷️ Labeling data from Firebase:');
+    print('   Raw labeling map: $labeling');
+    print('   labelImage field exists: ${labeling.containsKey('labelImage')}');
+    print('   labelImage value: ${labeling['labelImage']}');
+
     logoPlacementController.text = labeling['logoPlacement'] ?? '';
     labelsNeededController.text = labeling['labelsNeeded'] ?? '';
     labelImagePath.value = labeling['labelImage'] ?? '';
     qrCodeController.text = labeling['qrCode'] ?? '';
+
+    print('🖼️ After loading - label image path: ${labelImagePath.value}');
+    print('   Logo placement: ${logoPlacementController.text}');
+    print('   Labels needed: ${labelsNeededController.text}');
 
     // Packaging & Shipping
     final packaging =

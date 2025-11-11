@@ -1,5 +1,6 @@
 import 'dart:async';
-import 'package:atella/Data/Models/brief_questions_model.dart';import 'package:atella/Data/Models/tech_pack_model.dart';
+import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:get/get.dart';
 class CreativeBriefController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final EditDataService _editDataService = EditDataService();
-  
+
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
@@ -17,7 +18,7 @@ class CreativeBriefController extends GetxController {
   // Edit current session mode (when user clicks "Yes, I'd like to make changes")
   final RxBool _isEditingCurrentSession = false.obs;
   bool get isEditingCurrentSession => _isEditingCurrentSession.value;
-  
+
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
@@ -36,12 +37,14 @@ class CreativeBriefController extends GetxController {
   Map<String, BriefAnswer> get answers => _answers;
 
   // Text controllers for text input questions
-  final colorController = TextEditingController(); // For solid colors (hex codes)
+  final colorController =
+      TextEditingController(); // For solid colors (hex codes)
   final fabricController = TextEditingController();
   final customController = TextEditingController(); // For custom answers
 
   // Storage for multi-part colors question
-  final RxList<String> _selectedColors = <String>[].obs; // Hex codes for solid colors
+  final RxList<String> _selectedColors =
+      <String>[].obs; // Hex codes for solid colors
   List<String> get selectedColors => _selectedColors;
 
   final RxString _selectedPrint = ''.obs; // Selected print option
@@ -78,7 +81,15 @@ class CreativeBriefController extends GetxController {
       type: 'chips_categorized',
       options: [], // Will use categories instead
       categories: {
-        'Tops': ['T-shirt', 'Shirt', 'Blouse', 'Hoodie', 'Jacket', 'Coat', 'Vest'],
+        'Tops': [
+          'T-shirt',
+          'Shirt',
+          'Blouse',
+          'Hoodie',
+          'Jacket',
+          'Coat',
+          'Vest',
+        ],
         'Bottoms': ['Pants', 'Jeans', 'Skirts', 'Shorts', 'Leggings'],
         'Dresses': ['Casual dress', 'Evening', 'Cocktail dress', 'Gown'],
         'Sportswear': ['Tracksuit', 'Activewear', 'Swimwear'],
@@ -121,8 +132,20 @@ class CreativeBriefController extends GetxController {
       type: 'multi_part_color',
       options: [],
       categories: {
-        'Prints': ['Floral', 'Abstract', 'Camouflage', 'Stripes', 'Polka dots', 'Tie-dye'],
-        'Techniques': ['Color blocking', 'Gradient/Ombré', 'Embroidery', 'Jacquard'],
+        'Prints': [
+          'Floral',
+          'Abstract',
+          'Camouflage',
+          'Stripes',
+          'Polka dots',
+          'Tie-dye',
+        ],
+        'Techniques': [
+          'Color blocking',
+          'Gradient/Ombré',
+          'Embroidery',
+          'Jacquard',
+        ],
       },
     ),
     BriefQuestion(
@@ -131,12 +154,21 @@ class CreativeBriefController extends GetxController {
       type: 'chips_categorized',
       options: [],
       categories: {
-        'Cotton': ['Lightweight (poplin, voile)', 'Medium (twill)', 'Heavy (denim, canvas)'],
+        'Cotton': [
+          'Lightweight (poplin, voile)',
+          'Medium (twill)',
+          'Heavy (denim, canvas)',
+        ],
         'Wool': ['Merino', 'Cashmere', 'Tweed', 'Felt'],
         'Silk': ['Satin', 'Chiffon', 'Organza'],
         'Linen': ['Plain', 'Textured', 'Blended'],
         'Synthetic': ['Polyester', 'Nylon', 'Spandex', 'Neoprene'],
-        'Eco options': ['Organic cotton', 'Recycled polyester', 'Bamboo', 'Hemp'],
+        'Eco options': [
+          'Organic cotton',
+          'Recycled polyester',
+          'Bamboo',
+          'Hemp',
+        ],
         'Leather/Faux leather': ['Leather', 'Faux leather'],
         'Knitwear': ['Jersey', 'Rib knit', 'Interlock'],
       },
@@ -148,11 +180,11 @@ class CreativeBriefController extends GetxController {
     super.onInit();
     _startTimeUpdater();
     _updateCurrentTime();
-    
+
     // Check if we're in edit mode and pre-fill data
     _checkForEditMode();
   }
-  
+
   void _checkForEditMode() {
     final arguments = Get.arguments;
     print('=== CREATIVE BRIEF EDIT MODE CHECK ===');
@@ -198,7 +230,7 @@ class CreativeBriefController extends GetxController {
       print('Arguments is Map: ${arguments is Map<String, dynamic>}');
     }
   }
-  
+
   // Load existing data from Firebase for edit mode
   Future<void> _loadExistingDataFromFirebase() async {
     if (_editingTechPack == null) {
@@ -207,8 +239,10 @@ class CreativeBriefController extends GetxController {
     }
 
     try {
-      print('Loading data from Firebase for tech pack: ${_editingTechPack!.id}');
-      
+      print(
+        'Loading data from Firebase for tech pack: ${_editingTechPack!.id}',
+      );
+
       // Show loading indicator
       Get.snackbar(
         'Loading',
@@ -220,25 +254,36 @@ class CreativeBriefController extends GetxController {
       );
 
       // Get complete edit data from Firebase
-      final editData = await _editDataService.getTechPackEditData(_editingTechPack!.id);
-      
+      final editData = await _editDataService.getTechPackEditData(
+        _editingTechPack!.id,
+      );
+
       if (editData != null) {
-        final questionnaireData = editData['designQuestionnaire'] as Map<String, dynamic>;
-        final parsedData = _editDataService.parseQuestionnaireForEdit(questionnaireData);
-        
+        final questionnaireData =
+            editData['designQuestionnaire'] as Map<String, dynamic>;
+        final parsedData = _editDataService.parseQuestionnaireForEdit(
+          questionnaireData,
+        );
+
         // Load creative brief data if available
         if (parsedData.containsKey('creativeBrief')) {
-          _loadCreativeBriefAnswers(parsedData['creativeBrief'] as Map<String, dynamic>);
+          _loadCreativeBriefAnswers(
+            parsedData['creativeBrief'] as Map<String, dynamic>,
+          );
         }
-        
+
         // Store all questionnaire data for later use
         if (parsedData.containsKey('refinedConcept')) {
-          _dataService.setRefinedConceptData(parsedData['refinedConcept'] as Map<String, dynamic>);
+          _dataService.setRefinedConceptData(
+            parsedData['refinedConcept'] as Map<String, dynamic>,
+          );
         }
         if (parsedData.containsKey('finalDetails')) {
-          _dataService.setFinalDetailsData(parsedData['finalDetails'] as Map<String, dynamic>);
+          _dataService.setFinalDetailsData(
+            parsedData['finalDetails'] as Map<String, dynamic>,
+          );
         }
-        
+
         Get.snackbar(
           'Edit Mode',
           'Editing design: ${_editingTechPack!.projectName}',
@@ -264,11 +309,11 @@ class CreativeBriefController extends GetxController {
       _prefillDemoAnswers(_editingTechPack);
     }
   }
-  
+
   // Load creative brief answers from Firebase data
   void _loadCreativeBriefAnswers(Map<String, dynamic> creativeBriefData) {
     // print('Loading creative brief answers: $creativeBriefData');
-    
+
     // Load chip-based answers
     final garmentType = creativeBriefData['garment_type'] as String? ?? '';
     if (garmentType.isNotEmpty) {
@@ -277,7 +322,7 @@ class CreativeBriefController extends GetxController {
         selectedOptions: [garmentType],
       );
     }
-    
+
     final style = creativeBriefData['style'] as String? ?? '';
     if (style.isNotEmpty) {
       _answers['style'] = BriefAnswer(
@@ -285,15 +330,16 @@ class CreativeBriefController extends GetxController {
         selectedOptions: [style],
       );
     }
-    
-    final targetAudience = creativeBriefData['target_audience'] as String? ?? '';
+
+    final targetAudience =
+        creativeBriefData['target_audience'] as String? ?? '';
     if (targetAudience.isNotEmpty) {
       _answers['target_audience'] = BriefAnswer(
         questionId: 'target_audience',
         selectedOptions: [targetAudience],
       );
     }
-    
+
     final occasion = creativeBriefData['occasion'] as String? ?? '';
     if (occasion.isNotEmpty) {
       _answers['occasion'] = BriefAnswer(
@@ -301,7 +347,7 @@ class CreativeBriefController extends GetxController {
         selectedOptions: [occasion],
       );
     }
-    
+
     // Load image-based inspiration (support both single and multiple images)
     final inspiration = creativeBriefData['inspiration'];
     if (inspiration != null) {
@@ -312,7 +358,9 @@ class CreativeBriefController extends GetxController {
         _answers['inspiration'] = BriefAnswer(
           questionId: 'inspiration',
           selectedOptions: ['Image'],
-          textInput: imagePaths.join('|||'), // Use delimiter to store multiple paths
+          textInput: imagePaths.join(
+            '|||',
+          ), // Use delimiter to store multiple paths
         );
       } else if (inspiration is String && inspiration.isNotEmpty) {
         // Single image or text
@@ -339,7 +387,7 @@ class CreativeBriefController extends GetxController {
         }
       }
     }
-    
+
     // Load multi-part colors answer
     final solidColors = creativeBriefData['solidColors'];
     final print = creativeBriefData['print'] as String? ?? '';
@@ -381,9 +429,13 @@ class CreativeBriefController extends GetxController {
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
         selectedOptions: selectedOptions,
-        textInput: _selectedColors.isNotEmpty ? _selectedColors.join('|||') : null,
+        textInput: _selectedColors.isNotEmpty
+            ? _selectedColors.join('|||')
+            : null,
       );
-      debugPrint('   ✅ Created colors answer with ${selectedOptions.length} options and ${_selectedColors.length} colors');
+      debugPrint(
+        '   ✅ Created colors answer with ${selectedOptions.length} options and ${_selectedColors.length} colors',
+      );
     } else {
       debugPrint('   ⚠️ No color data found');
     }
@@ -396,24 +448,24 @@ class CreativeBriefController extends GetxController {
         selectedOptions: [fabrics],
       );
     }
-    
+
     // In edit mode, show all questions
     _showLastTwoQuestions.value = true;
     _currentQuestionIndex.value = questions.length - 1;
-    
+
     // Force reactive update
     _answers.refresh();
     update();
-    
+
     // print('Loaded ${_answers.length} answers for creative brief');
   }
-  
+
   void _prefillDemoAnswers(TechPackModel? techPack) {
     print('Pre-filling demo answers...');
-    
+
     // Pre-fill some answers to demonstrate edit mode functionality
     // In a real application, you would load these from stored data
-    
+
     // Example: Pre-fill garment type (this would come from stored questionnaire data)
     _answers['garment_type'] = BriefAnswer(
       questionId: 'garment_type',
@@ -421,7 +473,7 @@ class CreativeBriefController extends GetxController {
       textInput: null,
     );
     print('Pre-filled garment_type: ${_answers['garment_type']}');
-    
+
     // Example: Pre-fill style preference
     _answers['style'] = BriefAnswer(
       questionId: 'style',
@@ -429,7 +481,7 @@ class CreativeBriefController extends GetxController {
       textInput: null,
     );
     print('Pre-filled style: ${_answers['style']}');
-    
+
     // Example: Pre-fill multi-part colors (using project name as example)
     if (techPack?.projectName.toLowerCase().contains('blue') == true) {
       _selectedColors.value = ['#0000FF', '#000080'];
@@ -454,12 +506,14 @@ class CreativeBriefController extends GetxController {
       );
     }
     print('Pre-filled colors: ${_answers['colors']}');
-    
+
     // Example: Pre-fill fabrics as chip selection (categorized chips)
     if (techPack?.collectionName.toLowerCase().contains('summer') == true) {
       _answers['fabrics'] = BriefAnswer(
         questionId: 'fabrics',
-        selectedOptions: ['Lightweight (poplin, voile)'], // Cotton category option
+        selectedOptions: [
+          'Lightweight (poplin, voile)',
+        ], // Cotton category option
       );
     } else {
       // Default fabrics for edit mode
@@ -469,17 +523,17 @@ class CreativeBriefController extends GetxController {
       );
     }
     print('Pre-filled fabrics: ${_answers['fabrics']}');
-    
+
     // Force trigger reactive update for the _answers map
     _answers.refresh();
-    
+
     // Also trigger general update
     update();
-    
+
     print('All answers after pre-filling: ${_answers.keys.toList()}');
     print('Is garment_type answered: ${isQuestionAnswered('garment_type')}');
     print('Is style answered: ${isQuestionAnswered('style')}');
-    
+
     // Show success message
     Future.delayed(Duration(seconds: 2), () {
       Get.snackbar(
@@ -527,12 +581,12 @@ class CreativeBriefController extends GetxController {
       final answer = _answers[currentQuestion.id];
       return answer?.selectedOptions.contains(option) ?? false;
     }
-    
+
     // Check temporary selection first (for current question)
     if (!isQuestionAnswered(currentQuestion.id)) {
       return _tempSelections[currentQuestion.id] == option;
     }
-    
+
     // For answered questions, check final answer
     final answer = _answers[currentQuestion.id];
     return answer?.selectedOptions.contains(option) ?? false;
@@ -574,7 +628,9 @@ class CreativeBriefController extends GetxController {
 
     // Auto-advance to next question after delay, but only if no answer exists yet
     if (!isQuestionAnswered(questionId)) {
-      await Future.delayed(const Duration(milliseconds: 2000)); // Increased delay to 2 seconds
+      await Future.delayed(
+        const Duration(milliseconds: 2000),
+      ); // Increased delay to 2 seconds
       // Check if the selection is still the same (user hasn't changed it)
       if (_tempSelections[questionId] == option) {
         _confirmCurrentSelection(questionId);
@@ -644,16 +700,16 @@ class CreativeBriefController extends GetxController {
       if (answer.selectedOptions.isNotEmpty) {
         _tempSelections[questionId] = answer.selectedOptions.first;
       }
-      
+
       // Remove the final answer
       _answers.remove(questionId);
-      
+
       // Jump to that question if needed
       final questionIndex = questions.indexWhere((q) => q.id == questionId);
       if (questionIndex != -1 && questionIndex != currentQuestionIndex) {
         _currentQuestionIndex.value = questionIndex;
       }
-      
+
       update();
     }
   }
@@ -661,7 +717,7 @@ class CreativeBriefController extends GetxController {
   // Submit custom answer
   void submitCustomAnswer() async {
     print('Submitting custom answer: ${customController.text}'); // Debug
-    
+
     if (customController.text.trim().isEmpty) {
       return;
     }
@@ -770,7 +826,9 @@ class CreativeBriefController extends GetxController {
     _answers['inspiration'] = BriefAnswer(
       questionId: 'inspiration',
       selectedOptions: ['Image'],
-      textInput: _inspirationImages.join('|||'), // Store all paths with delimiter
+      textInput: _inspirationImages.join(
+        '|||',
+      ), // Store all paths with delimiter
     );
 
     // Trigger reactive update for the map
@@ -812,7 +870,7 @@ class CreativeBriefController extends GetxController {
       _selectedColors.add(hexCode);
       // Update text controller to show all colors
       colorController.text = _selectedColors.join(', ');
-      _checkAndSaveColorsAnswer();
+      _checkAndSaveColorsAnswer(trigger: 'color');
       update();
     }
   }
@@ -820,51 +878,62 @@ class CreativeBriefController extends GetxController {
   void removeColor(String hexCode) {
     _selectedColors.remove(hexCode);
     colorController.text = _selectedColors.join(', ');
-    _checkAndSaveColorsAnswer();
+    _checkAndSaveColorsAnswer(trigger: 'color');
     update();
   }
 
   void selectPrint(String print) {
     _selectedPrint.value = print;
-    _checkAndSaveColorsAnswer();
+    _checkAndSaveColorsAnswer(trigger: 'print');
     update();
   }
 
   void selectTechnique(String technique) {
     _selectedTechnique.value = technique;
-    _checkAndSaveColorsAnswer();
+    _checkAndSaveColorsAnswer(trigger: 'technique');
     update();
   }
 
-  bool get isColorsQuestionComplete {
-    return _selectedColors.isNotEmpty &&
-           _selectedPrint.value.isNotEmpty &&
-           _selectedTechnique.value.isNotEmpty;
-  }
+  void _checkAndSaveColorsAnswer({String? trigger}) {
+    final hadAnswer = _answers.containsKey('colors');
+    final hasAnySelection =
+        _selectedColors.isNotEmpty ||
+        _selectedPrint.value.isNotEmpty ||
+        _selectedTechnique.value.isNotEmpty;
 
-  void _checkAndSaveColorsAnswer() async {
-    final wasIncomplete = !_answers.containsKey('colors');
-
-    if (isColorsQuestionComplete) {
-      // Create answer with all three parts
-      _answers['colors'] = BriefAnswer(
-        questionId: 'colors',
-        selectedOptions: [_selectedPrint.value, _selectedTechnique.value],
-        textInput: _selectedColors.join('|||'), // Store colors with delimiter
-      );
-      _answers.refresh();
-      print('Colors answer saved: Solid=${_selectedColors.join(", ")}, Print=${_selectedPrint.value}, Technique=${_selectedTechnique.value}');
-
-      // Auto-advance to next question if this is the first time completing it
-      if (wasIncomplete && currentQuestion.id == 'colors') {
-        print('Colors question completed, auto-advancing to next question');
-        await Future.delayed(const Duration(milliseconds: 2000));
-        _nextQuestion();
+    if (!hasAnySelection) {
+      if (hadAnswer) {
+        _answers.remove('colors');
+        _answers.refresh();
       }
-    } else {
-      // Remove answer if incomplete
-      _answers.remove('colors');
-      _answers.refresh();
+      return;
+    }
+
+    final selectedOptions = <String>[];
+    if (_selectedPrint.value.isNotEmpty) {
+      selectedOptions.add(_selectedPrint.value);
+    }
+    if (_selectedTechnique.value.isNotEmpty) {
+      selectedOptions.add(_selectedTechnique.value);
+    }
+
+    _answers['colors'] = BriefAnswer(
+      questionId: 'colors',
+      selectedOptions: selectedOptions,
+      textInput: _selectedColors.isNotEmpty
+          ? _selectedColors.join('|||')
+          : null,
+    );
+    _answers.refresh();
+
+    if (!hadAnswer && currentQuestion.id == 'colors') {
+      final currentIndex = currentQuestionIndex;
+      Future.delayed(const Duration(milliseconds: 1200), () {
+        if (_currentQuestionIndex.value == currentIndex &&
+            currentQuestion.id == 'colors') {
+          _nextQuestion();
+        }
+      });
     }
   }
 
@@ -951,7 +1020,7 @@ class CreativeBriefController extends GetxController {
 
   double get progressPercentage =>
       (currentQuestionIndex + 1) / questions.length;
-  
+
   // Reset all answers and go back to the first question
   void resetAllAnswers() {
     _answers.clear();
@@ -965,17 +1034,17 @@ class CreativeBriefController extends GetxController {
     customController.clear();
     update();
   }
-  
+
   // Edit answer method - allows editing a specific question's answer
   void editAnswer(String questionId) {
     print('=== EDIT ANSWER CLICKED ===');
     print('Question ID: $questionId');
     print('Current answer: ${_answers[questionId]?.selectedOptions}');
-    
+
     // Show a dialog to allow editing
     _showEditDialog(questionId);
   }
-  
+
   // Show edit dialog for a question
   void _showEditDialog(String questionId) {
     final question = questions.firstWhere((q) => q.id == questionId);
@@ -988,11 +1057,13 @@ class CreativeBriefController extends GetxController {
     }
 
     // Create a temporary list to track changes
-    RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
+    RxList<String> tempSelectedOptions =
+        (currentAnswer?.selectedOptions.toList() ?? []).obs;
 
     // Create a temporary controller for custom text
     final tempCustomController = TextEditingController();
-    if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
+    if (currentAnswer?.textInput != null &&
+        currentAnswer!.textInput!.isNotEmpty) {
       tempCustomController.text = currentAnswer.textInput!;
     }
 
@@ -1039,132 +1110,170 @@ class CreativeBriefController extends GetxController {
                 ),
                 SizedBox(height: 12),
                 // Show categorized chips if applicable
-                if (question.type == 'chips_categorized' && categoriesMap != null)
+                if (question.type == 'chips_categorized' &&
+                    categoriesMap != null)
                   ...categoriesMap.entries.map((category) {
-                    return Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Category title
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8, top: 8),
-                          child: Text(
-                            category.key,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
+                    return Obx(
+                      () => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Category title
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              category.key,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
                             ),
                           ),
-                        ),
-                        // Category options
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: category.value.map((option) {
-                            final isSelected = tempSelectedOptions.contains(option);
-                            return GestureDetector(
-                              onTap: () {
-                                if (question.allowMultiple) {
-                                  if (isSelected) {
-                                    tempSelectedOptions.remove(option);
+                          // Category options
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: category.value.map((option) {
+                              final isSelected = tempSelectedOptions.contains(
+                                option,
+                              );
+                              return GestureDetector(
+                                onTap: () {
+                                  if (question.allowMultiple) {
+                                    if (isSelected) {
+                                      tempSelectedOptions.remove(option);
+                                    } else {
+                                      tempSelectedOptions.add(option);
+                                    }
                                   } else {
-                                    tempSelectedOptions.add(option);
+                                    tempSelectedOptions.value = [option];
                                   }
-                                } else {
-                                  tempSelectedOptions.value = [option];
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Colors.black : Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected ? Colors.black : Colors.grey[300]!,
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    option,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 13,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w500
+                                          : FontWeight.w400,
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  option,
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : Colors.black,
-                                    fontSize: 13,
-                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(height: 8),
-                      ],
-                    ));
+                              );
+                            }).toList(),
+                          ),
+                          SizedBox(height: 8),
+                        ],
+                      ),
+                    );
                   }).toList()
                 else
                   // Show regular chips
-                  Obx(() => Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: allOptions.map((option) {
-                      final isSelected = tempSelectedOptions.contains(option);
-                      return GestureDetector(
-                        onTap: () {
-                          if (question.allowMultiple) {
-                            if (isSelected) {
-                              tempSelectedOptions.remove(option);
+                  Obx(
+                    () => Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: allOptions.map((option) {
+                        final isSelected = tempSelectedOptions.contains(option);
+                        return GestureDetector(
+                          onTap: () {
+                            if (question.allowMultiple) {
+                              if (isSelected) {
+                                tempSelectedOptions.remove(option);
+                              } else {
+                                tempSelectedOptions.add(option);
+                              }
                             } else {
-                              tempSelectedOptions.add(option);
+                              tempSelectedOptions.value = [option];
                             }
-                          } else {
-                            tempSelectedOptions.value = [option];
-                          }
 
-                          // Update custom selected state
-                          isCustomSelected.value = tempSelectedOptions.contains('Custom');
-                        },
-                        child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.black : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(25),
-                            border: Border.all(
-                              color: isSelected ? Colors.black : Colors.grey[300]!,
+                            // Update custom selected state
+                            isCustomSelected.value = tempSelectedOptions
+                                .contains('Custom');
+                          },
+                          child: Container(
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.black
+                                    : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Text(
+                              option,
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black,
+                                fontSize: 14,
+                                fontWeight: isSelected
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                              ),
                             ),
                           ),
-                          child: Text(
-                            option,
-                            style: TextStyle(
-                              color: isSelected ? Colors.white : Colors.black,
-                              fontSize: 14,
-                              fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                            ),
-                          ),
-                        ),
-                      );
-                    }).toList(),
-                  )),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 SizedBox(height: 16),
                 // Show custom text field if Custom is selected
-                Obx(() => isCustomSelected.value ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Enter custom answer:',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: tempCustomController,
-                      decoration: InputDecoration(
-                        hintText: 'Type your custom answer...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      maxLines: 2,
-                    ),
-                  ],
-                ) : SizedBox.shrink()),
+                Obx(
+                  () => isCustomSelected.value
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Enter custom answer:',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextField(
+                              controller: tempCustomController,
+                              decoration: InputDecoration(
+                                hintText: 'Type your custom answer...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                ),
               ],
             ),
           ),
@@ -1178,15 +1287,13 @@ class CreativeBriefController extends GetxController {
                 tempCustomController.dispose();
               });
             },
-            child: Text(
-              'Cancel',
-              style: TextStyle(color: Colors.grey[600]),
-            ),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
               // Validate custom input if Custom is selected
-              if (tempSelectedOptions.contains('Custom') && tempCustomController.text.trim().isEmpty) {
+              if (tempSelectedOptions.contains('Custom') &&
+                  tempCustomController.text.trim().isEmpty) {
                 Get.snackbar(
                   'Invalid Input',
                   'Please enter a custom answer',
@@ -1197,24 +1304,24 @@ class CreativeBriefController extends GetxController {
                 );
                 return;
               }
-              
+
               // Save the changes
               _answers[questionId] = BriefAnswer(
                 questionId: questionId,
                 selectedOptions: tempSelectedOptions.toList(),
-                textInput: tempSelectedOptions.contains('Custom') 
-                    ? tempCustomController.text.trim() 
+                textInput: tempSelectedOptions.contains('Custom')
+                    ? tempCustomController.text.trim()
                     : null,
               );
-              
+
               // Close dialog first
               Navigator.of(Get.overlayContext!).pop();
-              
+
               // Dispose temporary controller after dialog is closed
               Future.delayed(Duration(milliseconds: 100), () {
                 tempCustomController.dispose();
               });
-              
+
               // Then update and show success message
               update();
               Get.snackbar(
@@ -1272,69 +1379,103 @@ class CreativeBriefController extends GetxController {
                 // Prints Section
                 Text(
                   'Prints',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
                 ),
                 SizedBox(height: 8),
-                Obx(() => Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: (question.categories!['Prints'] ?? []).map((print) {
-                    final isSelected = tempPrint.value == print;
-                    return GestureDetector(
-                      onTap: () => tempPrint.value = print,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.black : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
-                        ),
-                        child: Text(
-                          print,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontSize: 13,
-                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                Obx(
+                  () => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: (question.categories!['Prints'] ?? []).map((
+                      print,
+                    ) {
+                      final isSelected = tempPrint.value == print;
+                      return GestureDetector(
+                        onTap: () => tempPrint.value = print,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.black : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: Text(
+                            print,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontSize: 13,
+                              fontWeight: isSelected
+                                  ? FontWeight.w500
+                                  : FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                )),
+                      );
+                    }).toList(),
+                  ),
+                ),
                 SizedBox(height: 16),
 
                 // Techniques Section
                 Text(
                   'Techniques',
-                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: Colors.grey[700]),
+                  style: TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: Colors.grey[700],
+                  ),
                 ),
                 SizedBox(height: 8),
-                Obx(() => Wrap(
-                  spacing: 8,
-                  runSpacing: 8,
-                  children: (question.categories!['Techniques'] ?? []).map((technique) {
-                    final isSelected = tempTechnique.value == technique;
-                    return GestureDetector(
-                      onTap: () => tempTechnique.value = technique,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                        decoration: BoxDecoration(
-                          color: isSelected ? Colors.black : Colors.grey[100],
-                          borderRadius: BorderRadius.circular(20),
-                          border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
-                        ),
-                        child: Text(
-                          technique,
-                          style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontSize: 13,
-                            fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                Obx(
+                  () => Wrap(
+                    spacing: 8,
+                    runSpacing: 8,
+                    children: (question.categories!['Techniques'] ?? []).map((
+                      technique,
+                    ) {
+                      final isSelected = tempTechnique.value == technique;
+                      return GestureDetector(
+                        onTap: () => tempTechnique.value = technique,
+                        child: Container(
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 14,
+                            vertical: 8,
+                          ),
+                          decoration: BoxDecoration(
+                            color: isSelected ? Colors.black : Colors.grey[100],
+                            borderRadius: BorderRadius.circular(20),
+                            border: Border.all(
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[300]!,
+                            ),
+                          ),
+                          child: Text(
+                            technique,
+                            style: TextStyle(
+                              color: isSelected ? Colors.white : Colors.black,
+                              fontSize: 13,
+                              fontWeight: isSelected
+                                  ? FontWeight.w500
+                                  : FontWeight.w400,
+                            ),
                           ),
                         ),
-                      ),
-                    );
-                  }).toList(),
-                )),
+                      );
+                    }).toList(),
+                  ),
+                ),
               ],
             ),
           ),
@@ -1346,25 +1487,12 @@ class CreativeBriefController extends GetxController {
           ),
           ElevatedButton(
             onPressed: () {
-              // Validate that print and technique are filled
-              if (tempPrint.value.isEmpty || tempTechnique.value.isEmpty) {
-                Get.snackbar(
-                  'Incomplete Selection',
-                  'Please select both a print and a technique',
-                  backgroundColor: Colors.black,
-                  colorText: Colors.white,
-                  snackPosition: SnackPosition.TOP,
-                  duration: Duration(seconds: 2),
-                );
-                return;
-              }
-
               // Update the main selections
               _selectedPrint.value = tempPrint.value;
               _selectedTechnique.value = tempTechnique.value;
 
               // Save the answer
-              _checkAndSaveColorsAnswer();
+              _checkAndSaveColorsAnswer(trigger: 'edit_dialog');
 
               // Close dialog
               Navigator.of(Get.overlayContext!).pop();
@@ -1384,7 +1512,9 @@ class CreativeBriefController extends GetxController {
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
               foregroundColor: Colors.white,
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(8)),
+              shape: RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(8),
+              ),
             ),
             child: Text('Save Changes'),
           ),
@@ -1418,17 +1548,17 @@ class CreativeBriefController extends GetxController {
     if (_showLastTwoQuestions.value) {
       return false; // Don't show bottom input when showing last two questions
     }
-    
+
     // Don't show bottom input for chip questions
     if (currentQuestion.type == 'chips') {
       return false;
     }
-    
+
     // Don't show custom input if custom is selected for current question
     if (isCustomSelectedForCurrentQuestion()) {
       return false; // Custom input will be shown inline
     }
-    
+
     // Only show bottom input for text type questions when not showing last two questions together
     return currentQuestion.type == 'text' && !_showLastTwoQuestions.value;
   }
@@ -1441,25 +1571,26 @@ class CreativeBriefController extends GetxController {
   // Check if we should show animation after a specific question
   bool shouldShowAnimationAfterQuestion(int questionIndex) {
     // Don't show animation when custom is selected for current question
-    if (isCustomSelectedForCurrentQuestion() && questionIndex == currentQuestionIndex) {
+    if (isCustomSelectedForCurrentQuestion() &&
+        questionIndex == currentQuestionIndex) {
       return false;
     }
-    
+
     // Don't show animation when showing last two questions together
     if (_showLastTwoQuestions.value) {
       return false;
     }
-    
+
     // Don't show animation if all questions are completed
     if (isAllQuestionsCompleted) {
       return false;
     }
-    
+
     // Show animation below the current unanswered question
     // This means animation shows below current question's answers, not after answering
     bool isCurrentQuestion = questionIndex == currentQuestionIndex;
     bool isNotLastQuestion = questionIndex < questions.length - 1;
-    
+
     return isCurrentQuestion && isNotLastQuestion;
   }
 
@@ -1494,39 +1625,40 @@ class CreativeBriefController extends GetxController {
   void saveCreativeBriefData() {
     // Convert answers to a format suitable for design generation
     Map<String, dynamic> creativeBriefData = {};
-    
+
     for (var entry in _answers.entries) {
       String questionId = entry.key;
       BriefAnswer answer = entry.value;
-      
+
       switch (questionId) {
         case 'garment_type':
-          creativeBriefData['garmentType'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          creativeBriefData['garmentType'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             creativeBriefData['customGarmentType'] = answer.textInput;
           }
           break;
         case 'style':
-          creativeBriefData['style'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          creativeBriefData['style'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             creativeBriefData['customStyle'] = answer.textInput;
           }
           break;
         case 'target_audience':
-          creativeBriefData['targetAudience'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          creativeBriefData['targetAudience'] =
+              answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             creativeBriefData['customTargetAudience'] = answer.textInput;
           }
           break;
         case 'occasion':
-          creativeBriefData['occasion'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          creativeBriefData['occasion'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             creativeBriefData['customOccasion'] = answer.textInput;
@@ -1539,14 +1671,17 @@ class CreativeBriefController extends GetxController {
             creativeBriefData['inspirationType'] = 'skipped';
           }
           // For image type, save the image paths
-          else if (answer.textInput?.isNotEmpty == true && answer.selectedOptions.contains('Image')) {
+          else if (answer.textInput?.isNotEmpty == true &&
+              answer.selectedOptions.contains('Image')) {
             // Multiple images stored with delimiter
             if (answer.textInput!.contains('|||')) {
               final imagePaths = answer.textInput!.split('|||');
               creativeBriefData['inspiration'] = imagePaths; // Save as array
             } else {
               // Single image (backward compatibility)
-              creativeBriefData['inspiration'] = [answer.textInput!]; // Save as array
+              creativeBriefData['inspiration'] = [
+                answer.textInput!,
+              ]; // Save as array
             }
             creativeBriefData['inspirationType'] = 'image';
           } else {
@@ -1585,10 +1720,10 @@ class CreativeBriefController extends GetxController {
           break;
       }
     }
-    
+
     // Save to design data service
     _dataService.setCreativeBriefData(creativeBriefData);
-    
+
     print('Creative Brief data saved: $creativeBriefData');
   }
 
@@ -1600,16 +1735,16 @@ class CreativeBriefController extends GetxController {
     if (_isEditingCurrentSession.value) {
       // Editing current session - skip onboarding and preserve answers
       print('🔄 Continuing to Refining Concept in edit current session mode');
-      Get.toNamed('/refining_concept', arguments: {
-        'editCurrentSession': true,
-        'preserveAnswers': true,
-      });
+      Get.toNamed(
+        '/refining_concept',
+        arguments: {'editCurrentSession': true, 'preserveAnswers': true},
+      );
     } else if (_isEditMode.value && _editingTechPack != null) {
       // In edit mode, skip onboarding and go directly to questionnaire
-      Get.toNamed('/refining_concept', arguments: {
-        'editMode': true,
-        'techPackModel': _editingTechPack,
-      });
+      Get.toNamed(
+        '/refining_concept',
+        arguments: {'editMode': true, 'techPackModel': _editingTechPack},
+      );
     } else {
       Get.toNamed('/refine_concept');
     }

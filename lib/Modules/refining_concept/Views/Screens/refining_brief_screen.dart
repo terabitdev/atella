@@ -30,7 +30,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       backgroundColor: const Color(0xFFFAFAFA),
       body: Column(
         children: [
-         AppHeader(
+          AppHeader(
             title: 'Refining the Concept',
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
@@ -45,7 +45,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           Obx(() {
             final allQuestionsAnswered =
                 controller.answers.length >= controller.questions.length;
-      
+
             // Show button when all questions are answered (temporary selections will auto-confirm)
             if (allQuestionsAnswered) {
               return _buildBottomButton();
@@ -70,10 +70,13 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           final question = controller.questions[index];
           final isAnswered = controller.isQuestionAnswered(question.id);
           final isCurrentQuestion = index == controller.currentQuestionIndex;
-          
+
           // Debug prints
-          if (index == 0) { // Only debug first question to avoid spam
-            print('Question ${question.id}: isAnswered=$isAnswered, isCurrentQuestion=$isCurrentQuestion');
+          if (index == 0) {
+            // Only debug first question to avoid spam
+            print(
+              'Question ${question.id}: isAnswered=$isAnswered, isCurrentQuestion=$isCurrentQuestion',
+            );
             print('Answer count: ${controller.answers.length}');
             print('Temp selections: ${controller.tempSelections}');
           }
@@ -81,7 +84,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           // Debug prints
           if (isCurrentQuestion) {
             print('Current question: ${question.id}');
-            print('Is Custom Selected: ${controller.isCustomSelectedForCurrentQuestion()}');
+            print(
+              'Is Custom Selected: ${controller.isCustomSelectedForCurrentQuestion()}',
+            );
             print('Is Answered: $isAnswered');
             print('Question Type: ${question.type}');
           }
@@ -134,7 +139,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
         child: Text(
           answer.textInput!,
           style: const TextStyle(
-            fontSize: 14, 
+            fontSize: 14,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
@@ -190,10 +195,16 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
           // Answer Options for categorized chips
           if (question.type == 'chips_categorized')
-            _buildCategorizedChipOptions(question, isAnswered, isCurrentQuestion),
+            _buildCategorizedChipOptions(
+              question,
+              isAnswered,
+              isCurrentQuestion,
+            ),
 
           // Show custom answer if answered with custom text
-          if (isAnswered && (question.type == 'chips' || question.type == 'chips_categorized'))
+          if (isAnswered &&
+              (question.type == 'chips' ||
+                  question.type == 'chips_categorized'))
             _buildCustomAnswerDisplay(question),
         ],
       ),
@@ -207,27 +218,35 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   ) {
     return Obx(() {
       final answer = controller.getAnswer(question.id);
-      
+
       return Wrap(
         children: question.options.map((option) {
           final isSelected = controller.isOptionSelected(option);
-          
+
           // Debug for Custom option
           if (option == 'Custom') {
-            print('Custom chip - isSelected: $isSelected, isAnswered: $isAnswered');
+            print(
+              'Custom chip - isSelected: $isSelected, isAnswered: $isAnswered',
+            );
           }
-          
+
           if (isAnswered) {
             // Show final answered state for answered questions (with edit capability)
-            final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
+            final isAnswerSelected =
+                answer?.selectedOptions.contains(option) ?? false;
             return GestureDetector(
-              onTap: isAnswerSelected ? () {
-                // Allow editing of answered questions
-                controller.editAnswer(question.id);
-              } : null,
+              onTap: isAnswerSelected
+                  ? () {
+                      // Allow editing of answered questions
+                      controller.editAnswer(question.id);
+                    }
+                  : null,
               child: Container(
                 margin: const EdgeInsets.only(right: 12, bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+                padding: const EdgeInsets.symmetric(
+                  horizontal: 16,
+                  vertical: 8,
+                ),
                 decoration: BoxDecoration(
                   color: isAnswerSelected
                       ? AppColors.buttonColor
@@ -243,9 +262,13 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     Text(
                       option,
                       style: TextStyle(
-                        color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
+                        color: isAnswerSelected
+                            ? Colors.white
+                            : const Color(0xFF999999),
                         fontSize: 14,
-                        fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+                        fontWeight: isAnswerSelected
+                            ? FontWeight.w500
+                            : FontWeight.w400,
                       ),
                     ),
                     if (isAnswerSelected) ...[
@@ -334,14 +357,20 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
             if (isAnswered) {
               // Show final answered state for answered questions (with edit capability)
-              final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
+              final isAnswerSelected =
+                  answer?.selectedOptions.contains(option) ?? false;
               return GestureDetector(
-                onTap: isAnswerSelected ? () {
-                  // Allow editing of answered questions
-                  controller.editAnswer(question.id);
-                } : null,
+                onTap: isAnswerSelected
+                    ? () {
+                        // Allow editing of answered questions
+                        controller.editAnswer(question.id);
+                      }
+                    : null,
                 child: Container(
-                  padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 16.w,
+                    vertical: 8.h,
+                  ),
                   decoration: BoxDecoration(
                     color: isAnswerSelected
                         ? AppColors.buttonColor
@@ -357,18 +386,18 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       Text(
                         option,
                         style: TextStyle(
-                          color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
+                          color: isAnswerSelected
+                              ? Colors.white
+                              : const Color(0xFF999999),
                           fontSize: 14.sp,
-                          fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
+                          fontWeight: isAnswerSelected
+                              ? FontWeight.w500
+                              : FontWeight.w400,
                         ),
                       ),
                       if (isAnswerSelected) ...[
                         SizedBox(width: 4.w),
-                        Icon(
-                          Icons.edit,
-                          size: 14.0,
-                          color: Colors.white,
-                        ),
+                        Icon(Icons.edit, size: 14.0, color: Colors.white),
                       ],
                     ],
                   ),
@@ -380,7 +409,11 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 text: option,
                 isSelected: isSelected,
                 onTap: () {
-                  controller.selectOption(option);
+                  controller.selectCategorizedOption(
+                    question.id,
+                    categoryName,
+                    option,
+                  );
                 },
               );
             }
@@ -415,13 +448,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       padding: const EdgeInsets.all(24.0),
       child: RoundButton(
         title: 'Generate Design',
-        onTap: (){
+        onTap: () {
           controller.proceedToDesignGeneration();
         },
         color: AppColors.buttonColor,
-        isloading: false
+        isloading: false,
       ),
     );
   }
-
 }

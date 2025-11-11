@@ -25,6 +25,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
     super.initState();
     controller.refreshData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,7 +37,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
               Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () => Navigator.pop(context),
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
                       height: 40.h,
@@ -77,14 +78,16 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                 }
 
                 // Empty state - no collections
-                if (!controller.hasCollections && controller.searchQuery.value.isEmpty) {
+                if (!controller.hasCollections &&
+                    controller.searchQuery.value.isEmpty) {
                   return HomeEmptyState(
                     onCreateProject: controller.startNewProject,
                   );
                 }
 
                 // Search empty state
-                if (!controller.hasCollections && controller.searchQuery.value.isNotEmpty) {
+                if (!controller.hasCollections &&
+                    controller.searchQuery.value.isNotEmpty) {
                   return SearchEmptyState(
                     searchQuery: controller.searchQuery.value,
                     onClearSearch: controller.clearSearch,
@@ -93,14 +96,17 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
 
                 // Show collections grouped by category
                 final grouped = controller.groupedCollections;
-                
+
                 return Column(
                   children: grouped.entries.map((entry) {
                     final collectionName = entry.key;
                     final techPacks = entry.value;
-                    
+
                     return Padding(
-                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 8.h,
+                      ),
                       child: Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
@@ -117,7 +123,10 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                                     // Navigate to collection detail screen
                                     // You can implement this later if needed
                                   },
-                                  child: Text('See All', style: ssTitleTextTextStyle14400),
+                                  child: Text(
+                                    'See All',
+                                    style: ssTitleTextTextStyle14400,
+                                  ),
                                 ),
                             ],
                           ),
@@ -125,23 +134,28 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                           GridView.builder(
                             shrinkWrap: true,
                             physics: NeverScrollableScrollPhysics(),
-                            itemCount: techPacks.length > 4 ? 4 : techPacks.length,
-                            gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
-                              crossAxisCount: 2,
-                              crossAxisSpacing: 16.w,
-                              mainAxisSpacing: 16.h,
-                              childAspectRatio: 0.6,
-                            ),
+                            itemCount: techPacks.length > 4
+                                ? 4
+                                : techPacks.length,
+                            gridDelegate:
+                                SliverGridDelegateWithFixedCrossAxisCount(
+                                  crossAxisCount: 2,
+                                  crossAxisSpacing: 16.w,
+                                  mainAxisSpacing: 16.h,
+                                  childAspectRatio: 0.6,
+                                ),
                             itemBuilder: (context, index) {
                               final techPack = techPacks[index];
                               return DesignGridItem(
                                 techPack: techPack,
                                 showFavoriteIcon: true,
                                 onTap: () {
-                                  Get.to(() => PreviewScreen(
-                                    techPack: techPack,
-                                    version: 'Collection',
-                                  ));
+                                  Get.to(
+                                    () => PreviewScreen(
+                                      techPack: techPack,
+                                      version: 'Collection',
+                                    ),
+                                  );
                                 },
                                 onFavoriteToggle: () {
                                   controller.toggleFavorite(techPack);
@@ -156,14 +170,14 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                   }).toList(),
                 );
               }),
-              
+
               SizedBox(height: 20.h),
               RoundButton(
                 title: 'Create New Design',
                 onTap: controller.startNewProject,
                 color: Colors.black,
                 isloading: false,
-              )
+              ),
             ],
           ),
         ),

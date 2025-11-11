@@ -18,7 +18,7 @@ class RefiningConceptController extends GetxController {
   bool get isEditMode => _isEditMode.value;
   TechPackModel? _editingTechPack;
   TechPackModel? get editingTechPack => _editingTechPack;
-  
+
   // Current question index
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
@@ -48,6 +48,13 @@ class RefiningConceptController extends GetxController {
   // Track temporary selections before they are confirmed
   final RxMap<String, String> _tempSelections = <String, String>{}.obs;
   Map<String, String> get tempSelections => _tempSelections;
+  // Temporary multi-selections for allowMultiple questions
+  final RxSet<String> _tempMultiSelections = <String>{}.obs;
+  Timer? _multiSelectDebounce;
+  // Temporary categorized selections: one option per category (for categorized questions)
+  final RxMap<String, String> _tempCategorizedSelections =
+      <String, String>{}.obs;
+  Timer? _categorizedDebounce;
 
   // Editing state for text questions
   final RxSet<String> _editingQuestions = <String>{}.obs;
@@ -57,22 +64,47 @@ class RefiningConceptController extends GetxController {
   final List<BriefQuestion> questions = [
     BriefQuestion(
       id: 'garment_type',
-      question: 'What fit are you aiming for?',
+      question: 'What fit are you aiming for? (multiple selection)',
       type: 'chips',
-      options: ['Slim','Oversized', 'Regular', 'Straight', 'Fitted', 'Tailored', 'Cropped', 'Relaxed', 'Long', 'Custom'],
+      options: [
+        'Slim',
+        'Oversized',
+        'Regular',
+        'Straight',
+        'Fitted',
+        'Tailored',
+        'Cropped',
+        'Relaxed',
+        'Long',
+        'Custom',
+      ],
+      allowMultiple: true,
     ),
     BriefQuestion(
       id: 'specific_features',
-      question: 'Do you want to add special details?',
+      question: 'Do you want to add special details? (multiple selection)',
       type: 'chips_categorized',
       options: [],
       categories: {
         'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder'],
         'Sleeves': ['Sleeveless', 'Short ¾', 'Long', 'Puff', 'Raglan'],
-        'Closures': ['Zipper (metal/plastic/invisible)', 'Buttons', 'Hooks', 'Velcro', 'Snaps'],
+        'Closures': [
+          'Zipper (metal/plastic/invisible)',
+          'Buttons',
+          'Hooks',
+          'Velcro',
+          'Snaps',
+        ],
         'Pockets': ['Patch', 'Welt', 'Flap', 'Hidden', 'Cargo'],
         'Waist': ['Elastic', 'High-waist', 'Low-rise', 'Belted'],
-        'Finishes': ['Lining', 'Topstitching', 'Embroidery', 'Lace', 'Sequins', 'Appliqués'],
+        'Finishes': [
+          'Lining',
+          'Topstitching',
+          'Embroidery',
+          'Lace',
+          'Sequins',
+          'Appliqués',
+        ],
       },
     ),
     BriefQuestion(
@@ -107,7 +139,8 @@ class RefiningConceptController extends GetxController {
         'Quick-Dry',
         'Wrinkle-Free',
         'Custom',
-      ],)
+      ],
+    ),
   ];
 
   @override
@@ -117,7 +150,7 @@ class RefiningConceptController extends GetxController {
     _updateCurrentTime();
     _checkForEditMode();
   }
-  
+
   void _checkForEditMode() {
     final arguments = Get.arguments;
     print('=== REFINING CONCEPT EDIT MODE CHECK ===');
@@ -149,61 +182,86 @@ class RefiningConceptController extends GetxController {
       }
     }
   }
-  
+
   void _loadExistingRefinedConceptData() {
     // Get data from design data service (loaded in creative brief)
     final refinedConceptData = _dataService.getRefinedConceptData();
     print('Loading refined concept data: $refinedConceptData');
-    
+
     if (refinedConceptData.isNotEmpty) {
       // Load chip-based answers
-      final garmentType = refinedConceptData['garment_type'] as String? ?? '';
+      final garmentType =
+          refinedConceptData['garment_type'] as String? ??
+          refinedConceptData['silhouette'] as String? ??
+          '';
       if (garmentType.isNotEmpty) {
+        final multi = garmentType
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
         _answers['garment_type'] = BriefAnswer(
           questionId: 'garment_type',
-          selectedOptions: [garmentType],
+          selectedOptions: multi.isNotEmpty ? multi : [garmentType],
         );
       }
-      
-      final specificFeatures = refinedConceptData['specific_features'] as String? ?? '';
+
+      final specificFeatures =
+          refinedConceptData['specific_features'] as String? ??
+          refinedConceptData['features'] as String? ??
+          '';
       if (specificFeatures.isNotEmpty) {
+        final multi = specificFeatures
+            .split(',')
+            .map((e) => e.trim())
+            .where((e) => e.isNotEmpty)
+            .toList();
         _answers['specific_features'] = BriefAnswer(
           questionId: 'specific_features',
-          selectedOptions: [specificFeatures],
+          selectedOptions: multi.isNotEmpty ? multi : [specificFeatures],
         );
       }
-      
-      final seasonalConstraint = refinedConceptData['seasonal_constraint'] as String? ?? '';
+
+      final seasonalConstraint =
+          refinedConceptData['seasonal_constraint'] as String? ??
+          refinedConceptData['season'] as String? ??
+          '';
       if (seasonalConstraint.isNotEmpty) {
         _answers['seasonal_constraint'] = BriefAnswer(
           questionId: 'seasonal_constraint',
           selectedOptions: [seasonalConstraint],
         );
       }
-      
-      final targetBudget = refinedConceptData['target_budget'] as String? ?? '';
+
+      final targetBudget =
+          refinedConceptData['target_budget'] as String? ??
+          refinedConceptData['budget'] as String? ??
+          '';
       if (targetBudget.isNotEmpty) {
         _answers['target_budget'] = BriefAnswer(
           questionId: 'target_budget',
           selectedOptions: [targetBudget],
         );
       }
-      
-      final functionalitiesValues = refinedConceptData['functionalities_values'] as String? ?? '';
+
+      final functionalitiesValues =
+          refinedConceptData['functionalities_values'] as String? ??
+          refinedConceptData['values'] as String? ??
+          '';
       if (functionalitiesValues.isNotEmpty) {
         _answers['functionalities_values'] = BriefAnswer(
           questionId: 'functionalities_values',
           selectedOptions: [functionalitiesValues],
         );
       }
-      
+
       // In edit mode, show all questions
       _currentQuestionIndex.value = questions.length - 1;
-      
+
       // Force reactive update
       _answers.refresh();
       update();
-      
+
       print('Loaded ${_answers.length} answers for refined concept');
     }
   }
@@ -244,12 +302,23 @@ class RefiningConceptController extends GetxController {
       final answer = _answers[currentQuestion.id];
       return answer?.selectedOptions.contains(option) ?? false;
     }
-    
+
+    // For multi-select questions, reflect temporary multi selections before confirmation
+    if (currentQuestion.allowMultiple &&
+        !isQuestionAnswered(currentQuestion.id)) {
+      return _tempMultiSelections.contains(option);
+    }
+    // For categorized questions, reflect temporary per-category selections
+    if (currentQuestion.type == 'chips_categorized' &&
+        !isQuestionAnswered(currentQuestion.id)) {
+      return _tempCategorizedSelections.values.contains(option);
+    }
+
     // Check temporary selection first (for current question)
     if (!isQuestionAnswered(currentQuestion.id)) {
       return _tempSelections[currentQuestion.id] == option;
     }
-    
+
     // For answered questions, check final answer
     final answer = _answers[currentQuestion.id];
     return answer?.selectedOptions.contains(option) ?? false;
@@ -258,23 +327,46 @@ class RefiningConceptController extends GetxController {
   // Check if custom is selected for current question
   bool isCustomSelectedForCurrentQuestion() {
     final result = _customSelectedForQuestion.value == currentQuestion.id;
-    print('isCustomSelectedForCurrentQuestion called: $_customSelectedForQuestion.value == ${currentQuestion.id} = $result'); // Debug
+    print(
+      'isCustomSelectedForCurrentQuestion called: $_customSelectedForQuestion.value == ${currentQuestion.id} = $result',
+    ); // Debug
     return result;
   }
 
   void selectOption(String option) async {
     print('Selecting option: $option'); // Debug
-    
+
     // If "Custom" is selected, show text field at bottom
     if (option == 'Custom') {
       print('Custom selected for question: ${currentQuestion.id}'); // Debug
       _customSelectedForQuestion.value = currentQuestion.id;
-      
+
       // Clear any temporary selection
       _tempSelections.remove(currentQuestion.id);
-      
+
       update();
       return; // Don't advance to next question yet
+    }
+
+    // Handle multi-select questions: toggle selection and debounce confirm
+    if (currentQuestion.allowMultiple) {
+      // Toggle option in temp multi selections
+      if (_tempMultiSelections.contains(option)) {
+        _tempMultiSelections.remove(option);
+      } else {
+        _tempMultiSelections.add(option);
+      }
+      update();
+
+      // Debounce auto-confirmation (3 seconds)
+      _multiSelectDebounce?.cancel();
+      _multiSelectDebounce = Timer(const Duration(seconds: 3), () {
+        if (_tempMultiSelections.isNotEmpty &&
+            !isQuestionAnswered(currentQuestion.id)) {
+          _confirmMultiSelection();
+        }
+      });
+      return;
     }
 
     // For non-custom options, store as temporary selection
@@ -290,12 +382,70 @@ class RefiningConceptController extends GetxController {
 
     // Auto-advance to next question after delay, but only if no answer exists yet
     if (!isQuestionAnswered(currentQuestion.id)) {
-      await Future.delayed(const Duration(milliseconds: 2000)); // 2 seconds delay
+      await Future.delayed(
+        const Duration(milliseconds: 2000),
+      ); // 2 seconds delay
       // Check if the selection is still the same (user hasn't changed it)
       if (_tempSelections[currentQuestion.id] == option) {
         _confirmCurrentSelection();
       }
     }
+  }
+
+  // Confirm multi-select temp selections into final answer and advance
+  void _confirmMultiSelection() {
+    if (_tempMultiSelections.isEmpty) return;
+    // Save all selected options
+    _answers[currentQuestion.id] = BriefAnswer(
+      questionId: currentQuestion.id,
+      selectedOptions: _tempMultiSelections.toList(),
+    );
+    _tempMultiSelections.clear();
+    _answers.refresh();
+    update();
+    _nextQuestion();
+  }
+
+  // Handle categorized selection (one per category, multiple categories allowed)
+  void selectCategorizedOption(
+    String questionId,
+    String category,
+    String option,
+  ) {
+    if (currentQuestion.id != questionId) {
+      final qIndex = questions.indexWhere((q) => q.id == questionId);
+      if (qIndex != -1) {
+        _currentQuestionIndex.value = qIndex;
+      }
+    }
+    // Toggle/replace selection for this category
+    if (_tempCategorizedSelections[category] == option) {
+      _tempCategorizedSelections.remove(category);
+    } else {
+      _tempCategorizedSelections[category] = option;
+    }
+    update();
+
+    // Debounce confirmation (3 seconds)
+    _categorizedDebounce?.cancel();
+    _categorizedDebounce = Timer(const Duration(seconds: 3), () {
+      if (_tempCategorizedSelections.isNotEmpty &&
+          !isQuestionAnswered(questionId)) {
+        _confirmCategorizedSelections(questionId);
+      }
+    });
+  }
+
+  void _confirmCategorizedSelections(String questionId) {
+    if (_tempCategorizedSelections.isEmpty) return;
+    _answers[questionId] = BriefAnswer(
+      questionId: questionId,
+      selectedOptions: _tempCategorizedSelections.values.toList(),
+    );
+    _tempCategorizedSelections.clear();
+    _answers.refresh();
+    update();
+    _nextQuestion();
   }
 
   // Method to confirm current selection and advance
@@ -307,12 +457,12 @@ class RefiningConceptController extends GetxController {
         questionId: currentQuestion.id,
         selectedOptions: [tempSelection],
       );
-      
+
       // Clear temporary selection
       _tempSelections.remove(currentQuestion.id);
-      
+
       update();
-      
+
       // Advance to next question
       _nextQuestion();
     }
@@ -331,16 +481,16 @@ class RefiningConceptController extends GetxController {
       if (answer.selectedOptions.isNotEmpty) {
         _tempSelections[questionId] = answer.selectedOptions.first;
       }
-      
+
       // Remove the final answer
       _answers.remove(questionId);
-      
+
       // Jump to that question if needed
       final questionIndex = questions.indexWhere((q) => q.id == questionId);
       if (questionIndex != -1 && questionIndex != currentQuestionIndex) {
         _currentQuestionIndex.value = questionIndex;
       }
-      
+
       update();
     }
   }
@@ -348,7 +498,7 @@ class RefiningConceptController extends GetxController {
   // Submit custom answer
   void submitCustomAnswer() async {
     print('Submitting custom answer: ${customController.text}'); // Debug
-    
+
     if (customController.text.trim().isEmpty) {
       return;
     }
@@ -411,10 +561,10 @@ class RefiningConceptController extends GetxController {
   void _nextQuestion() {
     // Clear custom selection when moving to next question
     _customSelectedForQuestion.value = '';
-    
+
     // Clear any temporary selections for the current question
     _tempSelections.remove(currentQuestion.id);
-    
+
     if (currentQuestionIndex < questions.length - 1) {
       _currentQuestionIndex.value++;
       update();
@@ -472,7 +622,7 @@ class RefiningConceptController extends GetxController {
 
   double get progressPercentage =>
       (currentQuestionIndex + 1) / questions.length;
-  
+
   // Reset all answers and go back to the first question
   void resetAllAnswers() {
     _answers.clear();
@@ -512,20 +662,21 @@ class RefiningConceptController extends GetxController {
   // Check if we should show animation after a specific question
   bool shouldShowAnimationAfterQuestion(int questionIndex) {
     // Don't show animation when custom is selected for current question
-    if (isCustomSelectedForCurrentQuestion() && questionIndex == currentQuestionIndex) {
+    if (isCustomSelectedForCurrentQuestion() &&
+        questionIndex == currentQuestionIndex) {
       return false;
     }
-    
+
     // Don't show animation if all questions are completed
     if (isAllQuestionsCompleted) {
       return false;
     }
-    
+
     // Show animation below the current unanswered question
     // This means animation shows below current question's answers, not after answering
     bool isCurrentQuestion = questionIndex == currentQuestionIndex;
     bool isNotLastQuestion = questionIndex < questions.length - 1;
-    
+
     return isCurrentQuestion && isNotLastQuestion;
   }
 
@@ -535,7 +686,7 @@ class RefiningConceptController extends GetxController {
     if (_isEditMode.value) {
       return questions.length;
     }
-    
+
     if (currentQuestionIndex >= 5) {
       return questions.length; // Show all questions after question 5
     }
@@ -546,47 +697,49 @@ class RefiningConceptController extends GetxController {
   void _saveRefinedConceptData() {
     // Convert answers to a format suitable for design generation
     Map<String, dynamic> refinedConceptData = {};
-    
+
     for (var entry in _answers.entries) {
       String questionId = entry.key;
       BriefAnswer answer = entry.value;
-      
+
       switch (questionId) {
         case 'garment_type':
-          refinedConceptData['silhouette'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          // Preserve multi-select by joining with commas
+          refinedConceptData['silhouette'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.join(', ')
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             refinedConceptData['customSilhouette'] = answer.textInput;
           }
           break;
         case 'specific_features':
-          refinedConceptData['features'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          // Features can be from multiple categories; join all selections
+          refinedConceptData['features'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.join(', ')
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             refinedConceptData['customFeatures'] = answer.textInput;
           }
           break;
         case 'seasonal_constraint':
-          refinedConceptData['season'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          refinedConceptData['season'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             refinedConceptData['customSeason'] = answer.textInput;
           }
           break;
         case 'target_budget':
-          refinedConceptData['budget'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          refinedConceptData['budget'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             refinedConceptData['customBudget'] = answer.textInput;
           }
           break;
         case 'functionalities_values':
-          refinedConceptData['values'] = answer.selectedOptions.isNotEmpty 
-              ? answer.selectedOptions.first 
+          refinedConceptData['values'] = answer.selectedOptions.isNotEmpty
+              ? answer.selectedOptions.first
               : '';
           if (answer.textInput?.isNotEmpty == true) {
             refinedConceptData['customValues'] = answer.textInput;
@@ -594,10 +747,10 @@ class RefiningConceptController extends GetxController {
           break;
       }
     }
-    
+
     // Save to design data service
     _dataService.setRefinedConceptData(refinedConceptData);
-    
+
     print('Refined Concept data saved: $refinedConceptData');
   }
 
@@ -608,10 +761,10 @@ class RefiningConceptController extends GetxController {
     // Pass edit mode data to next screen
     if (_isEditMode.value && _editingTechPack != null) {
       // In edit mode, skip onboarding and go directly to questionnaire
-      Get.toNamed('/final_details', arguments: {
-        'editMode': true,
-        'techPackModel': _editingTechPack,
-      });
+      Get.toNamed(
+        '/final_details',
+        arguments: {'editMode': true, 'techPackModel': _editingTechPack},
+      );
     } else {
       Get.toNamed('/final_detail_onboard');
     }
@@ -626,7 +779,9 @@ class RefiningConceptController extends GetxController {
       creativeBriefController.saveCreativeBriefData();
       print('Creative Brief data saved from existing controller');
     } else {
-      print('WARNING: Creative Brief controller not found - data may not be saved');
+      print(
+        'WARNING: Creative Brief controller not found - data may not be saved',
+      );
     }
 
     // Save refined concept data
@@ -699,11 +854,14 @@ class RefiningConceptController extends GetxController {
 
     // Navigate to tech pack generation screen with edit mode data
     if (_isEditMode.value && _editingTechPack != null) {
-      Get.toNamed('/generate_tech_pack', arguments: {
-        'editMode': true,
-        'techPackModel': _editingTechPack,
-        'forceRegenerate': true, // Add flag to force regeneration
-      });
+      Get.toNamed(
+        '/generate_tech_pack',
+        arguments: {
+          'editMode': true,
+          'techPackModel': _editingTechPack,
+          'forceRegenerate': true, // Add flag to force regeneration
+        },
+      );
 
       Get.snackbar(
         'Regenerating Designs!',
@@ -713,9 +871,12 @@ class RefiningConceptController extends GetxController {
         colorText: Colors.white,
       );
     } else {
-      Get.toNamed('/generate_tech_pack', arguments: {
-        'forceRegenerate': true, // Add flag to force regeneration
-      });
+      Get.toNamed(
+        '/generate_tech_pack',
+        arguments: {
+          'forceRegenerate': true, // Add flag to force regeneration
+        },
+      );
 
       Get.snackbar(
         'Generating Designs!',
@@ -731,7 +892,8 @@ class RefiningConceptController extends GetxController {
   void _saveDefaultFinalDetailsData() {
     Map<String, dynamic> finalDetailsData = {
       'season': 'All-Season (Layer-Friendly)', // Default to all-season
-      'budget': 'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
+      'budget':
+          'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
       'features': '', // No special features by default
       'customFeatures': '',
       'additionalDetails': '', // No additional details
@@ -742,16 +904,18 @@ class RefiningConceptController extends GetxController {
 
     print('Default Final Details data saved: $finalDetailsData');
   }
-  
+
   // Edit answer method - allows editing a specific question's answer
   void editAnswer(String questionId) {
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
-    RxList<String> tempSelectedOptions = (currentAnswer?.selectedOptions.toList() ?? []).obs;
+    RxList<String> tempSelectedOptions =
+        (currentAnswer?.selectedOptions.toList() ?? []).obs;
 
     // Create a temporary controller for custom text
     final tempCustomController = TextEditingController();
-    if (currentAnswer?.textInput != null && currentAnswer!.textInput!.isNotEmpty) {
+    if (currentAnswer?.textInput != null &&
+        currentAnswer!.textInput!.isNotEmpty) {
       tempCustomController.text = currentAnswer.textInput!;
     }
 
@@ -776,7 +940,10 @@ class RefiningConceptController extends GetxController {
     Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
-        title: Text('Edit Answer', style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600)),
+        title: Text(
+          'Edit Answer',
+          style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
+        ),
         content: SizedBox(
           width: double.maxFinite,
           child: SingleChildScrollView(
@@ -784,7 +951,10 @@ class RefiningConceptController extends GetxController {
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(question.question, style: TextStyle(fontSize: 14, color: Colors.grey[600])),
+                Text(
+                  question.question,
+                  style: TextStyle(fontSize: 14, color: Colors.grey[600]),
+                ),
                 SizedBox(height: 16),
                 Text(
                   'Select your answer:',
@@ -792,123 +962,165 @@ class RefiningConceptController extends GetxController {
                 ),
                 SizedBox(height: 12),
                 // Show categorized chips if applicable
-                if (question.type == 'chips_categorized' && categoriesMap != null)
+                if (question.type == 'chips_categorized' &&
+                    categoriesMap != null)
                   ...categoriesMap.entries.map((category) {
-                    return Obx(() => Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        // Category title
-                        Padding(
-                          padding: EdgeInsets.only(bottom: 8, top: 8),
-                          child: Text(
-                            category.key,
-                            style: TextStyle(
-                              fontSize: 13,
-                              fontWeight: FontWeight.w600,
-                              color: Colors.grey[700],
+                    return Obx(
+                      () => Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // Category title
+                          Padding(
+                            padding: EdgeInsets.only(bottom: 8, top: 8),
+                            child: Text(
+                              category.key,
+                              style: TextStyle(
+                                fontSize: 13,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.grey[700],
+                              ),
                             ),
                           ),
-                        ),
-                        // Category options
-                        Wrap(
-                          spacing: 8,
-                          runSpacing: 8,
-                          children: category.value.map((option) {
-                            final isSelected = tempSelectedOptions.contains(option);
-                            return GestureDetector(
-                              onTap: () {
-                                if (question.allowMultiple) {
-                                  if (isSelected) {
-                                    tempSelectedOptions.remove(option);
-                                  } else {
-                                    tempSelectedOptions.add(option);
-                                  }
-                                } else {
-                                  tempSelectedOptions.value = [option];
-                                }
-                              },
-                              child: Container(
-                                padding: EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-                                decoration: BoxDecoration(
-                                  color: isSelected ? Colors.black : Colors.grey[100],
-                                  borderRadius: BorderRadius.circular(20),
-                                  border: Border.all(
-                                    color: isSelected ? Colors.black : Colors.grey[300]!,
+                          // Category options
+                          Wrap(
+                            spacing: 8,
+                            runSpacing: 8,
+                            children: category.value.map((option) {
+                              final isSelected = tempSelectedOptions.contains(
+                                option,
+                              );
+                              return GestureDetector(
+                                onTap: () {
+                                  // Enforce one selection per category: remove others from this category
+                                  tempSelectedOptions.removeWhere(
+                                    (o) => category.value.contains(o),
+                                  );
+                                  tempSelectedOptions.add(option);
+                                },
+                                child: Container(
+                                  padding: EdgeInsets.symmetric(
+                                    horizontal: 14,
+                                    vertical: 8,
+                                  ),
+                                  decoration: BoxDecoration(
+                                    color: isSelected
+                                        ? Colors.black
+                                        : Colors.grey[100],
+                                    borderRadius: BorderRadius.circular(20),
+                                    border: Border.all(
+                                      color: isSelected
+                                          ? Colors.black
+                                          : Colors.grey[300]!,
+                                    ),
+                                  ),
+                                  child: Text(
+                                    option,
+                                    style: TextStyle(
+                                      color: isSelected
+                                          ? Colors.white
+                                          : Colors.black,
+                                      fontSize: 13,
+                                      fontWeight: isSelected
+                                          ? FontWeight.w500
+                                          : FontWeight.w400,
+                                    ),
                                   ),
                                 ),
-                                child: Text(
-                                  option,
-                                  style: TextStyle(
-                                    color: isSelected ? Colors.white : Colors.black,
-                                    fontSize: 13,
-                                    fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                                  ),
-                                ),
-                              ),
-                            );
-                          }).toList(),
-                        ),
-                        SizedBox(height: 8),
-                      ],
-                    ));
+                              );
+                            }).toList(),
+                          ),
+                          SizedBox(height: 8),
+                        ],
+                      ),
+                    );
                   }).toList()
                 else
                   // Show regular chips
-                  Obx(() => Wrap(
-                    spacing: 8,
-                    runSpacing: 8,
-                    children: allOptions.map((option) {
-                      final isSelected = tempSelectedOptions.contains(option);
-                      return GestureDetector(
-                        onTap: () {
-                          if (question.allowMultiple) {
-                            isSelected ? tempSelectedOptions.remove(option) : tempSelectedOptions.add(option);
-                          } else {
-                            tempSelectedOptions.value = [option];
-                          }
+                  Obx(
+                    () => Wrap(
+                      spacing: 8,
+                      runSpacing: 8,
+                      children: allOptions.map((option) {
+                        final isSelected = tempSelectedOptions.contains(option);
+                        return GestureDetector(
+                          onTap: () {
+                            if (question.allowMultiple) {
+                              isSelected
+                                  ? tempSelectedOptions.remove(option)
+                                  : tempSelectedOptions.add(option);
+                            } else {
+                              tempSelectedOptions.value = [option];
+                            }
 
-                          // Update custom selected state
-                          isCustomSelected.value = tempSelectedOptions.contains('Custom');
-                        },
-                        child: Container(
-                          margin: EdgeInsets.only(right: 8, bottom: 8),
-                          padding: EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-                          decoration: BoxDecoration(
-                            color: isSelected ? Colors.black : Colors.grey[100],
-                            borderRadius: BorderRadius.circular(25),
-                            border: Border.all(color: isSelected ? Colors.black : Colors.grey[300]!),
+                            // Update custom selected state
+                            isCustomSelected.value = tempSelectedOptions
+                                .contains('Custom');
+                          },
+                          child: Container(
+                            margin: EdgeInsets.only(right: 8, bottom: 8),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16,
+                              vertical: 10,
+                            ),
+                            decoration: BoxDecoration(
+                              color: isSelected
+                                  ? Colors.black
+                                  : Colors.grey[100],
+                              borderRadius: BorderRadius.circular(25),
+                              border: Border.all(
+                                color: isSelected
+                                    ? Colors.black
+                                    : Colors.grey[300]!,
+                              ),
+                            ),
+                            child: Text(
+                              option,
+                              style: TextStyle(
+                                color: isSelected ? Colors.white : Colors.black,
+                                fontSize: 14,
+                                fontWeight: isSelected
+                                    ? FontWeight.w500
+                                    : FontWeight.w400,
+                              ),
+                            ),
                           ),
-                          child: Text(option, style: TextStyle(
-                            color: isSelected ? Colors.white : Colors.black,
-                            fontSize: 14, fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
-                          )),
-                        ),
-                      );
-                    }).toList(),
-                  )),
+                        );
+                      }).toList(),
+                    ),
+                  ),
                 SizedBox(height: 16),
                 // Show custom text field if Custom is selected
-                Obx(() => isCustomSelected.value ? Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      'Enter custom answer:',
-                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500),
-                    ),
-                    SizedBox(height: 8),
-                    TextField(
-                      controller: tempCustomController,
-                      decoration: InputDecoration(
-                        hintText: 'Type your custom answer...',
-                        border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(8),
-                        ),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
-                      maxLines: 2,
-                    ),
-                  ],
-                ) : SizedBox.shrink()),
+                Obx(
+                  () => isCustomSelected.value
+                      ? Column(
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Text(
+                              'Enter custom answer:',
+                              style: TextStyle(
+                                fontSize: 14,
+                                fontWeight: FontWeight.w500,
+                              ),
+                            ),
+                            SizedBox(height: 8),
+                            TextField(
+                              controller: tempCustomController,
+                              decoration: InputDecoration(
+                                hintText: 'Type your custom answer...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ],
+                        )
+                      : SizedBox.shrink(),
+                ),
               ],
             ),
           ),
@@ -922,12 +1134,13 @@ class RefiningConceptController extends GetxController {
                 tempCustomController.dispose();
               });
             },
-            child: Text('Cancel',style: TextStyle(color: Colors.grey[600])),
+            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
               // Validate custom input if Custom is selected
-              if (tempSelectedOptions.contains('Custom') && tempCustomController.text.trim().isEmpty) {
+              if (tempSelectedOptions.contains('Custom') &&
+                  tempCustomController.text.trim().isEmpty) {
                 Get.snackbar(
                   'Invalid Input',
                   'Please enter a custom answer',

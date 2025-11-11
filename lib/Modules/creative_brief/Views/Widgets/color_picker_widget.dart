@@ -117,11 +117,7 @@ class ColorPickerWidget extends StatelessWidget {
           // Remove icon
           GestureDetector(
             onTap: () => onColorRemoved(hexCode),
-            child: Icon(
-              Icons.close,
-              size: 16.sp,
-              color: Colors.grey.shade600,
-            ),
+            child: Icon(Icons.close, size: 16.sp, color: Colors.grey.shade600),
           ),
         ],
       ),
@@ -129,7 +125,9 @@ class ColorPickerWidget extends StatelessWidget {
   }
 
   void _showColorPicker(BuildContext context) {
-    Color pickerColor = Colors.blue;
+    Color pickerColor = selectedColors.isNotEmpty
+        ? _hexToColor(selectedColors.last)
+        : Colors.blue;
 
     showDialog(
       context: context,
@@ -139,73 +137,60 @@ class ColorPickerWidget extends StatelessWidget {
             'Select a Color',
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
           ),
-          content: SingleChildScrollView(
-            child: BlockPicker(
-              pickerColor: pickerColor,
-              onColorChanged: (Color color) {
-                pickerColor = color;
-              },
-              availableColors: [
-                // Reds
-                Colors.red,
-                Colors.redAccent,
-                Colors.pink,
-                Colors.pinkAccent,
-
-                // Purples
-                Colors.purple,
-                Colors.purpleAccent,
-                Colors.deepPurple,
-                Colors.deepPurpleAccent,
-
-                // Blues
-                Colors.indigo,
-                Colors.indigoAccent,
-                Colors.blue,
-                Colors.blueAccent,
-                Colors.lightBlue,
-                Colors.lightBlueAccent,
-                Colors.cyan,
-                Colors.cyanAccent,
-
-                // Greens
-                Colors.teal,
-                Colors.tealAccent,
-                Colors.green,
-                Colors.greenAccent,
-                Colors.lightGreen,
-                Colors.lightGreenAccent,
-                Colors.lime,
-                Colors.limeAccent,
-
-                // Yellows/Oranges
-                Colors.yellow,
-                Colors.yellowAccent,
-                Colors.amber,
-                Colors.amberAccent,
-                Colors.orange,
-                Colors.orangeAccent,
-                Colors.deepOrange,
-                Colors.deepOrangeAccent,
-
-                // Browns/Greys
-                Colors.brown,
-                Colors.grey,
-                Colors.blueGrey,
-
-                // Black/White
-                Colors.black,
-                Colors.white,
-              ],
-            ),
+          content: StatefulBuilder(
+            builder: (context, setState) {
+              return SingleChildScrollView(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ColorPicker(
+                      pickerColor: pickerColor,
+                      onColorChanged: (Color color) {
+                        setState(() {
+                          pickerColor = color;
+                        });
+                      },
+                      enableAlpha: false,
+                      displayThumbColor: true,
+                      labelTypes: const [],
+                      portraitOnly: true,
+                    ),
+                    SizedBox(height: 16.h),
+                    Row(
+                      children: [
+                        Container(
+                          width: 28.w,
+                          height: 28.w,
+                          decoration: BoxDecoration(
+                            color: pickerColor,
+                            shape: BoxShape.circle,
+                            border: Border.all(
+                              color: Colors.grey.shade300,
+                              width: 1.5,
+                            ),
+                          ),
+                        ),
+                        SizedBox(width: 12.w),
+                        Text(
+                          _colorToHex(pickerColor),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w600,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ],
+                ),
+              );
+            },
           ),
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text(
-                'Cancel',
-                style: TextStyle(color: Colors.grey[600]),
-              ),
+              child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
             ),
             ElevatedButton(
               onPressed: () {

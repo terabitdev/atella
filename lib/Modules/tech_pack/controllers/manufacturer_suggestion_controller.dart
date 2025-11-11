@@ -8,13 +8,14 @@ import 'package:atella/services/manufacture_services/manufacturer_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 
-
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
   final RxInt tabIndex = 0.obs;
 
   // Services
-  final ManufacturerService _manufacturerService = Get.put(ManufacturerService());
+  final ManufacturerService _manufacturerService = Get.put(
+    ManufacturerService(),
+  );
   final AuthService _authService = AuthService();
 
   // Data
@@ -27,14 +28,19 @@ class ManufacturerSuggestionController extends GetxController {
   final RxBool isLoadingCustomTab = false.obs;
   final RxBool isDataReady = false.obs;
   final RxString error = ''.obs;
-  
+
   // Streams for real-time data updates
-  final StreamController<List<Manufacturer>> _recommendedStreamController = StreamController<List<Manufacturer>>.broadcast();
-  final StreamController<List<Manufacturer>> _filteredStreamController = StreamController<List<Manufacturer>>.broadcast();
-  final StreamController<bool> _loadingStreamController = StreamController<bool>.broadcast();
-  
-  Stream<List<Manufacturer>> get recommendedStream => _recommendedStreamController.stream;
-  Stream<List<Manufacturer>> get filteredStream => _filteredStreamController.stream;
+  final StreamController<List<Manufacturer>> _recommendedStreamController =
+      StreamController<List<Manufacturer>>.broadcast();
+  final StreamController<List<Manufacturer>> _filteredStreamController =
+      StreamController<List<Manufacturer>>.broadcast();
+  final StreamController<bool> _loadingStreamController =
+      StreamController<bool>.broadcast();
+
+  Stream<List<Manufacturer>> get recommendedStream =>
+      _recommendedStreamController.stream;
+  Stream<List<Manufacturer>> get filteredStream =>
+      _filteredStreamController.stream;
   Stream<bool> get loadingStream => _loadingStreamController.stream;
 
   // Pagination
@@ -80,7 +86,9 @@ class ManufacturerSuggestionController extends GetxController {
     // Just apply the actual filtering now that data is loaded
     loadFilteredManufacturers();
 
-    print('Pre-filter applied: ${_prefilterCountryName}, found ${filteredManufacturers.length} manufacturers');
+    print(
+      'Pre-filter applied: ${_prefilterCountryName}, found ${filteredManufacturers.length} manufacturers',
+    );
   }
 
   void _initializeStreams() {
@@ -101,8 +109,8 @@ class ManufacturerSuggestionController extends GetxController {
 
   void setupScrollListener() {
     scrollController.addListener(() {
-      if (scrollController.position.pixels >= 
-          scrollController.position.maxScrollExtent - 200 &&
+      if (scrollController.position.pixels >=
+              scrollController.position.maxScrollExtent - 200 &&
           !isLoadingMore.value &&
           hasMoreData &&
           tabIndex.value == 0) {
@@ -116,20 +124,22 @@ class ManufacturerSuggestionController extends GetxController {
       isLoading.value = true;
       _loadingStreamController.add(true);
       error.value = '';
-      
+
       // Load initial manufacturers from Firebase
-      final manufacturers = await _manufacturerService.loadInitialManufacturers();
+      final manufacturers = await _manufacturerService
+          .loadInitialManufacturers();
       recommendedManufacturers.value = manufacturers;
       displayedManufacturers.value = manufacturers;
-      
+
       // Data is automatically reactive through displayedManufacturers observable
-      
+
       // Cache all manufacturers for filtering
-      final allManufacturers = await _manufacturerService.getManufacturersFromFirebase();
+      final allManufacturers = await _manufacturerService
+          .getManufacturersFromFirebase();
       allManufacturersCache.value = allManufacturers;
-      
+
       hasMoreData = _manufacturerService.hasMoreData;
-      
+
       // Pre-load ALL manufacturers for instant custom tab switching
       filteredManufacturers.assignAll(allManufacturers);
 
@@ -155,11 +165,12 @@ class ManufacturerSuggestionController extends GetxController {
 
   Future<void> loadMoreManufacturers() async {
     if (!hasMoreData || isLoadingMore.value) return;
-    
+
     try {
       isLoadingMore.value = true;
-      
-      final moreManufacturers = await _manufacturerService.loadMoreManufacturers();
+
+      final moreManufacturers = await _manufacturerService
+          .loadMoreManufacturers();
       if (moreManufacturers.isNotEmpty) {
         displayedManufacturers.addAll(moreManufacturers);
         hasMoreData = _manufacturerService.hasMoreData;
@@ -226,17 +237,16 @@ class ManufacturerSuggestionController extends GetxController {
     // Just switch the tab index - all data is pre-loaded
     tabIndex.value = index;
   }
-  
-  
+
   // Email functionality
   final RxBool isSendingEmail = false.obs;
   final RxSet<String> loadingManufacturers = <String>{}.obs;
-  
+
   // Helper method to check if a specific manufacturer is loading
   bool isManufacturerLoading(String manufacturerId) {
     return loadingManufacturers.contains(manufacturerId);
   }
-  
+
   // Send email to manufacturer
   Future<void> sendEmailToManufacturer(Manufacturer manufacturer) async {
     // Check if manufacturer has email
@@ -253,19 +263,19 @@ class ManufacturerSuggestionController extends GetxController {
 
     // Set screen-wide loading state
     isSendingEmail.value = true;
-    
+
     try {
       // Get current user information
       String? userEmail;
       String? userName;
-      
+
       try {
         final userData = await _authService.getUserData();
         if (userData != null) {
           userEmail = userData['email'] as String?;
           userName = userData['name'] as String?;
         }
-        
+
         // Fallback to Firebase Auth user if Firestore data is not available
         if (userEmail == null) {
           final currentUser = _authService.currentUser;
@@ -281,18 +291,18 @@ class ManufacturerSuggestionController extends GetxController {
       // Get tech pack images and data
       List<String> imagePaths = [];
       Map<String, dynamic> techPackData = {};
-      
+
       try {
         final techPackController = Get.find<TechPackReadyController>();
-        
+
         // Get all three images: selected design + 2 tech pack images
         List<String> allImages = [];
-        
+
         // 1. Add selected design image first
         if (techPackController.selectedDesignImage.isNotEmpty) {
           allImages.add(techPackController.selectedDesignImage);
         }
-        
+
         // 2. Add generated tech pack images (limit to 2)
         if (techPackController.hasGeneratedImages) {
           final techPackImages = techPackController.generatedImages;
@@ -300,33 +310,51 @@ class ManufacturerSuggestionController extends GetxController {
             allImages.add(techPackImages[i]);
           }
         }
-        
+
         imagePaths = allImages;
-        
+
         // Extract tech pack data for AI generation
         techPackData = {
-          'mainFabric': _extractFromSummary(techPackController.techPackSummary, 'Materials: '),
-          'primaryColor': _extractFromSummary(techPackController.techPackSummary, 'Colors: '),
-          'sizeRange': _extractFromSummary(techPackController.techPackSummary, 'Sizes: '),
-          'quantity': _extractFromSummary(techPackController.techPackSummary, 'Quantity: '),
-          'costPerPiece': _extractFromSummary(techPackController.techPackSummary, 'Target Cost: '),
-          'deliveryDate': _extractFromSummary(techPackController.techPackSummary, 'Delivery: '),
+          'mainFabric': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Materials: ',
+          ),
+          'primaryColor': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Colors: ',
+          ),
+          'sizeRange': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Sizes: ',
+          ),
+          'quantity': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Quantity: ',
+          ),
+          'costPerPiece': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Target Cost: ',
+          ),
+          'deliveryDate': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Delivery: ',
+          ),
         };
       } catch (e) {
         print('Could not find tech pack controller, using sample data: $e');
         // Use fallback sample data
         techPackData = {
           'mainFabric': 'Cotton blend',
-          'primaryColor': 'Navy blue', 
+          'primaryColor': 'Navy blue',
           'sizeRange': 'S-XL',
           'quantity': '500 pieces',
           'costPerPiece': '\$15-20',
           'deliveryDate': '30 days',
         };
-        
+
         // Use sample images if no tech pack images
         imagePaths = [
-          'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k='
+          'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=',
         ];
       }
 
@@ -376,16 +404,193 @@ class ManufacturerSuggestionController extends GetxController {
       isSendingEmail.value = false;
     }
   }
-  
+
+  // Preview email before sending
+  Future<void> previewEmailToManufacturer(Manufacturer manufacturer) async {
+    // Check if manufacturer has email
+    if (manufacturer.email == null || manufacturer.email!.isEmpty) {
+      Get.snackbar(
+        'No Email Available',
+        'This manufacturer does not have an email address on file.',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+      return;
+    }
+
+    String? userEmail;
+    String? userName;
+    List<String> imagePaths = [];
+    Map<String, dynamic> techPackData = {};
+
+    // Try to collect the same payload we will send
+    try {
+      try {
+        final userData = await _authService.getUserData();
+        if (userData != null) {
+          userEmail = userData['email'] as String?;
+          userName = userData['name'] as String?;
+        }
+        if (userEmail == null) {
+          final currentUser = _authService.currentUser;
+          if (currentUser != null) {
+            userEmail = currentUser.email;
+            userName = currentUser.displayName ?? userName;
+          }
+        }
+      } catch (_) {}
+
+      try {
+        final techPackController = Get.find<TechPackReadyController>();
+        final allImages = <String>[];
+        if (techPackController.selectedDesignImage.isNotEmpty) {
+          allImages.add(techPackController.selectedDesignImage);
+        }
+        if (techPackController.hasGeneratedImages) {
+          final techPackImages = techPackController.generatedImages;
+          for (int i = 0; i < techPackImages.length && i < 2; i++) {
+            allImages.add(techPackImages[i]);
+          }
+        }
+        imagePaths = allImages;
+        techPackData = {
+          'mainFabric': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Materials: ',
+          ),
+          'primaryColor': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Colors: ',
+          ),
+          'sizeRange': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Sizes: ',
+          ),
+          'quantity': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Quantity: ',
+          ),
+          'costPerPiece': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Target Cost: ',
+          ),
+          'deliveryDate': _extractFromSummary(
+            techPackController.techPackSummary,
+            'Delivery: ',
+          ),
+        };
+      } catch (e) {
+        // Fallback sample if controller not available
+        techPackData = {
+          'mainFabric': 'Cotton blend',
+          'primaryColor': 'Navy blue',
+          'sizeRange': 'S-XL',
+          'quantity': '500 pieces',
+          'costPerPiece': '\$15-20',
+          'deliveryDate': '30 days',
+        };
+        // Use sample images so preview reflects attachments similar to send flow
+        imagePaths = [
+          'data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYEBQYFBAYGBQYHBwYIChAKCgkJChQODwwQFxQYGBcUFhYaHSUfGhsjHBYWICwgIyYnKSopGR8tMC0oMCUoKSj/2wBDAQcHBwoIChMKChMoGhYaKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCgoKCj/wAARCAABAAEDASIAAhEBAxEB/8QAFQABAQAAAAAAAAAAAAAAAAAAAAv/xAAUEAEAAAAAAAAAAAAAAAAAAAAA/8QAFQEBAQAAAAAAAAAAAAAAAAAAAAX/xAAUEQEAAAAAAAAAAAAAAAAAAAAA/9oADAMBAAIRAxEAPwCdABmX/9k=',
+        ];
+      }
+    } catch (_) {}
+
+    // Optionally build a PDF for preview (path + size)
+    String? pdfPath;
+    String? pdfName;
+    String? pdfSizeKB;
+    try {
+      final preview = await EmailJSDebugService.previewEmailWithPDF(
+        toEmail: manufacturer.email!,
+        manufacturerName: manufacturer.name,
+        manufacturerLocation: manufacturer.location,
+        techPackData: techPackData,
+        userCompanyName: userName ?? 'Atelia Fashion',
+        imagePaths: imagePaths,
+      );
+      final pdf = preview['pdfPreview'] as Map<String, dynamic>?;
+      if (pdf != null) {
+        pdfPath = pdf['path'] as String?;
+        pdfSizeKB = pdf['sizeKB']?.toString();
+        if (pdfPath != null && pdfPath.isNotEmpty) {
+          pdfName = pdfPath.split('/').last;
+        }
+      }
+    } catch (_) {}
+
+    // Build readable preview
+    final previewLines = <Widget>[
+      Text(
+        'To: ${manufacturer.email}',
+        style: const TextStyle(fontWeight: FontWeight.w600),
+      ),
+      const SizedBox(height: 6),
+      Text('Manufacturer: ${manufacturer.name} (${manufacturer.location})'),
+      const SizedBox(height: 6),
+      Text(
+        'From: ${userName ?? 'Atelia Fashion'} ${userEmail != null ? "<$userEmail>" : ""}',
+      ),
+      const Divider(height: 16),
+      const Text(
+        'Tech Pack Summary',
+        style: TextStyle(fontWeight: FontWeight.w600),
+      ),
+      const SizedBox(height: 6),
+      Text('Material: ${techPackData['mainFabric']}'),
+      Text('Primary Color: ${techPackData['primaryColor']}'),
+      Text('Size Range: ${techPackData['sizeRange']}'),
+      Text('Quantity: ${techPackData['quantity']}'),
+      Text('Target Cost: ${techPackData['costPerPiece']}'),
+      Text('Delivery: ${techPackData['deliveryDate']}'),
+      const SizedBox(height: 8),
+      if (pdfName != null)
+        Text(
+          'PDF attachment: $pdfName${pdfSizeKB != null ? " ($pdfSizeKB KB)" : ""}',
+        )
+      else
+        Text('Images attached: ${imagePaths.length}'),
+    ];
+
+    await Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        title: const Text('Preview Email'),
+        content: SingleChildScrollView(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            mainAxisSize: MainAxisSize.min,
+            children: previewLines,
+          ),
+        ),
+        actions: [
+          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          ElevatedButton(
+            onPressed: () {
+              Get.back();
+              sendEmailToManufacturer(manufacturer);
+            },
+            style: ElevatedButton.styleFrom(
+              backgroundColor: Colors.black,
+              foregroundColor: Colors.white,
+            ),
+            child: const Text('Send Email'),
+          ),
+        ],
+      ),
+    );
+  }
+
   // Helper method to extract data from tech pack summary
   String _extractFromSummary(String summary, String key) {
     try {
       final startIndex = summary.indexOf(key);
       if (startIndex == -1) return 'Not specified';
-      
+
       final afterKey = summary.substring(startIndex + key.length);
       final endIndex = afterKey.indexOf('\n');
-      
+
       if (endIndex == -1) {
         return afterKey.trim();
       } else {
@@ -400,8 +605,11 @@ class ManufacturerSuggestionController extends GetxController {
   Future<Map<String, dynamic>> getDatabaseStats() async {
     try {
       final stats = await _manufacturerService.getManufacturerStatistics();
-      final totalManufacturers = stats.values.fold<int>(0, (sum, count) => sum + count);
-      
+      final totalManufacturers = stats.values.fold<int>(
+        0,
+        (sum, count) => sum + count,
+      );
+
       return {
         'totalManufacturers': totalManufacturers,
         'countByCountry': stats,
@@ -413,4 +621,3 @@ class ManufacturerSuggestionController extends GetxController {
     }
   }
 }
-

@@ -25,6 +25,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
     super.initState();
     controller.refreshData();
   }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -36,8 +37,8 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
               Row(
                 children: [
                   GestureDetector(
-                    onTap: (){
-                      Get.back();
+                    onTap: () {
+                      Navigator.pop(context);
                     },
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
@@ -79,14 +80,16 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                 }
 
                 // Empty state - no designs
-                if (!controller.hasDesigns && controller.searchQuery.value.isEmpty) {
+                if (!controller.hasDesigns &&
+                    controller.searchQuery.value.isEmpty) {
                   return HomeEmptyState(
                     onCreateProject: controller.startNewProject,
                   );
                 }
 
                 // Search empty state
-                if (!controller.hasDesigns && controller.searchQuery.value.isNotEmpty) {
+                if (!controller.hasDesigns &&
+                    controller.searchQuery.value.isNotEmpty) {
                   return SearchEmptyState(
                     searchQuery: controller.searchQuery.value,
                     onClearSearch: controller.clearSearch,
@@ -112,10 +115,12 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                         techPack: techPack,
                         showFavoriteIcon: true,
                         onTap: () {
-                          Get.to(() => PreviewScreen(
-                            techPack: techPack,
-                            version: 'V2',
-                          ));
+                          Get.to(
+                            () => PreviewScreen(
+                              techPack: techPack,
+                              version: 'V2',
+                            ),
+                          );
                         },
                         onFavoriteToggle: () {
                           controller.toggleFavorite(techPack);
@@ -131,7 +136,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                 onTap: controller.startNewProject,
                 color: Colors.black,
                 isloading: false,
-              )
+              ),
             ],
           ),
         ),
