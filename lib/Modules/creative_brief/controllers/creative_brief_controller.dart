@@ -41,12 +41,15 @@ class CreativeBriefController extends GetxController {
       TextEditingController(); // For solid colors (hex codes)
   final fabricController = TextEditingController();
   final customController = TextEditingController(); // For custom answers
-  
+
   // Custom controllers for categorized questions
-  final garmentTypeCustomController = TextEditingController(); // For garment_type custom
+  final garmentTypeCustomController =
+      TextEditingController(); // For garment_type custom
   final fabricCustomController = TextEditingController(); // For fabrics custom
-  final printCustomController = TextEditingController(); // For colors Prints custom
-  final techniqueCustomController = TextEditingController(); // For colors Techniques custom
+  final printCustomController =
+      TextEditingController(); // For colors Prints custom
+  final techniqueCustomController =
+      TextEditingController(); // For colors Techniques custom
 
   // Storage for multi-part colors question
   final RxList<String> _selectedColors =
@@ -70,7 +73,7 @@ class CreativeBriefController extends GetxController {
   // Track which question has custom selected - FIXED: Now properly observable
   final RxString _customSelectedForQuestion = ''.obs;
   String get customSelectedForQuestion => _customSelectedForQuestion.value;
-  
+
   // Track which category has custom selected for categorized questions
   // Format: "questionId:categoryName" e.g., "garment_type:Tops" or "colors:Prints"
   final RxString _customSelectedForCategory = ''.obs;
@@ -103,7 +106,13 @@ class CreativeBriefController extends GetxController {
           'Custom',
         ],
         'Bottoms': ['Pants', 'Jeans', 'Skirts', 'Shorts', 'Leggings', 'Custom'],
-        'Dresses': ['Casual dress', 'Evening', 'Cocktail dress', 'Gown', 'Custom'],
+        'Dresses': [
+          'Casual dress',
+          'Evening',
+          'Cocktail dress',
+          'Gown',
+          'Custom',
+        ],
         'Sportswear': ['Tracksuit', 'Activewear', 'Swimwear', 'Custom'],
         'Accessories': ['Hat', 'Bag', 'Scarf', 'Gloves', 'Custom'],
       },
@@ -331,36 +340,116 @@ class CreativeBriefController extends GetxController {
     // print('Loading creative brief answers: $creativeBriefData');
 
     // Load chip-based answers
-    final garmentType = creativeBriefData['garment_type'] as String? ?? '';
-    if (garmentType.isNotEmpty) {
+    final garmentType =
+        creativeBriefData['garment_type'] as String? ??
+        creativeBriefData['garmentType'] as String? ??
+        '';
+    final customGarmentType =
+        creativeBriefData['custom_garment_type'] as String? ??
+        creativeBriefData['customGarmentType'] as String? ??
+        '';
+    final List<String> garmentSelections = garmentType
+        .split(',')
+        .map((e) => e.trim())
+        .where((e) => e.isNotEmpty)
+        .toList();
+    if (garmentSelections.isNotEmpty || customGarmentType.isNotEmpty) {
+      if (garmentSelections.isEmpty && customGarmentType.isNotEmpty) {
+        garmentSelections.add('Custom');
+      }
+      String? formattedCustomGarment;
+      if (customGarmentType.isNotEmpty) {
+        formattedCustomGarment = customGarmentType;
+        // Ensure dialog receives category-prefixed custom text
+        final categoryWithCustom = garmentSelections.firstWhere(
+          (opt) => opt.contains(':Custom'),
+          orElse: () => '',
+        );
+        if (categoryWithCustom.isNotEmpty &&
+            !formattedCustomGarment.contains(':')) {
+          final categoryName = categoryWithCustom.split(':').first;
+          formattedCustomGarment = '$categoryName:$formattedCustomGarment';
+        }
+      }
       _answers['garment_type'] = BriefAnswer(
         questionId: 'garment_type',
-        selectedOptions: [garmentType],
+        selectedOptions: garmentSelections,
+        textInput: formattedCustomGarment,
       );
     }
 
-    final style = creativeBriefData['style'] as String? ?? '';
-    if (style.isNotEmpty) {
+    final style =
+        creativeBriefData['style'] as String? ??
+        creativeBriefData['stylePreference'] as String? ??
+        '';
+    final customStyle =
+        creativeBriefData['custom_style'] as String? ??
+        creativeBriefData['customStyle'] as String? ??
+        '';
+    if (style.isNotEmpty || customStyle.isNotEmpty) {
+      final List<String> styleSelections = [];
+      if (style.isNotEmpty) {
+        styleSelections.add(style);
+      }
+      if (styleSelections.isEmpty && customStyle.isNotEmpty) {
+        styleSelections.add('Custom');
+      }
       _answers['style'] = BriefAnswer(
         questionId: 'style',
-        selectedOptions: [style],
+        selectedOptions: styleSelections,
+        textInput: customStyle.isNotEmpty ? customStyle : null,
       );
     }
 
     final targetAudience =
-        creativeBriefData['target_audience'] as String? ?? '';
-    if (targetAudience.isNotEmpty) {
+        creativeBriefData['target_audience'] as String? ??
+        creativeBriefData['targetAudience'] as String? ??
+        '';
+    final customTargetAudience =
+        creativeBriefData['custom_target_audience'] as String? ??
+        creativeBriefData['customTargetAudience'] as String? ??
+        '';
+    if (targetAudience.isNotEmpty || customTargetAudience.isNotEmpty) {
+      final List<String> audienceSelections = [];
+      if (targetAudience.isNotEmpty) {
+        audienceSelections.add(targetAudience);
+      }
+      if (audienceSelections.isEmpty && customTargetAudience.isNotEmpty) {
+        audienceSelections.add('Custom');
+      }
+      final String? customAudienceInput = customTargetAudience.isNotEmpty
+          ? customTargetAudience
+          : null;
       _answers['target_audience'] = BriefAnswer(
         questionId: 'target_audience',
-        selectedOptions: [targetAudience],
+        selectedOptions: audienceSelections,
+        textInput: customAudienceInput,
       );
     }
 
-    final occasion = creativeBriefData['occasion'] as String? ?? '';
-    if (occasion.isNotEmpty) {
+    final occasion =
+        creativeBriefData['occasion'] as String? ??
+        creativeBriefData['occasionType'] as String? ??
+        '';
+    final customOccasion =
+        creativeBriefData['custom_occasion'] as String? ??
+        creativeBriefData['customOccasion'] as String? ??
+        '';
+    if (occasion.isNotEmpty || customOccasion.isNotEmpty) {
+      final List<String> occasionSelections = [];
+      if (occasion.isNotEmpty) {
+        occasionSelections.add(occasion);
+      }
+      if (occasionSelections.isEmpty && customOccasion.isNotEmpty) {
+        occasionSelections.add('Custom');
+      }
+      final String? customOccasionInput = customOccasion.isNotEmpty
+          ? customOccasion
+          : null;
       _answers['occasion'] = BriefAnswer(
         questionId: 'occasion',
-        selectedOptions: [occasion],
+        selectedOptions: occasionSelections,
+        textInput: customOccasionInput,
       );
     }
 
@@ -616,12 +705,12 @@ class CreativeBriefController extends GetxController {
   bool isCustomSelectedForCurrentQuestion() {
     return _customSelectedForQuestion.value == currentQuestion.id;
   }
-  
+
   // Check if custom is selected for a specific category
   bool isCustomSelectedForCategory(String questionId, String categoryName) {
     return _customSelectedForCategory.value == '$questionId:$categoryName';
   }
-  
+
   // Get the category name for which custom is selected (if any)
   String? getCustomSelectedCategory(String questionId) {
     final customCategory = _customSelectedForCategory.value;
@@ -631,16 +720,24 @@ class CreativeBriefController extends GetxController {
     return null;
   }
 
-  void selectOption(String option, {String? forQuestionId, String? categoryName}) async {
+  void selectOption(
+    String option, {
+    String? forQuestionId,
+    String? categoryName,
+  }) async {
     // Determine which question this selection is for
     final questionId = forQuestionId ?? currentQuestion.id;
 
-    print('Selecting option: $option for question: $questionId, category: $categoryName'); // Debug
+    print(
+      'Selecting option: $option for question: $questionId, category: $categoryName',
+    ); // Debug
 
     // If "Custom" is selected, show text field
     if (option == 'Custom') {
-      print('Custom selected for question: $questionId, category: $categoryName'); // Debug
-      
+      print(
+        'Custom selected for question: $questionId, category: $categoryName',
+      ); // Debug
+
       // For categorized questions, track which category has custom selected
       if (categoryName != null) {
         _customSelectedForCategory.value = '$questionId:$categoryName';
@@ -667,7 +764,8 @@ class CreativeBriefController extends GetxController {
     if (_customSelectedForQuestion.value == questionId) {
       _customSelectedForQuestion.value = '';
     }
-    if (categoryName != null && _customSelectedForCategory.value == '$questionId:$categoryName') {
+    if (categoryName != null &&
+        _customSelectedForCategory.value == '$questionId:$categoryName') {
       _customSelectedForCategory.value = '';
     }
 
@@ -794,10 +892,16 @@ class CreativeBriefController extends GetxController {
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
   }
-  
+
   // Submit custom answer for categorized questions (garment_type, fabrics)
-  void submitCategorizedCustomAnswer(String questionId, String categoryName, TextEditingController controller) async {
-    print('Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName'); // Debug
+  void submitCategorizedCustomAnswer(
+    String questionId,
+    String categoryName,
+    TextEditingController controller,
+  ) async {
+    print(
+      'Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName',
+    ); // Debug
 
     if (controller.text.trim().isEmpty) {
       return;
@@ -830,10 +934,15 @@ class CreativeBriefController extends GetxController {
       _nextQuestion();
     }
   }
-  
+
   // Submit custom answer for colors question (Prints or Techniques)
-  void submitColorCustomAnswer(String categoryName, TextEditingController controller) async {
-    print('Submitting color custom answer: ${controller.text} for $categoryName'); // Debug
+  void submitColorCustomAnswer(
+    String categoryName,
+    TextEditingController controller,
+  ) async {
+    print(
+      'Submitting color custom answer: ${controller.text} for $categoryName',
+    ); // Debug
 
     if (controller.text.trim().isEmpty) {
       return;
@@ -847,13 +956,15 @@ class CreativeBriefController extends GetxController {
 
     // Get existing answer or create new one
     final existingAnswer = _answers['colors'];
-    List<String> selectedOptions = existingAnswer?.selectedOptions.toList() ?? [];
-    String? solidColorsText = existingAnswer?.textInput; // This stores solid colors
-    
+    List<String> selectedOptions =
+        existingAnswer?.selectedOptions.toList() ?? [];
+    String? solidColorsText =
+        existingAnswer?.textInput; // This stores solid colors
+
     // Store custom print/technique text separately
     // We'll use a special format: "solidColors|||customPrint|||customTechnique"
     List<String> customParts = ['', '']; // [customPrint, customTechnique]
-    
+
     // Parse existing custom text if it exists (format: solidColors|||customPrint|||customTechnique)
     if (solidColorsText != null && solidColorsText.contains('|||')) {
       final parts = solidColorsText.split('|||');
@@ -868,24 +979,29 @@ class CreativeBriefController extends GetxController {
         }
       }
     }
-    
+
     // Update the custom part for the selected category
     if (categoryName == 'Prints') {
-      selectedOptions.removeWhere((opt) => opt == _selectedPrint.value || opt == 'Prints:Custom');
+      selectedOptions.removeWhere(
+        (opt) => opt == _selectedPrint.value || opt == 'Prints:Custom',
+      );
       _selectedPrint.value = 'Custom';
       customParts[0] = controller.text.trim();
       selectedOptions.add('Prints:Custom');
     } else if (categoryName == 'Techniques') {
-      selectedOptions.removeWhere((opt) => opt == _selectedTechnique.value || opt == 'Techniques:Custom');
+      selectedOptions.removeWhere(
+        (opt) => opt == _selectedTechnique.value || opt == 'Techniques:Custom',
+      );
       _selectedTechnique.value = 'Custom';
       customParts[1] = controller.text.trim();
       selectedOptions.add('Techniques:Custom');
     }
-    
+
     // Reconstruct textInput: solidColors|||customPrint|||customTechnique
     String finalTextInput = solidColorsText ?? '';
     if (customParts[0].isNotEmpty || customParts[1].isNotEmpty) {
-      finalTextInput = '${solidColorsText ?? ''}|||${customParts[0]}|||${customParts[1]}';
+      finalTextInput =
+          '${solidColorsText ?? ''}|||${customParts[0]}|||${customParts[1]}';
     }
 
     _answers['colors'] = BriefAnswer(
@@ -1120,8 +1236,9 @@ class CreativeBriefController extends GetxController {
     _selectedPrint.value = finalPrintValue;
     _selectedTechnique.value = finalTechniqueValue;
 
-    final solidColorsText =
-        _selectedColors.isNotEmpty ? _selectedColors.join('|||') : '';
+    final solidColorsText = _selectedColors.isNotEmpty
+        ? _selectedColors.join('|||')
+        : '';
 
     String? textInput;
     if (solidColorsText.isNotEmpty ||
@@ -1159,9 +1276,10 @@ class CreativeBriefController extends GetxController {
     final existingAnswer = _answers['colors'];
     String customPrintText = '';
     String customTechniqueText = '';
-    
+
     // Parse existing custom text if it exists (format: solidColors|||customPrint|||customTechnique)
-    if (existingAnswer?.textInput != null && existingAnswer!.textInput!.contains('|||')) {
+    if (existingAnswer?.textInput != null &&
+        existingAnswer!.textInput!.contains('|||')) {
       final parts = existingAnswer.textInput!.split('|||');
       if (parts.length >= 3) {
         customPrintText = parts[1];
@@ -1176,27 +1294,33 @@ class CreativeBriefController extends GetxController {
       } else {
         selectedOptions.add(_selectedPrint.value);
       }
-    } else if (existingAnswer?.selectedOptions.contains('Prints:Custom') ?? false) {
+    } else if (existingAnswer?.selectedOptions.contains('Prints:Custom') ??
+        false) {
       // Preserve custom print option if it exists
       selectedOptions.add('Prints:Custom');
     }
-    
+
     if (_selectedTechnique.value.isNotEmpty) {
       if (_selectedTechnique.value == 'Custom') {
         selectedOptions.add('Techniques:Custom');
       } else {
         selectedOptions.add(_selectedTechnique.value);
       }
-    } else if (existingAnswer?.selectedOptions.contains('Techniques:Custom') ?? false) {
+    } else if (existingAnswer?.selectedOptions.contains('Techniques:Custom') ??
+        false) {
       // Preserve custom technique option if it exists
       selectedOptions.add('Techniques:Custom');
     }
 
     // Build textInput: solidColors|||customPrint|||customTechnique
     String? textInput;
-    final solidColorsText = _selectedColors.isNotEmpty ? _selectedColors.join('|||') : '';
-    
-    if (solidColorsText.isNotEmpty || customPrintText.isNotEmpty || customTechniqueText.isNotEmpty) {
+    final solidColorsText = _selectedColors.isNotEmpty
+        ? _selectedColors.join('|||')
+        : '';
+
+    if (solidColorsText.isNotEmpty ||
+        customPrintText.isNotEmpty ||
+        customTechniqueText.isNotEmpty) {
       textInput = '$solidColorsText|||$customPrintText|||$customTechniqueText';
     }
 
@@ -1375,25 +1499,29 @@ class CreativeBriefController extends GetxController {
         // Initialize controllers and tracking for each category
         categoryCustomControllers[category.key] = TextEditingController();
         categoryCustomSelected[category.key] = ''.obs;
-        
+
         // Load existing custom text for this category if it exists
-        final categoryHasCustom = currentAnswer?.selectedOptions
-            .any((opt) => opt == '${category.key}:Custom') ?? false;
+        final categoryHasCustom =
+            currentAnswer?.selectedOptions.any(
+              (opt) => opt == '${category.key}:Custom',
+            ) ??
+            false;
         if (categoryHasCustom && currentAnswer?.textInput != null) {
           final customText = currentAnswer!.textInput!;
           if (customText.contains('|||')) {
             final parts = customText.split('|||');
             for (var part in parts) {
               if (part.startsWith('${category.key}:')) {
-                categoryCustomControllers[category.key]!.text =
-                    part.substring('${category.key}:'.length);
+                categoryCustomControllers[category.key]!.text = part.substring(
+                  '${category.key}:'.length,
+                );
                 categoryCustomSelected[category.key]!.value = category.key;
                 break;
               }
             }
           } else if (customText.startsWith('${category.key}:')) {
-            categoryCustomControllers[category.key]!.text =
-                customText.substring('${category.key}:'.length);
+            categoryCustomControllers[category.key]!.text = customText
+                .substring('${category.key}:'.length);
             categoryCustomSelected[category.key]!.value = category.key;
           } else if (!customText.contains(':')) {
             // Legacy format without category prefix
@@ -1435,9 +1563,11 @@ class CreativeBriefController extends GetxController {
                 if (question.type == 'chips_categorized' &&
                     categoriesMap != null)
                   ...categoriesMap.entries.map((category) {
-                    final customSelectedCategory = categoryCustomSelected[category.key]!;
-                    final tempCategoryCustomController = categoryCustomControllers[category.key]!;
-                    
+                    final customSelectedCategory =
+                        categoryCustomSelected[category.key]!;
+                    final tempCategoryCustomController =
+                        categoryCustomControllers[category.key]!;
+
                     return Obx(
                       () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1462,7 +1592,9 @@ class CreativeBriefController extends GetxController {
                               // Check if this option is selected (handle both formats)
                               // Check for direct match, category prefix match, or custom selection
                               final bool customActiveForCategory =
-                                  tempSelectedOptions.contains('${category.key}:Custom') ||
+                                  tempSelectedOptions.contains(
+                                    '${category.key}:Custom',
+                                  ) ||
                                   customSelectedCategory.value == category.key;
 
                               final bool isSelected;
@@ -1471,50 +1603,71 @@ class CreativeBriefController extends GetxController {
                               } else if (customActiveForCategory) {
                                 isSelected = false;
                               } else {
-                                isSelected = tempSelectedOptions.contains(option) ||
-                                    tempSelectedOptions.contains('${category.key}:$option');
+                                isSelected =
+                                    tempSelectedOptions.contains(option) ||
+                                    tempSelectedOptions.contains(
+                                      '${category.key}:$option',
+                                    );
                               }
-                              
+
                               return GestureDetector(
                                 onTap: () {
                                   if (option == 'Custom') {
                                     // Toggle custom selection for this category
-                                    if (customSelectedCategory.value == category.key) {
+                                    if (customSelectedCategory.value ==
+                                        category.key) {
                                       customSelectedCategory.value = '';
                                       tempCategoryCustomController.clear();
                                       // Remove custom option
-                                      tempSelectedOptions.removeWhere((opt) => 
-                                        opt == '${category.key}:Custom' || opt == 'Custom');
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            opt == '${category.key}:Custom' ||
+                                            opt == 'Custom',
+                                      );
                                     } else {
-                                      customSelectedCategory.value = category.key;
+                                      customSelectedCategory.value =
+                                          category.key;
                                       // Remove other options from this category
-                                      tempSelectedOptions.removeWhere((opt) => 
-                                        category.value.contains(opt) || 
-                                        opt.startsWith('${category.key}:'));
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            category.value.contains(opt) ||
+                                            opt.startsWith('${category.key}:'),
+                                      );
                                       // Add custom option
-                                      tempSelectedOptions.add('${category.key}:Custom');
+                                      tempSelectedOptions.add(
+                                        '${category.key}:Custom',
+                                      );
                                     }
                                   } else {
                                     // Regular option selected
                                     if (question.allowMultiple) {
                                       if (isSelected) {
                                         tempSelectedOptions.remove(option);
-                                        tempSelectedOptions.removeWhere((opt) => 
-                                          opt == '${category.key}:$option');
+                                        tempSelectedOptions.removeWhere(
+                                          (opt) =>
+                                              opt == '${category.key}:$option',
+                                        );
                                       } else {
-                                        tempSelectedOptions.removeWhere((opt) => 
-                                          category.value.contains(opt) || 
-                                          opt.startsWith('${category.key}:'));
+                                        tempSelectedOptions.removeWhere(
+                                          (opt) =>
+                                              category.value.contains(opt) ||
+                                              opt.startsWith(
+                                                '${category.key}:',
+                                              ),
+                                        );
                                         tempSelectedOptions.add(option);
                                       }
                                     } else {
-                                      tempSelectedOptions.removeWhere((opt) => 
-                                        category.value.contains(opt) || 
-                                        opt.startsWith('${category.key}:'));
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            category.value.contains(opt) ||
+                                            opt.startsWith('${category.key}:'),
+                                      );
                                       tempSelectedOptions.value = [option];
                                     }
                                     // Clear custom selection for this category
-                                    if (customSelectedCategory.value == category.key) {
+                                    if (customSelectedCategory.value ==
+                                        category.key) {
                                       customSelectedCategory.value = '';
                                       tempCategoryCustomController.clear();
                                     }
@@ -1558,7 +1711,8 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: tempCategoryCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Enter custom ${category.key.toLowerCase()}...',
+                                hintText:
+                                    'Enter custom ${category.key.toLowerCase()}...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -1673,7 +1827,8 @@ class CreativeBriefController extends GetxController {
               Navigator.of(Get.overlayContext!).pop();
               // Dispose temporary controllers after dialog is closed
               Future.delayed(Duration(milliseconds: 100), () {
-                if (question.type == 'chips_categorized' && categoriesMap != null) {
+                if (question.type == 'chips_categorized' &&
+                    categoriesMap != null) {
                   // Dispose category controllers
                   for (var controller in categoryCustomControllers.values) {
                     controller.dispose();
@@ -1688,10 +1843,13 @@ class CreativeBriefController extends GetxController {
           ElevatedButton(
             onPressed: () {
               // For categorized questions, validate and collect custom text
-              if (question.type == 'chips_categorized' && categoriesMap != null) {
+              if (question.type == 'chips_categorized' &&
+                  categoriesMap != null) {
                 // Validate custom inputs for categorized questions
                 for (var category in categoriesMap.entries) {
-                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom = tempSelectedOptions.contains(
+                    '${category.key}:Custom',
+                  );
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
                     Get.snackbar(
@@ -1705,17 +1863,19 @@ class CreativeBriefController extends GetxController {
                     return;
                   }
                 }
-                
+
                 // Collect custom texts for all categories
                 Map<String, String> customTexts = {};
                 for (var category in categoriesMap.entries) {
-                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom = tempSelectedOptions.contains(
+                    '${category.key}:Custom',
+                  );
                   if (hasCustom) {
                     final controller = categoryCustomControllers[category.key]!;
                     customTexts[category.key] = controller.text.trim();
                   }
                 }
-                
+
                 // Build custom text string: "category1:text1|||category2:text2"
                 String? customTextString;
                 if (customTexts.isNotEmpty) {
@@ -1723,7 +1883,7 @@ class CreativeBriefController extends GetxController {
                       .map((e) => '${e.key}:${e.value}')
                       .join('|||');
                 }
-                
+
                 // Save the changes
                 _answers[questionId] = BriefAnswer(
                   questionId: questionId,
@@ -1754,7 +1914,6 @@ class CreativeBriefController extends GetxController {
                       ? tempCustomController.text.trim()
                       : null,
                 );
-
               }
 
               // Close dialog first
@@ -1772,7 +1931,8 @@ class CreativeBriefController extends GetxController {
                 snackPosition: SnackPosition.TOP,
               );
 
-              if (question.type == 'chips_categorized' && categoriesMap != null) {
+              if (question.type == 'chips_categorized' &&
+                  categoriesMap != null) {
                 Future.delayed(const Duration(milliseconds: 100), () {
                   for (var controller in categoryCustomControllers.values) {
                     controller.dispose();
@@ -1833,10 +1993,10 @@ class CreativeBriefController extends GetxController {
       }
     }
 
-    final printCustomController =
-        TextEditingController(text: customPrintText);
-    final techniqueCustomController =
-        TextEditingController(text: customTechniqueText);
+    final printCustomController = TextEditingController(text: customPrintText);
+    final techniqueCustomController = TextEditingController(
+      text: customTechniqueText,
+    );
 
     final RxString tempPrint =
         (hasCustomPrint ? 'Custom' : _selectedPrint.value).obs;

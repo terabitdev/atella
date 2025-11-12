@@ -212,15 +212,44 @@ class RefiningConceptController extends GetxController {
           refinedConceptData['garment_type'] as String? ??
           refinedConceptData['silhouette'] as String? ??
           '';
-      if (garmentType.isNotEmpty) {
-        final multi = garmentType
+      final customSilhouette =
+          refinedConceptData['custom_garment_type'] as String? ??
+          refinedConceptData['customSilhouette'] as String? ??
+          '';
+      if (garmentType.isNotEmpty || customSilhouette.isNotEmpty) {
+        final List<String> selections = garmentType
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
+        if (customSilhouette.isNotEmpty &&
+            !selections.contains('Custom') &&
+            !selections.any((opt) => opt.endsWith(':Custom'))) {
+          selections.add('Custom');
+        }
+        if (selections.isEmpty && customSilhouette.isNotEmpty) {
+          selections.add('Custom');
+        }
+        String formattedCustomSilhouette = customSilhouette;
+        if (formattedCustomSilhouette.isNotEmpty &&
+            !formattedCustomSilhouette.contains(':')) {
+          final prefixedSelection = selections.firstWhere(
+            (opt) => opt.contains(':Custom'),
+            orElse: () => '',
+          );
+          if (prefixedSelection.isNotEmpty) {
+            final categoryName = prefixedSelection.split(':').first;
+            formattedCustomSilhouette =
+                '$categoryName:$formattedCustomSilhouette';
+          }
+        }
+        final String? silhouetteText = formattedCustomSilhouette.isNotEmpty
+            ? formattedCustomSilhouette
+            : null;
         _answers['garment_type'] = BriefAnswer(
           questionId: 'garment_type',
-          selectedOptions: multi.isNotEmpty ? multi : [garmentType],
+          selectedOptions: selections,
+          textInput: silhouetteText,
         );
       }
 
@@ -228,15 +257,35 @@ class RefiningConceptController extends GetxController {
           refinedConceptData['specific_features'] as String? ??
           refinedConceptData['features'] as String? ??
           '';
-      if (specificFeatures.isNotEmpty) {
+      final customFeatures =
+          refinedConceptData['custom_specific_features'] as String? ??
+          refinedConceptData['customFeatures'] as String? ??
+          '';
+      if (specificFeatures.isNotEmpty || customFeatures.isNotEmpty) {
         final multi = specificFeatures
             .split(',')
             .map((e) => e.trim())
             .where((e) => e.isNotEmpty)
             .toList();
+        String formattedCustomFeatures = customFeatures;
+        if (formattedCustomFeatures.isNotEmpty &&
+            !formattedCustomFeatures.contains('|||') &&
+            !formattedCustomFeatures.contains(':')) {
+          final prefixedSelections = multi
+              .where((opt) => opt.contains(':Custom'))
+              .toList();
+          if (prefixedSelections.isNotEmpty) {
+            final category = prefixedSelections.first.split(':').first;
+            formattedCustomFeatures = '$category:$formattedCustomFeatures';
+          }
+        }
+        final String? featuresText = formattedCustomFeatures.isNotEmpty
+            ? formattedCustomFeatures
+            : null;
         _answers['specific_features'] = BriefAnswer(
           questionId: 'specific_features',
-          selectedOptions: multi.isNotEmpty ? multi : [specificFeatures],
+          selectedOptions: multi,
+          textInput: featuresText,
         );
       }
 
@@ -244,10 +293,22 @@ class RefiningConceptController extends GetxController {
           refinedConceptData['seasonal_constraint'] as String? ??
           refinedConceptData['season'] as String? ??
           '';
-      if (seasonalConstraint.isNotEmpty) {
+      final customSeason =
+          refinedConceptData['custom_season'] as String? ??
+          refinedConceptData['customSeason'] as String? ??
+          '';
+      if (seasonalConstraint.isNotEmpty || customSeason.isNotEmpty) {
+        final List<String> selections = [];
+        if (seasonalConstraint.isNotEmpty) {
+          selections.add(seasonalConstraint);
+        }
+        if (selections.isEmpty && customSeason.isNotEmpty) {
+          selections.add('Custom');
+        }
         _answers['seasonal_constraint'] = BriefAnswer(
           questionId: 'seasonal_constraint',
-          selectedOptions: [seasonalConstraint],
+          selectedOptions: selections,
+          textInput: customSeason.isNotEmpty ? customSeason : null,
         );
       }
 
@@ -255,10 +316,22 @@ class RefiningConceptController extends GetxController {
           refinedConceptData['target_budget'] as String? ??
           refinedConceptData['budget'] as String? ??
           '';
-      if (targetBudget.isNotEmpty) {
+      final customBudget =
+          refinedConceptData['custom_budget'] as String? ??
+          refinedConceptData['customBudget'] as String? ??
+          '';
+      if (targetBudget.isNotEmpty || customBudget.isNotEmpty) {
+        final List<String> selections = [];
+        if (targetBudget.isNotEmpty) {
+          selections.add(targetBudget);
+        }
+        if (selections.isEmpty && customBudget.isNotEmpty) {
+          selections.add('Custom');
+        }
         _answers['target_budget'] = BriefAnswer(
           questionId: 'target_budget',
-          selectedOptions: [targetBudget],
+          selectedOptions: selections,
+          textInput: customBudget.isNotEmpty ? customBudget : null,
         );
       }
 
@@ -266,10 +339,22 @@ class RefiningConceptController extends GetxController {
           refinedConceptData['functionalities_values'] as String? ??
           refinedConceptData['values'] as String? ??
           '';
-      if (functionalitiesValues.isNotEmpty) {
+      final customValues =
+          refinedConceptData['custom_functionalities_values'] as String? ??
+          refinedConceptData['customValues'] as String? ??
+          '';
+      if (functionalitiesValues.isNotEmpty || customValues.isNotEmpty) {
+        final List<String> selections = [];
+        if (functionalitiesValues.isNotEmpty) {
+          selections.add(functionalitiesValues);
+        }
+        if (selections.isEmpty && customValues.isNotEmpty) {
+          selections.add('Custom');
+        }
         _answers['functionalities_values'] = BriefAnswer(
           questionId: 'functionalities_values',
-          selectedOptions: [functionalitiesValues],
+          selectedOptions: selections,
+          textInput: customValues.isNotEmpty ? customValues : null,
         );
       }
 
