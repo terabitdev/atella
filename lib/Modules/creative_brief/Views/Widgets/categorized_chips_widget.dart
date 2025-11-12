@@ -1,17 +1,22 @@
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:get/get.dart';
 
 class CategorizedChipsWidget extends StatelessWidget {
   final Map<String, List<String>> categories;
   final String? selectedOption;
-  final Function(String) onOptionSelected;
+  final Function(String, String) onOptionSelected; // Now includes categoryName
+  final String questionId; // Add questionId to check custom selection
+  final String customSelectedForCategory; // Observable value for custom selection
 
   const CategorizedChipsWidget({
     Key? key,
     required this.categories,
     required this.selectedOption,
     required this.onOptionSelected,
+    required this.questionId,
+    required this.customSelectedForCategory,
   }) : super(key: key);
 
   @override
@@ -51,11 +56,15 @@ class CategorizedChipsWidget extends StatelessWidget {
           spacing: 8.w,
           runSpacing: 8.h,
           children: options.map((option) {
-            final isSelected = selectedOption == option;
+            // Check if this option is selected (either directly or as Custom for this category)
+            // Access the observable value directly to make it reactive
+            final customKey = '$questionId:$categoryName';
+            final isSelected = selectedOption == option || 
+                (option == 'Custom' && customSelectedForCategory == customKey);
             return SelectionChipWidget(
               text: option,
               isSelected: isSelected,
-              onTap: () => onOptionSelected(option),
+              onTap: () => onOptionSelected(option, categoryName),
             );
           }).toList(),
         ),

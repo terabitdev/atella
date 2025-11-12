@@ -36,6 +36,9 @@ class RefiningConceptController extends GetxController {
   final colorController = TextEditingController();
   final fabricController = TextEditingController();
   final customController = TextEditingController(); // For custom answers
+  
+  // Custom controllers for categorized questions
+  final specificFeaturesCustomController = TextEditingController(); // For specific_features custom
 
   // Loading state for text input
   final RxBool _isTextLoading = false.obs;
@@ -44,6 +47,11 @@ class RefiningConceptController extends GetxController {
   // Track which question has custom selected
   final RxString _customSelectedForQuestion = ''.obs;
   String get customSelectedForQuestion => _customSelectedForQuestion.value;
+  
+  // Track which category has custom selected for categorized questions
+  // Format: "questionId:categoryName" e.g., "specific_features:Necklines"
+  final RxString _customSelectedForCategory = ''.obs;
+  String get customSelectedForCategory => _customSelectedForCategory.value;
 
   // Track temporary selections before they are confirmed
   final RxMap<String, String> _tempSelections = <String, String>{}.obs;
@@ -86,17 +94,18 @@ class RefiningConceptController extends GetxController {
       type: 'chips_categorized',
       options: [],
       categories: {
-        'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder'],
-        'Sleeves': ['Sleeveless', 'Short ¾', 'Long', 'Puff', 'Raglan'],
+        'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder', 'Custom'],
+        'Sleeves': ['Sleeveless', 'Short ¾', 'Long', 'Puff', 'Raglan', 'Custom'],
         'Closures': [
           'Zipper (metal/plastic/invisible)',
           'Buttons',
           'Hooks',
           'Velcro',
           'Snaps',
+          'Custom',
         ],
-        'Pockets': ['Patch', 'Welt', 'Flap', 'Hidden', 'Cargo'],
-        'Waist': ['Elastic', 'High-waist', 'Low-rise', 'Belted'],
+        'Pockets': ['Patch', 'Welt', 'Flap', 'Hidden', 'Cargo', 'Custom'],
+        'Waist': ['Elastic', 'High-waist', 'Low-rise', 'Belted', 'Custom'],
         'Finishes': [
           'Lining',
           'Topstitching',
@@ -104,6 +113,7 @@ class RefiningConceptController extends GetxController {
           'Lace',
           'Sequins',
           'Appliqués',
+          'Custom',
         ],
       },
     ),
@@ -272,6 +282,7 @@ class RefiningConceptController extends GetxController {
     colorController.dispose();
     fabricController.dispose();
     customController.dispose();
+    specificFeaturesCustomController.dispose();
     super.onClose();
   }
 
@@ -331,6 +342,20 @@ class RefiningConceptController extends GetxController {
       'isCustomSelectedForCurrentQuestion called: $_customSelectedForQuestion.value == ${currentQuestion.id} = $result',
     ); // Debug
     return result;
+  }
+  
+  // Check if custom is selected for a specific category
+  bool isCustomSelectedForCategory(String questionId, String categoryName) {
+    return _customSelectedForCategory.value == '$questionId:$categoryName';
+  }
+  
+  // Get the category name for which custom is selected (if any)
+  String? getCustomSelectedCategory(String questionId) {
+    final customCategory = _customSelectedForCategory.value;
+    if (customCategory.startsWith('$questionId:')) {
+      return customCategory.substring('$questionId:'.length);
+    }
+    return null;
   }
 
   void selectOption(String option) async {
@@ -418,6 +443,22 @@ class RefiningConceptController extends GetxController {
         _currentQuestionIndex.value = qIndex;
       }
     }
+    
+    // If "Custom" is selected, show text field
+    if (option == 'Custom') {
+      print('Custom selected for question: $questionId, category: $category'); // Debug
+      _customSelectedForCategory.value = '$questionId:$category';
+      // Clear any temporary selection for this category
+      _tempCategorizedSelections.remove(category);
+      update();
+      return; // Don't auto-confirm yet, wait for custom text input
+    }
+    
+    // Clear custom selection if user selects a different option
+    if (_customSelectedForCategory.value == '$questionId:$category') {
+      _customSelectedForCategory.value = '';
+    }
+    
     // Toggle/replace selection for this category
     if (_tempCategorizedSelections[category] == option) {
       _tempCategorizedSelections.remove(category);
@@ -438,9 +479,26 @@ class RefiningConceptController extends GetxController {
 
   void _confirmCategorizedSelections(String questionId) {
     if (_tempCategorizedSelections.isEmpty) return;
+    
+    // Get existing answer to preserve custom selections
+    final existingAnswer = _answers[questionId];
+    List<String> selectedOptions = existingAnswer?.selectedOptions.toList() ?? [];
+    String? customText = existingAnswer?.textInput;
+    
+    // Add new selections with category prefix format: "categoryName:optionName"
+    // This allows us to track which category each option belongs to
+    for (var entry in _tempCategorizedSelections.entries) {
+      // Remove any existing option for this category (both with and without prefix)
+      selectedOptions.removeWhere((opt) => 
+        opt == entry.value || opt.startsWith('${entry.key}:'));
+      // Add the new selection with category prefix
+      selectedOptions.add('${entry.key}:${entry.value}');
+    }
+    
     _answers[questionId] = BriefAnswer(
       questionId: questionId,
-      selectedOptions: _tempCategorizedSelections.values.toList(),
+      selectedOptions: selectedOptions,
+      textInput: customText, // Preserve custom text if it exists
     );
     _tempCategorizedSelections.clear();
     _answers.refresh();
@@ -526,6 +584,77 @@ class RefiningConceptController extends GetxController {
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
+  }
+  
+  // Submit custom answer for categorized questions (specific_features)
+  void submitCategorizedCustomAnswer(String questionId, String categoryName, TextEditingController controller) async {
+    print('Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName'); // Debug
+
+    if (controller.text.trim().isEmpty) {
+      return;
+    }
+
+    _isTextLoading.value = true;
+    update();
+
+    // Simulate processing
+    await Future.delayed(const Duration(milliseconds: 800));
+
+    // Get existing answer or create new one
+    final existingAnswer = _answers[questionId];
+    List<String> selectedOptions = existingAnswer?.selectedOptions.toList() ?? [];
+    
+    // Remove any existing option for this category (if it exists)
+    // For categorized questions, we store options as "categoryName:optionName" or "categoryName:Custom"
+    selectedOptions.removeWhere((opt) => opt.startsWith('$categoryName:'));
+    
+    // Add the custom option with format "categoryName:Custom"
+    selectedOptions.add('$categoryName:Custom');
+
+    // Store custom text - we'll use a special format to store custom text per category
+    // Format: "category1:customText|||category2:customText" or just store in textInput
+    String? customText = existingAnswer?.textInput;
+    Map<String, String> customTexts = {};
+    
+    // Parse existing custom texts if they exist (format: "category1:text1|||category2:text2")
+    if (customText != null && customText.contains('|||')) {
+      final parts = customText.split('|||');
+      for (var part in parts) {
+        if (part.contains(':')) {
+          final keyValue = part.split(':');
+          if (keyValue.length >= 2) {
+            customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+          }
+        }
+      }
+    }
+    
+    // Update custom text for this category
+    customTexts[categoryName] = controller.text.trim();
+    
+    // Reconstruct custom text string
+    final customTextString = customTexts.entries
+        .map((e) => '${e.key}:${e.value}')
+        .join('|||');
+
+    _answers[questionId] = BriefAnswer(
+      questionId: questionId,
+      selectedOptions: selectedOptions,
+      textInput: customTextString.isNotEmpty ? customTextString : null,
+    );
+
+    // Clear custom selection and controller
+    _customSelectedForCategory.value = '';
+    controller.clear();
+
+    _isTextLoading.value = false;
+    update();
+
+    // Auto-advance to next question if this is the current question
+    if (questionId == currentQuestion.id) {
+      await Future.delayed(const Duration(milliseconds: 400));
+      _nextQuestion();
+    }
   }
 
   void submitTextAnswer(
@@ -909,18 +1038,31 @@ class RefiningConceptController extends GetxController {
   void editAnswer(String questionId) {
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
-    RxList<String> tempSelectedOptions =
-        (currentAnswer?.selectedOptions.toList() ?? []).obs;
+    // Create a temporary list to track changes
+    // For categorized questions, we need to handle both formats: "categoryName:option" and just "option"
+    RxList<String> tempSelectedOptions = RxList<String>();
+    if (currentAnswer != null) {
+      // If it's a categorized question, preserve the format
+      if (question.type == 'chips_categorized' && question.categories != null) {
+        tempSelectedOptions.value = currentAnswer.selectedOptions.toList();
+      } else {
+        tempSelectedOptions.value = currentAnswer.selectedOptions.toList();
+      }
+    }
 
-    // Create a temporary controller for custom text
+    // Create a temporary controller for custom text (for regular chip questions)
     final tempCustomController = TextEditingController();
     if (currentAnswer?.textInput != null &&
         currentAnswer!.textInput!.isNotEmpty) {
       tempCustomController.text = currentAnswer.textInput!;
     }
 
-    // Track if custom is selected
+    // Track if custom is selected (for regular chip questions)
     RxBool isCustomSelected = tempSelectedOptions.contains('Custom').obs;
+
+    // For categorized questions, store custom controllers per category
+    Map<String, TextEditingController> categoryCustomControllers = {};
+    Map<String, RxString> categoryCustomSelected = {};
 
     // Get all options (either from options list or flattened from categories)
     List<String> allOptions = [];
@@ -929,8 +1071,33 @@ class RefiningConceptController extends GetxController {
     if (question.type == 'chips_categorized' && question.categories != null) {
       // For categorized questions, flatten all category options
       categoriesMap = question.categories;
-      for (var category in question.categories!.values) {
-        allOptions.addAll(category);
+      for (var category in question.categories!.entries) {
+        allOptions.addAll(category.value);
+        // Initialize controllers and tracking for each category
+        categoryCustomControllers[category.key] = TextEditingController();
+        categoryCustomSelected[category.key] = ''.obs;
+        
+        // Load existing custom text for this category if it exists
+        final categoryHasCustom = currentAnswer?.selectedOptions
+            .any((opt) => opt == '${category.key}:Custom') ?? false;
+        if (categoryHasCustom && currentAnswer?.textInput != null) {
+          final customText = currentAnswer!.textInput!;
+          if (customText.contains('|||')) {
+            final parts = customText.split('|||');
+            for (var part in parts) {
+              if (part.startsWith('${category.key}:')) {
+                categoryCustomControllers[category.key]!.text = 
+                    part.substring('${category.key}:'.length);
+                categoryCustomSelected[category.key]!.value = category.key;
+                break;
+              }
+            }
+          } else if (!customText.contains(':')) {
+            // Legacy format
+            categoryCustomControllers[category.key]!.text = customText;
+            categoryCustomSelected[category.key]!.value = category.key;
+          }
+        }
       }
     } else {
       // For regular chip questions, use options list
@@ -965,6 +1132,9 @@ class RefiningConceptController extends GetxController {
                 if (question.type == 'chips_categorized' &&
                     categoriesMap != null)
                   ...categoriesMap.entries.map((category) {
+                    final customSelectedCategory = categoryCustomSelected[category.key]!;
+                    final tempCategoryCustomController = categoryCustomControllers[category.key]!;
+                    
                     return Obx(
                       () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -986,16 +1156,45 @@ class RefiningConceptController extends GetxController {
                             spacing: 8,
                             runSpacing: 8,
                             children: category.value.map((option) {
-                              final isSelected = tempSelectedOptions.contains(
-                                option,
-                              );
+                              // Check if this option is selected (handle both formats)
+                              // Check for direct match, category prefix match, or custom selection
+                              final isSelected = tempSelectedOptions.contains(option) ||
+                                  tempSelectedOptions.contains('${category.key}:$option') ||
+                                  tempSelectedOptions.contains('${category.key}:Custom') ||
+                                  (option == 'Custom' && customSelectedCategory.value == category.key);
+                              
                               return GestureDetector(
                                 onTap: () {
-                                  // Enforce one selection per category: remove others from this category
-                                  tempSelectedOptions.removeWhere(
-                                    (o) => category.value.contains(o),
-                                  );
-                                  tempSelectedOptions.add(option);
+                                  if (option == 'Custom') {
+                                    // Toggle custom selection for this category
+                                    if (customSelectedCategory.value == category.key) {
+                                      customSelectedCategory.value = '';
+                                      tempCategoryCustomController.clear();
+                                      // Remove custom option
+                                      tempSelectedOptions.removeWhere((opt) => 
+                                        opt == '${category.key}:Custom' || opt == 'Custom');
+                                    } else {
+                                      customSelectedCategory.value = category.key;
+                                      // Remove other options from this category
+                                      tempSelectedOptions.removeWhere((opt) => 
+                                        category.value.contains(opt) || 
+                                        opt.startsWith('${category.key}:'));
+                                      // Add custom option
+                                      tempSelectedOptions.add('${category.key}:Custom');
+                                    }
+                                  } else {
+                                    // Regular option selected - enforce one selection per category
+                                    tempSelectedOptions.removeWhere(
+                                      (o) => category.value.contains(o) || 
+                                          o.startsWith('${category.key}:'),
+                                    );
+                                    tempSelectedOptions.add(option);
+                                    // Clear custom selection for this category
+                                    if (customSelectedCategory.value == category.key) {
+                                      customSelectedCategory.value = '';
+                                      tempCategoryCustomController.clear();
+                                    }
+                                  }
                                 },
                                 child: Container(
                                   padding: EdgeInsets.symmetric(
@@ -1029,6 +1228,24 @@ class RefiningConceptController extends GetxController {
                               );
                             }).toList(),
                           ),
+                          // Show custom text field if Custom is selected for this category
+                          if (customSelectedCategory.value == category.key) ...[
+                            SizedBox(height: 12),
+                            TextField(
+                              controller: tempCategoryCustomController,
+                              decoration: InputDecoration(
+                                hintText: 'Enter custom ${category.key.toLowerCase()}...',
+                                border: OutlineInputBorder(
+                                  borderRadius: BorderRadius.circular(8),
+                                ),
+                                contentPadding: EdgeInsets.symmetric(
+                                  horizontal: 12,
+                                  vertical: 8,
+                                ),
+                              ),
+                              maxLines: 2,
+                            ),
+                          ],
                           SizedBox(height: 8),
                         ],
                       ),
@@ -1129,43 +1346,101 @@ class RefiningConceptController extends GetxController {
           TextButton(
             onPressed: () {
               Navigator.of(Get.overlayContext!).pop();
-              // Dispose temporary controller after dialog is closed
+              // Dispose temporary controllers after dialog is closed
               Future.delayed(Duration(milliseconds: 100), () {
-                tempCustomController.dispose();
+                if (question.type == 'chips_categorized' && categoriesMap != null) {
+                  // Dispose category controllers
+                  for (var controller in categoryCustomControllers.values) {
+                    controller.dispose();
+                  }
+                } else {
+                  tempCustomController.dispose();
+                }
               });
             },
             child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
-              // Validate custom input if Custom is selected
-              if (tempSelectedOptions.contains('Custom') &&
-                  tempCustomController.text.trim().isEmpty) {
-                Get.snackbar(
-                  'Invalid Input',
-                  'Please enter a custom answer',
-                  backgroundColor: Colors.black,
-                  colorText: Colors.white,
-                  snackPosition: SnackPosition.TOP,
-                  duration: Duration(seconds: 2),
+              // For categorized questions, validate and collect custom text
+              if (question.type == 'chips_categorized' && categoriesMap != null) {
+                // Validate custom inputs for categorized questions
+                for (var category in categoriesMap.entries) {
+                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  final controller = categoryCustomControllers[category.key]!;
+                  if (hasCustom && controller.text.trim().isEmpty) {
+                    Get.snackbar(
+                      'Invalid Input',
+                      'Please enter a custom answer for ${category.key}',
+                      backgroundColor: Colors.black,
+                      colorText: Colors.white,
+                      snackPosition: SnackPosition.TOP,
+                      duration: Duration(seconds: 2),
+                    );
+                    return;
+                  }
+                }
+                
+                // Collect custom texts for all categories
+                Map<String, String> customTexts = {};
+                for (var category in categoriesMap.entries) {
+                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  if (hasCustom) {
+                    final controller = categoryCustomControllers[category.key]!;
+                    customTexts[category.key] = controller.text.trim();
+                  }
+                }
+                
+                // Build custom text string: "category1:text1|||category2:text2"
+                String? customTextString;
+                if (customTexts.isNotEmpty) {
+                  customTextString = customTexts.entries
+                      .map((e) => '${e.key}:${e.value}')
+                      .join('|||');
+                }
+                
+                // Save the changes
+                _answers[questionId] = BriefAnswer(
+                  questionId: questionId,
+                  selectedOptions: tempSelectedOptions.toList(),
+                  textInput: customTextString,
                 );
-                return;
+                
+                // Dispose category controllers
+                for (var controller in categoryCustomControllers.values) {
+                  controller.dispose();
+                }
+              } else {
+                // For regular chip questions
+                // Validate custom input if Custom is selected
+                if (tempSelectedOptions.contains('Custom') &&
+                    tempCustomController.text.trim().isEmpty) {
+                  Get.snackbar(
+                    'Invalid Input',
+                    'Please enter a custom answer',
+                    backgroundColor: Colors.black,
+                    colorText: Colors.white,
+                    snackPosition: SnackPosition.TOP,
+                    duration: Duration(seconds: 2),
+                  );
+                  return;
+                }
+
+                _answers[questionId] = BriefAnswer(
+                  questionId: questionId,
+                  selectedOptions: tempSelectedOptions.toList(),
+                  textInput: tempSelectedOptions.contains('Custom')
+                      ? tempCustomController.text.trim()
+                      : null,
+                );
+
+                // Dispose temporary controller after dialog is closed
+                Future.delayed(Duration(milliseconds: 100), () {
+                  tempCustomController.dispose();
+                });
               }
 
-              _answers[questionId] = BriefAnswer(
-                questionId: questionId,
-                selectedOptions: tempSelectedOptions.toList(),
-                textInput: tempSelectedOptions.contains('Custom')
-                    ? tempCustomController.text.trim()
-                    : null,
-              );
-
               Navigator.of(Get.overlayContext!).pop();
-
-              // Dispose temporary controller after dialog is closed
-              Future.delayed(Duration(milliseconds: 100), () {
-                tempCustomController.dispose();
-              });
               update();
               Get.snackbar(
                 'Answer Updated',

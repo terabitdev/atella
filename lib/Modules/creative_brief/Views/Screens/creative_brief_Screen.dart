@@ -40,9 +40,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             if (controller.shouldShowButton) {
               return _buildBottomButton();
             }
-            // Show custom text input at bottom when custom is selected
+            // Show custom text input at bottom when custom is selected for regular chips
             if (controller.isCustomSelectedForCurrentQuestion() && controller.currentQuestion.type == 'chips') {
               return _buildBottomCustomInput();
+            }
+            // Show custom text input for categorized questions
+            final customCategory = controller.getCustomSelectedCategory(controller.currentQuestion.id);
+            if (customCategory != null) {
+              return _buildBottomCategorizedCustomInput(controller.currentQuestion.id, customCategory);
             }
             // Show bottom input area only for text questions (not chip questions)
             if (controller.shouldShowBottomInput && controller.currentQuestion.type == 'text') {
@@ -186,29 +191,78 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       ),
     );
   }
+  
+  // Custom text input for categorized questions
+  Widget _buildBottomCategorizedCustomInput(String questionId, String categoryName) {
+    print('Building bottom categorized custom input for $questionId:$categoryName'); // Debug
+    
+    // Get the appropriate controller based on question and category
+    TextEditingController? textController;
+    VoidCallback? onSend;
+    
+    if (questionId == 'garment_type') {
+      textController = controller.garmentTypeCustomController;
+      onSend = () {
+        controller.submitCategorizedCustomAnswer(questionId, categoryName, textController!);
+      };
+    } else if (questionId == 'fabrics') {
+      textController = controller.fabricCustomController;
+      onSend = () {
+        controller.submitCategorizedCustomAnswer(questionId, categoryName, textController!);
+      };
+    } else if (questionId == 'colors') {
+      if (categoryName == 'Prints') {
+        textController = controller.printCustomController;
+        onSend = () {
+          controller.submitColorCustomAnswer(categoryName, textController!);
+        };
+      } else if (categoryName == 'Techniques') {
+        textController = controller.techniqueCustomController;
+        onSend = () {
+          controller.submitColorCustomAnswer(categoryName, textController!);
+        };
+      }
+    }
+    
+    if (textController == null || onSend == null) {
+      return const SizedBox.shrink();
+    }
+    
+    return Container(
+      padding: const EdgeInsets.all(24),
+      child: TextInputWithSend(
+        controller: textController,
+        placeholder: 'Enter custom $categoryName...',
+        onSend: onSend,
+        isLoading: controller.isTextLoading,
+      ),
+    );
+  }
 
   // Display custom answer
   Widget _buildCustomAnswerDisplay(BriefQuestion question) {
-    final answer = controller.getAnswer(question.id);
-    if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
-      return Container(
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppColors.buttonColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          answer.textInput!,
-          style: const TextStyle(
-            fontSize: 14, 
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
+    return Obx(() {
+      final answer = controller.getAnswer(question.id);
+      if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
+        return Container(
+          margin: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.buttonColor,
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
+          child: Text(
+            answer.textInput!,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        );
+      }
+      return const SizedBox.shrink();
+    });
   }
 
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
@@ -305,10 +359,20 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       print('Selected option: $selectedOption');
 
       if (isQuestionAnswered) {
-        // Show categorized view  chiwith edit icon on selectedp
+        // Show categorized view with edit icon on selected option
+        // Check if answer is in category:Custom format
+        final isCustomAnswer = selectedOption?.contains(':Custom') ?? false;
+        final customCategory = isCustomAnswer ? selectedOption!.split(':')[0] : null;
+        final customText = answer?.textInput;
+        
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: question.categories!.entries.map((category) {
+            // Check if this category has the selected answer
+            final categoryHasAnswer = isCustomAnswer 
+                ? customCategory == category.key
+                : category.value.contains(selectedOption);
+            
             return Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
@@ -329,7 +393,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   spacing: 8.w,
                   runSpacing: 8.h,
                   children: category.value.map((option) {
-                    final isAnswerSelected = selectedOption == option;
+                    final isAnswerSelected = isCustomAnswer
+                        ? (option == 'Custom' && customCategory == category.key)
+                        : (selectedOption == option && categoryHasAnswer);
                     return GestureDetector(
                       onTap: isAnswerSelected ? () {
                         controller.editAnswer(question.id);
@@ -375,6 +441,26 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     );
                   }).toList(),
                 ),
+                // Show custom text if this category has custom answer
+                if (isCustomAnswer && customCategory == category.key && customText != null && customText.isNotEmpty) ...[
+                  SizedBox(height: 8.h),
+                  Container(
+                    margin: EdgeInsets.only(left: 8.w),
+                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                    decoration: BoxDecoration(
+                      color: AppColors.buttonColor,
+                      borderRadius: BorderRadius.circular(20.r),
+                    ),
+                    child: Text(
+                      customText,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
                 SizedBox(height: 16.h),
               ],
             );
@@ -385,13 +471,15 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         // Get the selected option from temporary selections
         final tempSelected = controller.tempSelections[question.id];
 
-        return CategorizedChipsWidget(
+        return Obx(() => CategorizedChipsWidget(
           categories: question.categories!,
           selectedOption: tempSelected,
-          onOptionSelected: (option) {
-            controller.selectOption(option, forQuestionId: question.id);
+          questionId: question.id,
+          customSelectedForCategory: controller.customSelectedForCategory,
+          onOptionSelected: (option, categoryName) {
+            controller.selectOption(option, forQuestionId: question.id, categoryName: categoryName);
           },
-        );
+        ));
       }
     });
   }
@@ -597,7 +685,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             spacing: 8.w,
             runSpacing: 8.h,
             children: (question.categories!['Prints'] ?? []).map((print) {
-              final isSelected = selectedPrint == print;
+              final answer = controller.getAnswer('colors');
+              final hasCustomPrint = answer?.selectedOptions.contains('Prints:Custom') ?? false;
+              
+              final isSelected = hasCustomPrint 
+                  ? (print == 'Custom')
+                  : (selectedPrint == print);
+              
               return GestureDetector(
                 onTap: isQuestionAnswered
                   ? (isSelected ? () => controller.editAnswer(question.id) : null)
@@ -637,6 +731,39 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               );
             }).toList(),
           ),
+          // Show custom print text if answered with custom
+          if (isQuestionAnswered) ...[
+            Obx(() {
+              final answer = controller.getAnswer('colors');
+              final hasCustomPrint = answer?.selectedOptions.contains('Prints:Custom') ?? false;
+              if (hasCustomPrint && answer?.textInput != null) {
+                final parts = answer!.textInput!.split('|||');
+                final customPrintText = parts.length >= 2 ? parts[1] : '';
+                if (customPrintText.isNotEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Container(
+                      margin: EdgeInsets.only(left: 8.w),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.buttonColor,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        customPrintText,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+              return SizedBox.shrink();
+            }),
+          ],
           SizedBox(height: 16.h),
 
           // Part 3: Techniques
@@ -655,7 +782,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             spacing: 8.w,
             runSpacing: 8.h,
             children: (question.categories!['Techniques'] ?? []).map((technique) {
-              final isSelected = selectedTechnique == technique;
+              final answer = controller.getAnswer('colors');
+              final hasCustomTechnique = answer?.selectedOptions.contains('Techniques:Custom') ?? false;
+              
+              final isSelected = hasCustomTechnique 
+                  ? (technique == 'Custom')
+                  : (selectedTechnique == technique);
+              
               return GestureDetector(
                 onTap: isQuestionAnswered
                   ? (isSelected ? () => controller.editAnswer(question.id) : null)
@@ -695,6 +828,39 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               );
             }).toList(),
           ),
+          // Show custom technique text if answered with custom
+          if (isQuestionAnswered) ...[
+            Obx(() {
+              final answer = controller.getAnswer('colors');
+              final hasCustomTechnique = answer?.selectedOptions.contains('Techniques:Custom') ?? false;
+              if (hasCustomTechnique && answer?.textInput != null) {
+                final parts = answer!.textInput!.split('|||');
+                final customTechniqueText = parts.length >= 3 ? parts[2] : '';
+                if (customTechniqueText.isNotEmpty) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 8.h),
+                    child: Container(
+                      margin: EdgeInsets.only(left: 8.w),
+                      padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                      decoration: BoxDecoration(
+                        color: AppColors.buttonColor,
+                        borderRadius: BorderRadius.circular(20.r),
+                      ),
+                      child: Text(
+                        customTechniqueText,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  );
+                }
+              }
+              return SizedBox.shrink();
+            }),
+          ],
           SizedBox(height: 16.h),
         ],
       );
