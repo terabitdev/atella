@@ -358,6 +358,10 @@ class RefiningConceptController extends GetxController {
     return null;
   }
 
+  String? getTempSelectionForCategory(String categoryName) {
+    return _tempCategorizedSelections[categoryName];
+  }
+
   void selectOption(String option) async {
     print('Selecting option: $option'); // Debug
 
@@ -1086,12 +1090,16 @@ class RefiningConceptController extends GetxController {
             final parts = customText.split('|||');
             for (var part in parts) {
               if (part.startsWith('${category.key}:')) {
-                categoryCustomControllers[category.key]!.text = 
+                categoryCustomControllers[category.key]!.text =
                     part.substring('${category.key}:'.length);
                 categoryCustomSelected[category.key]!.value = category.key;
                 break;
               }
             }
+          } else if (customText.startsWith('${category.key}:')) {
+            categoryCustomControllers[category.key]!.text =
+                customText.substring('${category.key}:'.length);
+            categoryCustomSelected[category.key]!.value = category.key;
           } else if (!customText.contains(':')) {
             // Legacy format
             categoryCustomControllers[category.key]!.text = customText;
@@ -1158,10 +1166,20 @@ class RefiningConceptController extends GetxController {
                             children: category.value.map((option) {
                               // Check if this option is selected (handle both formats)
                               // Check for direct match, category prefix match, or custom selection
-                              final isSelected = tempSelectedOptions.contains(option) ||
-                                  tempSelectedOptions.contains('${category.key}:$option') ||
+                              final bool customActiveForCategory =
                                   tempSelectedOptions.contains('${category.key}:Custom') ||
-                                  (option == 'Custom' && customSelectedCategory.value == category.key);
+                                  customSelectedCategory.value == category.key;
+
+                              final bool isSelected;
+                              if (option == 'Custom') {
+                                isSelected = customActiveForCategory;
+                              } else if (customActiveForCategory) {
+                                isSelected = false;
+                              } else {
+                                isSelected =
+                                    tempSelectedOptions.contains('${category.key}:$option') ||
+                                    tempSelectedOptions.contains(option);
+                              }
                               
                               return GestureDetector(
                                 onTap: () {
@@ -1188,7 +1206,7 @@ class RefiningConceptController extends GetxController {
                                       (o) => category.value.contains(o) || 
                                           o.startsWith('${category.key}:'),
                                     );
-                                    tempSelectedOptions.add(option);
+                                    tempSelectedOptions.add('${category.key}:$option');
                                     // Clear custom selection for this category
                                     if (customSelectedCategory.value == category.key) {
                                       customSelectedCategory.value = '';
@@ -1362,11 +1380,14 @@ class RefiningConceptController extends GetxController {
           ),
           ElevatedButton(
             onPressed: () {
-              // For categorized questions, validate and collect custom text
-              if (question.type == 'chips_categorized' && categoriesMap != null) {
+              final bool isCategorizedDialog =
+                  question.type == 'chips_categorized' && categoriesMap != null;
+
+              if (isCategorizedDialog) {
                 // Validate custom inputs for categorized questions
                 for (var category in categoriesMap.entries) {
-                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom =
+                      tempSelectedOptions.contains('${category.key}:Custom');
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
                     Get.snackbar(
@@ -1375,22 +1396,23 @@ class RefiningConceptController extends GetxController {
                       backgroundColor: Colors.black,
                       colorText: Colors.white,
                       snackPosition: SnackPosition.TOP,
-                      duration: Duration(seconds: 2),
+                      duration: const Duration(seconds: 2),
                     );
                     return;
                   }
                 }
-                
+
                 // Collect custom texts for all categories
-                Map<String, String> customTexts = {};
+                final Map<String, String> customTexts = {};
                 for (var category in categoriesMap.entries) {
-                  final hasCustom = tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom =
+                      tempSelectedOptions.contains('${category.key}:Custom');
                   if (hasCustom) {
                     final controller = categoryCustomControllers[category.key]!;
                     customTexts[category.key] = controller.text.trim();
                   }
                 }
-                
+
                 // Build custom text string: "category1:text1|||category2:text2"
                 String? customTextString;
                 if (customTexts.isNotEmpty) {
@@ -1398,21 +1420,14 @@ class RefiningConceptController extends GetxController {
                       .map((e) => '${e.key}:${e.value}')
                       .join('|||');
                 }
-                
-                // Save the changes
+
                 _answers[questionId] = BriefAnswer(
                   questionId: questionId,
                   selectedOptions: tempSelectedOptions.toList(),
                   textInput: customTextString,
                 );
-                
-                // Dispose category controllers
-                for (var controller in categoryCustomControllers.values) {
-                  controller.dispose();
-                }
               } else {
                 // For regular chip questions
-                // Validate custom input if Custom is selected
                 if (tempSelectedOptions.contains('Custom') &&
                     tempCustomController.text.trim().isEmpty) {
                   Get.snackbar(
@@ -1421,7 +1436,7 @@ class RefiningConceptController extends GetxController {
                     backgroundColor: Colors.black,
                     colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
-                    duration: Duration(seconds: 2),
+                    duration: const Duration(seconds: 2),
                   );
                   return;
                 }
@@ -1433,11 +1448,11 @@ class RefiningConceptController extends GetxController {
                       ? tempCustomController.text.trim()
                       : null,
                 );
+              }
 
-                // Dispose temporary controller after dialog is closed
-                Future.delayed(Duration(milliseconds: 100), () {
-                  tempCustomController.dispose();
-                });
+              final overlayContext = Get.overlayContext;
+              if (overlayContext != null) {
+                FocusScope.of(overlayContext).unfocus();
               }
 
               Navigator.of(Get.overlayContext!).pop();
@@ -1448,9 +1463,19 @@ class RefiningConceptController extends GetxController {
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.TOP,
-                duration: Duration(seconds: 2),
-                margin: EdgeInsets.all(16),
+                duration: const Duration(seconds: 2),
+                margin: const EdgeInsets.all(16),
               );
+
+              Future.delayed(const Duration(milliseconds: 100), () {
+                if (isCategorizedDialog) {
+                  for (var controller in categoryCustomControllers.values) {
+                    controller.dispose();
+                  }
+                } else {
+                  tempCustomController.dispose();
+                }
+              });
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,

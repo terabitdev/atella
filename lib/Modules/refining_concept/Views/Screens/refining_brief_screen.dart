@@ -45,14 +45,24 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           Obx(() {
             final allQuestionsAnswered =
                 controller.answers.length >= controller.questions.length;
+            final currentQuestion = controller.currentQuestion;
+            final customCategory = controller
+                .getCustomSelectedCategory(currentQuestion.id);
 
             // Show button when all questions are answered (temporary selections will auto-confirm)
             if (allQuestionsAnswered) {
               return _buildBottomButton();
             }
+            // Show categorized custom input when a category custom is selected
+            if (customCategory != null) {
+              return _buildBottomCategorizedCustomInput(
+                currentQuestion.id,
+                customCategory,
+              );
+            }
             // Show custom input if custom is selected
             if (controller.isCustomSelectedForCurrentQuestion()) {
-              return _buildBottomInputArea();
+              return _buildBottomCustomInput();
             }
             return const SizedBox.shrink();
           }),
@@ -127,26 +137,28 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
   // Display custom answer
   Widget _buildCustomAnswerDisplay(BriefQuestion question) {
-    final answer = controller.getAnswer(question.id);
-    if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
-      return Container(
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-        decoration: BoxDecoration(
-          color: AppColors.buttonColor,
-          borderRadius: BorderRadius.circular(20),
-        ),
-        child: Text(
-          answer.textInput!,
-          style: const TextStyle(
-            fontSize: 14,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
+    return Obx(() {
+      final answer = controller.getAnswer(question.id);
+      if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
+        return Container(
+          margin: const EdgeInsets.only(top: 8),
+          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          decoration: BoxDecoration(
+            color: AppColors.buttonColor,
+            borderRadius: BorderRadius.circular(20),
           ),
-        ),
-      );
-    }
-    return const SizedBox.shrink();
+          child: Text(
+            answer.textInput!,
+            style: const TextStyle(
+              fontSize: 14,
+              color: Colors.white,
+              fontWeight: FontWeight.w500,
+            ),
+          ),
+        );
+      }
+      return const SizedBox.shrink();
+    });
   }
 
   Widget _buildQuestionItem(
@@ -333,6 +345,50 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     required bool isAnswered,
     required BriefAnswer? answer,
   }) {
+    final Set<String> selectedValues = <String>{};
+    String? customTextForCategory;
+
+    if (answer != null) {
+      for (final opt in answer.selectedOptions) {
+        if (opt.startsWith('$categoryName:')) {
+          selectedValues.add(opt.substring('$categoryName:'.length));
+        } else if (!opt.contains(':') && options.contains(opt)) {
+          selectedValues.add(opt);
+        } else if (!opt.contains(':') && opt == 'Custom') {
+          selectedValues.add('Custom');
+        }
+      }
+
+      final textInput = answer.textInput;
+      if (textInput != null && textInput.isNotEmpty) {
+        if (textInput.contains('|||')) {
+          final parts = textInput.split('|||');
+          for (final part in parts) {
+            final separatorIndex = part.indexOf(':');
+            if (separatorIndex != -1) {
+              final key = part.substring(0, separatorIndex);
+              final value = part.substring(separatorIndex + 1);
+              if (key == categoryName) {
+                customTextForCategory = value;
+                break;
+              }
+            }
+          }
+        } else if (textInput.contains(':')) {
+          final separatorIndex = textInput.indexOf(':');
+          if (separatorIndex != -1) {
+            final key = textInput.substring(0, separatorIndex);
+            final value = textInput.substring(separatorIndex + 1);
+            if (key == categoryName) {
+              customTextForCategory = value;
+            }
+          }
+        } else if (selectedValues.contains('Custom')) {
+          customTextForCategory = textInput;
+        }
+      }
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -353,12 +409,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           spacing: 8.w,
           runSpacing: 8.h,
           children: options.map((option) {
-            final isSelected = controller.isOptionSelected(option);
+            bool isSelected = false;
 
             if (isAnswered) {
-              // Show final answered state for answered questions (with edit capability)
-              final isAnswerSelected =
-                  answer?.selectedOptions.contains(option) ?? false;
+              final isAnswerSelected = option == 'Custom'
+                  ? selectedValues.contains('Custom')
+                  : selectedValues.contains(option);
               return GestureDetector(
                 onTap: isAnswerSelected
                     ? () {
@@ -404,6 +460,17 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 ),
               );
             } else {
+              if (option == 'Custom') {
+                isSelected = controller.isCustomSelectedForCategory(
+                  question.id,
+                  categoryName,
+                );
+              } else {
+                isSelected =
+                    controller.getTempSelectionForCategory(categoryName) ==
+                        option;
+              }
+
               // Show interactive chips for unanswered questions
               return SelectionChipWidget(
                 text: option,
@@ -419,12 +486,34 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             }
           }).toList(),
         ),
+        if (isAnswered &&
+            selectedValues.contains('Custom') &&
+            customTextForCategory != null &&
+            customTextForCategory.isNotEmpty) ...[
+          SizedBox(height: 8.h),
+          Container(
+            margin: EdgeInsets.only(left: 8.w),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+            decoration: BoxDecoration(
+              color: AppColors.buttonColor,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Text(
+              customTextForCategory,
+              style: TextStyle(
+                fontSize: 14.sp,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          ),
+        ],
         SizedBox(height: 16.h),
       ],
     );
   }
 
-  Widget _buildBottomInputArea() {
+  Widget _buildBottomCustomInput() {
     return Obx(() {
       // FIXED: Only show custom input when custom is selected
       if (controller.isCustomSelectedForCurrentQuestion()) {
@@ -441,6 +530,36 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       }
       return const SizedBox.shrink();
     });
+  }
+
+  Widget _buildBottomCategorizedCustomInput(
+    String questionId,
+    String categoryName,
+  ) {
+    TextEditingController? textController;
+    VoidCallback? onSend;
+
+    if (questionId == 'specific_features') {
+      textController = controller.specificFeaturesCustomController;
+      onSend = () {
+        controller.submitCategorizedCustomAnswer(
+          questionId,
+          categoryName,
+          textController!,
+        );
+      };
+    }
+
+    if (textController == null || onSend == null) {
+      return const SizedBox.shrink();
+    }
+
+    return TextInputWithSend(
+      controller: textController,
+      placeholder: 'Enter custom ${categoryName.toLowerCase()}...',
+      onSend: onSend,
+      isLoading: controller.isTextLoading,
+    );
   }
 
   Widget _buildBottomButton() {
