@@ -36,9 +36,10 @@ class RefiningConceptController extends GetxController {
   final colorController = TextEditingController();
   final fabricController = TextEditingController();
   final customController = TextEditingController(); // For custom answers
-  
+
   // Custom controllers for categorized questions
-  final specificFeaturesCustomController = TextEditingController(); // For specific_features custom
+  final specificFeaturesCustomController =
+      TextEditingController(); // For specific_features custom
 
   // Loading state for text input
   final RxBool _isTextLoading = false.obs;
@@ -47,7 +48,7 @@ class RefiningConceptController extends GetxController {
   // Track which question has custom selected
   final RxString _customSelectedForQuestion = ''.obs;
   String get customSelectedForQuestion => _customSelectedForQuestion.value;
-  
+
   // Track which category has custom selected for categorized questions
   // Format: "questionId:categoryName" e.g., "specific_features:Necklines"
   final RxString _customSelectedForCategory = ''.obs;
@@ -95,7 +96,14 @@ class RefiningConceptController extends GetxController {
       options: [],
       categories: {
         'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder', 'Custom'],
-        'Sleeves': ['Sleeveless', 'Short ¾', 'Long', 'Puff', 'Raglan', 'Custom'],
+        'Sleeves': [
+          'Sleeveless',
+          'Short ¾',
+          'Long',
+          'Puff',
+          'Raglan',
+          'Custom',
+        ],
         'Closures': [
           'Zipper (metal/plastic/invisible)',
           'Buttons',
@@ -343,12 +351,12 @@ class RefiningConceptController extends GetxController {
     ); // Debug
     return result;
   }
-  
+
   // Check if custom is selected for a specific category
   bool isCustomSelectedForCategory(String questionId, String categoryName) {
     return _customSelectedForCategory.value == '$questionId:$categoryName';
   }
-  
+
   // Get the category name for which custom is selected (if any)
   String? getCustomSelectedCategory(String questionId) {
     final customCategory = _customSelectedForCategory.value;
@@ -447,22 +455,24 @@ class RefiningConceptController extends GetxController {
         _currentQuestionIndex.value = qIndex;
       }
     }
-    
+
     // If "Custom" is selected, show text field
     if (option == 'Custom') {
-      print('Custom selected for question: $questionId, category: $category'); // Debug
+      print(
+        'Custom selected for question: $questionId, category: $category',
+      ); // Debug
       _customSelectedForCategory.value = '$questionId:$category';
       // Clear any temporary selection for this category
       _tempCategorizedSelections.remove(category);
       update();
       return; // Don't auto-confirm yet, wait for custom text input
     }
-    
+
     // Clear custom selection if user selects a different option
     if (_customSelectedForCategory.value == '$questionId:$category') {
       _customSelectedForCategory.value = '';
     }
-    
+
     // Toggle/replace selection for this category
     if (_tempCategorizedSelections[category] == option) {
       _tempCategorizedSelections.remove(category);
@@ -483,22 +493,24 @@ class RefiningConceptController extends GetxController {
 
   void _confirmCategorizedSelections(String questionId) {
     if (_tempCategorizedSelections.isEmpty) return;
-    
+
     // Get existing answer to preserve custom selections
     final existingAnswer = _answers[questionId];
-    List<String> selectedOptions = existingAnswer?.selectedOptions.toList() ?? [];
+    List<String> selectedOptions =
+        existingAnswer?.selectedOptions.toList() ?? [];
     String? customText = existingAnswer?.textInput;
-    
+
     // Add new selections with category prefix format: "categoryName:optionName"
     // This allows us to track which category each option belongs to
     for (var entry in _tempCategorizedSelections.entries) {
       // Remove any existing option for this category (both with and without prefix)
-      selectedOptions.removeWhere((opt) => 
-        opt == entry.value || opt.startsWith('${entry.key}:'));
+      selectedOptions.removeWhere(
+        (opt) => opt == entry.value || opt.startsWith('${entry.key}:'),
+      );
       // Add the new selection with category prefix
       selectedOptions.add('${entry.key}:${entry.value}');
     }
-    
+
     _answers[questionId] = BriefAnswer(
       questionId: questionId,
       selectedOptions: selectedOptions,
@@ -589,10 +601,16 @@ class RefiningConceptController extends GetxController {
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
   }
-  
+
   // Submit custom answer for categorized questions (specific_features)
-  void submitCategorizedCustomAnswer(String questionId, String categoryName, TextEditingController controller) async {
-    print('Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName'); // Debug
+  void submitCategorizedCustomAnswer(
+    String questionId,
+    String categoryName,
+    TextEditingController controller,
+  ) async {
+    print(
+      'Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName',
+    ); // Debug
 
     if (controller.text.trim().isEmpty) {
       return;
@@ -606,12 +624,13 @@ class RefiningConceptController extends GetxController {
 
     // Get existing answer or create new one
     final existingAnswer = _answers[questionId];
-    List<String> selectedOptions = existingAnswer?.selectedOptions.toList() ?? [];
-    
+    List<String> selectedOptions =
+        existingAnswer?.selectedOptions.toList() ?? [];
+
     // Remove any existing option for this category (if it exists)
     // For categorized questions, we store options as "categoryName:optionName" or "categoryName:Custom"
     selectedOptions.removeWhere((opt) => opt.startsWith('$categoryName:'));
-    
+
     // Add the custom option with format "categoryName:Custom"
     selectedOptions.add('$categoryName:Custom');
 
@@ -619,7 +638,7 @@ class RefiningConceptController extends GetxController {
     // Format: "category1:customText|||category2:customText" or just store in textInput
     String? customText = existingAnswer?.textInput;
     Map<String, String> customTexts = {};
-    
+
     // Parse existing custom texts if they exist (format: "category1:text1|||category2:text2")
     if (customText != null && customText.contains('|||')) {
       final parts = customText.split('|||');
@@ -632,10 +651,10 @@ class RefiningConceptController extends GetxController {
         }
       }
     }
-    
+
     // Update custom text for this category
     customTexts[categoryName] = controller.text.trim();
-    
+
     // Reconstruct custom text string
     final customTextString = customTexts.entries
         .map((e) => '${e.key}:${e.value}')
@@ -1080,25 +1099,29 @@ class RefiningConceptController extends GetxController {
         // Initialize controllers and tracking for each category
         categoryCustomControllers[category.key] = TextEditingController();
         categoryCustomSelected[category.key] = ''.obs;
-        
+
         // Load existing custom text for this category if it exists
-        final categoryHasCustom = currentAnswer?.selectedOptions
-            .any((opt) => opt == '${category.key}:Custom') ?? false;
+        final categoryHasCustom =
+            currentAnswer?.selectedOptions.any(
+              (opt) => opt == '${category.key}:Custom',
+            ) ??
+            false;
         if (categoryHasCustom && currentAnswer?.textInput != null) {
           final customText = currentAnswer!.textInput!;
           if (customText.contains('|||')) {
             final parts = customText.split('|||');
             for (var part in parts) {
               if (part.startsWith('${category.key}:')) {
-                categoryCustomControllers[category.key]!.text =
-                    part.substring('${category.key}:'.length);
+                categoryCustomControllers[category.key]!.text = part.substring(
+                  '${category.key}:'.length,
+                );
                 categoryCustomSelected[category.key]!.value = category.key;
                 break;
               }
             }
           } else if (customText.startsWith('${category.key}:')) {
-            categoryCustomControllers[category.key]!.text =
-                customText.substring('${category.key}:'.length);
+            categoryCustomControllers[category.key]!.text = customText
+                .substring('${category.key}:'.length);
             categoryCustomSelected[category.key]!.value = category.key;
           } else if (!customText.contains(':')) {
             // Legacy format
@@ -1140,9 +1163,11 @@ class RefiningConceptController extends GetxController {
                 if (question.type == 'chips_categorized' &&
                     categoriesMap != null)
                   ...categoriesMap.entries.map((category) {
-                    final customSelectedCategory = categoryCustomSelected[category.key]!;
-                    final tempCategoryCustomController = categoryCustomControllers[category.key]!;
-                    
+                    final customSelectedCategory =
+                        categoryCustomSelected[category.key]!;
+                    final tempCategoryCustomController =
+                        categoryCustomControllers[category.key]!;
+
                     return Obx(
                       () => Column(
                         crossAxisAlignment: CrossAxisAlignment.start,
@@ -1167,7 +1192,9 @@ class RefiningConceptController extends GetxController {
                               // Check if this option is selected (handle both formats)
                               // Check for direct match, category prefix match, or custom selection
                               final bool customActiveForCategory =
-                                  tempSelectedOptions.contains('${category.key}:Custom') ||
+                                  tempSelectedOptions.contains(
+                                    '${category.key}:Custom',
+                                  ) ||
                                   customSelectedCategory.value == category.key;
 
                               final bool isSelected;
@@ -1177,38 +1204,53 @@ class RefiningConceptController extends GetxController {
                                 isSelected = false;
                               } else {
                                 isSelected =
-                                    tempSelectedOptions.contains('${category.key}:$option') ||
+                                    tempSelectedOptions.contains(
+                                      '${category.key}:$option',
+                                    ) ||
                                     tempSelectedOptions.contains(option);
                               }
-                              
+
                               return GestureDetector(
                                 onTap: () {
                                   if (option == 'Custom') {
                                     // Toggle custom selection for this category
-                                    if (customSelectedCategory.value == category.key) {
+                                    if (customSelectedCategory.value ==
+                                        category.key) {
                                       customSelectedCategory.value = '';
                                       tempCategoryCustomController.clear();
                                       // Remove custom option
-                                      tempSelectedOptions.removeWhere((opt) => 
-                                        opt == '${category.key}:Custom' || opt == 'Custom');
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            opt == '${category.key}:Custom' ||
+                                            opt == 'Custom',
+                                      );
                                     } else {
-                                      customSelectedCategory.value = category.key;
+                                      customSelectedCategory.value =
+                                          category.key;
                                       // Remove other options from this category
-                                      tempSelectedOptions.removeWhere((opt) => 
-                                        category.value.contains(opt) || 
-                                        opt.startsWith('${category.key}:'));
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            category.value.contains(opt) ||
+                                            opt.startsWith('${category.key}:'),
+                                      );
                                       // Add custom option
-                                      tempSelectedOptions.add('${category.key}:Custom');
+                                      tempSelectedOptions.add(
+                                        '${category.key}:Custom',
+                                      );
                                     }
                                   } else {
                                     // Regular option selected - enforce one selection per category
                                     tempSelectedOptions.removeWhere(
-                                      (o) => category.value.contains(o) || 
+                                      (o) =>
+                                          category.value.contains(o) ||
                                           o.startsWith('${category.key}:'),
                                     );
-                                    tempSelectedOptions.add('${category.key}:$option');
+                                    tempSelectedOptions.add(
+                                      '${category.key}:$option',
+                                    );
                                     // Clear custom selection for this category
-                                    if (customSelectedCategory.value == category.key) {
+                                    if (customSelectedCategory.value ==
+                                        category.key) {
                                       customSelectedCategory.value = '';
                                       tempCategoryCustomController.clear();
                                     }
@@ -1252,7 +1294,8 @@ class RefiningConceptController extends GetxController {
                             TextField(
                               controller: tempCategoryCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Enter custom ${category.key.toLowerCase()}...',
+                                hintText:
+                                    'Enter custom ${category.key.toLowerCase()}...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -1366,7 +1409,8 @@ class RefiningConceptController extends GetxController {
               Navigator.of(Get.overlayContext!).pop();
               // Dispose temporary controllers after dialog is closed
               Future.delayed(Duration(milliseconds: 100), () {
-                if (question.type == 'chips_categorized' && categoriesMap != null) {
+                if (question.type == 'chips_categorized' &&
+                    categoriesMap != null) {
                   // Dispose category controllers
                   for (var controller in categoryCustomControllers.values) {
                     controller.dispose();
@@ -1386,8 +1430,9 @@ class RefiningConceptController extends GetxController {
               if (isCategorizedDialog) {
                 // Validate custom inputs for categorized questions
                 for (var category in categoriesMap.entries) {
-                  final hasCustom =
-                      tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom = tempSelectedOptions.contains(
+                    '${category.key}:Custom',
+                  );
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
                     Get.snackbar(
@@ -1405,8 +1450,9 @@ class RefiningConceptController extends GetxController {
                 // Collect custom texts for all categories
                 final Map<String, String> customTexts = {};
                 for (var category in categoriesMap.entries) {
-                  final hasCustom =
-                      tempSelectedOptions.contains('${category.key}:Custom');
+                  final hasCustom = tempSelectedOptions.contains(
+                    '${category.key}:Custom',
+                  );
                   if (hasCustom) {
                     final controller = categoryCustomControllers[category.key]!;
                     customTexts[category.key] = controller.text.trim();
