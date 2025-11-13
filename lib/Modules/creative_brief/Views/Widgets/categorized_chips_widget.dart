@@ -59,8 +59,18 @@ class CategorizedChipsWidget extends StatelessWidget {
             // Check if this option is selected (either directly or as Custom for this category)
             // Access the observable value directly to make it reactive
             final customKey = '$questionId:$categoryName';
-            final isSelected = selectedOption == option || 
-                (option == 'Custom' && customSelectedForCategory == customKey);
+
+            bool isSelected = false;
+            if (option == 'Custom') {
+              // Check if custom is selected for this category (either from temp state or saved answer)
+              isSelected = customSelectedForCategory == customKey ||
+                          selectedOption == '$categoryName:Custom';
+            } else {
+              // Regular option - check both formats: "option" and "categoryName:option"
+              isSelected = selectedOption == option ||
+                          selectedOption == '$categoryName:$option';
+            }
+
             return SelectionChipWidget(
               text: option,
               isSelected: isSelected,

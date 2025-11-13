@@ -116,6 +116,7 @@ final TextStyle qTextStyle16400 = GoogleFonts.manrope(
   color: Colors.white,
 );
 
+
 final TextStyle qTextStyle14600 = GoogleFonts.manrope(
   fontSize: 14.sp,
   fontWeight: FontWeight.w800,

@@ -91,7 +91,7 @@ class CreativeBriefController extends GetxController {
   final List<BriefQuestion> questions = [
     BriefQuestion(
       id: 'garment_type',
-      question: 'What type of garment are you creating?',
+      question: 'What type of garment are you creating? 👕',
       type: 'chips_categorized',
       options: [], // Will use categories instead
       categories: {
@@ -119,19 +119,19 @@ class CreativeBriefController extends GetxController {
     ),
     BriefQuestion(
       id: 'style',
-      question: 'What is the overall desired style?',
+      question: 'What is the overall desired style? ✨',
       type: 'chips',
       options: ['Casual', 'Chic', 'Sporty', 'Streetwear', 'Workwear', 'Custom'],
     ),
     BriefQuestion(
       id: 'target_audience',
-      question: 'Who is this garment intended for?',
+      question: 'Who is this garment intended for? 👤',
       type: 'chips',
       options: ['Woman', 'Man', 'Child', 'Unisex', 'Target Age', 'Custom'],
     ),
     BriefQuestion(
       id: 'occasion',
-      question: 'What is the intended occasion or use?',
+      question: 'What is the intended occasion or use? 📅',
       type: 'chips',
       options: [
         'Everyday wear',
@@ -143,13 +143,13 @@ class CreativeBriefController extends GetxController {
     ),
     BriefQuestion(
       id: 'inspiration',
-      question: 'Do you have any visual inspirations or references?',
+      question: 'Do you have any visual inspirations or references? 🖼️',
       type: 'image',
       options: [],
     ),
     BriefQuestion(
       id: 'colors',
-      question: 'What colors and patterns should the design include?',
+      question: 'What colors and patterns should the design include? 🎨',
       type: 'multi_part_color',
       options: [],
       categories: {
@@ -173,7 +173,7 @@ class CreativeBriefController extends GetxController {
     ),
     BriefQuestion(
       id: 'fabrics',
-      question: 'Which fabric or material would you like to use?',
+      question: 'Which fabric or material would you like to use? 🧵',
       type: 'chips_categorized',
       options: [],
       categories: {
@@ -506,9 +506,14 @@ class CreativeBriefController extends GetxController {
     if (solidColors != null || print.isNotEmpty || technique.isNotEmpty) {
       // Load solid colors
       if (solidColors is List && solidColors.isNotEmpty) {
-        _selectedColors.value = solidColors.cast<String>();
+        // Filter out empty strings from the colors array
+        final filteredColors = solidColors
+            .where((color) => color != null && color.toString().trim().isNotEmpty)
+            .map((color) => color.toString())
+            .toList();
+        _selectedColors.value = filteredColors;
         colorController.text = _selectedColors.join(', ');
-        debugPrint('   ✅ Loaded ${_selectedColors.length} solid colors');
+        debugPrint('   ✅ Loaded ${_selectedColors.length} solid colors (filtered from ${solidColors.length})');
       } else if (solidColors is String && solidColors.isNotEmpty) {
         _selectedColors.value = [solidColors];
         colorController.text = solidColors;
@@ -679,25 +684,27 @@ class CreativeBriefController extends GetxController {
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
 
   // FIXED: Check if option is selected including custom selection and temporary selections
-  bool isOptionSelected(String option) {
+  bool isOptionSelected(String option, {String? forQuestionId}) {
+    final questionId = forQuestionId ?? currentQuestion.id;
+
     // Special handling for Custom option
     if (option == 'Custom') {
       // Check if custom is currently selected for this question (not answered yet)
-      if (_customSelectedForQuestion.value == currentQuestion.id) {
+      if (_customSelectedForQuestion.value == questionId) {
         return true;
       }
       // Check if custom answer is already submitted
-      final answer = _answers[currentQuestion.id];
+      final answer = _answers[questionId];
       return answer?.selectedOptions.contains(option) ?? false;
     }
 
-    // Check temporary selection first (for current question)
-    if (!isQuestionAnswered(currentQuestion.id)) {
-      return _tempSelections[currentQuestion.id] == option;
+    // Check temporary selection first (for unanswered question)
+    if (!isQuestionAnswered(questionId)) {
+      return _tempSelections[questionId] == option;
     }
 
     // For answered questions, check final answer
-    final answer = _answers[currentQuestion.id];
+    final answer = _answers[questionId];
     return answer?.selectedOptions.contains(option) ?? false;
   }
 
@@ -720,6 +727,21 @@ class CreativeBriefController extends GetxController {
     return null;
   }
 
+  // Get custom selected info for ANY question (returns Map with questionId and categoryName)
+  Map<String, String>? getAnyCustomSelectedCategory() {
+    final customCategory = _customSelectedForCategory.value;
+    if (customCategory.isNotEmpty && customCategory.contains(':')) {
+      final parts = customCategory.split(':');
+      if (parts.length == 2) {
+        return {
+          'questionId': parts[0],
+          'categoryName': parts[1],
+        };
+      }
+    }
+    return null;
+  }
+
   void selectOption(
     String option, {
     String? forQuestionId,
@@ -732,12 +754,37 @@ class CreativeBriefController extends GetxController {
       'Selecting option: $option for question: $questionId, category: $categoryName',
     ); // Debug
 
-    // If "Custom" is selected, show text field
+    // Check if this option is already selected (for deselection)
+    final isAlreadySelected = _tempSelections[questionId] == option ||
+        (_answers.containsKey(questionId) &&
+            _answers[questionId]!.selectedOptions.contains(option));
+
+    // If "Custom" is selected
     if (option == 'Custom') {
       print(
         'Custom selected for question: $questionId, category: $categoryName',
       ); // Debug
 
+      // Check if custom is already selected - if so, deselect it
+      final isCustomAlreadySelected = categoryName != null
+          ? _customSelectedForCategory.value == '$questionId:$categoryName'
+          : _customSelectedForQuestion.value == questionId;
+
+      if (isCustomAlreadySelected) {
+        // DESELECT CUSTOM
+        print('Deselecting Custom for question: $questionId');
+        if (categoryName != null) {
+          _customSelectedForCategory.value = '';
+        } else {
+          _customSelectedForQuestion.value = '';
+        }
+        // Clear the custom controller
+        customController.clear();
+        update();
+        return;
+      }
+
+      // SELECT CUSTOM
       // For categorized questions, track which category has custom selected
       if (categoryName != null) {
         _customSelectedForCategory.value = '$questionId:$categoryName';
@@ -757,6 +804,20 @@ class CreativeBriefController extends GetxController {
       return; // Don't advance to next question yet
     }
 
+    // For non-custom options, check if clicking to deselect
+    if (isAlreadySelected) {
+      print('Deselecting option: $option for question: $questionId');
+
+      // Remove temporary selection
+      _tempSelections.remove(questionId);
+
+      // Remove final answer if it exists
+      _answers.remove(questionId);
+
+      update();
+      return; // Don't advance, just deselect
+    }
+
     // For non-custom options, store as temporary selection
     _tempSelections[questionId] = option;
 
@@ -772,8 +833,12 @@ class CreativeBriefController extends GetxController {
     // Update the UI
     update();
 
-    // Auto-advance to next question after delay, but only if no answer exists yet
-    if (!isQuestionAnswered(questionId)) {
+    // If question is already answered, update the answer immediately (no delay for edits)
+    if (isQuestionAnswered(questionId)) {
+      print('Updating already answered question immediately: $questionId');
+      _confirmCurrentSelection(questionId);
+    } else {
+      // Auto-advance to next question after delay for new answers
       await Future.delayed(
         const Duration(milliseconds: 2000),
       ); // Increased delay to 2 seconds
@@ -1161,12 +1226,31 @@ class CreativeBriefController extends GetxController {
 
   void selectPrint(String print) {
     if (print == 'Custom') {
-      // Show custom text input for Prints
+      // Toggle custom selection
+      if (_customSelectedForCategory.value == 'colors:Prints') {
+        // Deselect custom
+        _customSelectedForCategory.value = '';
+        printCustomController.clear();
+        update();
+        return;
+      }
+      // Select custom - show text input for Prints
       _customSelectedForCategory.value = 'colors:Prints';
       _selectedPrint.value = '';
       update();
       return;
     }
+
+    // Check if clicking already selected print to deselect
+    if (_selectedPrint.value == print) {
+      // Deselect print
+      _selectedPrint.value = '';
+      // May need to remove the answer if it's the only part selected
+      update();
+      return;
+    }
+
+    // Select new print
     _selectedPrint.value = print;
     // Clear custom selection if a regular option is selected
     if (_customSelectedForCategory.value == 'colors:Prints') {
@@ -1178,12 +1262,31 @@ class CreativeBriefController extends GetxController {
 
   void selectTechnique(String technique) {
     if (technique == 'Custom') {
-      // Show custom text input for Techniques
+      // Toggle custom selection
+      if (_customSelectedForCategory.value == 'colors:Techniques') {
+        // Deselect custom
+        _customSelectedForCategory.value = '';
+        techniqueCustomController.clear();
+        update();
+        return;
+      }
+      // Select custom - show text input for Techniques
       _customSelectedForCategory.value = 'colors:Techniques';
       _selectedTechnique.value = '';
       update();
       return;
     }
+
+    // Check if clicking already selected technique to deselect
+    if (_selectedTechnique.value == technique) {
+      // Deselect technique
+      _selectedTechnique.value = '';
+      // May need to remove the answer if it's the only part selected
+      update();
+      return;
+    }
+
+    // Select new technique
     _selectedTechnique.value = technique;
     // Clear custom selection if a regular option is selected
     if (_customSelectedForCategory.value == 'colors:Techniques') {
@@ -1641,6 +1744,7 @@ class CreativeBriefController extends GetxController {
                                   } else {
                                     // Regular option selected
                                     if (question.allowMultiple) {
+                                      // Toggle for multiple selection
                                       if (isSelected) {
                                         tempSelectedOptions.remove(option);
                                         tempSelectedOptions.removeWhere(
@@ -1658,12 +1762,23 @@ class CreativeBriefController extends GetxController {
                                         tempSelectedOptions.add(option);
                                       }
                                     } else {
-                                      tempSelectedOptions.removeWhere(
-                                        (opt) =>
-                                            category.value.contains(opt) ||
-                                            opt.startsWith('${category.key}:'),
-                                      );
-                                      tempSelectedOptions.value = [option];
+                                      // Toggle for single selection
+                                      if (isSelected) {
+                                        // Deselect by removing from this category
+                                        tempSelectedOptions.removeWhere(
+                                          (opt) =>
+                                              opt == option ||
+                                              opt == '${category.key}:$option',
+                                        );
+                                      } else {
+                                        // Select by clearing category and adding new option
+                                        tempSelectedOptions.removeWhere(
+                                          (opt) =>
+                                              category.value.contains(opt) ||
+                                              opt.startsWith('${category.key}:'),
+                                        );
+                                        tempSelectedOptions.value = [option];
+                                      }
                                     }
                                     // Clear custom selection for this category
                                     if (customSelectedCategory.value ==
@@ -1740,13 +1855,21 @@ class CreativeBriefController extends GetxController {
                         return GestureDetector(
                           onTap: () {
                             if (question.allowMultiple) {
+                              // Toggle for multiple selection
                               if (isSelected) {
                                 tempSelectedOptions.remove(option);
                               } else {
                                 tempSelectedOptions.add(option);
                               }
                             } else {
-                              tempSelectedOptions.value = [option];
+                              // Toggle for single selection
+                              if (isSelected) {
+                                // Deselect by clearing the list
+                                tempSelectedOptions.clear();
+                              } else {
+                                // Select by setting as the only option
+                                tempSelectedOptions.value = [option];
+                              }
                             }
 
                             // Update custom selected state
@@ -2276,9 +2399,8 @@ class CreativeBriefController extends GetxController {
 
   // Method to get number of questions to show in the list
   int get questionsToShow {
-    if (_showLastTwoQuestions.value) {
-      return questions.length; // Show all questions
-    }
+    // Always show all answered questions + current unanswered question
+    // This allows users to edit any previous answer
     return currentQuestionIndex + 1; // Show up to current question
   }
 

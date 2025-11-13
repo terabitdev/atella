@@ -150,15 +150,23 @@ class EditDataService {
     if (creativeBrief.isNotEmpty) {
       parsedData['creativeBrief'] = {
         'garment_type': creativeBrief['garmentType'] ?? '',
+        'customGarmentType': creativeBrief['customGarmentType'] ?? '',  // Added custom text
         'style': creativeBrief['style'] ?? '',
         'target_audience': creativeBrief['targetAudience'] ?? '',
         'occasion': creativeBrief['occasion'] ?? '',
         'inspiration': creativeBrief['inspiration'] ?? '',
         // Colors should be parsed as separate fields: solidColors, print, technique
-        'solidColors': creativeBrief['solidColors'] ?? [],
+        // Filter out empty strings from solidColors array
+        'solidColors': (creativeBrief['solidColors'] as List?)
+            ?.where((color) => color != null && color.toString().trim().isNotEmpty)
+            .map((color) => color.toString())
+            .toList() ?? [],
         'print': creativeBrief['print'] ?? '',
+        'printCustom': creativeBrief['printCustom'] ?? '',  // Added custom print text
         'technique': creativeBrief['technique'] ?? '',
+        'techniqueCustom': creativeBrief['techniqueCustom'] ?? '',  // Added custom technique text
         'fabrics': creativeBrief['fabrics'] ?? '',
+        'customFabric': creativeBrief['customFabric'] ?? '',  // Added custom fabric text
       };
     }
 
@@ -167,10 +175,15 @@ class EditDataService {
     if (refinedConcept.isNotEmpty) {
       parsedData['refinedConcept'] = {
         'garment_type': refinedConcept['silhouette'] ?? '',
+        'customSilhouette': refinedConcept['customSilhouette'] ?? '',  // Added custom silhouette text
         'specific_features': refinedConcept['features'] ?? '',
+        'customFeatures': refinedConcept['customFeatures'] ?? '',  // Added custom features text (for categorized)
         'seasonal_constraint': refinedConcept['season'] ?? '',
+        'customSeason': refinedConcept['customSeason'] ?? '',  // Added custom season text
         'target_budget': refinedConcept['budget'] ?? '',
+        'customBudget': refinedConcept['customBudget'] ?? '',  // Added custom budget text
         'functionalities_values': refinedConcept['values'] ?? '',
+        'customValues': refinedConcept['customValues'] ?? '',  // Added custom values text
       };
     }
 

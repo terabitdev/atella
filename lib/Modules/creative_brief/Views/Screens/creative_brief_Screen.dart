@@ -44,10 +44,10 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             if (controller.isCustomSelectedForCurrentQuestion() && controller.currentQuestion.type == 'chips') {
               return _buildBottomCustomInput();
             }
-            // Show custom text input for categorized questions
-            final customCategory = controller.getCustomSelectedCategory(controller.currentQuestion.id);
-            if (customCategory != null) {
-              return _buildBottomCategorizedCustomInput(controller.currentQuestion.id, customCategory);
+            // Show custom text input for categorized questions (for ANY question, not just current)
+            final customInfo = controller.getAnyCustomSelectedCategory();
+            if (customInfo != null) {
+              return _buildBottomCategorizedCustomInput(customInfo['questionId']!, customInfo['categoryName']!);
             }
             // Show bottom input area only for text questions (not chip questions)
             if (controller.shouldShowBottomInput && controller.currentQuestion.type == 'text') {
@@ -170,6 +170,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           // Show custom answer if answered with custom text
           if (isAnswered && question.type == 'chips')
             _buildCustomAnswerDisplay(question),
+          // Show custom answer for categorized chips
+          if (isAnswered && question.type == 'chips_categorized')
+            _buildCategorizedCustomAnswerDisplay(question),
         ],
       ),
     );
@@ -265,6 +268,35 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
+  Widget _buildCategorizedCustomAnswerDisplay(BriefQuestion question) {
+    return Obx(() {
+      final answer = controller.getAnswer(question.id);
+      // Check if answer has Custom selection (format: "CategoryName:Custom")
+      if (answer?.selectedOptions.isNotEmpty == true) {
+        final selectedOption = answer!.selectedOptions.first;
+        if (selectedOption.endsWith(':Custom') && answer.textInput != null && answer.textInput!.isNotEmpty) {
+          return Container(
+            margin: const EdgeInsets.only(top: 8, left: 8),
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+            decoration: BoxDecoration(
+              color: AppColors.buttonColor,
+              borderRadius: BorderRadius.circular(20),
+            ),
+            child: Text(
+              answer.textInput!,
+              style: const TextStyle(
+                fontSize: 14,
+                color: Colors.white,
+                fontWeight: FontWeight.w500,
+              ),
+            ),
+          );
+        }
+      }
+      return const SizedBox.shrink();
+    });
+  }
+
   Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
     return Obx(() {
       // Recalculate isAnswered inside Obx to ensure reactivity
@@ -273,68 +305,23 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
       return Wrap(
         children: question.options.map((option) {
-          final isSelected = controller.isOptionSelected(option);
+          // IMPORTANT: Pass question.id to check THIS question's selection, not current question
+          final isSelected = controller.isOptionSelected(option, forQuestionId: question.id);
 
           // Debug for Custom option
           if (option == 'Custom') {
             print('Custom chip - isSelected: $isSelected, isAnswered: $isQuestionAnswered');
           }
 
-          if (isQuestionAnswered) {
-            // Show final answered state for answered questions (with edit capability)
-            final isAnswerSelected = answer?.selectedOptions.contains(option) ?? false;
-            return GestureDetector(
-              onTap: isAnswerSelected ? () {
-                // Allow editing of answered questions
-                controller.editAnswer(question.id);
-              } : null,
-              child: Container(
-                margin: const EdgeInsets.only(right: 12, bottom: 8),
-                padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-                decoration: BoxDecoration(
-                  color: isAnswerSelected
-                      ? AppColors.buttonColor
-                      : const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(20),
-                  border: isAnswerSelected
-                      ? null
-                      : Border.all(color: const Color(0xFFE0E0E0)),
-                ),
-                child: Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Text(
-                      option,
-                      style: TextStyle(
-                        color: isAnswerSelected ? Colors.white : const Color(0xFF999999),
-                        fontSize: 14,
-                        fontWeight: isAnswerSelected ? FontWeight.w500 : FontWeight.w400,
-                      ),
-                    ),
-                    if (isAnswerSelected)
-                      ...[
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.edit,
-                          size: 14.0, // Fixed size instead of .w
-                          color: Colors.white,
-                        ),
-                      ],
-                  ],
-                ),
-              ),
-            );
-          } else {
-            // Show interactive chips for unanswered questions
-            return SelectionChipWidget(
-              text: option,
-              isSelected: isSelected,
-              onTap: () {
-                print('Chip tapped: $option'); // Debug
-                controller.selectOption(option, forQuestionId: question.id);
-              },
-            );
-          }
+          // Always show interactive chips - no disabled state, no edit icon
+          return SelectionChipWidget(
+            text: option,
+            isSelected: isSelected,
+            onTap: () {
+              print('Chip tapped: $option'); // Debug
+              controller.selectOption(option, forQuestionId: question.id);
+            },
+          );
         }).toList(),
       );
     });
@@ -345,142 +332,23 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       return const SizedBox.shrink();
     }
 
+    // Always show interactive categorized chips - no disabled state, no edit icon
     return Obx(() {
-      // Recalculate isAnswered inside Obx to ensure reactivity
-      final isQuestionAnswered = controller.isQuestionAnswered(question.id);
+      // Get the selected option from both temp and final answers
       final answer = controller.getAnswer(question.id);
       final selectedOption = answer?.selectedOptions.isNotEmpty == true
           ? answer!.selectedOptions.first
-          : null;
+          : controller.tempSelections[question.id];
 
-      print('=== CATEGORIZED CHIPS REBUILD ===');
-      print('Question: ${question.id}');
-      print('Is answered: $isQuestionAnswered');
-      print('Selected option: $selectedOption');
-
-      if (isQuestionAnswered) {
-        // Show categorized view with edit icon on selected option
-        // Check if answer is in category:Custom format
-        final isCustomAnswer = selectedOption?.contains(':Custom') ?? false;
-        final customCategory = isCustomAnswer ? selectedOption!.split(':')[0] : null;
-        final customText = answer?.textInput;
-        
-        return Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: question.categories!.entries.map((category) {
-            // Check if this category has the selected answer
-            final categoryHasAnswer = isCustomAnswer 
-                ? customCategory == category.key
-                : category.value.contains(selectedOption);
-            
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                // Category title
-                Padding(
-                  padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
-                  child: Text(
-                    category.key,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w600,
-                      color: const Color(0xFF666666),
-                    ),
-                  ),
-                ),
-                // Category chips
-                Wrap(
-                  spacing: 8.w,
-                  runSpacing: 8.h,
-                  children: category.value.map((option) {
-                    final isAnswerSelected = isCustomAnswer
-                        ? (option == 'Custom' && customCategory == category.key)
-                        : (selectedOption == option && categoryHasAnswer);
-                    return GestureDetector(
-                      onTap: isAnswerSelected ? () {
-                        controller.editAnswer(question.id);
-                      } : null,
-                      child: Container(
-                        padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
-                        decoration: BoxDecoration(
-                          color: isAnswerSelected
-                              ? AppColors.buttonColor
-                              : const Color(0xFFF5F5F5),
-                          borderRadius: BorderRadius.circular(25.r),
-                          border: Border.all(
-                            color: isAnswerSelected
-                                ? Colors.transparent
-                                : const Color(0xFFE0E0E0),
-                            width: 1,
-                          ),
-                        ),
-                        child: Row(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            Text(
-                              option,
-                              style: TextStyle(
-                                fontSize: 14.sp,
-                                fontWeight: FontWeight.w500,
-                                color: isAnswerSelected
-                                    ? Colors.white
-                                    : const Color(0xFF999999),
-                              ),
-                            ),
-                            if (isAnswerSelected) ...[
-                              SizedBox(width: 4.w),
-                              Icon(
-                                Icons.edit,
-                                size: 14.0,
-                                color: Colors.white,
-                              ),
-                            ],
-                          ],
-                        ),
-                      ),
-                    );
-                  }).toList(),
-                ),
-                // Show custom text if this category has custom answer
-                if (isCustomAnswer && customCategory == category.key && customText != null && customText.isNotEmpty) ...[
-                  SizedBox(height: 8.h),
-                  Container(
-                    margin: EdgeInsets.only(left: 8.w),
-                    padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-                    decoration: BoxDecoration(
-                      color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(20.r),
-                    ),
-                    child: Text(
-                      customText,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        color: Colors.white,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-                SizedBox(height: 16.h),
-              ],
-            );
-          }).toList(),
-        );
-      } else {
-        // Show interactive categorized chips for unanswered questions
-        // Get the selected option from temporary selections
-        final tempSelected = controller.tempSelections[question.id];
-
-        return Obx(() => CategorizedChipsWidget(
-          categories: question.categories!,
-          selectedOption: tempSelected,
-          questionId: question.id,
-          customSelectedForCategory: controller.customSelectedForCategory,
-          onOptionSelected: (option, categoryName) {
-            controller.selectOption(option, forQuestionId: question.id, categoryName: categoryName);
-          },
-        ));
-      }
+      return CategorizedChipsWidget(
+        categories: question.categories!,
+        selectedOption: selectedOption,
+        questionId: question.id,
+        customSelectedForCategory: controller.customSelectedForCategory,
+        onOptionSelected: (option, categoryName) {
+          controller.selectOption(option, forQuestionId: question.id, categoryName: categoryName);
+        },
+      );
     });
   }
 
@@ -693,9 +561,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   : (selectedPrint == print);
               
               return GestureDetector(
-                onTap: isQuestionAnswered
-                  ? (isSelected ? () => controller.editAnswer(question.id) : null)
-                  : () => controller.selectPrint(print),
+                onTap: () => controller.selectPrint(print),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                   decoration: BoxDecoration(
@@ -706,26 +572,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       width: 1,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        print,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.white : (isQuestionAnswered ? const Color(0xFF999999) : const Color(0xFF333333)),
-                        ),
-                      ),
-                      if (isSelected && isQuestionAnswered) ...[
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.edit,
-                          size: 14.0,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ],
+                  child: Text(
+                    print,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.white : const Color(0xFF333333),
+                    ),
                   ),
                 ),
               );
@@ -790,9 +643,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   : (selectedTechnique == technique);
               
               return GestureDetector(
-                onTap: isQuestionAnswered
-                  ? (isSelected ? () => controller.editAnswer(question.id) : null)
-                  : () => controller.selectTechnique(technique),
+                onTap: () => controller.selectTechnique(technique),
                 child: Container(
                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
                   decoration: BoxDecoration(
@@ -803,26 +654,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       width: 1,
                     ),
                   ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        technique,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          fontWeight: FontWeight.w500,
-                          color: isSelected ? Colors.white : (isQuestionAnswered ? const Color(0xFF999999) : const Color(0xFF333333)),
-                        ),
-                      ),
-                      if (isSelected && isQuestionAnswered) ...[
-                        SizedBox(width: 4.w),
-                        Icon(
-                          Icons.edit,
-                          size: 14.0,
-                          color: Colors.white,
-                        ),
-                      ],
-                    ],
+                  child: Text(
+                    technique,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: isSelected ? Colors.white : const Color(0xFF333333),
+                    ),
                   ),
                 ),
               );

@@ -45,20 +45,17 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           Obx(() {
             final allQuestionsAnswered =
                 controller.answers.length >= controller.questions.length;
-            final currentQuestion = controller.currentQuestion;
-            final customCategory = controller.getCustomSelectedCategory(
-              currentQuestion.id,
-            );
 
             // Show button when all questions are answered (temporary selections will auto-confirm)
             if (allQuestionsAnswered) {
               return _buildBottomButton();
             }
-            // Show categorized custom input when a category custom is selected
-            if (customCategory != null) {
+            // Show categorized custom input when a category custom is selected (for ANY question, not just current)
+            final customInfo = controller.getAnyCustomSelectedCategory();
+            if (customInfo != null) {
               return _buildBottomCategorizedCustomInput(
-                currentQuestion.id,
-                customCategory,
+                customInfo['questionId']!,
+                customInfo['categoryName']!,
               );
             }
             // Show custom input if custom is selected
@@ -223,83 +220,25 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   ) {
     return Wrap(
       children: question.options.map((option) {
-        if (isAnswered) {
-          // Show final answered state for answered questions (with edit capability)
-          final isAnswerSelected =
-              answer?.selectedOptions.contains(option) ?? false;
+        // Always show interactive chips - no disabled state, no edit icon
+        // IMPORTANT: Pass question.id to check THIS question's selection, not current question
+        final isSelected = controller.isOptionSelected(option, forQuestionId: question.id);
 
-          if (option == 'Custom') {
-            print(
-              'Custom chip (answered) - isAnswerSelected: $isAnswerSelected',
-            );
-          }
-
-          return GestureDetector(
-            onTap: isAnswerSelected
-                ? () {
-                    // Allow editing of answered questions
-                    controller.editAnswer(question.id);
-                  }
-                : null,
-            child: Container(
-              margin: const EdgeInsets.only(right: 12, bottom: 8),
-              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-              decoration: BoxDecoration(
-                color: isAnswerSelected
-                    ? AppColors.buttonColor
-                    : const Color(0xFFF5F5F5),
-                borderRadius: BorderRadius.circular(20),
-                border: isAnswerSelected
-                    ? null
-                    : Border.all(color: const Color(0xFFE0E0E0)),
-              ),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  Text(
-                    option,
-                    style: TextStyle(
-                      color: isAnswerSelected
-                          ? Colors.white
-                          : const Color(0xFF999999),
-                      fontSize: 14,
-                      fontWeight: isAnswerSelected
-                          ? FontWeight.w500
-                          : FontWeight.w400,
-                    ),
-                  ),
-                  if (isAnswerSelected) ...[
-                    SizedBox(width: 4.w),
-                    Icon(
-                      Icons.edit,
-                      size: 14.0, // Fixed size instead of .w
-                      color: Colors.white,
-                    ),
-                  ],
-                ],
-              ),
-            ),
-          );
-        } else {
-          final isSelected = controller.isOptionSelected(option);
-
-          // Debug for Custom option
-          if (option == 'Custom') {
-            print(
-              'Custom chip - isSelected: $isSelected, isAnswered: $isAnswered',
-            );
-          }
-
-          // Show interactive chips for unanswered questions
-          return SelectionChipWidget(
-            text: option,
-            isSelected: isSelected,
-            onTap: () {
-              print('Chip tapped: $option'); // Debug
-              controller.selectOption(option);
-            },
+        // Debug for Custom option
+        if (option == 'Custom') {
+          print(
+            'Custom chip - isSelected: $isSelected, isAnswered: $isAnswered',
           );
         }
+
+        return SelectionChipWidget(
+          text: option,
+          isSelected: isSelected,
+          onTap: () {
+            print('Chip tapped: $option'); // Debug
+            controller.selectOption(option);
+          },
+        );
       }).toList(),
     );
   }
@@ -398,81 +337,32 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           spacing: 8.w,
           runSpacing: 8.h,
           children: options.map((option) {
+            // Always show interactive chips - no disabled state, no edit icon
             bool isSelected = false;
 
-            if (isAnswered) {
-              final isAnswerSelected = option == 'Custom'
-                  ? selectedValues.contains('Custom')
-                  : selectedValues.contains(option);
-              return GestureDetector(
-                onTap: isAnswerSelected
-                    ? () {
-                        // Allow editing of answered questions
-                        controller.editAnswer(question.id);
-                      }
-                    : null,
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 16.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: isAnswerSelected
-                        ? AppColors.buttonColor
-                        : const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(20.r),
-                    border: isAnswerSelected
-                        ? null
-                        : Border.all(color: const Color(0xFFE0E0E0)),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Text(
-                        option,
-                        style: TextStyle(
-                          color: isAnswerSelected
-                              ? Colors.white
-                              : const Color(0xFF999999),
-                          fontSize: 14.sp,
-                          fontWeight: isAnswerSelected
-                              ? FontWeight.w500
-                              : FontWeight.w400,
-                        ),
-                      ),
-                      if (isAnswerSelected) ...[
-                        SizedBox(width: 4.w),
-                        Icon(Icons.edit, size: 14.0, color: Colors.white),
-                      ],
-                    ],
-                  ),
-                ),
-              );
+            if (option == 'Custom') {
+              // Check both temp state AND saved answer
+              isSelected = controller.isCustomSelectedForCategory(
+                question.id,
+                categoryName,
+              ) || selectedValues.contains('Custom');
             } else {
-              if (option == 'Custom') {
-                isSelected = controller.isCustomSelectedForCategory(
+              // Check temp selection OR saved answer
+              isSelected = controller.getTempSelectionForCategory(categoryName) == option ||
+                          selectedValues.contains(option);
+            }
+
+            return SelectionChipWidget(
+              text: option,
+              isSelected: isSelected,
+              onTap: () {
+                controller.selectCategorizedOption(
                   question.id,
                   categoryName,
+                  option,
                 );
-              } else {
-                isSelected =
-                    controller.getTempSelectionForCategory(categoryName) ==
-                    option;
-              }
-
-              // Show interactive chips for unanswered questions
-              return SelectionChipWidget(
-                text: option,
-                isSelected: isSelected,
-                onTap: () {
-                  controller.selectCategorizedOption(
-                    question.id,
-                    categoryName,
-                    option,
-                  );
-                },
-              );
-            }
+              },
+            );
           }).toList(),
         ),
         if (isAnswered &&

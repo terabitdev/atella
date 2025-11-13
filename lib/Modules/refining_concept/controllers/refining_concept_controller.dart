@@ -73,7 +73,7 @@ class RefiningConceptController extends GetxController {
   final List<BriefQuestion> questions = [
     BriefQuestion(
       id: 'garment_type',
-      question: 'What fit are you aiming for? (multiple selection)',
+      question: 'What fit are you aiming for? (multiple selection) 📏',
       type: 'chips',
       options: [
         'Slim',
@@ -91,7 +91,7 @@ class RefiningConceptController extends GetxController {
     ),
     BriefQuestion(
       id: 'specific_features',
-      question: 'Do you want to add special details? (multiple selection)',
+      question: 'Do you want to add special details? (multiple selection) ✂️',
       type: 'chips_categorized',
       options: [],
       categories: {
@@ -127,13 +127,13 @@ class RefiningConceptController extends GetxController {
     ),
     BriefQuestion(
       id: 'seasonal_constraint',
-      question: 'Is there a seasonal constraint?',
+      question: 'Is there a seasonal constraint? 🌤️',
       type: 'chips',
       options: ['Summer', 'Mid-Season', 'All-Season', 'Custom'],
     ),
     BriefQuestion(
       id: 'target_budget',
-      question: 'What is your target budget per piece?',
+      question: 'What is your target budget per piece? 💵',
       type: 'chips',
       options: [
         'Price Range In €',
@@ -147,7 +147,7 @@ class RefiningConceptController extends GetxController {
     BriefQuestion(
       id: 'functionalities_values',
       question:
-          'Would you like to include any specific functionalities or values?',
+          'Would you like to include any specific functionalities or values? 🧶',
       type: 'chips',
       options: [
         'Organic Fabric',
@@ -395,36 +395,39 @@ class RefiningConceptController extends GetxController {
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
 
   // Check if option is selected including custom selection and temporary selections
-  bool isOptionSelected(String option) {
+  bool isOptionSelected(String option, {String? forQuestionId}) {
+    final questionId = forQuestionId ?? currentQuestion.id;
+
     // Special handling for Custom option
     if (option == 'Custom') {
       // Check if custom is currently selected for this question (not answered yet)
-      if (_customSelectedForQuestion.value == currentQuestion.id) {
+      if (_customSelectedForQuestion.value == questionId) {
         return true;
       }
       // Check if custom answer is already submitted
-      final answer = _answers[currentQuestion.id];
+      final answer = _answers[questionId];
       return answer?.selectedOptions.contains(option) ?? false;
     }
 
+    // Get the question to check its properties
+    final question = questions.firstWhere((q) => q.id == questionId, orElse: () => currentQuestion);
+
     // For multi-select questions, reflect temporary multi selections before confirmation
-    if (currentQuestion.allowMultiple &&
-        !isQuestionAnswered(currentQuestion.id)) {
+    if (question.allowMultiple && !isQuestionAnswered(questionId) && questionId == currentQuestion.id) {
       return _tempMultiSelections.contains(option);
     }
     // For categorized questions, reflect temporary per-category selections
-    if (currentQuestion.type == 'chips_categorized' &&
-        !isQuestionAnswered(currentQuestion.id)) {
+    if (question.type == 'chips_categorized' && !isQuestionAnswered(questionId) && questionId == currentQuestion.id) {
       return _tempCategorizedSelections.values.contains(option);
     }
 
-    // Check temporary selection first (for current question)
-    if (!isQuestionAnswered(currentQuestion.id)) {
-      return _tempSelections[currentQuestion.id] == option;
+    // Check temporary selection first (for unanswered question)
+    if (!isQuestionAnswered(questionId)) {
+      return _tempSelections[questionId] == option;
     }
 
     // For answered questions, check final answer
-    final answer = _answers[currentQuestion.id];
+    final answer = _answers[questionId];
     return answer?.selectedOptions.contains(option) ?? false;
   }
 
@@ -451,6 +454,21 @@ class RefiningConceptController extends GetxController {
     return null;
   }
 
+  // Get custom selected info for ANY question (returns Map with questionId and categoryName)
+  Map<String, String>? getAnyCustomSelectedCategory() {
+    final customCategory = _customSelectedForCategory.value;
+    if (customCategory.isNotEmpty && customCategory.contains(':')) {
+      final parts = customCategory.split(':');
+      if (parts.length == 2) {
+        return {
+          'questionId': parts[0],
+          'categoryName': parts[1],
+        };
+      }
+    }
+    return null;
+  }
+
   String? getTempSelectionForCategory(String categoryName) {
     return _tempCategorizedSelections[categoryName];
   }
@@ -458,9 +476,29 @@ class RefiningConceptController extends GetxController {
   void selectOption(String option) async {
     print('Selecting option: $option'); // Debug
 
-    // If "Custom" is selected, show text field at bottom
+    // Check if this option is already selected (for deselection)
+    final isAlreadySelected = _tempSelections[currentQuestion.id] == option ||
+        (_answers.containsKey(currentQuestion.id) &&
+            _answers[currentQuestion.id]!.selectedOptions.contains(option));
+
+    // If "Custom" is selected
     if (option == 'Custom') {
       print('Custom selected for question: ${currentQuestion.id}'); // Debug
+
+      // Check if custom is already selected - if so, deselect it
+      final isCustomAlreadySelected =
+          _customSelectedForQuestion.value == currentQuestion.id;
+
+      if (isCustomAlreadySelected) {
+        // DESELECT CUSTOM
+        print('Deselecting Custom for question: ${currentQuestion.id}');
+        _customSelectedForQuestion.value = '';
+        customController.clear();
+        update();
+        return;
+      }
+
+      // SELECT CUSTOM
       _customSelectedForQuestion.value = currentQuestion.id;
 
       // Clear any temporary selection
@@ -472,6 +510,15 @@ class RefiningConceptController extends GetxController {
 
     // Handle multi-select questions: toggle selection and debounce confirm
     if (currentQuestion.allowMultiple) {
+      // If this is an already-answered question being edited, load existing answers first
+      if (isQuestionAnswered(currentQuestion.id) && _tempMultiSelections.isEmpty) {
+        final existingAnswer = _answers[currentQuestion.id];
+        if (existingAnswer != null) {
+          _tempMultiSelections.addAll(existingAnswer.selectedOptions);
+          print('Loaded existing multi-select answers for editing: ${existingAnswer.selectedOptions}');
+        }
+      }
+
       // Toggle option in temp multi selections
       if (_tempMultiSelections.contains(option)) {
         _tempMultiSelections.remove(option);
@@ -480,15 +527,35 @@ class RefiningConceptController extends GetxController {
       }
       update();
 
-      // Debounce auto-confirmation (3 seconds)
-      _multiSelectDebounce?.cancel();
-      _multiSelectDebounce = Timer(const Duration(seconds: 3), () {
-        if (_tempMultiSelections.isNotEmpty &&
-            !isQuestionAnswered(currentQuestion.id)) {
-          _confirmMultiSelection();
-        }
-      });
+      // If question is already answered, update immediately (no delay for edits)
+      if (isQuestionAnswered(currentQuestion.id)) {
+        print('Updating already answered multi-select question immediately');
+        _confirmMultiSelection(shouldAdvance: false); // Don't advance when editing
+      } else {
+        // For new answers, debounce auto-confirmation (3 seconds)
+        _multiSelectDebounce?.cancel();
+        _multiSelectDebounce = Timer(const Duration(seconds: 3), () {
+          if (_tempMultiSelections.isNotEmpty &&
+              !isQuestionAnswered(currentQuestion.id)) {
+            _confirmMultiSelection(shouldAdvance: true); // Advance for new answers
+          }
+        });
+      }
       return;
+    }
+
+    // For non-custom options (single select), check if clicking to deselect
+    if (isAlreadySelected) {
+      print('Deselecting option: $option for question: ${currentQuestion.id}');
+
+      // Remove temporary selection
+      _tempSelections.remove(currentQuestion.id);
+
+      // Remove final answer if it exists
+      _answers.remove(currentQuestion.id);
+
+      update();
+      return; // Don't advance, just deselect
     }
 
     // For non-custom options, store as temporary selection
@@ -502,8 +569,12 @@ class RefiningConceptController extends GetxController {
     // Update the UI
     update();
 
-    // Auto-advance to next question after delay, but only if no answer exists yet
-    if (!isQuestionAnswered(currentQuestion.id)) {
+    // If question is already answered, update the answer immediately (no delay for edits)
+    if (isQuestionAnswered(currentQuestion.id)) {
+      print('Updating already answered question immediately: ${currentQuestion.id}');
+      _confirmCurrentSelection();
+    } else {
+      // Auto-advance to next question after delay for new answers
       await Future.delayed(
         const Duration(milliseconds: 2000),
       ); // 2 seconds delay
@@ -515,7 +586,7 @@ class RefiningConceptController extends GetxController {
   }
 
   // Confirm multi-select temp selections into final answer and advance
-  void _confirmMultiSelection() {
+  void _confirmMultiSelection({bool shouldAdvance = true}) {
     if (_tempMultiSelections.isEmpty) return;
     // Save all selected options
     _answers[currentQuestion.id] = BriefAnswer(
@@ -525,7 +596,11 @@ class RefiningConceptController extends GetxController {
     _tempMultiSelections.clear();
     _answers.refresh();
     update();
-    _nextQuestion();
+
+    // Only advance to next question if this is a new answer (not editing)
+    if (shouldAdvance) {
+      _nextQuestion();
+    }
   }
 
   // Handle categorized selection (one per category, multiple categories allowed)
@@ -1324,15 +1399,26 @@ class RefiningConceptController extends GetxController {
                                       );
                                     }
                                   } else {
-                                    // Regular option selected - enforce one selection per category
-                                    tempSelectedOptions.removeWhere(
-                                      (o) =>
-                                          category.value.contains(o) ||
-                                          o.startsWith('${category.key}:'),
-                                    );
-                                    tempSelectedOptions.add(
-                                      '${category.key}:$option',
-                                    );
+                                    // Regular option selected
+                                    // Check if clicking to deselect
+                                    if (isSelected) {
+                                      // Deselect by removing from this category
+                                      tempSelectedOptions.removeWhere(
+                                        (opt) =>
+                                            opt == option ||
+                                            opt == '${category.key}:$option',
+                                      );
+                                    } else {
+                                      // Select - enforce one selection per category
+                                      tempSelectedOptions.removeWhere(
+                                        (o) =>
+                                            category.value.contains(o) ||
+                                            o.startsWith('${category.key}:'),
+                                      );
+                                      tempSelectedOptions.add(
+                                        '${category.key}:$option',
+                                      );
+                                    }
                                     // Clear custom selection for this category
                                     if (customSelectedCategory.value ==
                                         category.key) {
@@ -1408,11 +1494,19 @@ class RefiningConceptController extends GetxController {
                         return GestureDetector(
                           onTap: () {
                             if (question.allowMultiple) {
+                              // Toggle for multiple selection
                               isSelected
                                   ? tempSelectedOptions.remove(option)
                                   : tempSelectedOptions.add(option);
                             } else {
-                              tempSelectedOptions.value = [option];
+                              // Toggle for single selection
+                              if (isSelected) {
+                                // Deselect by clearing the list
+                                tempSelectedOptions.clear();
+                              } else {
+                                // Select by setting as the only option
+                                tempSelectedOptions.value = [option];
+                              }
                             }
 
                             // Update custom selected state
