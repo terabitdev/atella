@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
+import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 
 class ProfileController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
@@ -104,8 +105,32 @@ class ProfileController extends GetxController {
   }
 
   Future<void> logout() async {
+    print('🔄 Starting logout process...');
+
+    // Clear all cached data from controllers
+    try {
+      // Clear HomeController data if it exists
+      if (Get.isRegistered<HomeController>()) {
+        final homeController = Get.find<HomeController>();
+        homeController.clearAllData();
+        print('✅ HomeController data cleared');
+      }
+
+      // Delete all GetX controllers to ensure fresh state on next login
+      Get.deleteAll(force: true);
+      print('✅ All controllers deleted');
+
+    } catch (e) {
+      print('⚠️ Error clearing controllers: $e');
+    }
+
+    // Sign out from Firebase
     await _authService.signOut();
+    print('✅ Signed out from Firebase');
+
+    // Navigate to login screen and clear all routes
     Get.offAllNamed('/login');
+    print('✅ Navigated to login screen');
   }
 
   @override

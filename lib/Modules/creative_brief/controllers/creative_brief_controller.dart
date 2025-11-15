@@ -146,7 +146,7 @@ class CreativeBriefController extends GetxController {
       question: 'Do you have any visual inspirations or references? 🖼️',
       type: 'image',
       options: [],
-    ),
+    ), 
     BriefQuestion(
       id: 'colors',
       question: 'What colors and patterns should the design include? 🎨',

@@ -25,9 +25,17 @@ class _HomeScreenState extends State<HomeScreen> {
   @override
   void initState() {
     super.initState();
+
+    // If controller exists, delete it first to ensure fresh data after account switch
+    if (Get.isRegistered<HomeController>()) {
+      Get.delete<HomeController>(force: true);
+      print('🔄 Deleted existing HomeController for fresh data');
+    }
+
     // Use permanent to prevent disposal when navigating away
     controller = Get.put(HomeController(), permanent: true);
-    
+    print('✅ Created new HomeController');
+
     // Refresh data if coming back from another screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = Get.arguments;

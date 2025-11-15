@@ -262,6 +262,21 @@ class HomeController extends GetxController {
     await fetchTechPacks();
   }
 
+  // Clear all data (called on logout)
+  void clearAllData() {
+    print('🧹 Clearing all HomeController data...');
+    allTechPacks.clear();
+    myDesigns.clear();
+    myCollections.clear();
+    favorites.clear();
+    searchController.clear();
+    searchQuery.value = '';
+    isLoading.value = false;
+    hasError.value = false;
+    errorMessage.value = '';
+    print('✅ HomeController data cleared');
+  }
+
   @override
   void onClose() {
     // Don't dispose searchController since this controller is permanent
