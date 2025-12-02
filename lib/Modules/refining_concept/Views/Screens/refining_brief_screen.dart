@@ -310,6 +310,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   // Expandable categorized section - matching creative brief behavior
+  // Expandable categorized section - matching creative brief behavior
   Widget _buildExpandableCategorizedSection({
     required String questionId,
     required String categoryName,
@@ -395,25 +396,25 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           // Show selected + 2 more options when collapsed (like creative brief - no isAnswered check)
           if (hasSelection && !isExpanded)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
                 // Selected option chip - clicking allows direct selection change
                 GestureDetector(
                   onTap: () => onTap(selectedValue),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 12.h,
+                      horizontal: 14.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
                       selectedValue,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
@@ -428,12 +429,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     onTap: () => onTap(option),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(25.r),
+                        borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: const Color(0xFFE0E0E0),
                           width: 1,
@@ -442,7 +443,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF333333),
                         ),
@@ -457,7 +458,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       controller.expandCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -465,7 +466,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       ),
                       child: Icon(
                         Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
@@ -475,8 +476,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           else
             // Show expandable list (3 options initially)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
                 ...(isExpanded ? options : options.take(3).toList()).map((
                   option,
@@ -505,14 +506,14 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.buttonColor
                             : const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(25.r),
+                        borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
@@ -523,7 +524,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           color: isSelected
                               ? Colors.white
@@ -540,7 +541,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       controller.toggleCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -550,7 +551,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                         isExpanded
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
@@ -654,6 +655,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   // Expandable chip section for single-select chip options - matching creative brief behavior
+  // Expandable chip section for single-select chip options - matching creative brief behavior
   Widget _buildExpandableChipSection({
     required String questionId,
     required List<String> options,
@@ -679,22 +681,22 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       // Show selected + 2 more options when collapsed (like creative brief - no isAnswered check)
       if (hasSelection && !isExpanded) {
         return Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
+          spacing: 6.w,
+          runSpacing: 6.h,
           children: [
             // Selected option chip - clicking allows direct selection change
             GestureDetector(
               onTap: () => onTap(selectedValue!),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: AppColors.buttonColor,
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
                   selectedValue,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
@@ -709,12 +711,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 onTap: () => onTap(option),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
+                    horizontal: 14.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(25.r),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: const Color(0xFFE0E0E0),
                       width: 1,
@@ -723,7 +725,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   child: Text(
                     option,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF333333),
                     ),
@@ -738,7 +740,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   controller.expandCategory(categoryKey);
                 },
                 child: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
                     shape: BoxShape.circle,
@@ -746,7 +748,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    size: 20,
+                    size: 18,
                     color: const Color(0xFF666666),
                   ),
                 ),
@@ -759,8 +761,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       final displayOptions = isExpanded ? options : options.take(3).toList();
 
       return Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
+        spacing: 6.w,
+        runSpacing: 6.h,
         children: [
           ...displayOptions.map((option) {
             final isSelected = controller.isOptionSelected(
@@ -773,12 +775,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 onTap(option);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.buttonColor
                       : const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
@@ -789,7 +791,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 child: Text(
                   option,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: isSelected ? Colors.white : const Color(0xFF333333),
                   ),
@@ -804,7 +806,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 controller.toggleCategory(categoryKey);
               },
               child: Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F5),
                   shape: BoxShape.circle,
@@ -814,7 +816,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   isExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  size: 20,
+                  size: 18,
                   color: const Color(0xFF666666),
                 ),
               ),
@@ -824,6 +826,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     });
   }
 
+  // Expandable section for multi-select questions - matching creative brief behavior
   // Expandable section for multi-select questions - matching creative brief behavior
   Widget _buildExpandableMultiSelectSection({
     required String questionId,
@@ -846,8 +849,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             .toList();
 
         return Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
+          spacing: 6.w,
+          runSpacing: 6.h,
           children: [
             // ALL selected option chips - clicking toggles them
             ...selectedOptions.map((selectedValue) {
@@ -855,17 +858,17 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 onTap: () => onTap(selectedValue),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
+                    horizontal: 14.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: AppColors.buttonColor,
-                    borderRadius: BorderRadius.circular(25.r),
+                    borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
                     selectedValue,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: Colors.white,
                     ),
@@ -879,12 +882,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 onTap: () => onTap(option),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
+                    horizontal: 14.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(25.r),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: const Color(0xFFE0E0E0),
                       width: 1,
@@ -893,7 +896,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   child: Text(
                     option,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF333333),
                     ),
@@ -906,7 +909,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               GestureDetector(
                 onTap: () => controller.expandCategory(categoryKey),
                 child: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
                     shape: BoxShape.circle,
@@ -914,7 +917,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    size: 20,
+                    size: 18,
                     color: const Color(0xFF666666),
                   ),
                 ),
@@ -927,8 +930,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       final displayOptions = isExpanded ? options : options.take(3).toList();
 
       return Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
+        spacing: 6.w,
+        runSpacing: 6.h,
         children: [
           ...displayOptions.map((option) {
             final isSelected = selectedOptions.contains(option);
@@ -938,12 +941,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 onTap(option);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.buttonColor
                       : const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
@@ -954,7 +957,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 child: Text(
                   option,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: isSelected ? Colors.white : const Color(0xFF333333),
                   ),
@@ -969,7 +972,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 controller.toggleCategory(categoryKey);
               },
               child: Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F5),
                   shape: BoxShape.circle,
@@ -979,7 +982,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   isExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  size: 20,
+                  size: 18,
                   color: const Color(0xFF666666),
                 ),
               ),

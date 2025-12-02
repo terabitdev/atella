@@ -111,7 +111,7 @@ class RefiningConceptController extends GetxController {
         'Long',
         'Custom',
       ],
-      allowMultiple: true,
+      allowMultiple: false,
     ),
     BriefQuestion(
       id: 'specific_features',

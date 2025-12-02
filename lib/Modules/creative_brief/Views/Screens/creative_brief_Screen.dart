@@ -437,25 +437,25 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           // Show selected + 2 more options when collapsed
           if (hasSelection && !isExpanded)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
                 // Selected option chip
                 GestureDetector(
                   onTap: () => onTap(selectedValue!),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 12.h,
+                      horizontal: 14.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
                       selectedValue,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
@@ -470,12 +470,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     onTap: () => onTap(option),
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(25.r),
+                        borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: const Color(0xFFE0E0E0),
                           width: 1,
@@ -484,7 +484,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           color: const Color(0xFF333333),
                         ),
@@ -499,7 +499,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       controller.expandCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -507,7 +507,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       ),
                       child: Icon(
                         Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
@@ -517,8 +517,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           else
             // Show expandable list (3 options initially)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
                 ...(isExpanded ? options : options.take(3).toList()).map((
                   option,
@@ -531,14 +531,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.buttonColor
                             : const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(25.r),
+                        borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
@@ -549,7 +549,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           color: isSelected
                               ? Colors.white
@@ -566,7 +566,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       controller.toggleCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -576,7 +576,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         isExpanded
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
@@ -897,6 +897,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   // Expandable chip section for regular chip options
+  // Expandable chip section for regular chip options
   Widget _buildExpandableChipSection({
     required String questionId,
     required List<String> options,
@@ -921,22 +922,22 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       // Show selected + 2 more options when collapsed
       if (hasSelection && !isExpanded) {
         return Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
+          spacing: 6.w,
+          runSpacing: 6.h,
           children: [
             // Selected option chip
             GestureDetector(
               onTap: () => onTap(selectedValue!),
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: AppColors.buttonColor,
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
                   selectedValue,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: Colors.white,
                   ),
@@ -951,12 +952,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 onTap: () => onTap(option),
                 child: Container(
                   padding: EdgeInsets.symmetric(
-                    horizontal: 20.w,
-                    vertical: 12.h,
+                    horizontal: 14.w,
+                    vertical: 8.h,
                   ),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
-                    borderRadius: BorderRadius.circular(25.r),
+                    borderRadius: BorderRadius.circular(20.r),
                     border: Border.all(
                       color: const Color(0xFFE0E0E0),
                       width: 1,
@@ -965,7 +966,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   child: Text(
                     option,
                     style: TextStyle(
-                      fontSize: 14.sp,
+                      fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
                       color: const Color(0xFF333333),
                     ),
@@ -980,7 +981,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   controller.expandCategory(categoryKey);
                 },
                 child: Container(
-                  padding: EdgeInsets.all(12.w),
+                  padding: EdgeInsets.all(8.w),
                   decoration: BoxDecoration(
                     color: const Color(0xFFF5F5F5),
                     shape: BoxShape.circle,
@@ -988,21 +989,19 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   ),
                   child: Icon(
                     Icons.keyboard_arrow_down,
-                    size: 20,
+                    size: 18,
                     color: const Color(0xFF666666),
                   ),
                 ),
               ),
           ],
         );
-      }
-
-      // Show expandable list (3-4 options initially)
+      } // Show expandable list (3-4 options initially)
       final displayOptions = isExpanded ? options : options.take(3).toList();
 
       return Wrap(
-        spacing: 8.w,
-        runSpacing: 8.h,
+        spacing: 6.w,
+        runSpacing: 6.h,
         children: [
           ...displayOptions.map((option) {
             final isSelected = selectedOptions.contains(option);
@@ -1012,12 +1011,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 onTap(option);
               },
               child: Container(
-                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 8.h),
                 decoration: BoxDecoration(
                   color: isSelected
                       ? AppColors.buttonColor
                       : const Color(0xFFF5F5F5),
-                  borderRadius: BorderRadius.circular(25.r),
+                  borderRadius: BorderRadius.circular(20.r),
                   border: Border.all(
                     color: isSelected
                         ? Colors.transparent
@@ -1028,7 +1027,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 child: Text(
                   option,
                   style: TextStyle(
-                    fontSize: 14.sp,
+                    fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
                     color: isSelected ? Colors.white : const Color(0xFF333333),
                   ),
@@ -1043,7 +1042,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 controller.toggleCategory(categoryKey);
               },
               child: Container(
-                padding: EdgeInsets.all(12.w),
+                padding: EdgeInsets.all(8.w),
                 decoration: BoxDecoration(
                   color: const Color(0xFFF5F5F5),
                   shape: BoxShape.circle,
@@ -1053,7 +1052,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   isExpanded
                       ? Icons.keyboard_arrow_up
                       : Icons.keyboard_arrow_down,
-                  size: 20,
+                  size: 18,
                   color: const Color(0xFF666666),
                 ),
               ),
@@ -1064,6 +1063,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   // Expandable category section for prints/techniques
+  // Expandable category section for prints/techniques - UPDATED to match refining brief behavior
   Widget _buildExpandableCategory({
     required String categoryName,
     required List<String> options,
@@ -1094,35 +1094,35 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               ),
             ),
           ),
-          // Show selected + 2 more options when collapsed
+          // Show selected + 2 more options when collapsed (NO isAnswered check - matches refining brief)
           if (hasSelection && !isExpanded)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
-                // Selected option chip
+                // Selected option chip - clicking allows direct selection change
                 GestureDetector(
                   onTap: () => onTap(hasCustom ? 'Custom' : selectedValue!),
                   child: Container(
                     padding: EdgeInsets.symmetric(
-                      horizontal: 20.w,
-                      vertical: 12.h,
+                      horizontal: 14.w,
+                      vertical: 8.h,
                     ),
                     decoration: BoxDecoration(
                       color: AppColors.buttonColor,
-                      borderRadius: BorderRadius.circular(25.r),
+                      borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
                       hasCustom ? 'Custom' : selectedValue!,
                       style: TextStyle(
-                        fontSize: 14.sp,
+                        fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
                         color: Colors.white,
                       ),
                     ),
                   ),
                 ),
-                // 2 more unselected options
+                // 2 more unselected options - clicking selects them directly
                 ...options
                     .where(
                       (opt) => opt != (hasCustom ? 'Custom' : selectedValue),
@@ -1133,12 +1133,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         onTap: () => onTap(option),
                         child: Container(
                           padding: EdgeInsets.symmetric(
-                            horizontal: 20.w,
-                            vertical: 12.h,
+                            horizontal: 14.w,
+                            vertical: 8.h,
                           ),
                           decoration: BoxDecoration(
                             color: const Color(0xFFF5F5F5),
-                            borderRadius: BorderRadius.circular(25.r),
+                            borderRadius: BorderRadius.circular(20.r),
                             border: Border.all(
                               color: const Color(0xFFE0E0E0),
                               width: 1,
@@ -1147,7 +1147,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                           child: Text(
                             option,
                             style: TextStyle(
-                              fontSize: 14.sp,
+                              fontSize: 13.sp,
                               fontWeight: FontWeight.w500,
                               color: const Color(0xFF333333),
                             ),
@@ -1162,7 +1162,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       controller.expandCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -1170,7 +1170,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       ),
                       child: Icon(
                         Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
@@ -1178,10 +1178,10 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               ],
             )
           else
-            // Show expandable list (3-4 options initially)
+            // Show expandable list (3 options initially)
             Wrap(
-              spacing: 8.w,
-              runSpacing: 8.h,
+              spacing: 6.w,
+              runSpacing: 6.h,
               children: [
                 ...(isExpanded ? options : options.take(3).toList()).map((
                   option,
@@ -1196,14 +1196,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     },
                     child: Container(
                       padding: EdgeInsets.symmetric(
-                        horizontal: 20.w,
-                        vertical: 12.h,
+                        horizontal: 14.w,
+                        vertical: 8.h,
                       ),
                       decoration: BoxDecoration(
                         color: isSelected
                             ? AppColors.buttonColor
                             : const Color(0xFFF5F5F5),
-                        borderRadius: BorderRadius.circular(25.r),
+                        borderRadius: BorderRadius.circular(20.r),
                         border: Border.all(
                           color: isSelected
                               ? Colors.transparent
@@ -1214,7 +1214,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       child: Text(
                         option,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
                           color: isSelected
                               ? Colors.white
@@ -1231,7 +1231,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       controller.toggleCategory(categoryKey);
                     },
                     child: Container(
-                      padding: EdgeInsets.all(12.w),
+                      padding: EdgeInsets.all(8.w),
                       decoration: BoxDecoration(
                         color: const Color(0xFFF5F5F5),
                         shape: BoxShape.circle,
@@ -1241,7 +1241,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         isExpanded
                             ? Icons.keyboard_arrow_up
                             : Icons.keyboard_arrow_down,
-                        size: 20,
+                        size: 18,
                         color: const Color(0xFF666666),
                       ),
                     ),
