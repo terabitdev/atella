@@ -30,7 +30,7 @@ class ImageUploadContainer extends StatelessWidget {
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
+          duration: const Duration(milliseconds: 1500),
         );
       }
     } catch (e) {
@@ -41,7 +41,7 @@ class ImageUploadContainer extends StatelessWidget {
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }

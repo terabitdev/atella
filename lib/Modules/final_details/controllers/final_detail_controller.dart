@@ -464,6 +464,7 @@ class FinalDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor:Colors.black,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     } else {
       Get.toNamed('/generate_tech_pack', arguments: {
@@ -476,6 +477,7 @@ class FinalDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }
@@ -494,6 +496,7 @@ class FinalDetailsController extends GetxController {
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.black,
               colorText: Colors.white,
+              duration: const Duration(milliseconds: 1500),
             );
             await Future.delayed(Duration(seconds: 2));
             // First increment the usage count since we now have extra designs

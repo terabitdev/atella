@@ -39,6 +39,7 @@ class ProfileController extends GetxController {
         'Error',
         'Failed to load profile data',
         snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
       );
     } finally {
       isLoading.value = false;
@@ -67,6 +68,7 @@ class ProfileController extends GetxController {
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.black,
             colorText: Colors.white,
+            duration: const Duration(milliseconds: 1500),
           );
         } else {
           Get.snackbar(
@@ -75,6 +77,7 @@ class ProfileController extends GetxController {
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade100,
             colorText: Colors.red.shade800,
+            duration: const Duration(milliseconds: 1500),
           );
         }
       } catch (e) {
@@ -85,6 +88,7 @@ class ProfileController extends GetxController {
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red.shade100,
           colorText: Colors.red.shade800,
+          duration: const Duration(milliseconds: 1500),
         );
       } finally {
         print('✅ isLoading set to false');
@@ -97,7 +101,11 @@ class ProfileController extends GetxController {
 
   bool validateForm() {
     if (fullNameController.text.trim().isEmpty) {
-      Get.snackbar('Error', 'Please enter your full name');
+      Get.snackbar(
+        'Error',
+        'Please enter your full name',
+        duration: const Duration(milliseconds: 1500),
+      );
       return false;
     }
 

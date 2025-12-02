@@ -1,13 +1,9 @@
-import 'package:atella/Data/api/openai_service.dart';
 import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
-import 'package:atella/services/manufacture_services/manufacturer_firebase_service.dart';
-import 'package:atella/services/manufacture_services/manufacturer_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});

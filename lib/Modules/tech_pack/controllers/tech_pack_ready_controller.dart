@@ -112,7 +112,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
         );
         return;
       }
@@ -238,7 +238,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
         );
       } else {
         // NEW TECH PACK MODE: Create new tech pack
@@ -260,7 +260,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
         );
       }
 
@@ -278,7 +278,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
       print('Error saving tech pack: ${e.toString()}');
     } finally {
@@ -330,7 +330,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
     } finally {
       isExporting.value = false;
@@ -372,7 +372,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
     } finally {
       isExporting.value = false;

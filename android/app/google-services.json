@@ -22,6 +22,14 @@
           }
         },
         {
+          "client_id": "1097482533368-g5abhugav5i4amnfu697mr43m9lma339.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.atella",
+            "certificate_hash": "fe5040c3310451bcc2785654f2477f8f3209d7a2"
+          }
+        },
+        {
           "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
           "client_type": 3
         }

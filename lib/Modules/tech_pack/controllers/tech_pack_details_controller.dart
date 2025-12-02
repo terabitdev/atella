@@ -196,7 +196,7 @@ class TechPackDetailsController extends GetxController {
             backgroundColor: Colors.black,
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
-            duration: Duration(seconds: 3),
+            duration: const Duration(milliseconds: 1500),
           );
         }
       }
@@ -208,6 +208,7 @@ class TechPackDetailsController extends GetxController {
         backgroundColor: Colors.black,
         snackPosition: SnackPosition.TOP,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }
@@ -539,6 +540,7 @@ class TechPackDetailsController extends GetxController {
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.black,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
       } else {
         print(
@@ -1266,7 +1268,7 @@ class TechPackDetailsController extends GetxController {
           backgroundColor: Colors.green,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 4),
+          duration: const Duration(milliseconds: 1500),
         );
         
         // After successful purchase, allow user to generate techpack

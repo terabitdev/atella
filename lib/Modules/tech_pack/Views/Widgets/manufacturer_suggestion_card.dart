@@ -121,7 +121,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                 value: manufacturer.phoneNumber ?? 'Not available',
                 onTap: manufacturer.phoneNumber != null
                     ? () => _launchUrl(manufacturer.phoneNumber!)
-                    : () => Get.snackbar('Error', 'Phone number not available'),
+                    : () => Get.snackbar('Error', 'Phone number not available', duration: const Duration(milliseconds: 1500)),
                 isAvailable: manufacturer.phoneNumber != null,
               ),
               SizedBox(height: 12.h),

@@ -206,6 +206,7 @@ class HomeController extends GetxController {
         'Failed to update favorite status',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }

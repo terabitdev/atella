@@ -87,6 +87,23 @@ class CreativeBriefController extends GetxController {
   final RxSet<String> _editingQuestions = <String>{}.obs;
   Set<String> get editingQuestions => _editingQuestions;
 
+  // Track expanded state for expandable sections
+  final RxMap<String, bool> _expandedCategories = <String, bool>{}.obs;
+  Map<String, bool> get expandedCategories => _expandedCategories;
+
+  // Helper methods for expandable categories
+  void toggleCategory(String categoryKey) {
+    _expandedCategories[categoryKey] = !(_expandedCategories[categoryKey] ?? false);
+  }
+
+  void collapseCategory(String categoryKey) {
+    _expandedCategories[categoryKey] = false;
+  }
+
+  void expandCategory(String categoryKey) {
+    _expandedCategories[categoryKey] = true;
+  }
+
   // Questions data
   final List<BriefQuestion> questions = [
     BriefQuestion(
@@ -275,7 +292,7 @@ class CreativeBriefController extends GetxController {
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 2),
+        duration: const Duration(milliseconds: 1500),
       );
 
       // Get complete edit data from Firebase
@@ -315,7 +332,7 @@ class CreativeBriefController extends GetxController {
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 2),
+          duration: const Duration(milliseconds: 1500),
         );
       } else {
         print('No edit data found, using default values');
@@ -328,7 +345,7 @@ class CreativeBriefController extends GetxController {
         'Failed to load existing data. Using defaults.',
         backgroundColor: Colors.black,
         colorText: Colors.white,
-        duration: Duration(seconds: 2),
+        duration: const Duration(milliseconds: 1500),
         snackPosition: SnackPosition.TOP,
       );
       _prefillDemoAnswers(_editingTechPack);
@@ -651,6 +668,7 @@ class CreativeBriefController extends GetxController {
         'Previous answers have been loaded for editing',
         backgroundColor: Colors.green,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     });
   }
@@ -755,9 +773,11 @@ class CreativeBriefController extends GetxController {
     ); // Debug
 
     // Check if this option is already selected (for deselection)
-    final isAlreadySelected = _tempSelections[questionId] == option ||
+    final tempValue = categoryName != null ? '$categoryName:$option' : option;
+    final answerValue = categoryName != null ? '$categoryName:$option' : option;
+    final isAlreadySelected = _tempSelections[questionId] == tempValue ||
         (_answers.containsKey(questionId) &&
-            _answers[questionId]!.selectedOptions.contains(option));
+            _answers[questionId]!.selectedOptions.contains(answerValue));
 
     // If "Custom" is selected
     if (option == 'Custom') {
@@ -819,7 +839,12 @@ class CreativeBriefController extends GetxController {
     }
 
     // For non-custom options, store as temporary selection
-    _tempSelections[questionId] = option;
+    // For categorized questions, store with category prefix
+    if (categoryName != null) {
+      _tempSelections[questionId] = '$categoryName:$option';
+    } else {
+      _tempSelections[questionId] = option;
+    }
 
     // Clear custom selection if user selects a different option
     if (_customSelectedForQuestion.value == questionId) {
@@ -828,6 +853,14 @@ class CreativeBriefController extends GetxController {
     if (categoryName != null &&
         _customSelectedForCategory.value == '$questionId:$categoryName') {
       _customSelectedForCategory.value = '';
+    }
+
+    // Collapse the section immediately after selection
+    if (categoryName != null) {
+      final categoryKey = '${questionId}_$categoryName';
+      collapseCategory(categoryKey);
+    } else {
+      collapseCategory(questionId);
     }
 
     // Update the UI
@@ -843,7 +876,8 @@ class CreativeBriefController extends GetxController {
         const Duration(milliseconds: 2000),
       ); // Increased delay to 2 seconds
       // Check if the selection is still the same (user hasn't changed it)
-      if (_tempSelections[questionId] == option) {
+      final expectedValue = categoryName != null ? '$categoryName:$option' : option;
+      if (_tempSelections[questionId] == expectedValue) {
         _confirmCurrentSelection(questionId);
       }
     }
@@ -852,6 +886,9 @@ class CreativeBriefController extends GetxController {
   // Method to confirm current selection and advance
   void _confirmCurrentSelection(String questionId) {
     final tempSelection = _tempSelections[questionId];
+    print('=== _confirmCurrentSelection called ===');
+    print('Question ID: $questionId');
+    print('Temp selection: $tempSelection');
     if (tempSelection != null) {
       print('=== CONFIRMING SELECTION ===');
       print('Question ID: $questionId');
@@ -871,7 +908,14 @@ class CreativeBriefController extends GetxController {
 
       // Trigger multiple updates to ensure reactivity
       _answers.refresh();
+      _tempSelections.refresh();
       update();
+
+      // Force another update after a short delay to ensure UI updates
+      Future.delayed(const Duration(milliseconds: 50), () {
+        _answers.refresh();
+        update();
+      });
 
       print('Answers map size: ${_answers.length}');
       print('All answered questions: ${_answers.keys.toList()}');
@@ -1256,6 +1300,8 @@ class CreativeBriefController extends GetxController {
     if (_customSelectedForCategory.value == 'colors:Prints') {
       _customSelectedForCategory.value = '';
     }
+    // Collapse the Prints section after selection
+    collapseCategory('colors_Prints');
     _checkAndSaveColorsAnswer(trigger: 'print');
     update();
   }
@@ -1292,6 +1338,8 @@ class CreativeBriefController extends GetxController {
     if (_customSelectedForCategory.value == 'colors:Techniques') {
       _customSelectedForCategory.value = '';
     }
+    // Collapse the Techniques section after selection
+    collapseCategory('colors_Techniques');
     _checkAndSaveColorsAnswer(trigger: 'technique');
     update();
   }
@@ -1501,6 +1549,7 @@ class CreativeBriefController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }
@@ -1981,7 +2030,7 @@ class CreativeBriefController extends GetxController {
                       backgroundColor: Colors.black,
                       colorText: Colors.white,
                       snackPosition: SnackPosition.TOP,
-                      duration: Duration(seconds: 2),
+                      duration: const Duration(milliseconds: 1500),
                     );
                     return;
                   }
@@ -2024,7 +2073,7 @@ class CreativeBriefController extends GetxController {
                     backgroundColor: Colors.black,
                     colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
-                    duration: Duration(seconds: 2),
+                    duration: const Duration(milliseconds: 1500),
                   );
                   return;
                 }
@@ -2049,7 +2098,7 @@ class CreativeBriefController extends GetxController {
                 'Your answer has been updated successfully',
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
-                duration: Duration(seconds: 2),
+                duration: const Duration(milliseconds: 1500),
                 margin: EdgeInsets.all(16),
                 snackPosition: SnackPosition.TOP,
               );
@@ -2319,7 +2368,7 @@ class CreativeBriefController extends GetxController {
                   backgroundColor: Colors.black,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.TOP,
-                  duration: const Duration(seconds: 2),
+                  duration: const Duration(milliseconds: 1500),
                 );
                 return;
               }
@@ -2332,7 +2381,7 @@ class CreativeBriefController extends GetxController {
                   backgroundColor: Colors.black,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.TOP,
-                  duration: const Duration(seconds: 2),
+                  duration: const Duration(milliseconds: 1500),
                 );
                 return;
               }
@@ -2361,7 +2410,7 @@ class CreativeBriefController extends GetxController {
                 'Your prints and techniques have been updated successfully',
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
-                duration: Duration(seconds: 2),
+                duration: const Duration(milliseconds: 1500),
                 margin: EdgeInsets.all(16),
                 snackPosition: SnackPosition.TOP,
               );

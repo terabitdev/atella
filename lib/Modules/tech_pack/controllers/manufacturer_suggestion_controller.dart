@@ -256,7 +256,7 @@ class ManufacturerSuggestionController extends GetxController {
         'This manufacturer does not have an email address on file.',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
       return;
     }
@@ -377,7 +377,7 @@ class ManufacturerSuggestionController extends GetxController {
           'Your tech pack has been sent to ${manufacturer.name} at ${manufacturer.email}',
           backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: const Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
           icon: const Icon(Icons.check_circle, color: Colors.white),
         );
       } else {
@@ -386,7 +386,7 @@ class ManufacturerSuggestionController extends GetxController {
           'Failed to send email to ${manufacturer.name}. Please try again.',
           backgroundColor: Colors.red,
           colorText: Colors.white,
-          duration: const Duration(seconds: 5),
+          duration: const Duration(milliseconds: 1500),
           icon: const Icon(Icons.error, color: Colors.white),
         );
       }
@@ -396,7 +396,7 @@ class ManufacturerSuggestionController extends GetxController {
         'An error occurred while sending email: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        duration: const Duration(seconds: 5),
+        duration: const Duration(milliseconds: 1500),
         icon: const Icon(Icons.error, color: Colors.white),
       );
     } finally {
@@ -414,7 +414,7 @@ class ManufacturerSuggestionController extends GetxController {
         'This manufacturer does not have an email address on file.',
         backgroundColor: Colors.orange,
         colorText: Colors.white,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
       return;
     }

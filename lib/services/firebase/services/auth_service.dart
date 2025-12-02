@@ -1,6 +1,6 @@
-
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 
 class AuthService {
@@ -58,6 +58,7 @@ class AuthService {
       return 'An error occurred';
     }
   }
+
   // Get the current user (null if not signed in)
   User? get currentUser => _auth.currentUser;
 
@@ -66,7 +67,10 @@ class AuthService {
     try {
       User? user = currentUser;
       if (user != null) {
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+        DocumentSnapshot userDoc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .get();
         if (userDoc.exists) {
           return userDoc.data() as Map<String, dynamic>;
         }
@@ -79,9 +83,7 @@ class AuthService {
   }
 
   // Update user profile data
-  Future<bool> updateUserProfile({
-    required String name,
-  }) async {
+  Future<bool> updateUserProfile({required String name}) async {
     try {
       User? user = currentUser;
       if (user != null) {
@@ -89,11 +91,11 @@ class AuthService {
           'name': name,
           'updatedAt': FieldValue.serverTimestamp(),
         });
-        
+
         // Also update the Firebase Auth display name
         await user.updateDisplayName(name);
         await user.reload();
-        
+
         return true;
       }
       return false;
@@ -110,18 +112,24 @@ class AuthService {
         return 'Google sign-in was cancelled';
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
       );
 
-      UserCredential userCredential = await _auth.signInWithCredential(credential);
+      UserCredential userCredential = await _auth.signInWithCredential(
+        credential,
+      );
       User? user = userCredential.user;
 
       if (user != null) {
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-        
+        DocumentSnapshot userDoc = await _firestore
+            .collection('users')
+            .doc(user.uid)
+            .get();
+
         if (!userDoc.exists) {
           await _firestore.collection('users').doc(user.uid).set({
             'uid': user.uid,
@@ -140,8 +148,13 @@ class AuthService {
         return 'Google sign-in failed';
       }
     } on FirebaseAuthException catch (e) {
+      debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
       return e.message;
     } catch (e) {
+      debugPrint('Error during Google sign-in: $e');
+      if (e.toString().contains('sign_in_failed') || e.toString().contains('ApiException: 10')) {
+        return 'Configuration error. Please ensure SHA-1 fingerprint is added to Firebase Console.';
+      }
       return 'An error occurred during Google sign-in';
     }
   }

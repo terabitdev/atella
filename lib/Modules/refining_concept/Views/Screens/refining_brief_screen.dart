@@ -1,7 +1,1000 @@
+// import 'package:atella/Data/Models/brief_questions_model.dart';
+// import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
+// import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
+// import 'package:atella/Widgets/custom_roundbutton.dart';
+// import 'package:atella/Widgets/questionare_app_header.dart';
+// import 'package:atella/core/themes/app_colors.dart';
+// import 'package:atella/core/themes/app_fonts.dart';
+// import 'package:flutter/material.dart';
+// import 'package:flutter/services.dart';
+// import 'package:flutter_screenutil/flutter_screenutil.dart';
+// import 'package:get/get.dart';
+// import 'package:lottie/lottie.dart';
+
+// class RefiningBriefScreen extends GetView<RefiningConceptController> {
+//   const RefiningBriefScreen({super.key});
+
+//   @override
+//   Widget build(BuildContext context) {
+//     SystemChrome.setSystemUIOverlayStyle(
+//       const SystemUiOverlayStyle(
+//         statusBarColor: Colors.transparent,
+//         statusBarIconBrightness: Brightness.dark,
+//         statusBarBrightness: Brightness.light,
+//       ),
+//     );
+
+//     return Scaffold(
+//       backgroundColor: const Color(0xFFFAFAFA),
+//       body: Column(
+//         children: [
+//           AppHeader(
+//             title: 'Refining the Concept',
+//             timeTextGetter: () => controller.currentTime,
+//             titleStyle: qTextStyle14600,
+//             onBack: () => Navigator.of(context).pop(),
+//           ),
+//           Expanded(
+//             child: Padding(
+//               padding: const EdgeInsets.symmetric(horizontal: 24),
+//               child: _buildQuestionsList(),
+//             ),
+//           ),
+//           Obx(() {
+//             final allQuestionsAnswered =
+//                 controller.answers.length >= controller.questions.length;
+
+//             // Show button when all questions are answered (temporary selections will auto-confirm)
+//             if (allQuestionsAnswered) {
+//               return _buildBottomButton();
+//             }
+//             // Show categorized custom input when a category custom is selected (for ANY question, not just current)
+//             final customInfo = controller.getAnyCustomSelectedCategory();
+//             if (customInfo != null) {
+//               return _buildBottomCategorizedCustomInput(
+//                 customInfo['questionId']!,
+//                 customInfo['categoryName']!,
+//               );
+//             }
+//             // Show custom input if custom is selected
+//             if (controller.isCustomSelectedForCurrentQuestion()) {
+//               return _buildBottomCustomInput();
+//             }
+//             return const SizedBox.shrink();
+//           }),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildQuestionsList() {
+//     return Obx(
+//       () => ListView.builder(
+//         padding: const EdgeInsets.only(top: 32, bottom: 20),
+//         itemCount: controller.questionsToShow,
+//         itemBuilder: (context, index) {
+//           final question = controller.questions[index];
+//           final isAnswered = controller.isQuestionAnswered(question.id);
+//           final isCurrentQuestion = index == controller.currentQuestionIndex;
+
+//           // Debug prints
+//           if (index == 0) {
+//             // Only debug first question to avoid spam
+//             print(
+//               'Question ${question.id}: isAnswered=$isAnswered, isCurrentQuestion=$isCurrentQuestion',
+//             );
+//             print('Answer count: ${controller.answers.length}');
+//             print('Temp selections: ${controller.tempSelections}');
+//           }
+
+//           // Debug prints
+//           if (isCurrentQuestion) {
+//             print('Current question: ${question.id}');
+//             print(
+//               'Is Custom Selected: ${controller.isCustomSelectedForCurrentQuestion()}',
+//             );
+//             print('Is Answered: $isAnswered');
+//             print('Question Type: ${question.type}');
+//           }
+
+//           return Column(
+//             children: [
+//               _buildQuestionItem(question, index),
+//               // Show animation below current unanswered question's answers
+//               if (controller.shouldShowAnimationAfterQuestion(index))
+//                 _buildLottieAnimation(),
+//             ],
+//           );
+//         },
+//       ),
+//     );
+//   }
+
+//   Widget _buildLottieAnimation() {
+//     return Container(
+//       padding: const EdgeInsets.symmetric(vertical: 20),
+//       child: Center(
+//         child: Lottie.asset(
+//           'assets/lottie/Loading_dots.json',
+//           width: 100.w,
+//           height: 100.h,
+//           fit: BoxFit.contain,
+//           repeat: true,
+//           animate: true,
+//         ),
+//       ),
+//     );
+//   }
+
+//   // Display custom answer - matching creative brief style
+//   Widget _buildCustomAnswerDisplay(BriefAnswer? answer) {
+//     if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
+//       return Container(
+//         margin: EdgeInsets.only(top: 8.h, left: 8.w),
+//         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+//         decoration: BoxDecoration(
+//           color: AppColors.buttonColor,
+//           borderRadius: BorderRadius.circular(20.r),
+//         ),
+//         child: Text(
+//           answer.textInput!,
+//           style: TextStyle(
+//             fontSize: 14.sp,
+//             color: Colors.white,
+//             fontWeight: FontWeight.w500,
+//           ),
+//         ),
+//       );
+//     }
+//     return const SizedBox.shrink();
+//   }
+
+//   Widget _buildQuestionItem(BriefQuestion question, int index) {
+//     final isAnswered = controller.isQuestionAnswered(question.id);
+//     final answer = controller.getAnswer(question.id);
+
+//     return Container(
+//       margin: const EdgeInsets.only(bottom: 32),
+//       child: Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Question Bubble - matching creative brief design EXACTLY
+//           Container(
+//             padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+//             decoration: BoxDecoration(
+//               color: const Color(0xFFF8F9FA),
+//               borderRadius: BorderRadius.circular(12.r),
+//               border: Border.all(
+//                 color: isAnswered
+//                     ? AppColors.buttonColor.withValues(alpha: 0.3)
+//                     : const Color(0xFFE8E8E8),
+//                 width: 1.5,
+//               ),
+//             ),
+//             child: Row(
+//               crossAxisAlignment: CrossAxisAlignment.start,
+//               children: [
+//                 Expanded(
+//                   child: Text(
+//                     question.question,
+//                     style: TextStyle(
+//                       fontSize: 15.sp,
+//                       fontWeight: FontWeight.w600,
+//                       color: const Color(0xFF2C2C2C),
+//                       height: 1.5,
+//                       letterSpacing: -0.2,
+//                     ),
+//                   ),
+//                 ),
+//                 if (isAnswered) ...[
+//                   SizedBox(width: 12.w),
+//                   Container(
+//                     padding: const EdgeInsets.all(5),
+//                     decoration: BoxDecoration(
+//                       color: AppColors.buttonColor,
+//                       shape: BoxShape.circle,
+//                     ),
+//                     child: const Icon(
+//                       Icons.check,
+//                       color: Colors.white,
+//                       size: 14,
+//                     ),
+//                   ),
+//                 ],
+//               ],
+//             ),
+//           ),
+
+//           SizedBox(height: 16.h),
+
+//           // Answer Options
+//           if (question.type == 'chips')
+//             _buildChipOptions(question, isAnswered, answer),
+
+//           // Answer Options for categorized chips
+//           if (question.type == 'chips_categorized')
+//             _buildCategorizedChipOptions(question, isAnswered, answer),
+
+//           // Show custom answer if answered with custom text
+//           if (isAnswered &&
+//               (question.type == 'chips' || question.type == 'chips_categorized'))
+//             _buildCustomAnswerDisplay(answer),
+//         ],
+//       ),
+//     );
+//   }
+
+//   Widget _buildChipOptions(
+//     BriefQuestion question,
+//     bool isAnswered,
+//     BriefAnswer? answer,
+//   ) {
+//     // For multi-select questions, show all selected options
+//     if (question.allowMultiple) {
+//       return Obx(() {
+//         // Get the latest answer from controller to ensure reactivity
+//         final latestAnswer = controller.getAnswer(question.id);
+//         final selectedOptions = controller.tempMultiSelections.isNotEmpty
+//             ? controller.tempMultiSelections.toList()
+//             : (latestAnswer?.selectedOptions ?? []);
+
+//         return _buildExpandableMultiSelectSection(
+//           questionId: question.id,
+//           options: question.options,
+//           selectedOptions: selectedOptions,
+//           onTap: (option) => controller.selectOption(option, forQuestionId: question.id),
+//           isAnswered: isAnswered,
+//         );
+//       });
+//     }
+
+//     // For single-select questions, use expandable section
+//     return Obx(() {
+//       // Get the latest answer from controller to ensure reactivity
+//       final latestAnswer = controller.getAnswer(question.id);
+//       final selectedOptions = latestAnswer?.selectedOptions ?? [];
+
+//       return _buildExpandableChipSection(
+//         questionId: question.id,
+//         options: question.options,
+//         selectedOptions: selectedOptions,
+//         onTap: (option) => controller.selectOption(option, forQuestionId: question.id),
+//         isAnswered: isAnswered,
+//       );
+//     });
+//   }
+
+//   Widget _buildCategorizedChipOptions(
+//     BriefQuestion question,
+//     bool isAnswered,
+//     BriefAnswer? answer,
+//   ) {
+//     if (question.categories == null) {
+//       return const SizedBox.shrink();
+//     }
+
+//     return Column(
+//       crossAxisAlignment: CrossAxisAlignment.start,
+//       children: question.categories!.entries.map((category) {
+//         return _buildCategorySection(
+//           categoryName: category.key,
+//           options: category.value,
+//           question: question,
+//           isAnswered: isAnswered,
+//           answer: answer,
+//         );
+//       }).toList(),
+//     );
+//   }
+
+//   Widget _buildCategorySection({
+//     required String categoryName,
+//     required List<String> options,
+//     required BriefQuestion question,
+//     required bool isAnswered,
+//     required BriefAnswer? answer,
+//   }) {
+//     return _buildExpandableCategorizedSection(
+//       questionId: question.id,
+//       categoryName: categoryName,
+//       options: options,
+//       answer: answer,
+//       onTap: (option) {
+//         controller.selectCategorizedOption(
+//           question.id,
+//           categoryName,
+//           option,
+//         );
+//       },
+//       isAnswered: isAnswered,
+//     );
+//   }
+
+//   // Expandable categorized section
+//   Widget _buildExpandableCategorizedSection({
+//     required String questionId,
+//     required String categoryName,
+//     required List<String> options,
+//     required BriefAnswer? answer,
+//     required Function(String) onTap,
+//     required bool isAnswered,
+//   }) {
+//     final categoryKey = '${questionId}_$categoryName';
+
+//     // Get selected option for this category - check both temp and final selections
+//     String? getSelectedValue() {
+//       // First check temp categorized selections
+//       final tempCatSelection = controller.getTempSelectionForCategory(categoryName);
+//       if (tempCatSelection != null) {
+//         return tempCatSelection;
+//       }
+
+//       // Then check final answer
+//       if (answer?.selectedOptions.isNotEmpty == true) {
+//         for (final opt in answer!.selectedOptions) {
+//           if (opt.startsWith('$categoryName:')) {
+//             return opt.substring('$categoryName:'.length);
+//           }
+//         }
+//       }
+//       return null;
+//     }
+
+//     // Get custom text for category
+//     String? getCustomText() {
+//       final textInput = answer?.textInput;
+//       if (textInput == null || textInput.isEmpty) return null;
+
+//       if (textInput.contains('|||')) {
+//         final parts = textInput.split('|||');
+//         for (final part in parts) {
+//           final separatorIndex = part.indexOf(':');
+//           if (separatorIndex != -1) {
+//             final key = part.substring(0, separatorIndex);
+//             final value = part.substring(separatorIndex + 1);
+//             if (key == categoryName) {
+//               return value;
+//             }
+//           }
+//         }
+//       } else if (textInput.contains(':')) {
+//         final separatorIndex = textInput.indexOf(':');
+//         if (separatorIndex != -1) {
+//           final key = textInput.substring(0, separatorIndex);
+//           final value = textInput.substring(separatorIndex + 1);
+//           if (key == categoryName) {
+//             return value;
+//           }
+//         }
+//       }
+//       return null;
+//     }
+
+//     return Obx(() {
+//       final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+//       final selectedValue = getSelectedValue();
+//       final customTextForCategory = getCustomText();
+//       final hasSelection = selectedValue != null;
+
+//       return Column(
+//         crossAxisAlignment: CrossAxisAlignment.start,
+//         children: [
+//           // Category title
+//           Padding(
+//             padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+//             child: Text(
+//               categoryName,
+//               style: TextStyle(
+//                 fontSize: 14.sp,
+//                 fontWeight: FontWeight.w600,
+//                 color: const Color(0xFF666666),
+//               ),
+//             ),
+//           ),
+//           // Show selected + 2 more options when collapsed
+//           if (hasSelection && !isExpanded && isAnswered)
+//             Wrap(
+//               spacing: 8.w,
+//               runSpacing: 8.h,
+//               children: [
+//                 // Selected option chip
+//                 GestureDetector(
+//                   onTap: () {
+//                     // Expand to allow editing
+//                     controller.expandCategory(categoryKey);
+//                   },
+//                   child: Container(
+//                     padding: EdgeInsets.symmetric(
+//                       horizontal: 20.w,
+//                       vertical: 12.h,
+//                     ),
+//                     decoration: BoxDecoration(
+//                       color: AppColors.buttonColor,
+//                       borderRadius: BorderRadius.circular(25.r),
+//                     ),
+//                     child: Text(
+//                       selectedValue,
+//                       style: TextStyle(
+//                         fontSize: 14.sp,
+//                         fontWeight: FontWeight.w500,
+//                         color: Colors.white,
+//                       ),
+//                     ),
+//                   ),
+//                 ),
+//                 // 2 more unselected options
+//                 ...options.where((opt) => opt != selectedValue).take(2).map((option) {
+//                   return GestureDetector(
+//                     onTap: () {
+//                       // Expand to allow selection
+//                       controller.expandCategory(categoryKey);
+//                     },
+//                     child: Container(
+//                       padding: EdgeInsets.symmetric(
+//                         horizontal: 20.w,
+//                         vertical: 12.h,
+//                       ),
+//                       decoration: BoxDecoration(
+//                         color: const Color(0xFFF5F5F5),
+//                         borderRadius: BorderRadius.circular(25.r),
+//                         border: Border.all(
+//                           color: const Color(0xFFE0E0E0),
+//                           width: 1,
+//                         ),
+//                       ),
+//                       child: Text(
+//                         option,
+//                         style: TextStyle(
+//                           fontSize: 14.sp,
+//                           fontWeight: FontWeight.w500,
+//                           color: const Color(0xFF333333),
+//                         ),
+//                       ),
+//                     ),
+//                   );
+//                 }),
+//                 // Expand arrow if there are more options
+//                 if (options.length > 3)
+//                   GestureDetector(
+//                     onTap: () {
+//                       controller.expandCategory(categoryKey);
+//                     },
+//                     child: Container(
+//                       padding: EdgeInsets.all(12.w),
+//                       decoration: BoxDecoration(
+//                         color: const Color(0xFFF5F5F5),
+//                         shape: BoxShape.circle,
+//                         border: Border.all(color: const Color(0xFFE0E0E0)),
+//                       ),
+//                       child: Icon(
+//                         Icons.keyboard_arrow_down,
+//                         size: 20,
+//                         color: const Color(0xFF666666),
+//                       ),
+//                     ),
+//                   ),
+//               ],
+//             )
+//           else
+//             // Show expandable list (3 options initially)
+//             Wrap(
+//               spacing: 8.w,
+//               runSpacing: 8.h,
+//               children: [
+//                 ...(isExpanded ? options : options.take(3).toList()).map((
+//                   option,
+//                 ) {
+//                   bool isSelected = false;
+
+//                   if (option == 'Custom') {
+//                     // Check both temp state AND saved answer
+//                     isSelected =
+//                         controller.isCustomSelectedForCategory(
+//                           questionId,
+//                           categoryName,
+//                         ) ||
+//                         (selectedValue == 'Custom');
+//                   } else {
+//                     // Check temp selection OR saved answer
+//                     isSelected =
+//                         controller.getTempSelectionForCategory(categoryName) ==
+//                             option ||
+//                         selectedValue == option;
+//                   }
+
+//                   return GestureDetector(
+//                     onTap: () {
+//                       onTap(option);
+//                     },
+//                     child: Container(
+//                       padding: EdgeInsets.symmetric(
+//                         horizontal: 20.w,
+//                         vertical: 12.h,
+//                       ),
+//                       decoration: BoxDecoration(
+//                         color: isSelected
+//                             ? AppColors.buttonColor
+//                             : const Color(0xFFF5F5F5),
+//                         borderRadius: BorderRadius.circular(25.r),
+//                         border: Border.all(
+//                           color: isSelected
+//                               ? Colors.transparent
+//                               : const Color(0xFFE0E0E0),
+//                           width: 1,
+//                         ),
+//                       ),
+//                       child: Text(
+//                         option,
+//                         style: TextStyle(
+//                           fontSize: 14.sp,
+//                           fontWeight: FontWeight.w500,
+//                           color: isSelected
+//                               ? Colors.white
+//                               : const Color(0xFF333333),
+//                         ),
+//                       ),
+//                     ),
+//                   );
+//                 }),
+//                 // Show expand/collapse button if there are more than 3 options
+//                 if (options.length > 3)
+//                   GestureDetector(
+//                     onTap: () {
+//                       controller.toggleCategory(categoryKey);
+//                     },
+//                     child: Container(
+//                       padding: EdgeInsets.all(12.w),
+//                       decoration: BoxDecoration(
+//                         color: const Color(0xFFF5F5F5),
+//                         shape: BoxShape.circle,
+//                         border: Border.all(color: const Color(0xFFE0E0E0)),
+//                       ),
+//                       child: Icon(
+//                         isExpanded
+//                             ? Icons.keyboard_arrow_up
+//                             : Icons.keyboard_arrow_down,
+//                         size: 20,
+//                         color: const Color(0xFF666666),
+//                       ),
+//                     ),
+//                   ),
+//               ],
+//             ),
+//           // Show custom answer if answered with custom text
+//           if (isAnswered &&
+//               selectedValue == 'Custom' &&
+//               customTextForCategory != null &&
+//               customTextForCategory.isNotEmpty) ...[
+//             SizedBox(height: 8.h),
+//             Container(
+//               margin: EdgeInsets.only(left: 8.w),
+//               padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+//               decoration: BoxDecoration(
+//                 color: AppColors.buttonColor,
+//                 borderRadius: BorderRadius.circular(20.r),
+//               ),
+//               child: Text(
+//                 customTextForCategory,
+//                 style: TextStyle(
+//                   fontSize: 14.sp,
+//                   color: Colors.white,
+//                   fontWeight: FontWeight.w500,
+//                 ),
+//               ),
+//             ),
+//           ],
+//           SizedBox(height: 16.h),
+//         ],
+//       );
+//     });
+//   }
+
+//   Widget _buildBottomCustomInput() {
+//     return Obx(() {
+//       // FIXED: Only show custom input when custom is selected
+//       if (controller.isCustomSelectedForCurrentQuestion()) {
+//         return Container(
+//           padding: EdgeInsets.all(24.w),
+//           child: TextInputWithSend(
+//             controller: controller.customController,
+//             placeholder: 'Enter your custom answer...',
+//             onSend: () {
+//               controller.submitCustomAnswer();
+//             },
+//             isLoading: controller.isTextLoading,
+//           ),
+//         );
+//       }
+//       return const SizedBox.shrink();
+//     });
+//   }
+
+//   Widget _buildBottomCategorizedCustomInput(
+//     String questionId,
+//     String categoryName,
+//   ) {
+//     TextEditingController? textController;
+//     VoidCallback? onSend;
+
+//     if (questionId == 'specific_features') {
+//       textController = controller.specificFeaturesCustomController;
+//       onSend = () {
+//         controller.submitCategorizedCustomAnswer(
+//           questionId,
+//           categoryName,
+//           textController!,
+//         );
+//       };
+//     }
+
+//     if (textController == null || onSend == null) {
+//       return const SizedBox.shrink();
+//     }
+
+//     return Container(
+//       padding: EdgeInsets.all(24.w),
+//       child: TextInputWithSend(
+//         controller: textController,
+//         placeholder: 'Enter custom ${categoryName.toLowerCase()}...',
+//         onSend: onSend,
+//         isLoading: controller.isTextLoading,
+//       ),
+//     );
+//   }
+
+//   Widget _buildBottomButton() {
+//     return Padding(
+//       padding: const EdgeInsets.all(24.0),
+//       child: RoundButton(
+//         title: 'Generate Design',
+//         onTap: () {
+//           controller.proceedToDesignGeneration();
+//         },
+//         color: AppColors.buttonColor,
+//         isloading: false,
+//       ),
+//     );
+//   }
+
+//   // Expandable chip section for single-select chip options
+//   Widget _buildExpandableChipSection({
+//     required String questionId,
+//     required List<String> options,
+//     required List<String> selectedOptions,
+//     required Function(String) onTap,
+//     required bool isAnswered,
+//   }) {
+//     final categoryKey = questionId;
+
+//     return Obx(() {
+//       final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+
+//       // Check temp selections first for immediate display
+//       String? selectedValue;
+//       if (controller.tempSelections.containsKey(questionId)) {
+//         selectedValue = controller.tempSelections[questionId];
+//       } else if (selectedOptions.isNotEmpty) {
+//         selectedValue = selectedOptions.first;
+//       }
+
+//       final hasSelection = selectedValue != null;
+
+//       // Show selected + 2 more options when collapsed and answered
+//       if (hasSelection && !isExpanded && isAnswered) {
+//         return Wrap(
+//           spacing: 8.w,
+//           runSpacing: 8.h,
+//           children: [
+//             // Selected option chip
+//             GestureDetector(
+//               onTap: () {
+//                 // Expand to allow editing
+//                 controller.expandCategory(categoryKey);
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                 decoration: BoxDecoration(
+//                   color: AppColors.buttonColor,
+//                   borderRadius: BorderRadius.circular(25.r),
+//                 ),
+//                 child: Text(
+//                   selectedValue,
+//                   style: TextStyle(
+//                     fontSize: 14.sp,
+//                     fontWeight: FontWeight.w500,
+//                     color: Colors.white,
+//                   ),
+//                 ),
+//               ),
+//             ),
+//             // 2 more unselected options
+//             ...options.where((opt) => opt != selectedValue).take(2).map((option) {
+//               return GestureDetector(
+//                 onTap: () {
+//                   // Expand to allow selection
+//                   controller.expandCategory(categoryKey);
+//                 },
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                   decoration: BoxDecoration(
+//                     color: const Color(0xFFF5F5F5),
+//                     borderRadius: BorderRadius.circular(25.r),
+//                     border: Border.all(
+//                       color: const Color(0xFFE0E0E0),
+//                       width: 1,
+//                     ),
+//                   ),
+//                   child: Text(
+//                     option,
+//                     style: TextStyle(
+//                       fontSize: 14.sp,
+//                       fontWeight: FontWeight.w500,
+//                       color: const Color(0xFF333333),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
+//             // Expand arrow if there are more options
+//             if (options.length > 3)
+//               GestureDetector(
+//                 onTap: () {
+//                   controller.expandCategory(categoryKey);
+//                 },
+//                 child: Container(
+//                   padding: EdgeInsets.all(12.w),
+//                   decoration: BoxDecoration(
+//                     color: const Color(0xFFF5F5F5),
+//                     shape: BoxShape.circle,
+//                     border: Border.all(color: const Color(0xFFE0E0E0)),
+//                   ),
+//                   child: Icon(
+//                     Icons.keyboard_arrow_down,
+//                     size: 20,
+//                     color: const Color(0xFF666666),
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         );
+//       }
+
+//       // Show expandable list (3 options initially)
+//       final displayOptions = isExpanded ? options : options.take(3).toList();
+
+//       return Wrap(
+//         spacing: 8.w,
+//         runSpacing: 8.h,
+//         children: [
+//           ...displayOptions.map((option) {
+//             final isSelected = controller.isOptionSelected(
+//               option,
+//               forQuestionId: questionId,
+//             );
+
+//             return GestureDetector(
+//               onTap: () {
+//                 onTap(option);
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                 decoration: BoxDecoration(
+//                   color: isSelected
+//                       ? AppColors.buttonColor
+//                       : const Color(0xFFF5F5F5),
+//                   borderRadius: BorderRadius.circular(25.r),
+//                   border: Border.all(
+//                     color: isSelected
+//                         ? Colors.transparent
+//                         : const Color(0xFFE0E0E0),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 child: Text(
+//                   option,
+//                   style: TextStyle(
+//                     fontSize: 14.sp,
+//                     fontWeight: FontWeight.w500,
+//                     color: isSelected ? Colors.white : const Color(0xFF333333),
+//                   ),
+//                 ),
+//               ),
+//             );
+//           }),
+//           // Show expand/collapse button if there are more than 3 options
+//           if (options.length > 3)
+//             GestureDetector(
+//               onTap: () {
+//                 controller.toggleCategory(categoryKey);
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.all(12.w),
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFFF5F5F5),
+//                   shape: BoxShape.circle,
+//                   border: Border.all(color: const Color(0xFFE0E0E0)),
+//                 ),
+//                 child: Icon(
+//                   isExpanded
+//                       ? Icons.keyboard_arrow_up
+//                       : Icons.keyboard_arrow_down,
+//                   size: 20,
+//                   color: const Color(0xFF666666),
+//                 ),
+//               ),
+//             ),
+//         ],
+//       );
+//     });
+//   }
+
+//   // Expandable section for multi-select questions
+//   Widget _buildExpandableMultiSelectSection({
+//     required String questionId,
+//     required List<String> options,
+//     required List<String> selectedOptions,
+//     required Function(String) onTap,
+//     required bool isAnswered,
+//   }) {
+//     final categoryKey = questionId;
+
+//     return Obx(() {
+//       final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+//       final hasSelection = selectedOptions.isNotEmpty;
+
+//       // Show ALL selected + 2 unselected when collapsed and answered
+//       if (hasSelection && !isExpanded && isAnswered) {
+//         final unselectedOptions = options
+//             .where((opt) => !selectedOptions.contains(opt))
+//             .take(2)
+//             .toList();
+
+//         return Wrap(
+//           spacing: 8.w,
+//           runSpacing: 8.h,
+//           children: [
+//             // ALL selected option chips
+//             ...selectedOptions.map((selectedValue) {
+//               return GestureDetector(
+//                 onTap: () {
+//                   // Expand to allow editing
+//                   controller.expandCategory(categoryKey);
+//                 },
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                   decoration: BoxDecoration(
+//                     color: AppColors.buttonColor,
+//                     borderRadius: BorderRadius.circular(25.r),
+//                   ),
+//                   child: Text(
+//                     selectedValue,
+//                     style: TextStyle(
+//                       fontSize: 14.sp,
+//                       fontWeight: FontWeight.w500,
+//                       color: Colors.white,
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
+//             // 2 more unselected options
+//             ...unselectedOptions.map((option) {
+//               return GestureDetector(
+//                 onTap: () {
+//                   // Expand to allow selection
+//                   controller.expandCategory(categoryKey);
+//                 },
+//                 child: Container(
+//                   padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                   decoration: BoxDecoration(
+//                     color: const Color(0xFFF5F5F5),
+//                     borderRadius: BorderRadius.circular(25.r),
+//                     border: Border.all(
+//                       color: const Color(0xFFE0E0E0),
+//                       width: 1,
+//                     ),
+//                   ),
+//                   child: Text(
+//                     option,
+//                     style: TextStyle(
+//                       fontSize: 14.sp,
+//                       fontWeight: FontWeight.w500,
+//                       color: const Color(0xFF333333),
+//                     ),
+//                   ),
+//                 ),
+//               );
+//             }),
+//             // Expand arrow if there are more options
+//             if (options.length > selectedOptions.length + 2)
+//               GestureDetector(
+//                 onTap: () => controller.expandCategory(categoryKey),
+//                 child: Container(
+//                   padding: EdgeInsets.all(12.w),
+//                   decoration: BoxDecoration(
+//                     color: const Color(0xFFF5F5F5),
+//                     shape: BoxShape.circle,
+//                     border: Border.all(color: const Color(0xFFE0E0E0)),
+//                   ),
+//                   child: Icon(
+//                     Icons.keyboard_arrow_down,
+//                     size: 20,
+//                     color: const Color(0xFF666666),
+//                   ),
+//                 ),
+//               ),
+//           ],
+//         );
+//       }
+
+//       // Show expandable list (3 options initially)
+//       final displayOptions = isExpanded ? options : options.take(3).toList();
+
+//       return Wrap(
+//         spacing: 8.w,
+//         runSpacing: 8.h,
+//         children: [
+//           ...displayOptions.map((option) {
+//             final isSelected = selectedOptions.contains(option);
+
+//             return GestureDetector(
+//               onTap: () {
+//                 onTap(option);
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+//                 decoration: BoxDecoration(
+//                   color: isSelected
+//                       ? AppColors.buttonColor
+//                       : const Color(0xFFF5F5F5),
+//                   borderRadius: BorderRadius.circular(25.r),
+//                   border: Border.all(
+//                     color: isSelected
+//                         ? Colors.transparent
+//                         : const Color(0xFFE0E0E0),
+//                     width: 1,
+//                   ),
+//                 ),
+//                 child: Text(
+//                   option,
+//                   style: TextStyle(
+//                     fontSize: 14.sp,
+//                     fontWeight: FontWeight.w500,
+//                     color: isSelected ? Colors.white : const Color(0xFF333333),
+//                   ),
+//                 ),
+//               ),
+//             );
+//           }),
+//           // Show expand/collapse button if there are more than 3 options
+//           if (options.length > 3)
+//             GestureDetector(
+//               onTap: () {
+//                 controller.toggleCategory(categoryKey);
+//               },
+//               child: Container(
+//                 padding: EdgeInsets.all(12.w),
+//                 decoration: BoxDecoration(
+//                   color: const Color(0xFFF5F5F5),
+//                   shape: BoxShape.circle,
+//                   border: Border.all(color: const Color(0xFFE0E0E0)),
+//                 ),
+//                 child: Icon(
+//                   isExpanded
+//                       ? Icons.keyboard_arrow_up
+//                       : Icons.keyboard_arrow_down,
+//                   size: 20,
+//                   color: const Color(0xFF666666),
+//                 ),
+//               ),
+//             ),
+//         ],
+//       );
+//     });
+//   }
+// }
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
-// import 'package:atella/Modules/creative_brief/Views/Widgets/categorized_chips_widget.dart';
-import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/Widgets/questionare_app_header.dart';
@@ -72,7 +1065,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   Widget _buildQuestionsList() {
     return Obx(
       () => ListView.builder(
-        padding: const EdgeInsets.only(top: 32, bottom: 20),
+        padding: const EdgeInsets.only(top: 0, bottom: 20),
         itemCount: controller.questionsToShow,
         itemBuilder: (context, index) {
           final question = controller.questions[index];
@@ -128,20 +1121,20 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     );
   }
 
-  // Display custom answer
+  // Display custom answer - matching creative brief style
   Widget _buildCustomAnswerDisplay(BriefAnswer? answer) {
     if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
       return Container(
-        margin: const EdgeInsets.only(top: 8),
-        padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+        margin: EdgeInsets.only(top: 8.h, left: 8.w),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
         decoration: BoxDecoration(
           color: AppColors.buttonColor,
-          borderRadius: BorderRadius.circular(20),
+          borderRadius: BorderRadius.circular(20.r),
         ),
         child: Text(
           answer.textInput!,
-          style: const TextStyle(
-            fontSize: 14,
+          style: TextStyle(
+            fontSize: 14.sp,
             color: Colors.white,
             fontWeight: FontWeight.w500,
           ),
@@ -152,65 +1145,79 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildQuestionItem(BriefQuestion question, int index) {
-    return Obx(() {
-      final isAnswered = controller.isQuestionAnswered(question.id);
-      final answer = controller.getAnswer(question.id);
+    final isAnswered = controller.isQuestionAnswered(question.id);
+    final answer = controller.getAnswer(question.id);
 
-      return Container(
-        margin: const EdgeInsets.only(bottom: 32),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Question Bubble
-            Container(
-              padding: const EdgeInsets.all(20),
-              decoration: BoxDecoration(
-                border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-                color: Colors.black,
-                borderRadius: BorderRadius.only(
-                  topLeft: Radius.circular(4.r),
-                  topRight: Radius.circular(24.r),
-                  bottomLeft: Radius.circular(24.r),
-                  bottomRight: Radius.circular(24.r),
-                ),
-              ),
-              child: Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Text(question.question, style: qTextStyle16400),
-                  ),
-                  const SizedBox(width: 12),
-                  // Checkmark for answered questions
-                  if (isAnswered)
-                    Image.asset(
-                      'assets/images/tick.png',
-                      height: 16,
-                      width: 16,
-                    ),
-                ],
+    return Container(
+      margin: const EdgeInsets.only(bottom: 32),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Question Bubble - matching creative brief design EXACTLY
+          Container(
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+            decoration: BoxDecoration(
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: isAnswered
+                    ? AppColors.buttonColor.withValues(alpha: 0.3)
+                    : const Color(0xFFE8E8E8),
+                width: 1.5,
               ),
             ),
+            child: Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Expanded(
+                  child: Text(
+                    question.question,
+                    style: TextStyle(
+                      fontSize: 15.sp,
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF2C2C2C),
+                      height: 1.5,
+                      letterSpacing: -0.2,
+                    ),
+                  ),
+                ),
+                if (isAnswered) ...[
+                  SizedBox(width: 12.w),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: AppColors.buttonColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: const Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 14,
+                    ),
+                  ),
+                ],
+              ],
+            ),
+          ),
 
-            const SizedBox(height: 16),
+          SizedBox(height: 16.h),
 
-            // Answer Options
-            if (question.type == 'chips')
-              _buildChipOptions(question, isAnswered, answer),
+          // Answer Options
+          if (question.type == 'chips')
+            _buildChipOptions(question, isAnswered, answer),
 
-            // Answer Options for categorized chips
-            if (question.type == 'chips_categorized')
-              _buildCategorizedChipOptions(question, isAnswered, answer),
+          // Answer Options for categorized chips
+          if (question.type == 'chips_categorized')
+            _buildCategorizedChipOptions(question, isAnswered, answer),
 
-            // Show custom answer if answered with custom text
-            if (isAnswered &&
-                (question.type == 'chips' ||
-                    question.type == 'chips_categorized'))
-              _buildCustomAnswerDisplay(answer),
-          ],
-        ),
-      );
-    });
+          // Show custom answer if answered with custom text
+          if (isAnswered &&
+              (question.type == 'chips' ||
+                  question.type == 'chips_categorized'))
+            _buildCustomAnswerDisplay(answer),
+        ],
+      ),
+    );
   }
 
   Widget _buildChipOptions(
@@ -218,29 +1225,41 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     bool isAnswered,
     BriefAnswer? answer,
   ) {
-    return Wrap(
-      children: question.options.map((option) {
-        // Always show interactive chips - no disabled state, no edit icon
-        // IMPORTANT: Pass question.id to check THIS question's selection, not current question
-        final isSelected = controller.isOptionSelected(option, forQuestionId: question.id);
+    // For multi-select questions, show all selected options
+    if (question.allowMultiple) {
+      return Obx(() {
+        // Get the latest answer from controller to ensure reactivity
+        final latestAnswer = controller.getAnswer(question.id);
+        final selectedOptions = controller.tempMultiSelections.isNotEmpty
+            ? controller.tempMultiSelections.toList()
+            : (latestAnswer?.selectedOptions ?? []);
 
-        // Debug for Custom option
-        if (option == 'Custom') {
-          print(
-            'Custom chip - isSelected: $isSelected, isAnswered: $isAnswered',
-          );
-        }
-
-        return SelectionChipWidget(
-          text: option,
-          isSelected: isSelected,
-          onTap: () {
-            print('Chip tapped: $option'); // Debug
-            controller.selectOption(option);
-          },
+        return _buildExpandableMultiSelectSection(
+          questionId: question.id,
+          options: question.options,
+          selectedOptions: selectedOptions,
+          onTap: (option) =>
+              controller.selectOption(option, forQuestionId: question.id),
+          isAnswered: isAnswered,
         );
-      }).toList(),
-    );
+      });
+    }
+
+    // For single-select questions, use expandable section
+    return Obx(() {
+      // Get the latest answer from controller to ensure reactivity
+      final latestAnswer = controller.getAnswer(question.id);
+      final selectedOptions = latestAnswer?.selectedOptions ?? [];
+
+      return _buildExpandableChipSection(
+        questionId: question.id,
+        options: question.options,
+        selectedOptions: selectedOptions,
+        onTap: (option) =>
+            controller.selectOption(option, forQuestionId: question.id),
+        isAnswered: isAnswered,
+      );
+    });
   }
 
   Widget _buildCategorizedChipOptions(
@@ -273,138 +1292,309 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     required bool isAnswered,
     required BriefAnswer? answer,
   }) {
-    final Set<String> selectedValues = <String>{};
-    String? customTextForCategory;
+    return _buildExpandableCategorizedSection(
+      questionId: question.id,
+      categoryName: categoryName,
+      options: options,
+      answer: answer,
+      onTap: (option) {
+        controller.selectCategorizedOption(question.id, categoryName, option);
+      },
+      isAnswered: isAnswered,
+    );
+  }
 
-    if (answer != null) {
-      for (final opt in answer.selectedOptions) {
-        if (opt.startsWith('$categoryName:')) {
-          selectedValues.add(opt.substring('$categoryName:'.length));
-        } else if (!opt.contains(':') && options.contains(opt)) {
-          selectedValues.add(opt);
-        } else if (!opt.contains(':') && opt == 'Custom') {
-          selectedValues.add('Custom');
-        }
+  // Expandable categorized section - matching creative brief behavior
+  Widget _buildExpandableCategorizedSection({
+    required String questionId,
+    required String categoryName,
+    required List<String> options,
+    required BriefAnswer? answer,
+    required Function(String) onTap,
+    required bool isAnswered,
+  }) {
+    final categoryKey = '${questionId}_$categoryName';
+
+    // Get selected option for this category - check both temp and final selections
+    String? getSelectedValue() {
+      // First check temp categorized selections
+      final tempCatSelection = controller.getTempSelectionForCategory(
+        categoryName,
+      );
+      if (tempCatSelection != null) {
+        return tempCatSelection;
       }
 
-      final textInput = answer.textInput;
-      if (textInput != null && textInput.isNotEmpty) {
-        if (textInput.contains('|||')) {
-          final parts = textInput.split('|||');
-          for (final part in parts) {
-            final separatorIndex = part.indexOf(':');
-            if (separatorIndex != -1) {
-              final key = part.substring(0, separatorIndex);
-              final value = part.substring(separatorIndex + 1);
-              if (key == categoryName) {
-                customTextForCategory = value;
-                break;
-              }
-            }
+      // Then check final answer
+      if (answer?.selectedOptions.isNotEmpty == true) {
+        for (final opt in answer!.selectedOptions) {
+          if (opt.startsWith('$categoryName:')) {
+            return opt.substring('$categoryName:'.length);
           }
-        } else if (textInput.contains(':')) {
-          final separatorIndex = textInput.indexOf(':');
-          if (separatorIndex != -1) {
-            final key = textInput.substring(0, separatorIndex);
-            final value = textInput.substring(separatorIndex + 1);
-            if (key == categoryName) {
-              customTextForCategory = value;
-            }
-          }
-        } else if (selectedValues.contains('Custom')) {
-          customTextForCategory = textInput;
         }
       }
+      return null;
     }
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        // Category title
-        Padding(
-          padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
-          child: Text(
-            categoryName,
-            style: TextStyle(
-              fontSize: 14.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF666666),
-            ),
-          ),
-        ),
-        // Category options as chips
-        Wrap(
-          spacing: 8.w,
-          runSpacing: 8.h,
-          children: options.map((option) {
-            // Always show interactive chips - no disabled state, no edit icon
-            bool isSelected = false;
+    // Get custom text for category
+    String? getCustomText() {
+      final textInput = answer?.textInput;
+      if (textInput == null || textInput.isEmpty) return null;
 
-            if (option == 'Custom') {
-              // Check both temp state AND saved answer
-              isSelected = controller.isCustomSelectedForCategory(
-                question.id,
-                categoryName,
-              ) || selectedValues.contains('Custom');
-            } else {
-              // Check temp selection OR saved answer
-              isSelected = controller.getTempSelectionForCategory(categoryName) == option ||
-                          selectedValues.contains(option);
+      if (textInput.contains('|||')) {
+        final parts = textInput.split('|||');
+        for (final part in parts) {
+          final separatorIndex = part.indexOf(':');
+          if (separatorIndex != -1) {
+            final key = part.substring(0, separatorIndex);
+            final value = part.substring(separatorIndex + 1);
+            if (key == categoryName) {
+              return value;
             }
+          }
+        }
+      } else if (textInput.contains(':')) {
+        final separatorIndex = textInput.indexOf(':');
+        if (separatorIndex != -1) {
+          final key = textInput.substring(0, separatorIndex);
+          final value = textInput.substring(separatorIndex + 1);
+          if (key == categoryName) {
+            return value;
+          }
+        }
+      }
+      return null;
+    }
 
-            return SelectionChipWidget(
-              text: option,
-              isSelected: isSelected,
-              onTap: () {
-                controller.selectCategorizedOption(
-                  question.id,
-                  categoryName,
-                  option,
-                );
-              },
-            );
-          }).toList(),
-        ),
-        if (isAnswered &&
-            selectedValues.contains('Custom') &&
-            customTextForCategory != null &&
-            customTextForCategory.isNotEmpty) ...[
-          SizedBox(height: 8.h),
-          Container(
-            margin: EdgeInsets.only(left: 8.w),
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-            decoration: BoxDecoration(
-              color: AppColors.buttonColor,
-              borderRadius: BorderRadius.circular(20.r),
-            ),
+    return Obx(() {
+      final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+      final selectedValue = getSelectedValue();
+      final customTextForCategory = getCustomText();
+      final hasSelection = selectedValue != null;
+
+      return Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          // Category title
+          Padding(
+            padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
             child: Text(
-              customTextForCategory,
+              categoryName,
               style: TextStyle(
                 fontSize: 14.sp,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF666666),
               ),
             ),
           ),
+          // Show selected + 2 more options when collapsed (like creative brief - no isAnswered check)
+          if (hasSelection && !isExpanded)
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                // Selected option chip - clicking allows direct selection change
+                GestureDetector(
+                  onTap: () => onTap(selectedValue),
+                  child: Container(
+                    padding: EdgeInsets.symmetric(
+                      horizontal: 20.w,
+                      vertical: 12.h,
+                    ),
+                    decoration: BoxDecoration(
+                      color: AppColors.buttonColor,
+                      borderRadius: BorderRadius.circular(25.r),
+                    ),
+                    child: Text(
+                      selectedValue,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        fontWeight: FontWeight.w500,
+                        color: Colors.white,
+                      ),
+                    ),
+                  ),
+                ),
+                // 2 more unselected options - clicking selects them directly
+                ...options.where((opt) => opt != selectedValue).take(2).map((
+                  option,
+                ) {
+                  return GestureDetector(
+                    onTap: () => onTap(option),
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(25.r),
+                        border: Border.all(
+                          color: const Color(0xFFE0E0E0),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: const Color(0xFF333333),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                // Expand arrow if there are more options
+                if (options.length > 3)
+                  GestureDetector(
+                    onTap: () {
+                      controller.expandCategory(categoryKey);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                      ),
+                      child: Icon(
+                        Icons.keyboard_arrow_down,
+                        size: 20,
+                        color: const Color(0xFF666666),
+                      ),
+                    ),
+                  ),
+              ],
+            )
+          else
+            // Show expandable list (3 options initially)
+            Wrap(
+              spacing: 8.w,
+              runSpacing: 8.h,
+              children: [
+                ...(isExpanded ? options : options.take(3).toList()).map((
+                  option,
+                ) {
+                  bool isSelected = false;
+
+                  if (option == 'Custom') {
+                    // Check both temp state AND saved answer
+                    isSelected =
+                        controller.isCustomSelectedForCategory(
+                          questionId,
+                          categoryName,
+                        ) ||
+                        (selectedValue == 'Custom');
+                  } else {
+                    // Check temp selection OR saved answer
+                    isSelected =
+                        controller.getTempSelectionForCategory(categoryName) ==
+                            option ||
+                        selectedValue == option;
+                  }
+
+                  return GestureDetector(
+                    onTap: () {
+                      onTap(option);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 20.w,
+                        vertical: 12.h,
+                      ),
+                      decoration: BoxDecoration(
+                        color: isSelected
+                            ? AppColors.buttonColor
+                            : const Color(0xFFF5F5F5),
+                        borderRadius: BorderRadius.circular(25.r),
+                        border: Border.all(
+                          color: isSelected
+                              ? Colors.transparent
+                              : const Color(0xFFE0E0E0),
+                          width: 1,
+                        ),
+                      ),
+                      child: Text(
+                        option,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: isSelected
+                              ? Colors.white
+                              : const Color(0xFF333333),
+                        ),
+                      ),
+                    ),
+                  );
+                }),
+                // Show expand/collapse button if there are more than 3 options
+                if (options.length > 3)
+                  GestureDetector(
+                    onTap: () {
+                      controller.toggleCategory(categoryKey);
+                    },
+                    child: Container(
+                      padding: EdgeInsets.all(12.w),
+                      decoration: BoxDecoration(
+                        color: const Color(0xFFF5F5F5),
+                        shape: BoxShape.circle,
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                      ),
+                      child: Icon(
+                        isExpanded
+                            ? Icons.keyboard_arrow_up
+                            : Icons.keyboard_arrow_down,
+                        size: 20,
+                        color: const Color(0xFF666666),
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          // Show custom answer if answered with custom text
+          if (isAnswered &&
+              selectedValue == 'Custom' &&
+              customTextForCategory != null &&
+              customTextForCategory.isNotEmpty) ...[
+            SizedBox(height: 8.h),
+            Container(
+              margin: EdgeInsets.only(left: 8.w),
+              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+              decoration: BoxDecoration(
+                color: AppColors.buttonColor,
+                borderRadius: BorderRadius.circular(20.r),
+              ),
+              child: Text(
+                customTextForCategory,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: Colors.white,
+                  fontWeight: FontWeight.w500,
+                ),
+              ),
+            ),
+          ],
+          SizedBox(height: 16.h),
         ],
-        SizedBox(height: 16.h),
-      ],
-    );
+      );
+    });
   }
 
   Widget _buildBottomCustomInput() {
     return Obx(() {
       // FIXED: Only show custom input when custom is selected
       if (controller.isCustomSelectedForCurrentQuestion()) {
-        print('Showing custom input at bottom'); // Debug
-        return TextInputWithSend(
-          controller: controller.customController,
-          placeholder: 'Enter your custom answer...',
-          onSend: () {
-            print('Custom send from bottom input'); // Debug
-            controller.submitCustomAnswer();
-          },
-          isLoading: controller.isTextLoading,
+        return Container(
+          padding: EdgeInsets.all(24.w),
+          child: TextInputWithSend(
+            controller: controller.customController,
+            placeholder: 'Enter your custom answer...',
+            onSend: () {
+              controller.submitCustomAnswer();
+            },
+            isLoading: controller.isTextLoading,
+          ),
         );
       }
       return const SizedBox.shrink();
@@ -433,11 +1623,14 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       return const SizedBox.shrink();
     }
 
-    return TextInputWithSend(
-      controller: textController,
-      placeholder: 'Enter custom ${categoryName.toLowerCase()}...',
-      onSend: onSend,
-      isLoading: controller.isTextLoading,
+    return Container(
+      padding: EdgeInsets.all(24.w),
+      child: TextInputWithSend(
+        controller: textController,
+        placeholder: 'Enter custom ${categoryName.toLowerCase()}...',
+        onSend: onSend,
+        isLoading: controller.isTextLoading,
+      ),
     );
   }
 
@@ -453,5 +1646,341 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
         isloading: false,
       ),
     );
+  }
+
+  // Expandable chip section for single-select chip options - matching creative brief behavior
+  Widget _buildExpandableChipSection({
+    required String questionId,
+    required List<String> options,
+    required List<String> selectedOptions,
+    required Function(String) onTap,
+    required bool isAnswered,
+  }) {
+    final categoryKey = questionId;
+
+    return Obx(() {
+      final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+
+      // Check temp selections first for immediate display
+      String? selectedValue;
+      if (controller.tempSelections.containsKey(questionId)) {
+        selectedValue = controller.tempSelections[questionId];
+      } else if (selectedOptions.isNotEmpty) {
+        selectedValue = selectedOptions.first;
+      }
+
+      final hasSelection = selectedValue != null;
+
+      // Show selected + 2 more options when collapsed (like creative brief - no isAnswered check)
+      if (hasSelection && !isExpanded) {
+        return Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: [
+            // Selected option chip - clicking allows direct selection change
+            GestureDetector(
+              onTap: () => onTap(selectedValue!),
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: AppColors.buttonColor,
+                  borderRadius: BorderRadius.circular(25.r),
+                ),
+                child: Text(
+                  selectedValue,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.white,
+                  ),
+                ),
+              ),
+            ),
+            // 2 more unselected options - clicking selects them directly
+            ...options.where((opt) => opt != selectedValue).take(2).map((
+              option,
+            ) {
+              return GestureDetector(
+                onTap: () => onTap(option),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(25.r),
+                    border: Border.all(
+                      color: const Color(0xFFE0E0E0),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF333333),
+                    ),
+                  ),
+                ),
+              );
+            }),
+            // Expand arrow if there are more options
+            if (options.length > 3)
+              GestureDetector(
+                onTap: () {
+                  controller.expandCategory(categoryKey);
+                },
+                child: Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                  ),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: const Color(0xFF666666),
+                  ),
+                ),
+              ),
+          ],
+        );
+      }
+
+      // Show expandable list (3 options initially)
+      final displayOptions = isExpanded ? options : options.take(3).toList();
+
+      return Wrap(
+        spacing: 8.w,
+        runSpacing: 8.h,
+        children: [
+          ...displayOptions.map((option) {
+            final isSelected = controller.isOptionSelected(
+              option,
+              forQuestionId: questionId,
+            );
+
+            return GestureDetector(
+              onTap: () {
+                onTap(option);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.buttonColor
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(25.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : const Color(0xFFE0E0E0),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? Colors.white : const Color(0xFF333333),
+                  ),
+                ),
+              ),
+            );
+          }),
+          // Show expand/collapse button if there are more than 3 options
+          if (options.length > 3)
+            GestureDetector(
+              onTap: () {
+                controller.toggleCategory(categoryKey);
+              },
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE0E0E0)),
+                ),
+                child: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  size: 20,
+                  color: const Color(0xFF666666),
+                ),
+              ),
+            ),
+        ],
+      );
+    });
+  }
+
+  // Expandable section for multi-select questions - matching creative brief behavior
+  Widget _buildExpandableMultiSelectSection({
+    required String questionId,
+    required List<String> options,
+    required List<String> selectedOptions,
+    required Function(String) onTap,
+    required bool isAnswered,
+  }) {
+    final categoryKey = questionId;
+
+    return Obx(() {
+      final isExpanded = controller.expandedCategories[categoryKey] ?? false;
+      final hasSelection = selectedOptions.isNotEmpty;
+
+      // Show ALL selected + 2 unselected when collapsed (like creative brief - no isAnswered check)
+      if (hasSelection && !isExpanded) {
+        final unselectedOptions = options
+            .where((opt) => !selectedOptions.contains(opt))
+            .take(2)
+            .toList();
+
+        return Wrap(
+          spacing: 8.w,
+          runSpacing: 8.h,
+          children: [
+            // ALL selected option chips - clicking toggles them
+            ...selectedOptions.map((selectedValue) {
+              return GestureDetector(
+                onTap: () => onTap(selectedValue),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.buttonColor,
+                    borderRadius: BorderRadius.circular(25.r),
+                  ),
+                  child: Text(
+                    selectedValue,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              );
+            }),
+            // 2 more unselected options - clicking selects them
+            ...unselectedOptions.map((option) {
+              return GestureDetector(
+                onTap: () => onTap(option),
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 20.w,
+                    vertical: 12.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    borderRadius: BorderRadius.circular(25.r),
+                    border: Border.all(
+                      color: const Color(0xFFE0E0E0),
+                      width: 1,
+                    ),
+                  ),
+                  child: Text(
+                    option,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: const Color(0xFF333333),
+                    ),
+                  ),
+                ),
+              );
+            }),
+            // Expand arrow if there are more options
+            if (options.length > selectedOptions.length + 2)
+              GestureDetector(
+                onTap: () => controller.expandCategory(categoryKey),
+                child: Container(
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF5F5F5),
+                    shape: BoxShape.circle,
+                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                  ),
+                  child: Icon(
+                    Icons.keyboard_arrow_down,
+                    size: 20,
+                    color: const Color(0xFF666666),
+                  ),
+                ),
+              ),
+          ],
+        );
+      }
+
+      // Show expandable list (3 options initially)
+      final displayOptions = isExpanded ? options : options.take(3).toList();
+
+      return Wrap(
+        spacing: 8.w,
+        runSpacing: 8.h,
+        children: [
+          ...displayOptions.map((option) {
+            final isSelected = selectedOptions.contains(option);
+
+            return GestureDetector(
+              onTap: () {
+                onTap(option);
+              },
+              child: Container(
+                padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 12.h),
+                decoration: BoxDecoration(
+                  color: isSelected
+                      ? AppColors.buttonColor
+                      : const Color(0xFFF5F5F5),
+                  borderRadius: BorderRadius.circular(25.r),
+                  border: Border.all(
+                    color: isSelected
+                        ? Colors.transparent
+                        : const Color(0xFFE0E0E0),
+                    width: 1,
+                  ),
+                ),
+                child: Text(
+                  option,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: isSelected ? Colors.white : const Color(0xFF333333),
+                  ),
+                ),
+              ),
+            );
+          }),
+          // Show expand/collapse button if there are more than 3 options
+          if (options.length > 3)
+            GestureDetector(
+              onTap: () {
+                controller.toggleCategory(categoryKey);
+              },
+              child: Container(
+                padding: EdgeInsets.all(12.w),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF5F5F5),
+                  shape: BoxShape.circle,
+                  border: Border.all(color: const Color(0xFFE0E0E0)),
+                ),
+                child: Icon(
+                  isExpanded
+                      ? Icons.keyboard_arrow_up
+                      : Icons.keyboard_arrow_down,
+                  size: 20,
+                  color: const Color(0xFF666666),
+                ),
+              ),
+            ),
+        ],
+      );
+    });
   }
 }

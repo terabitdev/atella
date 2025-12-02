@@ -91,6 +91,7 @@ class SignupController extends GetxController {
         'User registered successfully',
         backgroundColor: Colors.black,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
       FocusScope.of(Get.context!).unfocus(); // Unfocus text fields
       await Future.delayed(const Duration(milliseconds: 300)); // Let UI settle
@@ -106,6 +107,7 @@ class SignupController extends GetxController {
           result,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
       }
     }

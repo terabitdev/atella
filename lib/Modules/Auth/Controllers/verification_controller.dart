@@ -26,6 +26,7 @@ class VerificationController extends GetxController {
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.black,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
       } catch (e) {
         // print('Failed to send verification link: $e');
@@ -35,6 +36,7 @@ class VerificationController extends GetxController {
           snackPosition: SnackPosition.BOTTOM,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
       }
     }

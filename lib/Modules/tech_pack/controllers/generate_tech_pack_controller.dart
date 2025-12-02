@@ -15,13 +15,14 @@ class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
   final DesignsService _designsService = DesignsService();
   final EditDataService _editDataService = EditDataService();
-  final StripeSubscriptionService _subscriptionService = StripeSubscriptionService();
-  
+  final StripeSubscriptionService _subscriptionService =
+      StripeSubscriptionService();
+
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
   TechPackModel? _editingTechPack;
-  
+
   var isLoading = false.obs;
   var isSaving = false.obs; // Separate loading state for saving to Firebase
   var isInitialized = false.obs;
@@ -38,7 +39,7 @@ class TechPackController extends GetxController {
     _checkForEditMode();
     _initializeApiKey();
   }
-  
+
   @override
   void onReady() {
     super.onReady();
@@ -50,27 +51,38 @@ class TechPackController extends GetxController {
         SubscriptionCallbackService().clearCallback();
         return;
       }
-      
+
       SubscriptionCallbackService().executeSubscriptionSuccessCallback();
     });
   }
-  
+
+  void startLoadingSimulation() {
+    isLoading.value = true;
+    // Your actual image generation logic here
+  }
+
+  void onImagesGenerated(List<String> images) {
+    generatedImages.assignAll(images);
+    isLoading.value = false;
+    hasError.value = false;
+  }
+
   void _checkForEditMode() {
     final arguments = Get.arguments;
     print('TechPack Controller - Arguments received: $arguments');
-    
+
     if (arguments != null && arguments is Map<String, dynamic>) {
       final isEditMode = arguments['editMode'] == true;
       final forceRegenerate = arguments['forceRegenerate'] == true;
       print('Edit mode detected: $isEditMode');
       print('Force regenerate: $forceRegenerate');
-      
+
       if (isEditMode) {
         _isEditMode.value = true;
         _editingTechPack = arguments['techPackModel'] as TechPackModel?;
         print('Editing tech pack: ${_editingTechPack?.projectName}');
       }
-      
+
       // Clear existing images if force regenerate is requested
       if (forceRegenerate) {
         generatedImages.clear();
@@ -78,25 +90,28 @@ class TechPackController extends GetxController {
       }
     }
   }
-  
+
   Future<void> _initializeApiKey() async {
     // Set the API key
     await OpenAIService.setApiKey(dotenv.env['OPENAI_API_KEY'] ?? '');
     isInitialized.value = true;
-    
+
     // Always generate designs if forceRegenerate was passed or if images are empty
     final arguments = Get.arguments;
-    final forceRegenerate = arguments != null && 
-                           arguments is Map<String, dynamic> && 
-                           arguments['forceRegenerate'] == true;
-    
+    final forceRegenerate =
+        arguments != null &&
+        arguments is Map<String, dynamic> &&
+        arguments['forceRegenerate'] == true;
+
     if (generatedImages.isEmpty || forceRegenerate) {
       generateDesigns();
     } else {
-      print('Skipping generation - already have ${generatedImages.length} images');
+      print(
+        'Skipping generation - already have ${generatedImages.length} images',
+      );
     }
   }
-  
+
   Future<void> generateDesigns() async {
     try {
       print('=== STARTING DESIGN GENERATION ===');
@@ -104,7 +119,7 @@ class TechPackController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
       generatedImages.clear();
-      
+
       // Check if all questionnaire data is available
       if (!_dataService.isAllDataComplete()) {
         print('No questionnaire data found, using sample data...');
@@ -113,7 +128,7 @@ class TechPackController extends GetxController {
       } else {
         print('Using real questionnaire data...');
       }
-      
+
       print('Creative Brief Data: ${_dataService.getCreativeBriefData()}');
       print('Refined Concept Data: ${_dataService.getRefinedConceptData()}');
 
@@ -123,11 +138,11 @@ class TechPackController extends GetxController {
         creativeBrief: _dataService.getCreativeBriefData(),
         refinedConcept: _dataService.getRefinedConceptData(),
       );
-      
+
       print('Generated Visual Prompt: ${currentPrompt.value}');
-      
+
       print('Generating 3 design images with GPT-IMAGE-1...');
-      
+
       // Get inspiration image path from creative brief data
       final creativeBriefData = _dataService.getCreativeBriefData();
       String? inspirationImagePath;
@@ -140,29 +155,32 @@ class TechPackController extends GetxController {
         if (inspiration is List) {
           // New format: array of image paths, use the first one
           inspirationImagePath = inspiration.isNotEmpty ? inspiration[0] : null;
-          print('Using first inspiration image from list: $inspirationImagePath');
+          print(
+            'Using first inspiration image from list: $inspirationImagePath',
+          );
         } else if (inspiration is String) {
           // Legacy format: single image path
           inspirationImagePath = inspiration;
           print('Using inspiration image (legacy): $inspirationImagePath');
         }
       }
-      
+
       // Generate design images (now returns base64-encoded images)
       final base64Images = await OpenAIService.generateDesignImages(
         prompt: currentPrompt.value,
         numberOfImages: 3,
         inspirationImagePath: inspirationImagePath,
       );
-      
+
       print('Generated ${base64Images.length} images:');
       for (int i = 0; i < base64Images.length; i++) {
-        print('Image  [33m${i + 1} [0m: [base64 string, length:  [32m${base64Images[i].length} [0m]');
+        print(
+          'Image  [33m${i + 1} [0m: [base64 string, length:  [32m${base64Images[i].length} [0m]',
+        );
       }
-      
+
       generatedImages.value = base64Images;
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
-      
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
@@ -173,7 +191,7 @@ class TechPackController extends GetxController {
       isLoading.value = false;
     }
   }
-  
+
   void _setSampleData() {
     // Sample data for testing when no real questionnaire data exists
     _dataService.setCreativeBriefData({
@@ -182,14 +200,14 @@ class TechPackController extends GetxController {
       'occasion': 'everyday wear',
       'brand': 'Modern casual',
     });
-    
+
     _dataService.setRefinedConceptData({
       'style': 'minimalist',
       'colors': 'neutral tones',
       'materials': 'cotton blend',
       'silhouette': 'relaxed fit',
     });
-    
+
     _dataService.setFinalDetailsData({
       'fit': 'comfortable',
       'details': 'subtle branding',
@@ -197,18 +215,19 @@ class TechPackController extends GetxController {
       'size': 'unisex',
     });
   }
-  
-  
+
   void onContinueWithDesign(int selectedIndex) async {
     // Check subscription before allowing techpack generation (with monthly reset check)
-    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
-    
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
+      'techpack',
+    );
+
     if (!canGenerate) {
       // Show upgrade prompt
       _showUpgradeDialog();
       return;
     }
-    
+
     // Continue with the selected design
     if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
       // Prepare arguments for tech pack details
@@ -217,23 +236,24 @@ class TechPackController extends GetxController {
         'designPrompt': currentPrompt.value,
         'designData': _dataService.getAllDesignData(),
       };
-      
+
       // Add edit mode data if applicable
       if (_isEditMode.value && _editingTechPack != null) {
         arguments['editMode'] = true;
         arguments['techPackModel'] = _editingTechPack;
       }
-      
+
       // Navigate to tech pack details with arguments
       Get.toNamed('/tech_pack_details_screen', arguments: arguments);
     }
   }
-  
+
   void selectDesign(int index) {
     if (index >= 0 && index < generatedImages.length) {
       selectedDesignIndex.value = index;
     }
   }
+
   Future<void> onContinueWithSelectedDesign() async {
     // Safety check - ensure controller is not disposed
     try {
@@ -245,120 +265,122 @@ class TechPackController extends GetxController {
       print('Controller might be disposed: $e');
       return;
     }
-    
+
     // Check subscription before allowing techpack generation (with monthly reset check)
-    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
-    
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
+      'techpack',
+    );
+
     if (!canGenerate) {
       // Show upgrade prompt
       _showUpgradeDialog();
       return;
     }
-    
-    if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
+
+    if (selectedDesignIndex.value >= 0 &&
+        selectedDesignIndex.value < generatedImages.length) {
       // Navigate immediately - no waiting
       onContinueWithDesign(selectedDesignIndex.value);
-      
+
       // Save in background
       _saveDesignsInBackground();
     }
   }
 
-// Background save function - OPTIMIZED VERSION
-// Now saves all images to Storage but only selected design data to Firestore
-// Handles both new designs and edit mode updates
-Future<void> _saveDesignsInBackground() async {
-  try {
-    print('=== STARTING OPTIMIZED BACKGROUND SAVE ===');
-    
-    // Get questionnaire data
-    Map<String, dynamic> questionnaireData = {
-      'creativeBrief': _dataService.getCreativeBriefData(),
-      'refinedConcept': _dataService.getRefinedConceptData(),
-      'finalDetails': _dataService.getFinalDetailsData(),
-      'prompt': currentPrompt.value,
-    };
+  // Background save function - OPTIMIZED VERSION
+  // Now saves all images to Storage but only selected design data to Firestore
+  // Handles both new designs and edit mode updates
+  Future<void> _saveDesignsInBackground() async {
+    try {
+      print('=== STARTING OPTIMIZED BACKGROUND SAVE ===');
 
-    if (_isEditMode.value && _editingTechPack != null) {
-      // EDIT MODE: Update existing design with new questionnaire data
-      print('=== EDIT MODE: Updating existing design ===');
-      
-      // Update the designs collection with new questionnaire data
-      await _editDataService.updateTechPackData(
-        techPackId: _editingTechPack!.id,
-        designQuestionnaireData: questionnaireData,
-      );
-      
-      // Also save new designs if user selects one (for comparison)
-      await _designsService.saveDesignsOptimized(
-        base64Images: generatedImages,
-        questionnaireData: questionnaireData,
-        selectedIndex: selectedDesignIndex.value,
-      );
-      
-      print('✅ Edit mode: Updated existing design and saved new options');
-      
+      // Get questionnaire data
+      Map<String, dynamic> questionnaireData = {
+        'creativeBrief': _dataService.getCreativeBriefData(),
+        'refinedConcept': _dataService.getRefinedConceptData(),
+        'finalDetails': _dataService.getFinalDetailsData(),
+        'prompt': currentPrompt.value,
+      };
+
+      if (_isEditMode.value && _editingTechPack != null) {
+        // EDIT MODE: Update existing design with new questionnaire data
+        print('=== EDIT MODE: Updating existing design ===');
+
+        // Update the designs collection with new questionnaire data
+        await _editDataService.updateTechPackData(
+          techPackId: _editingTechPack!.id,
+          designQuestionnaireData: questionnaireData,
+        );
+
+        // Also save new designs if user selects one (for comparison)
+        await _designsService.saveDesignsOptimized(
+          base64Images: generatedImages,
+          questionnaireData: questionnaireData,
+          selectedIndex: selectedDesignIndex.value,
+        );
+
+        print('✅ Edit mode: Updated existing design and saved new options');
+
+        Get.snackbar(
+          'Design Updated',
+          'Your design has been updated with new preferences',
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(milliseconds: 1500),
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(10),
+        );
+      } else {
+        // NEW DESIGN MODE: Save as new design
+        print('=== NEW DESIGN MODE: Creating new design ===');
+
+        await _designsService.saveDesignsOptimized(
+          base64Images: generatedImages,
+          questionnaireData: questionnaireData,
+          selectedIndex: selectedDesignIndex.value,
+        );
+
+        print('✅ New design: Saved successfully');
+
+        Get.snackbar(
+          'Design Saved',
+          'Your selected design has been saved successfully',
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(milliseconds: 1500),
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          margin: const EdgeInsets.all(10),
+        );
+      }
+
+      print('=== OPTIMIZED BACKGROUND SAVE COMPLETED ===');
+      print('✅ All 3 images saved to Storage');
+      print('✅ Selected design data saved to Firestore');
+    } catch (e) {
+      print('=== OPTIMIZED BACKGROUND SAVE FAILED ===');
+      print('Error: $e');
+
+      // Optional: Show error notification
       Get.snackbar(
-        'Design Updated',
-        'Your design has been updated with new preferences',
+        'Save Failed',
+        'Failed to save design. It will be available during this session.',
         snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 2),
-        backgroundColor: Colors.black,
-        colorText: Colors.white,
-        margin: const EdgeInsets.all(10),
-      );
-    } else {
-      // NEW DESIGN MODE: Save as new design
-      print('=== NEW DESIGN MODE: Creating new design ===');
-      
-      await _designsService.saveDesignsOptimized(
-        base64Images: generatedImages,
-        questionnaireData: questionnaireData,
-        selectedIndex: selectedDesignIndex.value,
-      );
-      
-      print('✅ New design: Saved successfully');
-      
-      Get.snackbar(
-        'Design Saved',
-        'Your selected design has been saved successfully',
-        snackPosition: SnackPosition.TOP,
-        duration: const Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.black,
         colorText: Colors.white,
         margin: const EdgeInsets.all(10),
       );
     }
-
-    print('=== OPTIMIZED BACKGROUND SAVE COMPLETED ===');
-    print('✅ All 3 images saved to Storage');
-    print('✅ Selected design data saved to Firestore');
-    
-  } catch (e) {
-    print('=== OPTIMIZED BACKGROUND SAVE FAILED ===');
-    print('Error: $e');
-    
-    // Optional: Show error notification
-    Get.snackbar(
-      'Save Failed',
-      'Failed to save design. It will be available during this session.',
-      snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 3),
-      backgroundColor: Colors.black,
-      colorText: Colors.white,
-      margin: const EdgeInsets.all(10),
-    );
   }
-}
-  
+
   Future<void> regenerateDesigns() async {
     await generateDesigns();
   }
-  
+
   void retryGeneration() {
     generateDesigns();
   }
-  
+
   // Reset controller state and regenerate designs
   void resetAndRegenerate() {
     // Clear all existing data
@@ -368,31 +390,33 @@ Future<void> _saveDesignsInBackground() async {
     errorMessage.value = '';
     hasError.value = false;
     isLoading.value = false;
-    
+
     // Trigger new design generation
     generateDesigns();
   }
-  
+
   void _showUpgradeDialog() async {
     // Get current subscription to show in dialog
-    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    final subscription = await _subscriptionService
+        .getCurrentUserSubscription();
     String currentPlan = subscription?.subscriptionPlan ?? 'FREE';
     int remainingTechpacks = subscription?.remainingTechpacks ?? 0;
-    
+
     // If Pro plan user has reached limit, show extra purchase dialog
     if (currentPlan.startsWith('PRO')) {
       _showProLimitDialog(subscription);
       return;
     }
-    
+
     Get.dialog(
       AlertDialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(15),
-        ),
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Row(
           children: [
-            Text('Upgrade Required',style:  sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),),
+            Text(
+              'Upgrade Required',
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+            ),
           ],
         ),
         content: Column(
@@ -415,7 +439,7 @@ Future<void> _saveDesignsInBackground() async {
                     children: [
                       Text(
                         'Current Plan: ${_getPlanDisplayName(currentPlan)}',
-                        style:  ssTitleTextTextStyle14400.copyWith(
+                        style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -428,11 +452,11 @@ Future<void> _saveDesignsInBackground() async {
                       padding: EdgeInsets.only(top: 4),
                       child: Text(
                         currentPlan.startsWith('PRO')
-                          ? 'Remaining: $remainingTechpacks/20 techpacks this month'
-                          : currentPlan == 'STARTER_YEARLY' 
+                            ? 'Remaining: $remainingTechpacks/20 techpacks this month'
+                            : currentPlan == 'STARTER_YEARLY'
                             ? 'Remaining: $remainingTechpacks/3 this month'
                             : 'Remaining techpacks: $remainingTechpacks/3 this month',
-                        style:  ssTitleTextTextStyle14400.copyWith(
+                        style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
@@ -444,14 +468,14 @@ Future<void> _saveDesignsInBackground() async {
             ),
             SizedBox(height: 16),
             Text(
-              currentPlan == 'FREE' 
-                ? 'Techpack generation is a premium feature.'
-                : currentPlan.startsWith('PRO')
+              currentPlan == 'FREE'
+                  ? 'Techpack generation is a premium feature.'
+                  : currentPlan.startsWith('PRO')
                   ? 'You\'ve reached your Pro plan monthly limit of 20 techpacks.'
                   : currentPlan == 'STARTER_YEARLY'
-                    ? 'You\'ve reached your monthly limit of 3 techpacks (36/year total).'
-                    : 'You\'ve reached your monthly limit of 3 techpacks.',
-              style:  ssTitleTextTextStyle14400.copyWith(
+                  ? 'You\'ve reached your monthly limit of 3 techpacks (36/year total).'
+                  : 'You\'ve reached your monthly limit of 3 techpacks.',
+              style: ssTitleTextTextStyle14400.copyWith(
                 fontSize: 12,
                 color: Colors.black,
               ),
@@ -468,21 +492,29 @@ Future<void> _saveDesignsInBackground() async {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    currentPlan == 'FREE' ? 'Choose a plan:' : 'Upgrade to Pro:',
-                    style:  ssTitleTextTextStyle14400.copyWith(
+                    currentPlan == 'FREE'
+                        ? 'Choose a plan:'
+                        : 'Upgrade to Pro:',
+                    style: ssTitleTextTextStyle14400.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
                     ),
                   ),
                   SizedBox(height: 8),
                   if (currentPlan == 'FREE') ...[
-                    _buildFeatureItem('Starter: 3 techpacks/month (€9.99/mo or €99/yr)'),
-                    _buildFeatureItem('Pro: 20 techpacks/month (€24.99/mo or €249/yr)'),
+                    _buildFeatureItem(
+                      'Starter: 3 techpacks/month (€9.99/mo or €99/yr)',
+                    ),
+                    _buildFeatureItem(
+                      'Pro: 20 techpacks/month (€24.99/mo or €249/yr)',
+                    ),
                   ] else if (currentPlan.startsWith('STARTER')) ...[
                     _buildFeatureItem('Pro: 20 techpacks/month'),
                   ] else if (currentPlan.startsWith('PRO')) ...[
                     _buildFeatureItem('Purchase extra techpacks: +5 for €4.99'),
-                    _buildFeatureItem('Purchase extra techpacks: +10 for €8.99'),
+                    _buildFeatureItem(
+                      'Purchase extra techpacks: +10 for €8.99',
+                    ),
                   ],
                   _buildFeatureItem('Custom PDF export with your logo'),
                   _buildFeatureItem('Access to manufacturers list'),
@@ -495,25 +527,29 @@ Future<void> _saveDesignsInBackground() async {
         actions: [
           TextButton(
             onPressed: () => Get.back(),
-            child: Text('Maybe Later', style: ssTitleTextTextStyle14400.copyWith(
-              color: Colors.black,
-            )),
+            child: Text(
+              'Maybe Later',
+              style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               Get.back();
-              
+
               // Set callback to refresh the UI state after subscription
               SubscriptionCallbackService().setOnSubscriptionSuccess(() {
                 // Just refresh the UI, don't automatically navigate
                 // User needs to manually click the button again
                 print('Subscription upgraded, UI refreshed');
               });
-              
-              Get.toNamed('/subscribe', arguments: {
-                'returnRoute': '/generate_tech_pack',
-                'showSuccessMessage': true,
-              });
+
+              Get.toNamed(
+                '/subscribe',
+                arguments: {
+                  'returnRoute': '/generate_tech_pack',
+                  'showSuccessMessage': true,
+                },
+              );
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
@@ -521,16 +557,17 @@ Future<void> _saveDesignsInBackground() async {
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
-            child: Text('Upgrade Now', style: ssTitleTextTextStyle14400.copyWith(
-              color: Colors.white,
-            )),
+            child: Text(
+              'Upgrade Now',
+              style: ssTitleTextTextStyle14400.copyWith(color: Colors.white),
+            ),
           ),
         ],
       ),
       barrierDismissible: false,
     );
   }
-  
+
   String _getPlanDisplayName(String plan) {
     switch (plan) {
       case 'FREE':
@@ -547,7 +584,7 @@ Future<void> _saveDesignsInBackground() async {
         return 'Free';
     }
   }
-  
+
   Widget _buildFeatureItem(String text) {
     return Padding(
       padding: EdgeInsets.only(bottom: 4),
@@ -555,12 +592,7 @@ Future<void> _saveDesignsInBackground() async {
         children: [
           Icon(Icons.check_circle, color: Colors.green, size: 16),
           SizedBox(width: 8),
-          Expanded(
-            child: Text(
-              text,
-              style: TextStyle(fontSize: 14),
-            ),
-          ),
+          Expanded(child: Text(text, style: TextStyle(fontSize: 14))),
         ],
       ),
     );
@@ -572,11 +604,7 @@ Future<void> _saveDesignsInBackground() async {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Row(
           children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.red,
-              size: 24,
-            ),
+            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
             SizedBox(width: 8),
             Text(
               'Monthly Limit Reached',
@@ -612,7 +640,9 @@ Future<void> _saveDesignsInBackground() async {
                         ),
                       ),
                       Text(
-                        _getPlanDisplayName(subscription?.subscriptionPlan ?? 'PRO'),
+                        _getPlanDisplayName(
+                          subscription?.subscriptionPlan ?? 'PRO',
+                        ),
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 12,
                           fontWeight: FontWeight.bold,
@@ -733,7 +763,7 @@ Future<void> _saveDesignsInBackground() async {
               '+5 Techpacks',
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.black,
-                fontWeight: FontWeight.w600 ,
+                fontWeight: FontWeight.w600,
               ),
             ),
           ),
@@ -766,8 +796,11 @@ Future<void> _saveDesignsInBackground() async {
         snackPosition: SnackPosition.TOP,
       );
 
-      bool success = await _subscriptionService.purchaseExtraTechpacks(count, price);
-      
+      bool success = await _subscriptionService.purchaseExtraTechpacks(
+        count,
+        price,
+      );
+
       if (success) {
         Get.snackbar(
           'Success!',
@@ -775,9 +808,9 @@ Future<void> _saveDesignsInBackground() async {
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 4),
+          duration: const Duration(milliseconds: 1500),
         );
-        
+
         // After successful purchase, allow user to continue
         // User should click the button again to proceed
       } else {

@@ -178,6 +178,7 @@ void showPopup() {
           'No images available to download',
           backgroundColor: Colors.orange,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
         return;
       }
@@ -191,6 +192,7 @@ void showPopup() {
           'All images are local assets and cannot be downloaded',
           backgroundColor: Colors.blue,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
         return;
       }
@@ -239,6 +241,7 @@ void showPopup() {
         'Failed to download images: $e',
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }
@@ -310,7 +313,7 @@ void showPopup() {
           '${downloadedFiles.length} images saved to gallery in "Atelia" album',
           backgroundColor: Colors.black,
           colorText: Colors.white,
-          duration: Duration(seconds: 4),
+          duration: const Duration(milliseconds: 1500),
           snackPosition: SnackPosition.TOP,
         );
       } else if (downloadedFiles.isNotEmpty && failedDownloads.isNotEmpty) {
@@ -320,7 +323,7 @@ void showPopup() {
           '${downloadedFiles.length} images saved to gallery. ${failedDownloads.length} failed.',
           backgroundColor: Colors.orange,
           colorText: Colors.white,
-          duration: Duration(seconds: 4),
+          duration: const Duration(milliseconds: 1500),
           snackPosition: SnackPosition.TOP,
         );
       } else {
@@ -330,7 +333,7 @@ void showPopup() {
           'Failed to save images to gallery.',
           backgroundColor: Colors.red,
           colorText: Colors.white,
-          duration: Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
           snackPosition: SnackPosition.TOP,
         );
       }
@@ -345,6 +348,7 @@ void showPopup() {
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }

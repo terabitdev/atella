@@ -34,15 +34,22 @@ import 'package:atella/Modules/tech_pack/bindings/tech_pack_binding.dart';
 import 'package:atella/nav_bar.dart';
 import 'package:get/get.dart';
 
-
 class AppPages {
   static const initial = AppRoutes.splash;
 
   static final routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
     GetPage(name: AppRoutes.onboarding, page: () => const OnboardingScreen()),
-    GetPage(name: AppRoutes.login, page: () => LoginScreen(), binding: LoginBinding()),
-    GetPage(name: AppRoutes.signup, page: () => SignUpscreen(), binding: SignupBinding()),
+    GetPage(
+      name: AppRoutes.login,
+      page: () => LoginScreen(),
+      binding: LoginBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.signup,
+      page: () => SignUpscreen(),
+      binding: SignupBinding(),
+    ),
     GetPage(
       name: AppRoutes.verification,
       page: () => const VerificationScreen(),
@@ -50,10 +57,7 @@ class AppPages {
     GetPage(name: AppRoutes.home, page: () => const HomeScreen()),
     GetPage(name: AppRoutes.profile, page: () => const ProfileScreen()),
     GetPage(name: AppRoutes.create, page: () => const CreateScreen()),
-    GetPage(
-      name: AppRoutes.favourite,
-      page: () => const FavouriteScreen(),
-    ),
+    GetPage(name: AppRoutes.favourite, page: () => const FavouriteScreen()),
     GetPage(name: AppRoutes.navBar, page: () => const CustomNavigationBar()),
     GetPage(
       name: AppRoutes.creativeBrief,
@@ -110,16 +114,19 @@ class AppPages {
       page: () => const SubscribeScreen(),
       binding: SubscribeBinding(),
     ),
-    GetPage(
-      name: AppRoutes.myDesigns,
-      page: () => const MyDesignScreen()
-    ),
+    GetPage(name: AppRoutes.myDesigns, page: () => const MyDesignScreen()),
     GetPage(
       name: AppRoutes.collections,
       page: () => const MyCollectionScreen(),
     ),
-    GetPage(name: AppRoutes.subscribeFree, page: () => const SubscribeFreePlan()),
-    GetPage(name: AppRoutes.subscribeStarter, page: () => const SubscribeStarterPlan()),
+    GetPage(
+      name: AppRoutes.subscribeFree,
+      page: () => const SubscribeFreePlan(),
+    ),
+    GetPage(
+      name: AppRoutes.subscribeStarter,
+      page: () => const SubscribeStarterPlan(),
+    ),
     GetPage(name: AppRoutes.subscribePro, page: () => const SubscribeProPlan()),
     // Add more routes here
   ];

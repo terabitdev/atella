@@ -53,7 +53,7 @@ class LoginController extends GetxController {
         'User successfully logged in',
         backgroundColor: Colors.black,
         colorText: Colors.white,
-        
+        duration: const Duration(milliseconds: 1500),
       );
       // Success
       Get.offAllNamed('/nav_bar');
@@ -69,6 +69,7 @@ class LoginController extends GetxController {
           result,
           backgroundColor: Colors.red,
           colorText: Colors.white,
+          duration: const Duration(milliseconds: 1500),
         );
       }
     }
@@ -86,6 +87,7 @@ class LoginController extends GetxController {
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
       );
       Get.offAllNamed('/nav_bar');
     } else {
@@ -94,6 +96,7 @@ class LoginController extends GetxController {
         result,
         backgroundColor: Colors.red,
         colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
       );
     }
   }

@@ -68,7 +68,7 @@ class SubscribeController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
-        duration: Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
     } finally {
       isLoading.value = false;
@@ -103,7 +103,7 @@ class SubscribeController extends GetxController {
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
-        duration: Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
       );
       return;
     }
@@ -125,10 +125,10 @@ class SubscribeController extends GetxController {
         
         if (showSuccessMessage) {
           Get.snackbar(
-            'Success! 🎉', 
+            'Success! 🎉',
             'Welcome to ${plan.displayName}! You can now generate techpacks.',
             snackPosition: SnackPosition.TOP,
-            duration: Duration(seconds: 4),
+            duration: const Duration(milliseconds: 1500),
             backgroundColor: Colors.black,
             colorText: Colors.white,
             icon: Icon(Icons.check_circle, color: Colors.white),
@@ -158,7 +158,7 @@ class SubscribeController extends GetxController {
                 snackPosition: SnackPosition.TOP,
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
-                duration: Duration(seconds: 4),
+                duration: const Duration(milliseconds: 1500),
                 icon: Icon(Icons.check_circle, color: Colors.white),
               );
             });
@@ -183,10 +183,10 @@ class SubscribeController extends GetxController {
         }
       } else {
         Get.snackbar(
-          'Error', 
+          'Error',
           'Failed to complete subscription',
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );
@@ -194,10 +194,10 @@ class SubscribeController extends GetxController {
     } catch (e) {
       print('Error in subscribeToPlan: $e');
       Get.snackbar(
-        'Error', 
+        'Error',
         'An error occurred: $e',
         snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.black,
         colorText: Colors.white,
       );
@@ -227,26 +227,26 @@ class SubscribeController extends GetxController {
           'Success',
           'Subscription cancelled successfully',
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       } else {
         Get.snackbar(
-          'Error', 
+          'Error',
           'Failed to cancel subscription',
           snackPosition: SnackPosition.TOP,
-          duration: Duration(seconds: 3),
+          duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       }
     } catch (e) {
       Get.snackbar(
-        'Error', 
+        'Error',
         'An error occurred: $e',
         snackPosition: SnackPosition.TOP,
-        duration: Duration(seconds: 3),
+        duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );

@@ -1,14 +1,14 @@
 import 'package:atella/Modules/creative_brief/Views/Widgets/selection_chip_widget.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class CategorizedChipsWidget extends StatelessWidget {
   final Map<String, List<String>> categories;
   final String? selectedOption;
   final Function(String, String) onOptionSelected; // Now includes categoryName
   final String questionId; // Add questionId to check custom selection
-  final String customSelectedForCategory; // Observable value for custom selection
+  final String
+  customSelectedForCategory; // Observable value for custom selection
 
   const CategorizedChipsWidget({
     Key? key,
@@ -63,12 +63,14 @@ class CategorizedChipsWidget extends StatelessWidget {
             bool isSelected = false;
             if (option == 'Custom') {
               // Check if custom is selected for this category (either from temp state or saved answer)
-              isSelected = customSelectedForCategory == customKey ||
-                          selectedOption == '$categoryName:Custom';
+              isSelected =
+                  customSelectedForCategory == customKey ||
+                  selectedOption == '$categoryName:Custom';
             } else {
               // Regular option - check both formats: "option" and "categoryName:option"
-              isSelected = selectedOption == option ||
-                          selectedOption == '$categoryName:$option';
+              isSelected =
+                  selectedOption == option ||
+                  selectedOption == '$categoryName:$option';
             }
 
             return SelectionChipWidget(
