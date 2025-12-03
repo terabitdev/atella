@@ -383,7 +383,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
         children: [
           // Category title
           Padding(
-            padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+            padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
             child: Text(
               categoryName,
               style: TextStyle(

@@ -21,7 +21,7 @@ class ColorPickerWidget extends StatelessWidget {
       children: [
         // Section title
         Padding(
-          padding: EdgeInsets.only(bottom: 12.h, top: 8.h),
+          padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
           child: Text(
             'Solid colors',
             style: TextStyle(

@@ -111,7 +111,7 @@ class RefiningConceptController extends GetxController {
         'Long',
         'Custom',
       ],
-      allowMultiple: false,
+      allowMultiple: true,
     ),
     BriefQuestion(
       id: 'specific_features',
@@ -705,7 +705,7 @@ class RefiningConceptController extends GetxController {
 
     // Debounce confirmation (2 seconds like creative brief)
     _categorizedDebounce?.cancel();
-    _categorizedDebounce = Timer(const Duration(milliseconds: 2000), () {
+    _categorizedDebounce = Timer(const Duration(milliseconds: 3000), () {
       if (_tempCategorizedSelections.isNotEmpty &&
           !isQuestionAnswered(questionId)) {
         _confirmCategorizedSelections(questionId);
