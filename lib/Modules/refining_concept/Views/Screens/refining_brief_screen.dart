@@ -33,6 +33,12 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
             onBack: () => Navigator.of(context).pop(),
+            padding: const EdgeInsets.only(
+              left: 20.0,
+              right: 20.0,
+              top: 54.0,
+              bottom: 25.0,
+            ),
           ),
           Expanded(
             child: Padding(
