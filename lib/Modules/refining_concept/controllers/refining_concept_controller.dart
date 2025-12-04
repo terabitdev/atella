@@ -119,13 +119,22 @@ class RefiningConceptController extends GetxController {
       type: 'chips_categorized',
       options: [],
       categories: {
-        'Necklines': ['Crew', 'V-neck', 'Square', 'Half-shoulder', 'Custom'],
+        'Necklines': [
+          'Crew',
+          'V-neck',
+          'Square',
+          'Half-shoulder',
+          'Scoop',
+          'Boat neck',
+          'Custom',
+        ],
         'Sleeves': [
           'Sleeveless',
           'Short ¾',
           'Long',
           'Puff',
           'Raglan',
+          'Cap',
           'Custom',
         ],
         'Closures': [
@@ -137,7 +146,22 @@ class RefiningConceptController extends GetxController {
           'Custom',
         ],
         'Pockets': ['Patch', 'Welt', 'Flap', 'Hidden', 'Cargo', 'Custom'],
-        'Waist': ['Elastic', 'High-waist', 'Low-rise', 'Belted', 'Custom'],
+        'Waist': [
+          'Elastic',
+          'High-waist',
+          'Low-rise',
+          'Belted',
+          'Drawstring',
+          'Custom',
+        ],
+        'Legs': [
+          'Straight leg',
+          'Tapered',
+          'Wide leg',
+          'Bootcut',
+          'Flared',
+          'Custom',
+        ],
         'Finishes': [
           'Lining',
           'Topstitching',
