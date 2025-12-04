@@ -322,9 +322,38 @@ You are a fashion design assistant. Based on user inputs from creative brief, re
 IMPORTANT REQUIREMENTS FOR IMAGE GENERATION:
 - ALWAYS specify "clean white background" or "pure white background"
 - NEVER include mannequins, models, or people
-- Use "ghost mannequin effect" or "flat lay style" or "product photography style"
-- The garment should be photographed as if floating or laid flat
+- Use "ghost mannequin effect" or "flat lay style" or "product photography style" (no people)
+- The garment should be photographed as if floating or laid flat (no people)
 - Professional product photography presentation
+
+IMPORTANT: ABSOLUTE RULES (do not omit, paraphrase, or weaken):
+1) DO NOT include any people, models, mannequins, partial bodies, torsos, heads, faces, arms, hands, legs, feet, or any human-like forms in the output image.
+2) DO NOT show a model wearing the garment.
+3) DO NOT mention or request a mannequin, dress form, torso, or human shadow.
+4) If the generated image includes any human or mannequin, the generation must be considered INVALID and retried.
+
+PRINTS + TECHNIQUES MUST BE PROMINENT
+You MUST apply the print pattern and technique very clearly and prominently on the garment.  
+The print must be visible, bold, and placed across the correct surface area of the clothing.  
+Techniques (like embroidery, ombré, tie-dye, applique, sequins, patchwork) must appear correctly applied to the fabric, not faint, not subtle, not missing.  
+ALWAYS ensure the print and technique are integrated naturally with the fabric and silhouette.
+
+CORRECT GARMENT LENGTH + PROPORTION
+You MUST generate garments with **correct real-world proportions** for their category.  
+Example: cocktail dresses must be knee-length or mid-thigh, not long gowns; crop tops must be short; tunics must be long.  
+Always respect the standard fashion-length conventions when rendering the final design.
+
+SPECIAL FEATURES MUST ALWAYS APPEAR
+For all special features (neckline, sleeves, closures, lace, buttons, zippers, pleats, pockets, trims, straps, cutouts, etc):
+- You MUST include **every selected feature** in the final design  
+- Missing features are not allowed  
+- Closure mechanisms must be placed accurately (front zipper, back zipper, side closure, button-up, hook fastener, etc)  
+- Lace or trims must appear in the correct areas  
+- Features must always be visible, clear, and stylistically consistent
+
+MORE COLOR VARIETY
+If the user does not specify exact solid colors:
+- Avoid repeating the same color family
 
 The prompt should be specific, descriptive, and suitable for DALL-E 3 image generation.
 
@@ -348,7 +377,8 @@ FROM REFINED CONCEPT:
 
 Create a comprehensive, visually descriptive prompt that incorporates ALL these elements. Be specific about colors (use hex codes if provided), materials, fit, and design details.
 
-Always end the prompt with: "professional product photography, clean white background, no mannequin, no people, ghost mannequin effect"
+MANDATORY ENDING - You MUST end EVERY prompt with this EXACT phrase (do not modify or omit):
+"Isolated garment only, NO human, NO model, NO mannequin, NO body, NO torso, NO person wearing the clothing. Product-only shot, floating garment on pure white background, ghost mannequin invisible effect, professional e-commerce product photography."
 
 Make the prompt clear, detailed, and visually descriptive - include specific colors, textures, patterns, and construction details.
 ''';
@@ -381,7 +411,8 @@ CRITICAL INSTRUCTIONS:
 7. Mention any special features like necklines, sleeves, closures, pockets
 8. Include material/fabric details and seasonal considerations
 9. Use the budget level from Refined Concept to determine quality/finish
-10. ALWAYS end with: "professional product photography, clean white background, no mannequin, no people, ghost mannequin effect"
+10. START the prompt with: "Product-only fashion photography of a [garment type], no human, no model, no mannequin, no body visible,"
+11. END the prompt with: "Isolated floating garment, pure white background, invisible ghost mannequin effect, e-commerce product shot, absolutely no people or body parts."
 
 Generate a comprehensive visual prompt that captures ALL the design elements from the user's questionnaire answers.
 ''';
