@@ -1,6 +1,6 @@
 import 'package:atella/core/themes/app_colors.dart';
-import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 
 class CustomCheckboxWidget extends StatelessWidget {
   final String text;
@@ -21,34 +21,50 @@ class CustomCheckboxWidget extends StatelessWidget {
     return GestureDetector(
       onTap: onTap,
       child: Container(
-        margin: const EdgeInsets.only(bottom: 8),
-        padding: const EdgeInsets.all(16),
-        decoration: BoxDecoration(color: Colors.transparent),
+        margin: EdgeInsets.only(bottom: 8.h),
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        decoration: BoxDecoration(
+          color: const Color(0xFFF5F5F5),
+          borderRadius: BorderRadius.circular(20.r),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.buttonColor
+                : const Color(0xFFE0E0E0),
+            width: 1,
+          ),
+        ),
         child: Row(
           children: [
-            // Custom Checkbox
+            // Checkbox icon
             Container(
-              width: 20,
-              height: 20,
+              width: 20.w,
+              height: 20.w,
               decoration: BoxDecoration(
                 color: isSelected ? AppColors.buttonColor : Colors.transparent,
                 border: Border.all(
-                  color: isSelected
-                      ? AppColors.buttonColor
-                      : const Color.fromRGBO(204, 204, 204, 1),
-                  width: 2,
+                  color: isSelected ? AppColors.buttonColor : const Color(0xFFCCCCCC),
+                  width: 1.5,
                 ),
-                borderRadius: BorderRadius.circular(4),
+                borderRadius: BorderRadius.circular(4.r),
               ),
               child: isSelected
-                  ? const Icon(Icons.check, color: Colors.white, size: 14)
+                  ? Icon(Icons.check, color: Colors.white, size: 14.sp)
                   : null,
             ),
 
-            const SizedBox(width: 12),
+            SizedBox(width: 12.w),
 
             // Text
-            Expanded(child: Text(text, style: cbTextStyle12400)),
+            Expanded(
+              child: Text(
+                text,
+                style: TextStyle(
+                  fontSize: 13.sp,
+                  fontWeight: isSelected ? FontWeight.w500 : FontWeight.w400,
+                  color: Colors.black87,
+                ),
+              ),
+            ),
           ],
         ),
       ),

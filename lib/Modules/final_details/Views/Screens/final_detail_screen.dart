@@ -161,26 +161,45 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
         children: [
           if (index < 3) _buildSectionTitle(question.id),
           Container(
-            padding: const EdgeInsets.all(20),
+            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
             decoration: BoxDecoration(
-              border: Border.all(color: const Color(0xFFE0E0E0), width: 2),
-              color: Colors.black,
-              borderRadius: BorderRadius.only(
-                topLeft: Radius.circular(4.r),
-                topRight: Radius.circular(24.r),
-                bottomLeft: Radius.circular(24.r),
-                bottomRight: Radius.circular(24.r),
+              color: const Color(0xFFF8F9FA),
+              borderRadius: BorderRadius.circular(12.r),
+              border: Border.all(
+                color: isAnswered
+                    ? AppColors.buttonColor.withValues(alpha: 0.3)
+                    : const Color(0xFFE8E8E8),
+                width: 1,
               ),
             ),
             child: Row(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Expanded(
-                  child: Text(question.question, style: qTextStyle16400),
+                  child: Text(
+                    question.question,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                      color: Colors.black87,
+                    ),
+                  ),
                 ),
-                const SizedBox(width: 12),
-                if (isAnswered)
-                  Image.asset('assets/images/tick.png', height: 16, width: 16),
+                if (isAnswered) ...[
+                  SizedBox(width: 12.w),
+                  Container(
+                    padding: const EdgeInsets.all(5),
+                    decoration: BoxDecoration(
+                      color: AppColors.buttonColor,
+                      shape: BoxShape.circle,
+                    ),
+                    child: Icon(
+                      Icons.check,
+                      color: Colors.white,
+                      size: 12.sp,
+                    ),
+                  ),
+                ],
               ],
             ),
           ),
