@@ -11,6 +11,7 @@ import 'package:get/get.dart';
 import 'package:atella/Widgets/app_header.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
+import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
 class GenerateTechPackScreen extends StatelessWidget {
   GenerateTechPackScreen({super.key});
@@ -64,7 +65,9 @@ class GenerateTechPackScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Stack(
+      body: TapTrackingWrapper(
+        screenName: 'GenerateTechPackScreen',
+        child: Stack(
         children: [
           Column(
             children: [
@@ -130,6 +133,7 @@ class GenerateTechPackScreen extends StatelessWidget {
             ],
           ),
         ],
+      ),
       ),
     );
   }

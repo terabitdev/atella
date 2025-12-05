@@ -2,6 +2,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -48,12 +49,23 @@ class LoginController extends GetxController {
     final result = await _authService.signIn(email: email, password: password);
     isLoading.value = false;
     if (result == null) {
+      // Identify user for PostHog
+      final user = _authService.currentUser;
+      if (user != null) {
+        PostHogAnalyticsService().identifyUser(
+          userId: user.uid,
+          email: user.email,
+          name: user.displayName,
+        );
+      }
+      // Track login event
+      PostHogAnalyticsService().trackUserLoggedIn(method: 'email');
+
       Get.snackbar(
         'Success',
         'User successfully logged in',
         backgroundColor: Colors.black,
         colorText: Colors.white,
-        
       );
       // Success
       Get.offAllNamed('/nav_bar');
@@ -80,6 +92,18 @@ class LoginController extends GetxController {
     isGoogleLoading.value = false;
     
     if (result == null) {
+      // Identify user for PostHog
+      final user = _authService.currentUser;
+      if (user != null) {
+        PostHogAnalyticsService().identifyUser(
+          userId: user.uid,
+          email: user.email,
+          name: user.displayName,
+        );
+      }
+      // Track Google login event
+      PostHogAnalyticsService().trackUserLoggedIn(method: 'google');
+
       Get.snackbar(
         'Success',
         'Successfully signed in with Google',

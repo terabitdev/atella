@@ -3,6 +3,7 @@ import 'tech_pack_details_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
 import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 
 class TechPackReadyController extends GetxController {
   final TechPackDetailsController _detailsController = Get.find<TechPackDetailsController>();
@@ -245,6 +246,16 @@ Delivery: ${_detailsController.deliveryDateController.text}
         );
       }
 
+      // Track tech pack completed
+      String garmentType = 'Fashion';
+      if (_detailsController.designData.isNotEmpty) {
+        final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
+        if (creativeBrief != null && creativeBrief['garmentType'] != null) {
+          garmentType = creativeBrief['garmentType'].toString();
+        }
+      }
+      PostHogAnalyticsService().trackTechPackCompleted(garmentType: garmentType);
+
       // Clear any existing project controller to force refresh
       if (Get.isRegistered<dynamic>(tag: 'projectController')) {
         Get.delete(tag: 'projectController', force: true);
@@ -308,6 +319,9 @@ Delivery: ${_detailsController.deliveryDateController.text}
         snackPosition: SnackPosition.TOP,
         duration: const Duration(seconds: 3),
       );
+
+      // Track tech pack downloaded
+      PostHogAnalyticsService().trackTechPackDownloaded(format: 'pdf');
     } catch (e) {
       print('Error exporting PDF: ${e.toString()}');
       Get.snackbar(

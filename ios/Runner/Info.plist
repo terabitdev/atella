@@ -53,6 +53,8 @@
 	<string>This app needs access to save images to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
 	<string>This app needs access to your photo library.</string>
-
+	<!-- PostHog: Manual initialization for more control -->
+	<key>com.posthog.posthog.AUTO_INIT</key>
+	<false/>
 </dict>
 </plist>
