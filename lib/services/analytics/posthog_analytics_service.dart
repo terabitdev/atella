@@ -249,12 +249,22 @@ class PostHogAnalyticsService {
     }
   }
 
-  /// Get feature flag value
+  /// Get feature flag value (returns variant key for multivariate flags)
   Future<dynamic> getFeatureFlag(String flagKey) async {
     try {
       return await _posthog.getFeatureFlag(flagKey);
     } catch (e) {
       _debugLog('Failed to get feature flag: $e');
+      return null;
+    }
+  }
+
+  /// Get feature flag payload (JSON data attached to the flag)
+  Future<dynamic> getFeatureFlagPayload(String flagKey) async {
+    try {
+      return await _posthog.getFeatureFlagPayload(flagKey);
+    } catch (e) {
+      _debugLog('Failed to get feature flag payload: $e');
       return null;
     }
   }

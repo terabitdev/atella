@@ -26,13 +26,13 @@ Fashion-focused SaaS platform for independent creators (Flutter mobile app)
 
 | Feature | Status | Notes |
 |---------|--------|-------|
-| Session Recordings | ✅ Configured | `sessionReplay = on (when analytics enabled)`, masking ON (texts/images) |
+| Session Recordings | ✅ Configured | `sessionReplay = on (when analytics enabled)`, masking OFF (full visibility) |
 | Automatic Screen Tracking | ✅ Done | Via `PosthogObserver` |
 | User Identification | ✅ Ready | `identifyUser()` method in analytics service |
 | Feature Flags | ✅ Ready | Methods available in analytics service |
 | Heatmaps | ✅ Custom | Custom tap tracking via `trackTap()` method |
-| Funnels | ✅ Done | Design Creation + Onboarding funnels created in PostHog |
-| Cohorts | ✅ Done | Power Users, New Users cohorts created |
+| Funnels | ✅ Done | Design Creation + Onboarding + Conversion + Churn funnels created in PostHog |
+| Cohorts | ✅ Done | Power Users, New Users, Free Users, Paid Users, Churned Users cohorts created |
 
 ### 3. Event Tracking Integration
 
@@ -91,11 +91,16 @@ Sign Up → Creative Brief → Design Generated → [Tech Pack Completed]*
 ```
 *Step 4 (`tech_pack_completed`) to be added once events are captured*
 
-#### 3. Conversion Funnel 🔲 Pending
+#### 3. Conversion Funnel ✅ Created
 ```
 Subscription Viewed → Subscription Started
 ```
-*Requires Stripe sandbox to test `subscription_started` event*
+
+#### 4. Subscription Churn Funnel ✅ Created
+```
+Subscription Started → Subscription Cancelled
+```
+*Measures churn rate - what % of paying users cancel their subscription*
 
 ### User Properties to Track
 | Property | When Set | Purpose |
@@ -111,9 +116,9 @@ Subscription Viewed → Subscription Started
 |--------|--------|----------|
 | **Power Users** | ✅ Created | Users with 5+ designs generated |
 | **New Users (7 days)** | ✅ Created | First seen in last 7 days |
-| **Free Users** | 🔲 Pending | Needs `subscription_started` events |
-| **Paid Users** | 🔲 Pending | Needs `subscription_started` events |
-| **Churned Users** | 🔲 Pending | Needs subscription data |
+| **Free Users** | ✅ Created | Users who signed up but never started a subscription |
+| **Paid Users** | ✅ Created | Users who completed at least one `subscription_started` event |
+| **Churned Users** | ✅ Created | Users who completed at least one `subscription_cancelled` event |
 
 ---
 
@@ -165,8 +170,9 @@ Subscription Viewed → Subscription Started
 - [x] Verify events are flowing in PostHog
 - [x] Create Onboarding Funnel (3 steps - 4th step pending `tech_pack_completed` events)
 - [x] Create Design Creation Funnel
-- [ ] Create Conversion Funnel (pending - needs `subscription_started` events)
-- [x] Set up user cohorts (Power Users, New Users)
+- [x] Create Conversion Funnel (`subscription_viewed` → `subscription_started`)
+- [x] Create Churn Funnel (`subscription_started` → `subscription_cancelled`)
+- [x] Set up user cohorts (Power Users, New Users, Free Users, Paid Users, Churned Users)
 - [ ] Configure session replay filters (optional)
 
 ### Phase 4: Validation & Testing ✅
@@ -192,21 +198,213 @@ config.personProfiles = PostHogPersonProfiles.identifiedOnly;
 // Session Replay
 config.optOut = !analyticsOptIn;           // respects user toggle
 config.sessionReplay = analyticsOptIn;     // on when enabled
-config.sessionReplayConfig.maskAllTexts = true;
-config.sessionReplayConfig.maskAllImages = true;
+config.sessionReplayConfig.maskAllTexts = false;   // show all text
+config.sessionReplayConfig.maskAllImages = false;  // show all images
 config.sessionReplayConfig.throttleDelay = Duration(milliseconds: 700);
 ```
 
 **Consent & Sampling**
 - Analytics opt-in toggle lives in Profile screen; default ON, persisted.
-- Session replay runs when analytics is enabled (no sampling) and uses full masking for text/images.
-- Users can disable analytics/replay at any time; when disabled we call `Posthog().disable()` to stop collection. Update the Privacy Policy/ToS to disclose analytics, masking, and the opt-out location in-app.
+- Session replay runs when analytics is enabled (no sampling) with full visibility (no masking).
+- Users can disable analytics/replay at any time; when disabled we call `Posthog().disable()` to stop collection. Update the Privacy Policy/ToS to disclose analytics and the opt-out location in-app.
 
 ### Environment Variables (.env)
 ```
 POSTHOG_API_KEY=phc_xxxxx
 POSTHOG_HOST=https://us.i.posthog.com
 ```
+
+---
+
+## Feature Flags
+
+Feature flags allow you to enable/disable features remotely without deploying new code. They're useful for A/B testing, gradual rollouts, and kill switches.
+
+### Available Methods
+
+| Method | Description | Returns |
+|--------|-------------|---------|
+| `isFeatureEnabled(flagKey)` | Check if a boolean flag is enabled | `Future<bool>` |
+| `getFeatureFlag(flagKey)` | Get flag value (for multivariate flags) | `Future<dynamic>` |
+| `getFeatureFlagPayload(flagKey)` | Get JSON payload attached to flag | `Future<dynamic>` |
+| `reloadFeatureFlags()` | Force refresh all flags from server | `Future<void>` |
+
+### Creating a Feature Flag in PostHog Dashboard
+
+1. Go to **Feature Flags** → **New feature flag**
+2. Enter a **Key** (e.g., `new_subscription_ui`)
+3. Set **Release conditions**:
+   - Roll out to X% of users
+   - Target specific cohorts (e.g., "Paid Users")
+   - Target by user properties
+4. Optionally add a **Payload** (JSON data)
+5. Click **Save**
+
+### Usage Examples
+
+#### Basic Boolean Flag
+```dart
+// Check if feature is enabled
+if (await PostHogAnalyticsService().isFeatureEnabled('new_subscription_ui')) {
+  // Show new UI
+} else {
+  // Show old UI
+}
+```
+
+#### Multivariate Flag (A/B/C Testing)
+```dart
+// Get which variant the user is in
+final variant = await PostHogAnalyticsService().getFeatureFlag('button_color_test');
+
+switch (variant) {
+  case 'red':
+    return Colors.red;
+  case 'blue':
+    return Colors.blue;
+  case 'green':
+    return Colors.green;
+  default:
+    return Colors.grey; // Control/default
+}
+```
+
+#### Flag with Payload (Remote Config)
+```dart
+// Get JSON payload attached to the flag
+final payload = await PostHogAnalyticsService().getFeatureFlagPayload('app_config');
+
+if (payload != null) {
+  final maxDesigns = payload['max_designs'] ?? 10;
+  final welcomeMessage = payload['welcome_message'] ?? 'Welcome!';
+  // Use the remote config values
+}
+```
+
+#### Force Reload Flags
+```dart
+// Useful after user logs in or changes subscription
+await PostHogAnalyticsService().reloadFeatureFlags();
+```
+
+### Suggested Feature Flags for Atelia
+
+| Flag Key | Type | Use Case |
+|----------|------|----------|
+| `show_analytics_toggle` | Boolean | **✅ IMPLEMENTED** - Show/hide analytics toggle in Edit Profile |
+| `new_subscription_ui` | Boolean | A/B test new subscription screen design |
+| `ai_design_v2` | Boolean | Gradual rollout of new AI model |
+| `enable_tech_pack_export` | Boolean | Kill switch for PDF export |
+| `max_free_designs` | Payload | Remote config for free tier limits |
+| `enable_manufacturer_suggestions` | Boolean | Feature gate for paid users only |
+| `beta_features` | Boolean | Enable experimental features for beta testers |
+
+### Best Practices
+
+1. **Use descriptive flag names**: `enable_dark_mode` not `flag1`
+2. **Default to safe values**: If flag check fails, default to existing behavior
+3. **Reload after auth changes**: Call `reloadFeatureFlags()` after login/logout
+4. **Clean up old flags**: Remove flags from code after full rollout
+5. **Use cohorts for targeting**: Target "Paid Users" cohort for premium features
+
+### Example: Premium Feature Gate
+
+```dart
+class ManufacturerSuggestionsButton extends StatelessWidget {
+  @override
+  Widget build(BuildContext context) {
+    return FutureBuilder<bool>(
+      future: PostHogAnalyticsService().isFeatureEnabled('enable_manufacturer_suggestions'),
+      builder: (context, snapshot) {
+        final isEnabled = snapshot.data ?? false;
+
+        if (!isEnabled) {
+          return SizedBox.shrink(); // Hide button
+        }
+
+        return ElevatedButton(
+          onPressed: () => Get.to(() => ManufacturerSuggestionsScreen()),
+          child: Text('Get Manufacturer Suggestions'),
+        );
+      },
+    );
+  }
+}
+```
+
+### Example: A/B Test with Tracking
+
+```dart
+Future<void> showSubscriptionScreen() async {
+  final variant = await PostHogAnalyticsService().getFeatureFlag('subscription_screen_test');
+
+  // Track which variant the user saw (for analysis)
+  await PostHogAnalyticsService().trackEvent('subscription_screen_viewed', properties: {
+    'variant': variant ?? 'control',
+  });
+
+  if (variant == 'new_design') {
+    Get.to(() => NewSubscriptionScreen());
+  } else {
+    Get.to(() => SubscriptionScreen());
+  }
+}
+```
+
+### Real Implementation: `show_analytics_toggle`
+
+**File:** `lib/Modules/Home/View/Screens/profile_screen.dart`
+
+This is a working feature flag implementation in the codebase that controls whether the analytics toggle is shown in the Edit Profile screen.
+
+```dart
+FutureBuilder<bool>(
+  future: PostHogAnalyticsService().isFeatureEnabled('show_analytics_toggle'),
+  builder: (context, snapshot) {
+    // Default to showing the toggle if flag check fails or is loading
+    final showToggle = snapshot.data ?? true;
+
+    if (!showToggle) {
+      return const SizedBox.shrink();
+    }
+
+    return /* Analytics toggle widget */;
+  },
+),
+```
+
+**To create this flag in PostHog:**
+1. Go to **Feature Flags** → **New feature flag**
+2. Key: `show_analytics_toggle`
+3. Set rollout to **100%** (enabled for all users)
+4. Save
+
+**Note:** The flag defaults to `true` if not found, so the toggle will always show unless you explicitly disable it in PostHog.
+
+### Feature Flags Troubleshooting
+
+**Problem: Feature flag always returns `false`**
+
+Feature flags are loaded asynchronously from PostHog's servers. If you check a flag before it's loaded, it returns `false`.
+
+**Solution:** We call `reloadFeatureFlags()` during app initialization in `main.dart`:
+
+```dart
+await Posthog().setup(config);
+// Ensure feature flags are loaded before app starts
+await Posthog().reloadFeatureFlags();
+```
+
+**Debugging:** Check the debug console for logs like:
+```
+PostHog Feature Flag [show_analytics_toggle]: connectionState=done, data=true, error=null
+```
+
+**Common issues:**
+1. **Flag key mismatch** - Ensure the key in code matches exactly (case-sensitive)
+2. **Flags not loaded** - Call `reloadFeatureFlags()` after PostHog setup
+3. **User not identified** - If flag targets specific users, ensure user is identified first
+4. **Network issues** - Check if PostHog calls are being blocked
 
 ---
 
@@ -334,24 +532,11 @@ This is a Flutter-only mobile app. If there's a backend API, PostHog server-side
 
 ## Future Work
 
-### Requires Stripe Sandbox Keys
-| Task | Description |
-|------|-------------|
-| Test subscription events | Verify `subscription_started` and `subscription_cancelled` fire correctly |
-| Create Conversion Funnel | `subscription_viewed` → `subscription_started` |
-| Create Free Users cohort | Users who have not completed `subscription_started` |
-| Create Paid Users cohort | Users who have completed `subscription_started` |
-| Create Churned Users cohort | Users who cancelled subscription |
-
-### Requires More User Data
-| Task | Description |
-|------|-------------|
-| Add step 4 to Onboarding Funnel | Add `tech_pack_completed` once events are captured |
-| Configure session replay filters | Filter recordings by user properties or events (optional) |
-
 ### Optional Enhancements
 | Task | Description |
 |------|-------------|
+| Add step 4 to Onboarding Funnel | Add `tech_pack_completed` once more events are captured |
+| Configure session replay filters | Filter recordings by user properties or events (optional) |
 | Add `designs_created_count` user property | Track total designs per user for segmentation |
 | Performance testing | Verify no app slowdowns from PostHog SDK |
 | Wrap additional screens with TapTrackingWrapper | Add tap tracking to more screens as needed |
@@ -369,10 +554,16 @@ All PostHog analytics code integration is complete. The following features are f
 | 15 custom events tracked | ✅ Implemented |
 | Design Creation Funnel | ✅ Created |
 | Onboarding Funnel (3 steps) | ✅ Created |
+| Conversion Funnel | ✅ Created |
+| Subscription Churn Funnel | ✅ Created |
 | Power Users cohort | ✅ Created |
 | New Users cohort | ✅ Created |
+| Free Users cohort | ✅ Created |
+| Paid Users cohort | ✅ Created |
+| Churned Users cohort | ✅ Created |
 | Custom tap tracking | ✅ Implemented on 4 key screens |
 | Analytics opt-in toggle | ✅ Implemented (Profile screen) |
 | Cancellation reason tracking | ✅ Implemented |
+| Feature Flags | ✅ Working (`show_analytics_toggle` implemented) |
 
 **Date:** December 2025

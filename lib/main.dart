@@ -61,14 +61,18 @@ Future<void> _initializePostHog() async {
 
     // Enable Session Replay
     config.sessionReplay = analyticsOptIn;
-    // Mask text/images by default to avoid PII capture
-    config.sessionReplayConfig.maskAllTexts = true;
-    config.sessionReplayConfig.maskAllImages = true;
+    // Show all text and images in session replays (no masking)
+    config.sessionReplayConfig.maskAllTexts = false;
+    config.sessionReplayConfig.maskAllImages = false;
     // Slightly tighter throttle to balance fidelity/perf
     config.sessionReplayConfig.throttleDelay =
         const Duration(milliseconds: 700);
 
     await Posthog().setup(config);
+
+    // Ensure feature flags are loaded before app starts
+    // This is important because isFeatureEnabled() returns false if flags haven't loaded yet
+    await Posthog().reloadFeatureFlags();
 
     if (kDebugMode) {
       debugPrint('PostHog: Initialized (optIn: $analyticsOptIn, replay: $analyticsOptIn)');
