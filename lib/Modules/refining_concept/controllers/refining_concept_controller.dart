@@ -727,11 +727,10 @@ class RefiningConceptController extends GetxController {
 
     update();
 
-    // Debounce confirmation (2 seconds like creative brief)
+    // Debounce confirmation (2 seconds)
     _categorizedDebounce?.cancel();
-    _categorizedDebounce = Timer(const Duration(milliseconds: 3000), () {
-      if (_tempCategorizedSelections.isNotEmpty &&
-          !isQuestionAnswered(questionId)) {
+    _categorizedDebounce = Timer(const Duration(milliseconds: 2000), () {
+      if (_tempCategorizedSelections.isNotEmpty) {
         _confirmCategorizedSelections(questionId);
       }
     });
