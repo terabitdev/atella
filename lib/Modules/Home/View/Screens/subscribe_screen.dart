@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controllers/subscribe_controller.dart';
+import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
 class SubscribeScreen extends StatefulWidget {
   const SubscribeScreen({super.key});
@@ -28,7 +29,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: Colors.black,
-      body: SafeArea(
+      body: TapTrackingWrapper(
+        screenName: 'SubscribeScreen',
+        child: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -111,6 +114,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
             ),
           ],
         ),
+      ),
       ),
     );
   }

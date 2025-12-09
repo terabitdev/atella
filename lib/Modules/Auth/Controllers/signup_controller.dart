@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 
 class SignupController extends GetxController {
   final nameController = TextEditingController();
@@ -85,7 +86,9 @@ class SignupController extends GetxController {
     );
     isLoading.value = false;
     if (result == null) {
-      // Success
+      // Success - Track signup event
+      PostHogAnalyticsService().trackUserSignedUp(method: 'email');
+
       Get.snackbar(
         'Success',
         'User registered successfully',

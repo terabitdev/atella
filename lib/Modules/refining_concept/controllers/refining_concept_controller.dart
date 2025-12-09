@@ -2,6 +2,7 @@ import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -584,7 +585,14 @@ class RefiningConceptController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     _saveRefinedConceptData();
-    
+
+    // Track refined concept completion
+    final data = _dataService.getRefinedConceptData();
+    PostHogAnalyticsService().trackRefinedConceptCompleted(
+      silhouette: data['garment_type']?.toString() ?? data['silhouette']?.toString() ?? '',
+      features: data['specific_features']?.toString() ?? data['features']?.toString() ?? '',
+    );
+
     // Pass edit mode data to next screen
     if (_isEditMode.value && _editingTechPack != null) {
       // In edit mode, skip onboarding and go directly to questionnaire

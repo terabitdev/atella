@@ -9,6 +9,7 @@ import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
 import 'dart:convert';
+import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -152,7 +153,9 @@ class TechPackReadyScreen extends StatelessWidget {
 
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
-      body: SafeArea(
+      body: TapTrackingWrapper(
+        screenName: 'TechPackReadyScreen',
+        child: SafeArea(
         child: SingleChildScrollView(
           padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 26),
           child: Column(
@@ -293,6 +296,7 @@ class TechPackReadyScreen extends StatelessWidget {
             ],
           ),
         ),
+      ),
       ),
     );
   }
