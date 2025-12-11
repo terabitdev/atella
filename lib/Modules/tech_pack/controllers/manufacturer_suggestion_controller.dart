@@ -2,9 +2,8 @@ import 'dart:async';
 import 'package:atella/services/email/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:country_picker/country_picker.dart';
-import 'package:atella/Data/Models/manufacturer_model.dart';
-import 'package:atella/services/manufacture_services/manufacturer_service.dart';
+import 'package:atella/Data/Models/new_manufacturer_model.dart';
+import 'package:atella/services/manufacture_services/new_manufacturer_firebase_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 
@@ -13,43 +12,55 @@ class ManufacturerSuggestionController extends GetxController {
   final RxInt tabIndex = 0.obs;
 
   // Services
-  final ManufacturerService _manufacturerService = Get.put(
-    ManufacturerService(),
-  );
+  final NewManufacturerFirebaseService _manufacturerService =
+      NewManufacturerFirebaseService();
   final AuthService _authService = AuthService();
 
-  // Data
-  final RxList<Manufacturer> recommendedManufacturers = <Manufacturer>[].obs;
-  final RxList<Manufacturer> displayedManufacturers = <Manufacturer>[].obs;
-  final RxList<Manufacturer> filteredManufacturers = <Manufacturer>[].obs;
-  final RxList<Manufacturer> allManufacturersCache = <Manufacturer>[].obs;
+  // Data - Using NewManufacturer model
+  final RxList<NewManufacturer> recommendedManufacturers = <NewManufacturer>[].obs;
+  final RxList<NewManufacturer> displayedManufacturers = <NewManufacturer>[].obs;
+  final RxList<NewManufacturer> filteredManufacturers = <NewManufacturer>[].obs;
+  final RxList<NewManufacturer> allManufacturersCache = <NewManufacturer>[].obs;
   final RxBool isLoading = false.obs;
   final RxBool isLoadingMore = false.obs;
   final RxBool isLoadingCustomTab = false.obs;
   final RxBool isDataReady = false.obs;
   final RxString error = ''.obs;
 
+  // Expanded card tracking
+  final RxSet<String> expandedCards = <String>{}.obs;
+
   // Streams for real-time data updates
-  final StreamController<List<Manufacturer>> _recommendedStreamController =
-      StreamController<List<Manufacturer>>.broadcast();
-  final StreamController<List<Manufacturer>> _filteredStreamController =
-      StreamController<List<Manufacturer>>.broadcast();
+  final StreamController<List<NewManufacturer>> _recommendedStreamController =
+      StreamController<List<NewManufacturer>>.broadcast();
+  final StreamController<List<NewManufacturer>> _filteredStreamController =
+      StreamController<List<NewManufacturer>>.broadcast();
   final StreamController<bool> _loadingStreamController =
       StreamController<bool>.broadcast();
 
-  Stream<List<Manufacturer>> get recommendedStream =>
+  Stream<List<NewManufacturer>> get recommendedStream =>
       _recommendedStreamController.stream;
-  Stream<List<Manufacturer>> get filteredStream =>
+  Stream<List<NewManufacturer>> get filteredStream =>
       _filteredStreamController.stream;
   Stream<bool> get loadingStream => _loadingStreamController.stream;
 
   // Pagination
   final ScrollController scrollController = ScrollController();
   bool hasMoreData = true;
+  int _currentPage = 0;
+  final int _pageSize = 20;
 
   // Filters for custom tab
-  final Rx<Country?> selectedCountry = Rx<Country?>(null);
   final RxString selectedCountryName = 'All Countries'.obs;
+  final RxList<String> availableCountries = <String>[].obs;
+
+  // Product filter
+  final RxString selectedProduct = 'All Products'.obs;
+  final RxList<String> availableProducts = <String>[].obs;
+
+  // Certification filter
+  final RxString selectedCertification = 'All Certifications'.obs;
+  final RxList<String> availableCertifications = <String>[].obs;
 
   @override
   void onInit() {
@@ -87,7 +98,7 @@ class ManufacturerSuggestionController extends GetxController {
     loadFilteredManufacturers();
 
     print(
-      'Pre-filter applied: ${_prefilterCountryName}, found ${filteredManufacturers.length} manufacturers',
+      'Pre-filter applied: $_prefilterCountryName, found ${filteredManufacturers.length} manufacturers',
     );
   }
 
@@ -119,29 +130,45 @@ class ManufacturerSuggestionController extends GetxController {
     });
   }
 
+  // Toggle card expansion
+  void toggleCardExpansion(String manufacturerId) {
+    if (expandedCards.contains(manufacturerId)) {
+      expandedCards.remove(manufacturerId);
+    } else {
+      expandedCards.add(manufacturerId);
+    }
+  }
+
+  bool isCardExpanded(String manufacturerId) {
+    return expandedCards.contains(manufacturerId);
+  }
+
   Future<void> loadRecommendedManufacturers() async {
     try {
       isLoading.value = true;
       _loadingStreamController.add(true);
       error.value = '';
 
-      // Load initial manufacturers from Firebase
-      final manufacturers = await _manufacturerService
-          .loadInitialManufacturers();
-      recommendedManufacturers.value = manufacturers;
-      displayedManufacturers.value = manufacturers;
+      // Load all manufacturers from new Firebase collection
+      final manufacturers = await _manufacturerService.getAllManufacturers();
 
-      // Data is automatically reactive through displayedManufacturers observable
+      // Cache all manufacturers
+      allManufacturersCache.value = manufacturers;
 
-      // Cache all manufacturers for filtering
-      final allManufacturers = await _manufacturerService
-          .getManufacturersFromFirebase();
-      allManufacturersCache.value = allManufacturers;
+      // Display first page
+      _currentPage = 0;
+      final endIndex = (_currentPage + 1) * _pageSize;
+      displayedManufacturers.value = manufacturers.take(endIndex).toList();
 
-      hasMoreData = _manufacturerService.hasMoreData;
+      hasMoreData = endIndex < manufacturers.length;
 
       // Pre-load ALL manufacturers for instant custom tab switching
-      filteredManufacturers.assignAll(allManufacturers);
+      filteredManufacturers.assignAll(manufacturers);
+
+      // Load available countries, products and certifications for filters
+      availableCountries.value = await _manufacturerService.getAllCountries();
+      availableProducts.value = await _manufacturerService.getAllProducts();
+      availableCertifications.value = await _manufacturerService.getAllCertifications();
 
       // Mark data as ready for instant tab switching
       isDataReady.value = true;
@@ -169,11 +196,22 @@ class ManufacturerSuggestionController extends GetxController {
     try {
       isLoadingMore.value = true;
 
-      final moreManufacturers = await _manufacturerService
-          .loadMoreManufacturers();
-      if (moreManufacturers.isNotEmpty) {
-        displayedManufacturers.addAll(moreManufacturers);
-        hasMoreData = _manufacturerService.hasMoreData;
+      _currentPage++;
+      final startIndex = _currentPage * _pageSize;
+      final endIndex = startIndex + _pageSize;
+
+      if (startIndex < allManufacturersCache.length) {
+        final moreManufacturers = allManufacturersCache
+            .skip(startIndex)
+            .take(_pageSize)
+            .toList();
+
+        if (moreManufacturers.isNotEmpty) {
+          displayedManufacturers.addAll(moreManufacturers);
+          hasMoreData = endIndex < allManufacturersCache.length;
+        } else {
+          hasMoreData = false;
+        }
       } else {
         hasMoreData = false;
       }
@@ -190,16 +228,31 @@ class ManufacturerSuggestionController extends GetxController {
       return;
     }
 
-    // For instant switching, always show all manufacturers unless specific filter
-    if (selectedCountryName.value == 'All Countries') {
-      filteredManufacturers.value = allManufacturersCache;
-      return;
+    var filtered = allManufacturersCache.toList();
+
+    // Apply country filter
+    if (selectedCountryName.value != 'All Countries') {
+      filtered = filtered
+          .where((m) => m.country.toLowerCase() == selectedCountryName.value.toLowerCase())
+          .toList();
     }
 
-    final filtered = _manufacturerService.getFilteredManufacturers(
-      country: selectedCountryName.value,
-      sourceManufacturers: allManufacturersCache,
-    );
+    // Apply product filter
+    if (selectedProduct.value != 'All Products') {
+      filtered = filtered
+          .where((m) => m.products.any((p) =>
+              p.toLowerCase() == selectedProduct.value.toLowerCase()))
+          .toList();
+    }
+
+    // Apply certification filter
+    if (selectedCertification.value != 'All Certifications') {
+      filtered = filtered
+          .where((m) => m.certifications.any((c) =>
+              c.toLowerCase() == selectedCertification.value.toLowerCase()))
+          .toList();
+    }
+
     filteredManufacturers.value = filtered;
   }
 
@@ -220,15 +273,40 @@ class ManufacturerSuggestionController extends GetxController {
     }
   }
 
-  void selectCountry(Country country) {
-    selectedCountry.value = country;
-    selectedCountryName.value = country.name;
+  void selectCountry(String country) {
+    selectedCountryName.value = country;
     updateFilters();
   }
 
   void clearCountryFilter() {
-    selectedCountry.value = null;
     selectedCountryName.value = 'All Countries';
+    updateFilters();
+  }
+
+  void selectProduct(String product) {
+    selectedProduct.value = product;
+    updateFilters();
+  }
+
+  void clearProductFilter() {
+    selectedProduct.value = 'All Products';
+    updateFilters();
+  }
+
+  void selectCertification(String certification) {
+    selectedCertification.value = certification;
+    updateFilters();
+  }
+
+  void clearCertificationFilter() {
+    selectedCertification.value = 'All Certifications';
+    updateFilters();
+  }
+
+  void clearAllFilters() {
+    selectedCountryName.value = 'All Countries';
+    selectedProduct.value = 'All Products';
+    selectedCertification.value = 'All Certifications';
     updateFilters();
   }
 
@@ -248,7 +326,7 @@ class ManufacturerSuggestionController extends GetxController {
   }
 
   // Send email to manufacturer
-  Future<void> sendEmailToManufacturer(Manufacturer manufacturer) async {
+  Future<void> sendEmailToManufacturer(NewManufacturer manufacturer) async {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
       Get.snackbar(
@@ -361,8 +439,8 @@ class ManufacturerSuggestionController extends GetxController {
       // Send AI-powered email with PDF attachment
       final success = await EmailJSDebugService.sendAIPoweredEmailWithPDF(
         toEmail: manufacturer.email!,
-        manufacturerName: manufacturer.name,
-        manufacturerLocation: manufacturer.location,
+        manufacturerName: manufacturer.companyName,
+        manufacturerLocation: manufacturer.country,
         techPackData: techPackData,
         userCompanyName: userName ?? 'Atelia Fashion',
         userEmail: userEmail,
@@ -374,7 +452,7 @@ class ManufacturerSuggestionController extends GetxController {
       if (success) {
         Get.snackbar(
           'Email Sent Successfully!',
-          'Your tech pack has been sent to ${manufacturer.name} at ${manufacturer.email}',
+          'Your tech pack has been sent to ${manufacturer.companyName} at ${manufacturer.email}',
           backgroundColor: Colors.black,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -383,7 +461,7 @@ class ManufacturerSuggestionController extends GetxController {
       } else {
         Get.snackbar(
           'Email Failed',
-          'Failed to send email to ${manufacturer.name}. Please try again.',
+          'Failed to send email to ${manufacturer.companyName}. Please try again.',
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -406,7 +484,7 @@ class ManufacturerSuggestionController extends GetxController {
   }
 
   // Preview email before sending
-  Future<void> previewEmailToManufacturer(Manufacturer manufacturer) async {
+  Future<void> previewEmailToManufacturer(NewManufacturer manufacturer) async {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
       Get.snackbar(
@@ -504,8 +582,8 @@ class ManufacturerSuggestionController extends GetxController {
     try {
       final preview = await EmailJSDebugService.previewEmailWithPDF(
         toEmail: manufacturer.email!,
-        manufacturerName: manufacturer.name,
-        manufacturerLocation: manufacturer.location,
+        manufacturerName: manufacturer.companyName,
+        manufacturerLocation: manufacturer.country,
         techPackData: techPackData,
         userCompanyName: userName ?? 'Atelia Fashion',
         imagePaths: imagePaths,
@@ -527,7 +605,7 @@ class ManufacturerSuggestionController extends GetxController {
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 6),
-      Text('Manufacturer: ${manufacturer.name} (${manufacturer.location})'),
+      Text('Manufacturer: ${manufacturer.companyName} (${manufacturer.country})'),
       const SizedBox(height: 6),
       Text(
         'From: ${userName ?? 'Atelia Fashion'} ${userEmail != null ? "<$userEmail>" : ""}',
@@ -604,16 +682,14 @@ class ManufacturerSuggestionController extends GetxController {
   // Get database statistics
   Future<Map<String, dynamic>> getDatabaseStats() async {
     try {
-      final stats = await _manufacturerService.getManufacturerStatistics();
-      final totalManufacturers = stats.values.fold<int>(
-        0,
-        (sum, count) => sum + count,
-      );
+      final count = await _manufacturerService.getManufacturerCount();
+      final countries = await _manufacturerService.getAllCountries();
+      final products = await _manufacturerService.getAllProducts();
 
       return {
-        'totalManufacturers': totalManufacturers,
-        'countByCountry': stats,
-        'countriesCovered': stats.keys.length,
+        'totalManufacturers': count,
+        'countriesCovered': countries.length,
+        'productsCovered': products.length,
       };
     } catch (e) {
       print('❌ Error getting database stats: $e');
