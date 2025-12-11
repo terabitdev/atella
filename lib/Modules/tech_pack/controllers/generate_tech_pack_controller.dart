@@ -10,6 +10,7 @@ import 'package:atella/services/designservices/designs_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
@@ -113,6 +114,9 @@ class TechPackController extends GetxController {
   }
 
   Future<void> generateDesigns() async {
+    final startTime = DateTime.now(); // Track generation time
+    PostHogAnalyticsService().trackDesignGenerationStarted();
+
     try {
       print('=== STARTING DESIGN GENERATION ===');
       isLoading.value = true;
@@ -181,12 +185,24 @@ class TechPackController extends GetxController {
 
       generatedImages.value = base64Images;
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
+
+      // Track successful generation
+      PostHogAnalyticsService().trackDesignGenerationCompleted(
+        numberOfDesigns: base64Images.length,
+        generationTime: DateTime.now().difference(startTime),
+      );
+
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
       print('=== ERROR GENERATING DESIGNS ===');
       print('Error: $e');
       print('Error Type: ${e.runtimeType}');
+
+      // Track generation failure
+      PostHogAnalyticsService().trackDesignGenerationFailed(
+        errorMessage: e.toString(),
+      );
     } finally {
       isLoading.value = false;
     }
@@ -251,6 +267,8 @@ class TechPackController extends GetxController {
   void selectDesign(int index) {
     if (index >= 0 && index < generatedImages.length) {
       selectedDesignIndex.value = index;
+      // Track design selection
+      PostHogAnalyticsService().trackDesignSelected(designIndex: index);
     }
   }
 
@@ -279,6 +297,11 @@ class TechPackController extends GetxController {
 
     if (selectedDesignIndex.value >= 0 &&
         selectedDesignIndex.value < generatedImages.length) {
+    
+    if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
+      // Track tech pack creation started
+      PostHogAnalyticsService().trackTechPackStarted();
+
       // Navigate immediately - no waiting
       onContinueWithDesign(selectedDesignIndex.value);
 

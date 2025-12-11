@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controllers/subscribe_controller.dart';
+import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
 class SubscribeScreen extends StatefulWidget {
   const SubscribeScreen({super.key});
@@ -26,20 +27,11 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // Handle Android back button
-        if (Get.previousRoute.isNotEmpty && Get.previousRoute != '/subscribe') {
-          return true; // Allow normal back navigation
-        } else {
-          // Go to Settings tab (index 4) in nav_bar
-          Get.offAllNamed('/nav_bar', arguments: {'initialIndex': 4});
-          return false; // Prevent default back behavior
-        }
-      },
-      child: Scaffold(
-        backgroundColor: Colors.black,
-        body: SafeArea(
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: TapTrackingWrapper(
+        screenName: 'SubscribeScreen',
+        child: SafeArea(
         child: Column(
           children: [
             Padding(
@@ -131,7 +123,8 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
           ],
         ),
       ),
-    ));
+      ),
+    );
   }
 
   Widget _buildPlanCard({

@@ -6,6 +6,7 @@ import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controll
 import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -1157,6 +1158,13 @@ class RefiningConceptController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     _saveRefinedConceptData();
+
+    // Track refined concept completion
+    final data = _dataService.getRefinedConceptData();
+    PostHogAnalyticsService().trackRefinedConceptCompleted(
+      silhouette: data['garment_type']?.toString() ?? data['silhouette']?.toString() ?? '',
+      features: data['specific_features']?.toString() ?? data['features']?.toString() ?? '',
+    );
 
     // Pass edit mode data to next screen
     if (_isEditMode.value && _editingTechPack != null) {

@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 class ProfileController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
@@ -10,11 +12,13 @@ class ProfileController extends GetxController {
   final RxString profileImageUrl = ''.obs;
   final RxBool isLoading = false.obs;
   final AuthService _authService = AuthService();
+  final RxBool analyticsOptIn = true.obs;
 
   @override
   void onInit() {
     super.onInit();
     loadUserData();
+    _loadAnalyticsOptIn();
   }
 
   Future<void> loadUserData() async {
@@ -133,12 +137,35 @@ class ProfileController extends GetxController {
     }
 
     // Sign out from Firebase
+    // Track logout and reset PostHog session
+    await PostHogAnalyticsService().trackUserLoggedOut();
     await _authService.signOut();
     print('✅ Signed out from Firebase');
 
     // Navigate to login screen and clear all routes
     Get.offAllNamed('/login');
     print('✅ Navigated to login screen');
+  }
+
+  // ========= Analytics Opt-In =========
+  Future<void> _loadAnalyticsOptIn() async {
+    final prefs = await SharedPreferences.getInstance();
+    analyticsOptIn.value = prefs.getBool('analytics_opt_in') ?? true;
+  }
+
+  Future<void> toggleAnalyticsOptIn(bool enabled) async {
+    analyticsOptIn.value = enabled;
+    await PostHogAnalyticsService().setAnalyticsOptIn(enabled);
+    Get.snackbar(
+      enabled ? 'Analytics enabled' : 'Analytics disabled',
+      enabled
+          ? 'Helps improve the app. Session replays remain sampled.'
+          : 'We will stop sending analytics and session replays.',
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
   }
 
   @override

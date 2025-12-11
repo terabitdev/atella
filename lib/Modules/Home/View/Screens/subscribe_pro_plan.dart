@@ -346,26 +346,64 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
   }
 
   void _showCancelConfirmationDialog() {
+    String? selectedReason;
+    final otherReasonController = TextEditingController();
+
     Get.dialog(
-      AlertDialog(
-        title: Text('Cancel Subscription',style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black),),
-        content: Text('Are you sure you want to cancel your Pro subscription? You will lose access to premium features.',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text('No, Keep Subscription',style: ssTitleTextTextStyle14400.copyWith(color: Colors.black,fontWeight: FontWeight.bold),),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              controller.cancelSubscription();
-            },
-            style: TextButton.styleFrom(
-              foregroundColor: Colors.red,
+      StatefulBuilder(
+        builder: (context, setState) => AlertDialog(
+          title: Text('Cancel Subscription', style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black)),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  'We\'re sorry to see you go. Please let us know why:',
+                  style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
+                ),
+                SizedBox(height: 16),
+                ...controller.cancellationReasons.map((reason) => RadioListTile<String>(
+                  title: Text(reason, style: ssTitleTextTextStyle14400.copyWith(color: Colors.black)),
+                  value: reason,
+                  groupValue: selectedReason,
+                  onChanged: (value) => setState(() => selectedReason = value),
+                  contentPadding: EdgeInsets.zero,
+                  dense: true,
+                )),
+                if (selectedReason == 'Other')
+                  Padding(
+                    padding: EdgeInsets.only(top: 8),
+                    child: TextField(
+                      controller: otherReasonController,
+                      decoration: InputDecoration(
+                        hintText: 'Please specify...',
+                        border: OutlineInputBorder(),
+                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                      ),
+                    ),
+                  ),
+              ],
             ),
-            child: Text('Yes, Cancel',style: ssTitleTextTextStyle14400.copyWith(color: Colors.red,fontWeight: FontWeight.bold),),
           ),
-        ],
+          actions: [
+            TextButton(
+              onPressed: () => Get.back(),
+              child: Text('Keep Subscription', style: ssTitleTextTextStyle14400.copyWith(color: Colors.black, fontWeight: FontWeight.bold)),
+            ),
+            TextButton(
+              onPressed: () {
+                final reason = selectedReason == 'Other'
+                    ? otherReasonController.text.isNotEmpty ? otherReasonController.text : 'Other'
+                    : selectedReason;
+                Get.back();
+                controller.cancelSubscription(reason: reason);
+              },
+              style: TextButton.styleFrom(foregroundColor: Colors.red),
+              child: Text('Cancel Subscription', style: ssTitleTextTextStyle14400.copyWith(color: Colors.red, fontWeight: FontWeight.bold)),
+            ),
+          ],
+        ),
       ),
     );
   }

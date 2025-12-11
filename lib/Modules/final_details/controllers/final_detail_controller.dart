@@ -4,6 +4,7 @@ import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -438,7 +439,16 @@ class FinalDetailsController extends GetxController {
   void _proceedWithGeneration() async {
     // Store final details data in the design data service
     _saveFinalDetailsData();
-    
+
+    // Track final details completion
+    final data = _dataService.getFinalDetailsData();
+    final season = data['target_season'];
+    PostHogAnalyticsService().trackFinalDetailsCompleted(
+      season: season is List ? season.join(', ') : season?.toString() ?? '',
+      budget: data['target_budget']?.toString() ?? '',
+      values: data['desired_features']?.toString() ?? '',
+    );
+
     // Force delete existing TechPackController to ensure fresh generation
     if (Get.isRegistered<TechPackController>()) {
       try {
@@ -449,7 +459,7 @@ class FinalDetailsController extends GetxController {
         print('Error deleting TechPackController: $e');
       }
     }
-    
+
     // Navigate to tech pack generation screen with edit mode data
     if (_isEditMode.value && _editingTechPack != null) {
       Get.toNamed('/generate_tech_pack', arguments: {

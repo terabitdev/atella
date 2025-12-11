@@ -11,6 +11,7 @@ import '../../../../Widgets/design_grid_item.dart';
 import '../Widgets/search_widget.dart';
 import '../../Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
+import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -56,7 +57,9 @@ class _HomeScreenState extends State<HomeScreen> {
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
-      body: SingleChildScrollView(
+      body: TapTrackingWrapper(
+        screenName: 'HomeScreen',
+        child: SingleChildScrollView(
         child: Column(
           children: [
             // ---------- Stack for background ----------
@@ -281,6 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
             }),
           ],
         ),
+      ),
       ),
     );
   }

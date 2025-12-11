@@ -3,6 +3,7 @@ import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -2670,6 +2671,15 @@ class CreativeBriefController extends GetxController {
   // Method to proceed to next screen with data saving
   void proceedToNextScreen() {
     saveCreativeBriefData();
+    // _saveCreativeBriefData();
+
+    // Track creative brief completion
+    final data = _dataService.getCreativeBriefData();
+    PostHogAnalyticsService().trackCreativeBriefCompleted(
+      garmentType: data['garment_type']?.toString() ?? '',
+      style: data['style']?.toString() ?? '',
+      targetAudience: data['target_audience']?.toString() ?? '',
+    );
 
     // Pass edit mode data to next screen
     if (_isEditingCurrentSession.value) {

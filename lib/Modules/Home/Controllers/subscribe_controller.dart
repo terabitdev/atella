@@ -1,5 +1,6 @@
 import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
@@ -13,7 +14,17 @@ class SubscribeController extends GetxController {
   RxBool isLoading = false.obs;
   RxBool isCancellingSubscription = false.obs;
   RxBool isYearlyBilling = false.obs; // Toggle for monthly/yearly billing
-  
+
+  // Cancellation reasons for analytics
+  final List<String> cancellationReasons = [
+    'Too expensive',
+    'Not using it enough',
+    'Missing features I need',
+    'Found a better alternative',
+    'Technical issues',
+    'Other',
+  ];
+
   // Navigation handling
   String? returnRoute;
   bool showSuccessMessage = false;
@@ -62,6 +73,10 @@ class SubscribeController extends GetxController {
       print('🔄 Forcing UI update...');
       update();
       print('✅ loadCurrentSubscription completed');
+      // Track subscription page viewed
+      PostHogAnalyticsService().trackSubscriptionViewed(
+        currentPlan: selectedPlan.value,
+      );
     } catch (e) {
       print('❌ Error loading subscription: $e');
       Get.snackbar('Error', 'Failed to load subscription details',
@@ -122,7 +137,14 @@ class SubscribeController extends GetxController {
         print('✅ Subscription successful! Plan: ${plan.displayName}');
         print('📍 Return route: $returnRoute');
         print('📍 Show success message: $showSuccessMessage');
-        
+
+        // Track subscription started
+        PostHogAnalyticsService().trackSubscriptionStarted(
+          plan: plan.name,
+          billingCycle: isYearlyBilling.value ? 'yearly' : 'monthly',
+          price: isYearlyBilling.value ? (plan.yearlyPrice ?? plan.price) : plan.price,
+        );
+
         if (showSuccessMessage) {
           Get.snackbar(
             'Success! 🎉',
@@ -207,7 +229,8 @@ class SubscribeController extends GetxController {
     }
   }
 
-  Future<void> cancelSubscription() async {
+  Future<void> cancelSubscription({String? reason}) async {
+    final currentPlan = currentSubscription.value?.subscriptionPlan ?? '';
     isCancellingSubscription.value = true;
     try {
       bool success = await _stripeService.cancelSubscription();
@@ -222,6 +245,11 @@ class SubscribeController extends GetxController {
         print('🔄 Reloading subscription data after cancellation...');
         await loadCurrentSubscription();
         print('🔄 Subscription data reloaded. Current plan: ${selectedPlan.value}');
+        // Track subscription cancellation
+        PostHogAnalyticsService().trackSubscriptionCancelled(
+          plan: currentPlan,
+          reason: reason,
+        );
 
         Get.snackbar(
           'Success',
