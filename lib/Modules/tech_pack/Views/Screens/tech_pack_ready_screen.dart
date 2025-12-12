@@ -13,6 +13,8 @@ import '../../controllers/tech_pack_ready_controller.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -181,54 +183,75 @@ class TechPackReadyScreen extends StatelessWidget {
       children: [
         Text(
           'Creating your tech pack...',
-          style: TextStyle(
+          style: GoogleFonts.inter(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
-            color: Color(0xFF1A1A1A),
+            color: const Color(0xFF1A1A1A),
           ),
         ),
         SizedBox(height: 8.h),
         Text(
           'Please wait while we generate your tech pack images with all specifications.',
           textAlign: TextAlign.center,
-          style: TextStyle(fontSize: 14.sp, color: Color(0xFF666666)),
+          style: GoogleFonts.inter(
+            fontSize: 14.sp,
+            color: const Color(0xFF666666),
+          ),
         ),
         SizedBox(height: 24.h),
-        _buildLoadingCard('Tech Pack Details'),
+        _buildDynamicLoadingCard('Tech Pack Details'),
         SizedBox(height: 16.h),
-        _buildLoadingCard('Technical Flat Drawing'),
+        _buildDynamicLoadingCard('Technical Flat Drawing'),
       ],
     );
   }
 
-  Widget _buildLoadingCard(String title) {
+  Widget _buildDynamicLoadingCard(String title) {
     return Container(
       width: double.infinity,
-      height: 200.h,
+      height: 280.h,
       decoration: BoxDecoration(
         color: const Color.fromRGBO(236, 239, 246, 1),
-        borderRadius: BorderRadius.circular(12.r),
+        borderRadius: BorderRadius.circular(20.r),
       ),
       child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
-            Image.asset(
-              'assets/images/generate.png',
-              width: 60.w,
-              height: 64.h,
-              errorBuilder: (context, error, stackTrace) {
-                return Icon(
-                  Icons.hourglass_empty,
-                  size: 60.w,
-                  color: Colors.grey,
-                );
-              },
+            // Title
+            Text(
+              title,
+              style: GoogleFonts.inter(
+                fontSize: 16.sp,
+                fontWeight: FontWeight.w600,
+                color: const Color(0xFF1A1A1A),
+              ),
             ),
             SizedBox(height: 16.h),
+
+            // Lottie loading animation
+            SizedBox(
+              width: 150.w,
+              height: 80.h,
+              child: Lottie.asset(
+                'assets/lottie/Loading_dots.json',
+                width: 150.w,
+                height: 80.h,
+                fit: BoxFit.contain,
+                repeat: true,
+                animate: true,
+              ),
+            ),
+            SizedBox(height: 16.h),
+
+            // Generating text
             Text(
-              'Generating $title...',
-              style: TextStyle(fontSize: 17.sp, fontWeight: FontWeight.w500),
+              'Generating',
+              style: GoogleFonts.inter(
+                fontSize: 14.sp,
+                color: const Color(0xFF666666),
+                fontWeight: FontWeight.w500,
+              ),
             ),
           ],
         ),
