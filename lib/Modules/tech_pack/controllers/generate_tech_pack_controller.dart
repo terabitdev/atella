@@ -309,6 +309,7 @@ class TechPackController extends GetxController {
       _saveDesignsInBackground();
     }
   }
+  }
 
   // Background save function - OPTIMIZED VERSION
   // Now saves all images to Storage but only selected design data to Firestore
