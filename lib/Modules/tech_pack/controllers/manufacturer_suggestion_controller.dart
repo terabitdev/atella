@@ -11,6 +11,151 @@ class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
   final RxInt tabIndex = 0.obs;
 
+  // Country name mappings for abbreviations and alternative spellings
+  // Maps variations to a list of possible matches
+  static const Map<String, List<String>> _countryNameMappings = {
+    // USA variations
+    'united states': ['usa', 'us', 'united states', 'united states of america', 'america'],
+    'usa': ['usa', 'us', 'united states', 'united states of america', 'america'],
+    'us': ['usa', 'us', 'united states', 'united states of america', 'america'],
+    'united states of america': ['usa', 'us', 'united states', 'united states of america', 'america'],
+    'america': ['usa', 'us', 'united states', 'united states of america', 'america'],
+
+    // UK variations
+    'united kingdom': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+    'uk': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+    'great britain': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+    'britain': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+    'england': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+    'gb': ['uk', 'united kingdom', 'great britain', 'britain', 'england', 'gb'],
+
+    // UAE variations
+    'united arab emirates': ['uae', 'united arab emirates', 'emirates'],
+    'uae': ['uae', 'united arab emirates', 'emirates'],
+    'emirates': ['uae', 'united arab emirates', 'emirates'],
+
+    // Turkey variations
+    'turkey': ['turkey', 'türkiye', 'turkiye'],
+    'türkiye': ['turkey', 'türkiye', 'turkiye'],
+    'turkiye': ['turkey', 'türkiye', 'turkiye'],
+
+    // China variations
+    'china': ['china', 'prc', 'peoples republic of china', "people's republic of china"],
+    'prc': ['china', 'prc', 'peoples republic of china', "people's republic of china"],
+
+    // South Korea variations
+    'south korea': ['south korea', 'korea', 'republic of korea', 'rok'],
+    'korea': ['south korea', 'korea', 'republic of korea', 'rok'],
+    'republic of korea': ['south korea', 'korea', 'republic of korea', 'rok'],
+
+    // Germany variations
+    'germany': ['germany', 'deutschland', 'de'],
+    'deutschland': ['germany', 'deutschland', 'de'],
+
+    // India variations
+    'india': ['india', 'in', 'bharat'],
+    'bharat': ['india', 'in', 'bharat'],
+
+    // Bangladesh variations
+    'bangladesh': ['bangladesh', 'bd'],
+    'bd': ['bangladesh', 'bd'],
+
+    // Vietnam variations
+    'vietnam': ['vietnam', 'viet nam', 'vn'],
+    'viet nam': ['vietnam', 'viet nam', 'vn'],
+    'vn': ['vietnam', 'viet nam', 'vn'],
+
+    // Pakistan variations
+    'pakistan': ['pakistan', 'pk'],
+    'pk': ['pakistan', 'pk'],
+
+    // Indonesia variations
+    'indonesia': ['indonesia', 'id'],
+
+    // Thailand variations
+    'thailand': ['thailand', 'th'],
+
+    // Italy variations
+    'italy': ['italy', 'italia', 'it'],
+    'italia': ['italy', 'italia', 'it'],
+
+    // France variations
+    'france': ['france', 'fr'],
+
+    // Spain variations
+    'spain': ['spain', 'españa', 'espana', 'es'],
+    'españa': ['spain', 'españa', 'espana', 'es'],
+    'espana': ['spain', 'españa', 'espana', 'es'],
+
+    // Portugal variations
+    'portugal': ['portugal', 'pt'],
+
+    // Mexico variations
+    'mexico': ['mexico', 'méxico', 'mx'],
+    'méxico': ['mexico', 'méxico', 'mx'],
+
+    // Brazil variations
+    'brazil': ['brazil', 'brasil', 'br'],
+    'brasil': ['brazil', 'brasil', 'br'],
+
+    // Sri Lanka variations
+    'sri lanka': ['sri lanka', 'lk', 'ceylon'],
+    'ceylon': ['sri lanka', 'lk', 'ceylon'],
+
+    // Cambodia variations
+    'cambodia': ['cambodia', 'kh', 'kampuchea'],
+    'kampuchea': ['cambodia', 'kh', 'kampuchea'],
+
+    // Myanmar variations
+    'myanmar': ['myanmar', 'burma', 'mm'],
+    'burma': ['myanmar', 'burma', 'mm'],
+
+    // Philippines variations
+    'philippines': ['philippines', 'ph', 'pilipinas'],
+    'pilipinas': ['philippines', 'ph', 'pilipinas'],
+
+    // Hong Kong variations
+    'hong kong': ['hong kong', 'hk'],
+    'hk': ['hong kong', 'hk'],
+
+    // Taiwan variations
+    'taiwan': ['taiwan', 'tw', 'republic of china', 'roc'],
+    'republic of china': ['taiwan', 'tw', 'republic of china', 'roc'],
+    'roc': ['taiwan', 'tw', 'republic of china', 'roc'],
+  };
+
+  /// Get all possible country name variations for matching
+  List<String> _getCountryVariations(String countryName) {
+    final lowerName = countryName.toLowerCase().trim();
+    return _countryNameMappings[lowerName] ?? [lowerName];
+  }
+
+  /// Check if two country names match (including abbreviations and variations)
+  bool _countriesMatch(String selectedCountry, String manufacturerCountry) {
+    final selectedLower = selectedCountry.toLowerCase().trim();
+    final manufacturerLower = manufacturerCountry.toLowerCase().trim();
+
+    // Direct match
+    if (selectedLower == manufacturerLower) return true;
+
+    // Check if manufacturer country is in the variations of selected country
+    final selectedVariations = _getCountryVariations(selectedLower);
+    if (selectedVariations.contains(manufacturerLower)) return true;
+
+    // Check if selected country is in the variations of manufacturer country
+    final manufacturerVariations = _getCountryVariations(manufacturerLower);
+    if (manufacturerVariations.contains(selectedLower)) return true;
+
+    // Check for partial matches within variations
+    for (final variation in selectedVariations) {
+      if (manufacturerLower.contains(variation) || variation.contains(manufacturerLower)) {
+        return true;
+      }
+    }
+
+    return false;
+  }
+
   // Services
   final NewManufacturerFirebaseService _manufacturerService =
       NewManufacturerFirebaseService();
@@ -230,10 +375,11 @@ class ManufacturerSuggestionController extends GetxController {
 
     var filtered = allManufacturersCache.toList();
 
-    // Apply country filter
-    if (selectedCountryName.value != 'All Countries') {
+    // Apply country filter with abbreviation and variation matching
+    if (selectedCountryName.value != 'All Countries' &&
+        selectedCountryName.value.isNotEmpty) {
       filtered = filtered
-          .where((m) => m.country.toLowerCase() == selectedCountryName.value.toLowerCase())
+          .where((m) => _countriesMatch(selectedCountryName.value, m.country))
           .toList();
     }
 

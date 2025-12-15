@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
+import 'package:country_picker/country_picker.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
@@ -225,132 +226,75 @@ Widget customTab(ManufacturerSuggestionController controller) {
           ),
           SizedBox(height: 18.h),
 
-          // Country Filter
-          Obx(() {
-            if (controller.availableCountries.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Country or Region', style: cstTextTextStyle16500),
-                SizedBox(height: 8.h),
-                InkWell(
-                  onTap: () => _showCountryPicker(controller),
+          // Country Filter with searchable picker
+          Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text('Country or Region', style: cstTextTextStyle16500),
+              SizedBox(height: 8.h),
+              Builder(
+                builder: (ctx) => InkWell(
+                  onTap: () {
+                    showCountryPicker(
+                      context: ctx,
+                      showPhoneCode: false,
+                      onSelect: (Country country) {
+                        controller.selectCountry(country.name);
+                      },
+                      countryListTheme: CountryListThemeData(
+                        backgroundColor: Colors.white,
+                        textStyle: TextStyle(fontSize: 16.sp),
+                        searchTextStyle: TextStyle(fontSize: 16.sp),
+                        inputDecoration: InputDecoration(
+                          labelText: 'Search',
+                          hintText: 'Start typing to search',
+                          prefixIcon: const Icon(Icons.search),
+                          border: OutlineInputBorder(
+                            borderSide: BorderSide(
+                              color: const Color(0xFF8C98A8).withValues(alpha: 0.2),
+                            ),
+                          ),
+                        ),
+                      ),
+                    );
+                  },
+                  borderRadius: BorderRadius.circular(12.r),
                   child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 14.h,
-                      horizontal: 16.w,
-                    ),
+                    width: double.infinity,
+                    padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
                     decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 227, 225, 251),
+                      color: const Color(0xFFE3E1FB),
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Row(
                       children: [
                         Expanded(
-                          child: Text(
-                            controller.selectedCountryName.value,
+                          child: Obx(() => Text(
+                            controller.selectedCountryName.value == 'All Countries' ||
+                                    controller.selectedCountryName.value.isEmpty
+                                ? 'All Countries'
+                                : controller.selectedCountryName.value,
                             style: TextStyle(fontSize: 16.sp),
-                          ),
+                          )),
                         ),
                         const Icon(Icons.arrow_drop_down),
                       ],
                     ),
                   ),
                 ),
-                SizedBox(height: 16.h),
-              ],
-            );
-          }),
+              ),
+              SizedBox(height: 8.h),
+            ],
+          ),
 
-          // Product Filter
-          Obx(() {
-            if (controller.availableProducts.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Product Type', style: cstTextTextStyle16500),
-                SizedBox(height: 8.h),
-                InkWell(
-                  onTap: () => _showProductPicker(controller),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 14.h,
-                      horizontal: 16.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 227, 225, 251),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            controller.selectedProduct.value,
-                            style: TextStyle(fontSize: 16.sp),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 16.h),
-              ],
-            );
-          }),
-
-          // Certification Filter
-          Obx(() {
-            if (controller.availableCertifications.isEmpty) {
-              return const SizedBox.shrink();
-            }
-            return Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text('Certification', style: cstTextTextStyle16500),
-                SizedBox(height: 8.h),
-                InkWell(
-                  onTap: () => _showCertificationPicker(controller),
-                  child: Container(
-                    padding: EdgeInsets.symmetric(
-                      vertical: 14.h,
-                      horizontal: 16.w,
-                    ),
-                    decoration: BoxDecoration(
-                      color: const Color.fromARGB(255, 227, 225, 251),
-                      borderRadius: BorderRadius.circular(12.r),
-                    ),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            controller.selectedCertification.value,
-                            style: TextStyle(fontSize: 16.sp),
-                          ),
-                        ),
-                        const Icon(Icons.arrow_drop_down),
-                      ],
-                    ),
-                  ),
-                ),
-                SizedBox(height: 8.h),
-              ],
-            );
-          }),
-
-          // Clear All Filters button
+          // Clear Filter button
           Obx(
-            () => (controller.selectedCountryName.value != 'All Countries' ||
-                    controller.selectedProduct.value != 'All Products' ||
-                    controller.selectedCertification.value != 'All Certifications')
+            () => controller.selectedCountryName.value != 'All Countries' &&
+                    controller.selectedCountryName.value.isNotEmpty
                 ? TextButton(
-                    onPressed: controller.clearAllFilters,
+                    onPressed: controller.clearCountryFilter,
                     child: Text(
-                      'Clear All Filters',
+                      'Clear Filter',
                       style: cstTextTextStyle16500.copyWith(color: Colors.red),
                     ),
                   )
@@ -447,209 +391,4 @@ Widget customTab(ManufacturerSuggestionController controller) {
   );
 }
 
-void _showCountryPicker(ManufacturerSuggestionController controller) {
-  Get.bottomSheet(
-    Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.r),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Country',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  title: const Text('All Countries'),
-                  trailing: controller.selectedCountryName.value == 'All Countries'
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    controller.clearCountryFilter();
-                    Get.back();
-                  },
-                ),
-                ...controller.availableCountries.map((country) {
-                  return ListTile(
-                    title: Text(country),
-                    trailing: controller.selectedCountryName.value == country
-                        ? const Icon(Icons.check, color: Colors.green)
-                        : null,
-                    onTap: () {
-                      controller.selectCountry(country);
-                      Get.back();
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-          SizedBox(height: 20.h),
-        ],
-      ),
-    ),
-  );
-}
 
-void _showProductPicker(ManufacturerSuggestionController controller) {
-  Get.bottomSheet(
-    Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.r),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Product Type',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  title: const Text('All Products'),
-                  trailing: controller.selectedProduct.value == 'All Products'
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    controller.clearProductFilter();
-                    Get.back();
-                  },
-                ),
-                ...controller.availableProducts.map((product) {
-                  return ListTile(
-                    title: Text(product),
-                    trailing: controller.selectedProduct.value == product
-                        ? const Icon(Icons.check, color: Colors.green)
-                        : null,
-                    onTap: () {
-                      controller.selectProduct(product);
-                      Get.back();
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-          SizedBox(height: 20.h),
-        ],
-      ),
-    ),
-  );
-}
-
-void _showCertificationPicker(ManufacturerSuggestionController controller) {
-  Get.bottomSheet(
-    Container(
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.only(
-          topLeft: Radius.circular(20.r),
-          topRight: Radius.circular(20.r),
-        ),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Padding(
-            padding: EdgeInsets.all(16.r),
-            child: Row(
-              mainAxisAlignment: MainAxisAlignment.spaceBetween,
-              children: [
-                Text(
-                  'Select Certification',
-                  style: TextStyle(
-                    fontSize: 18.sp,
-                    fontWeight: FontWeight.w600,
-                  ),
-                ),
-                IconButton(
-                  onPressed: () => Get.back(),
-                  icon: const Icon(Icons.close),
-                ),
-              ],
-            ),
-          ),
-          const Divider(height: 1),
-          Flexible(
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                ListTile(
-                  title: const Text('All Certifications'),
-                  trailing: controller.selectedCertification.value == 'All Certifications'
-                      ? const Icon(Icons.check, color: Colors.green)
-                      : null,
-                  onTap: () {
-                    controller.clearCertificationFilter();
-                    Get.back();
-                  },
-                ),
-                ...controller.availableCertifications.map((cert) {
-                  return ListTile(
-                    title: Text(cert),
-                    trailing: controller.selectedCertification.value == cert
-                        ? const Icon(Icons.check, color: Colors.green)
-                        : null,
-                    onTap: () {
-                      controller.selectCertification(cert);
-                      Get.back();
-                    },
-                  );
-                }),
-              ],
-            ),
-          ),
-          SizedBox(height: 20.h),
-        ],
-      ),
-    ),
-  );
-}

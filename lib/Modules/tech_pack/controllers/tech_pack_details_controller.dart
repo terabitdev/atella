@@ -61,6 +61,7 @@ class TechPackDetailsController extends GetxController {
 
   // Manufacturers
   final manufacturerCountryController = TextEditingController();
+  final RxString selectedManufacturerCountry = ''.obs;
 
   // Block visibility
   final RxBool showColorsBlock = false.obs;
@@ -285,6 +286,7 @@ class TechPackDetailsController extends GetxController {
     final manufacturers =
         techPackDetails['manufacturers'] as Map<String, dynamic>? ?? {};
     manufacturerCountryController.text = manufacturers['country'] ?? '';
+    selectedManufacturerCountry.value = manufacturers['country'] ?? '';
 
     update();
   }
@@ -364,6 +366,12 @@ class TechPackDetailsController extends GetxController {
   void checkManufacturersBlockComplete() {
     // Optional field - no further block needed
     // User can proceed to generate even if this is empty
+  }
+
+  /// Set the selected manufacturer country from the country picker
+  void setManufacturerCountry(String country) {
+    selectedManufacturerCountry.value = country;
+    manufacturerCountryController.text = country;
   }
 
   Map<String, String> _collectReferenceImages() {
