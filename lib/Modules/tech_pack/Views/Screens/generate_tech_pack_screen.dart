@@ -63,72 +63,72 @@ class GenerateTechPackScreen extends StatelessWidget {
       body: TapTrackingWrapper(
         screenName: 'GenerateTechPackScreen',
         child: Stack(
-        children: [
-          Column(
-            children: [
-              Padding(
-                padding: const EdgeInsets.all(24.0),
-                child: GlobalHeader(
-                  title: 'Design Assistant',
-                  onBack: () => Get.back(),
+          children: [
+            Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.all(24.0),
+                  child: GlobalHeader(
+                    title: 'Design Assistant',
+                    onBack: () => Get.back(),
+                  ),
                 ),
-              ),
-              const SizedBox(height: 12),
-              Obx(() {
-                if (controller.isLoading.value) {
-                  return _buildLoadingState();
-                } else if (controller.hasError.value) {
-                  return _buildErrorState();
-                } else {
-                  return Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 24.0),
-                    child: Text(
-                      'Choose your favorite design:',
-                      style: GoogleFonts.inter(
-                        fontSize: 18,
-                        fontWeight: FontWeight.w600,
-                        color: const Color(0xFF1A1A1A),
+                const SizedBox(height: 12),
+                Obx(() {
+                  if (controller.isLoading.value) {
+                    return _buildLoadingState();
+                  } else if (controller.hasError.value) {
+                    return _buildErrorState();
+                  } else {
+                    return Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 24.0),
+                      child: Text(
+                        'Choose your favorite design:',
+                        style: GoogleFonts.inter(
+                          fontSize: 18,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1A1A1A),
+                        ),
                       ),
-                    ),
-                  );
-                }
-              }),
-              const SizedBox(height: 20),
-              Expanded(
-                child: SingleChildScrollView(
-                  padding: const EdgeInsets.symmetric(horizontal: 16),
-                  child: Obx(() {
-                    return Column(
-                      children: [
-                        ...List.generate(3, (index) {
-                          if (controller.isLoading.value) {
-                            return _buildDynamicLoadingCard(index);
-                          } else if (controller.hasError.value) {
-                            return _buildErrorCard(index);
-                          } else if (controller.generatedImages.isNotEmpty &&
-                              index < controller.generatedImages.length) {
-                            return _buildDesignImageCard(
-                              controller.generatedImages[index],
-                              index,
-                              context,
-                            );
-                          } else {
-                            return _buildEmptyCard(index);
-                          }
-                        }),
-                        const SizedBox(height: 20),
-                        if (!controller.isLoading.value &&
-                            !controller.hasError.value)
-                          _buildActionButtons(),
-                      ],
                     );
-                  }),
+                  }
+                }),
+                const SizedBox(height: 20),
+                Expanded(
+                  child: SingleChildScrollView(
+                    padding: const EdgeInsets.symmetric(horizontal: 16),
+                    child: Obx(() {
+                      return Column(
+                        children: [
+                          ...List.generate(3, (index) {
+                            if (controller.isLoading.value) {
+                              return _buildDynamicLoadingCard(index);
+                            } else if (controller.hasError.value) {
+                              return _buildErrorCard(index);
+                            } else if (controller.generatedImages.isNotEmpty &&
+                                index < controller.generatedImages.length) {
+                              return _buildDesignImageCard(
+                                controller.generatedImages[index],
+                                index,
+                                context,
+                              );
+                            } else {
+                              return _buildEmptyCard(index);
+                            }
+                          }),
+                          const SizedBox(height: 20),
+                          if (!controller.isLoading.value &&
+                              !controller.hasError.value)
+                            _buildActionButtons(),
+                        ],
+                      );
+                    }),
+                  ),
                 ),
-              ),
-            ],
-          ),
-        ],
-      ),
+              ],
+            ),
+          ],
+        ),
       ),
     );
   }
@@ -340,116 +340,110 @@ class GenerateTechPackScreen extends StatelessWidget {
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
-          color: Colors.white,
-          child: Column(
-            children: [
-              Container(
-                height: 280.h,
-                margin: const EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(22),
-                  border: Border.all(
-                    color: isSelected ? const Color(0xFF1A1A1A) : Colors.white,
-                    width: 2,
-                  ),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.05),
-                      blurRadius: 8,
-                      offset: const Offset(0, 4),
-                    ),
-                  ],
-                ),
-                child: ClipRRect(
-                  borderRadius: BorderRadius.circular(20),
-                  child: Stack(
-                    children: [
-                      Image.memory(
-                        base64Decode(base64Image),
-                        width: double.infinity,
-                        height: double.infinity,
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey.shade200,
-                            child: Center(
-                              child: Column(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                children: [
-                                  Icon(
-                                    Icons.image_not_supported_outlined,
-                                    size: 48,
-                                    color: Colors.grey.shade400,
-                                  ),
-                                  const SizedBox(height: 8),
-                                  Text(
-                                    'Failed to load image',
-                                    style: GoogleFonts.inter(
-                                      fontSize: 12,
-                                      color: Colors.grey.shade500,
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      if (isSelected)
-                        Positioned(
-                          top: 12,
-                          right: 12,
-                          child: Container(
-                            padding: const EdgeInsets.all(6),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              shape: BoxShape.circle,
-                              boxShadow: [
-                                BoxShadow(
-                                  color: Colors.black.withOpacity(0.2),
-                                  blurRadius: 4,
-                                  offset: const Offset(0, 2),
-                                ),
-                              ],
-                            ),
-                            child: Image.asset(
-                              'assets/images/tick.png',
-                              width: 20,
-                              height: 20,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      // if (!isSelected)
-                      // Design number overlay
-                      Positioned(
-                        top: 12,
-                        left: 12,
-                        child: Container(
-                          padding: const EdgeInsets.symmetric(
-                            horizontal: 8,
-                            vertical: 4,
-                          ),
-                          decoration: BoxDecoration(
-                            color: Colors.black.withOpacity(0.7),
-                            borderRadius: BorderRadius.circular(12),
-                          ),
-                          child: Text(
-                            'Design ${index + 1}',
-                            style: GoogleFonts.inter(
-                              fontSize: 12,
-                              color: Colors.white,
-                              fontWeight: FontWeight.w500,
-                            ),
-                          ),
-                        ),
-                      ),
-                    ],
-                  ),
-                ),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(22),
+            border: Border.all(
+              color: isSelected ? const Color(0xFF1A1A1A) : Colors.transparent,
+              width: 2,
+            ),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 8,
+                offset: const Offset(0, 4),
               ),
             ],
+          ),
+          child: ClipRRect(
+            borderRadius: BorderRadius.circular(20),
+            child: Stack(
+              children: [
+                // Image that determines the card height
+                Image.memory(
+                  base64Decode(base64Image),
+                  width: double.infinity,
+                  // REMOVE fixed height - let image determine height
+                  fit: BoxFit.contain, // Show full image without cropping
+                  errorBuilder: (context, error, stackTrace) {
+                    return Container(
+                      height: 200, // Fallback height if image fails
+                      color: Colors.grey.shade200,
+                      child: Center(
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [
+                            Icon(
+                              Icons.image_not_supported_outlined,
+                              size: 48,
+                              color: Colors.grey.shade400,
+                            ),
+                            const SizedBox(height: 8),
+                            Text(
+                              'Failed to load image',
+                              style: GoogleFonts.inter(
+                                fontSize: 12,
+                                color: Colors.grey.shade500,
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    );
+                  },
+                ),
+
+                if (isSelected)
+                  Positioned(
+                    top: 12,
+                    right: 12,
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        shape: BoxShape.circle,
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black.withOpacity(0.2),
+                            blurRadius: 4,
+                            offset: const Offset(0, 2),
+                          ),
+                        ],
+                      ),
+                      child: Image.asset(
+                        'assets/images/tick.png',
+                        width: 20,
+                        height: 20,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ),
+
+                // Design number overlay
+                Positioned(
+                  top: 12,
+                  left: 12,
+                  child: Container(
+                    padding: const EdgeInsets.symmetric(
+                      horizontal: 8,
+                      vertical: 4,
+                    ),
+                    decoration: BoxDecoration(
+                      color: Colors.black.withOpacity(0.7),
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Text(
+                      'Design ${index + 1}',
+                      style: GoogleFonts.inter(
+                        fontSize: 12,
+                        color: Colors.white,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
         ),
       );
