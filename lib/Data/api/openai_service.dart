@@ -80,14 +80,7 @@ class OpenAIService {
       }
 
       // Truncate prompt to 1000 characters if necessary
-      String safePrompt = prompt.length > 1000
-          ? prompt.substring(0, 1000)
-          : prompt;
-      if (prompt.length > 1000) {
-        print(
-          'OpenAI: Prompt was too long (${prompt.length}), truncated to 1000 characters.',
-        );
-      }
+      String safePrompt = prompt;
 
       // Enhance prompt with reference information
       if (referenceImages.containsKey('measurementChart')) {
@@ -217,14 +210,7 @@ class OpenAIService {
       }
 
       // Truncate prompt to 1000 characters if necessary
-      String safePrompt = enhancedPrompt.length > 1000
-          ? enhancedPrompt.substring(0, 1000)
-          : enhancedPrompt;
-      if (enhancedPrompt.length > 1000) {
-        print(
-          'OpenAI: Prompt was too long (${enhancedPrompt.length}), truncated to 1000 characters.',
-        );
-      }
+      String safePrompt = enhancedPrompt;
 
       print('OpenAI: API key found, making request to DALL-E 3...');
 

@@ -47,3 +47,4 @@ app.*.map.json
 
 # Generated files
 /.env
+functions/.env

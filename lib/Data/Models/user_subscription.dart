@@ -126,20 +126,40 @@ class UserSubscription {
   }
 
   bool get canGenerateDesign {
+    // Starter and Pro plans have UNLIMITED design generation
+    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
+      return true; // Always allowed for paid plans
+    }
+
+    // FREE plan has limited designs
     int totalAllowedDesigns = getTotalAllowedDesigns();
     return designsGeneratedThisMonth < totalAllowedDesigns;
   }
 
   int getTotalAllowedDesigns() {
-    int baseDesigns = 10; // Free plan base limit
+    // Starter and Pro plans have unlimited designs
+    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
+      return -1; // -1 indicates unlimited
+    }
+
+    // FREE plan: 10 base + extras purchased
+    int baseDesigns = 10;
     return baseDesigns + (extraDesignsPurchased * 20);
   }
 
   int get remainingDesigns {
+    // Unlimited for paid plans
+    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
+      return -1; // -1 indicates unlimited
+    }
     return getTotalAllowedDesigns() - designsGeneratedThisMonth;
   }
 
   String get designCounterDisplay {
+    // For paid plans, show unlimited
+    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
+      return '$designsGeneratedThisMonth/∞';
+    }
     return '$designsGeneratedThisMonth/${getTotalAllowedDesigns()}';
   }
 }
