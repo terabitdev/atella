@@ -1,4 +1,4 @@
-import * as functions from 'firebase-functions';
+import * as functions from 'firebase-functions/v1';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
 
@@ -6,15 +6,19 @@ import Stripe from 'stripe';
 admin.initializeApp();
 const db = admin.firestore();
 
+// Get Stripe keys from environment variables
+const stripeSecretKey = process.env.STRIPE_SECRET_KEY || '';
+const stripeWebhookSecretKey = process.env.STRIPE_WEBHOOK_SECRET || '';
+
 // Initialize Stripe
-const stripe = new Stripe(functions.config().stripe.secret_key, {
+const stripe = new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
 });
 
-// Stripe webhook Cloud Function
+// Stripe webhook Cloud Function (1st Gen)
 export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   const sig = req.headers['stripe-signature'] as string;
-  const webhookSecret = functions.config().stripe.webhook_secret;
+  const webhookSecret = stripeWebhookSecretKey;
   
   let event: Stripe.Event;
   
@@ -96,18 +100,16 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
       updatedBy: 'WEBHOOK' // Debug field to identify source
     };
     
-    // Reset appropriate techpack counters based on billing period
-    if (isYearly) {
-      updateData.techpacksUsedThisYear = 0;
-      updateData.techpacksUsedThisMonth = 0; // Keep monthly counter for designs
-    } else {
-      updateData.techpacksUsedThisMonth = 0;
-      updateData.techpacksUsedThisYear = 0; // Initialize yearly counter
-    }
-    
+    // Reset all counters when creating a new subscription
+    updateData.techpacksUsedThisMonth = 0;
+    updateData.techpacksUsedThisYear = 0;
+    updateData.designsGeneratedThisMonth = 0;  // Reset (unlimited for paid plans anyway)
+    updateData.extraDesignsPurchased = 0;
+    updateData.extraTechpacksPurchased = 0;
+
     await db.collection('users').doc(userId).update(updateData);
-    
-    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} to ${planName} plan`);
+
+    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} to ${planName} plan (all counters reset)`);
   } catch (error) {
     console.error(`❌ Error handling subscription created:`, error);
   }
@@ -194,11 +196,15 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       subscriptionStatus: 'canceled',
       currentSubscriptionId: null,
       techpacksUsedThisMonth: 0,
+      techpacksUsedThisYear: 0,
+      designsGeneratedThisMonth: 0,  // Reset design counter for FREE plan limit
+      extraDesignsPurchased: 0,
+      extraTechpacksPurchased: 0,
       lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       updatedBy: 'WEBHOOK' // Debug field to identify source
     });
-    
-    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} downgraded to FREE plan`);
+
+    console.log(`🚀 WEBHOOK: Firebase updated - User ${userId} downgraded to FREE plan (all counters reset)`);
   } catch (error) {
     console.error(`❌ Error handling subscription deleted:`, error);
   }
