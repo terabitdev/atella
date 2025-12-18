@@ -194,21 +194,31 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                       children: [
                        Obx(() {
                           final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
-                          bool isCurrentPlan = currentPlan == 'PRO' || currentPlan == 'PRO_YEARLY';
+                          final isYearly = controller.isYearlyBilling.value;
+
+                          // Check EXACT match based on selected tab
+                          final expectedPlan = isYearly ? 'PRO_YEARLY' : 'PRO';
+                          bool isExactCurrentPlan = currentPlan == expectedPlan;
+
+                          // Check if user has the opposite billing period for same tier
+                          bool hasOppositeBillingPeriod = (isYearly && currentPlan == 'PRO') ||
+                                                          (!isYearly && currentPlan == 'PRO_YEARLY');
+
+                          // Check if user is on Starter plan (for upgrade messaging)
                           bool isStarterUser = currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY';
                           
                           return Column(
                             children: [
                               // Main action button
                               InkWell(
-                                onTap: (controller.isLoading.value || isCurrentPlan) ? null : () {
+                                onTap: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod) ? null : () {
                                   controller.subscribeToPlan(controller.getProPlan());
                                 },
                                 child: Container(
                                   height: 50.h,
                                   width: 375.w,
                                   decoration: BoxDecoration(
-                                    color: (controller.isLoading.value || isCurrentPlan) ? Colors.grey[400] : Colors.black,
+                                    color: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod) ? Colors.grey[400] : Colors.black,
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
                                   child: Center(
@@ -222,8 +232,10 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                             ),
                                           )
                                         : Text(
-                                            isCurrentPlan 
-                                                ? "Current Plan" 
+                                            isExactCurrentPlan
+                                                ? "Current Plan"
+                                                : hasOppositeBillingPeriod
+                                                    ? "Cancel ${isYearly ? 'Monthly' : 'Yearly'} plan first"
                                                 : isStarterUser
                                                     ? "Upgrade Plan"
                                                     : "Start",
@@ -236,9 +248,9 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                   ),
                                 ),
                               ),
-                              
+
                               // Cancel subscription button for current PRO users
-                              if (isCurrentPlan) ...[
+                              if (isExactCurrentPlan) ...[
                                 SizedBox(height: 16.h),
                                 InkWell(
                                   onTap: controller.isCancellingSubscription.value ? null : () {

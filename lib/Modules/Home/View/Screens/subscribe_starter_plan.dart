@@ -196,21 +196,34 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                       children: [
                        Obx(() {
                           final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
-                          bool isCurrentPlan = currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY';
-                          bool hasOtherSubscription = currentPlan != null && currentPlan != 'FREE' && !isCurrentPlan;
+                          final isYearly = controller.isYearlyBilling.value;
+
+                          // Check EXACT match based on selected tab
+                          final expectedPlan = isYearly ? 'STARTER_YEARLY' : 'STARTER';
+                          bool isExactCurrentPlan = currentPlan == expectedPlan;
+
+                          // Check if user has the opposite billing period for same tier
+                          bool hasOppositeBillingPeriod = (isYearly && currentPlan == 'STARTER') ||
+                                                          (!isYearly && currentPlan == 'STARTER_YEARLY');
+
+                          // Check if user has any other active subscription (PRO plans)
+                          bool hasOtherSubscription = currentPlan != null &&
+                                                      currentPlan != 'FREE' &&
+                                                      !isExactCurrentPlan &&
+                                                      !hasOppositeBillingPeriod;
                           
                           return Column(
                             children: [
                               // Main action button
                               InkWell(
-                                onTap: (controller.isLoading.value || isCurrentPlan || hasOtherSubscription) ? null : () {
+                                onTap: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod || hasOtherSubscription) ? null : () {
                                   controller.subscribeToPlan(controller.getStarterPlan());
                                 },
                                 child: Container(
                                   height: 50.h,
                                   width: 375.w,
                                   decoration: BoxDecoration(
-                                    color: (controller.isLoading.value || isCurrentPlan || hasOtherSubscription) ? Colors.grey[400] : Colors.black,
+                                    color: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod || hasOtherSubscription) ? Colors.grey[400] : Colors.black,
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
                                   child: Center(
@@ -224,9 +237,11 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                             ),
                                           )
                                         : Text(
-                                            isCurrentPlan 
-                                                ? "Current Plan" 
-                                                : hasOtherSubscription 
+                                            isExactCurrentPlan
+                                                ? "Current Plan"
+                                                : hasOppositeBillingPeriod
+                                                    ? "Cancel ${isYearly ? 'Monthly' : 'Yearly'} plan first"
+                                                : hasOtherSubscription
                                                     ? "Cancel subscription first"
                                                     : "Start",
                                             style: TextStyle(
@@ -238,9 +253,9 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                   ),
                                 ),
                               ),
-                              
+
                               // Cancel subscription button for current Starter users
-                              if (isCurrentPlan) ...[
+                              if (isExactCurrentPlan) ...[
                                 SizedBox(height: 16.h),
                                 InkWell(
                                   onTap: controller.isCancellingSubscription.value ? null : () {
