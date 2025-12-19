@@ -501,12 +501,12 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       // IMAGE logo - Don't ask AI to render it (will be shown as reference)
       print('   ✅ Using SIMPLE prompt (image logo - shown as reference)');
       manufacturingPrompt =
-          '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement always write that ${logoPlacement} in text), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible.''';
+          '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement always write that ${logoPlacement} in text), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
     } else {
       // TEXT logo or no logo - AI should render it if provided
       print('   ✅ Using FULL prompt (text logo - AI will render)');
       manufacturingPrompt =
-          '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement${logoInstruction.isNotEmpty ? ', with logo/branding visible on garment' : ''}), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. ${logoInstruction}''';
+          '''Professional fashion tech pack specification sheet for ${garmentType}. Clean organized grid layout with distinct sections: MATERIALS (${mainFabric}, ${secondaryMaterial} written in proper text), COLORS (${primaryColor}, ${alternateColor}, Pantone ${pantone} with color blocks), SIZES (${sizeRange} measurement chart), TECHNICAL (${accessories}, ${stitching}, ${decorativeStitching} the ${garmentType} is shown in  ${primaryColor} ), LABELS (${logoPlacement} placement${logoInstruction.isNotEmpty ? ', with logo/branding visible on garment' : ''}), PACKAGING (${packagingType}), PRODUCTION (${costPerPiece}, ${quantity}units, ${deliveryDate}). White background, professional typography, complete layout visible. ${logoInstruction} CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
     }
     final technicalFlatPrompt =
         '''
@@ -557,6 +557,8 @@ Output:
 - Fully annotated, measurement-rich technical flat drawing ready for inclusion in a production tech pack.
 - Black-and-white only, no shading or colors.
 - Complete sheet layout with 10% margin border
+
+CRITICAL: Ensure all text, labels, and annotations are spelled correctly with no spelling mistakes anywhere.
 ''';
 
     print('Manufacturing prompt (${manufacturingPrompt.length} chars)');

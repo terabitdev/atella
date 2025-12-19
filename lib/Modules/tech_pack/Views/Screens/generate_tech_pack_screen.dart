@@ -26,7 +26,10 @@ class GenerateTechPackScreen extends StatelessWidget {
           insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 60.h),
           child: Container(
             width: double.infinity,
-            height: 500.h,
+            // Remove fixed height to prevent vertical cropping
+            constraints: BoxConstraints(
+              maxHeight: MediaQuery.of(context).size.height - 120.h,
+            ),
             decoration: BoxDecoration(
               color: Colors.white,
               borderRadius: BorderRadius.circular(36.r),
@@ -36,7 +39,7 @@ class GenerateTechPackScreen extends StatelessWidget {
               borderRadius: BorderRadius.circular(28.r),
               child: Image.memory(
                 base64Decode(base64Image),
-                fit: BoxFit.cover,
+                fit: BoxFit.contain, // Show full image without cropping
                 errorBuilder: (context, error, stackTrace) {
                   return Container(
                     color: Colors.grey.shade200,

@@ -11,11 +11,8 @@ class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
   final String version;
 
-  const PreviewScreen({
-    Key? key,
-    required this.techPack,
-    required this.version,
-  }) : super(key: key);
+  const PreviewScreen({Key? key, required this.techPack, required this.version})
+    : super(key: key);
 
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
@@ -25,40 +22,41 @@ class _PreviewScreenState extends State<PreviewScreen> {
   late PageController _pageController;
   final RxInt currentImageIndex = 0.obs;
   final RxInt _downloadProgress = 0.obs;
-  
+
   @override
   void initState() {
     super.initState();
     _pageController = PageController();
   }
-  
+
   @override
   void dispose() {
     _pageController.dispose();
     super.dispose();
   }
-  
+
   // Get all images for the slider
   List<String> get allImages {
     List<String> images = [];
-    
+
     // Add design image first if available
-    if (widget.techPack.selectedDesignImageUrl != null && 
+    if (widget.techPack.selectedDesignImageUrl != null &&
         widget.techPack.selectedDesignImageUrl!.isNotEmpty) {
       images.add(widget.techPack.selectedDesignImageUrl!);
     }
-    
+
     // Add tech pack images
     images.addAll(widget.techPack.images.values);
-    
+
     return images;
   }
-  
+
   // Get image type label for current index
   String _getImageTypeLabel(int index) {
-    final hasDesignImage = widget.techPack.selectedDesignImageUrl != null && 
-                          widget.techPack.selectedDesignImageUrl!.isNotEmpty;
-    
+    final hasDesignImage =
+        widget.techPack.selectedDesignImageUrl != null &&
+        widget.techPack.selectedDesignImageUrl!.isNotEmpty;
+
     if (hasDesignImage && index == 0) {
       return 'Design Image';
     } else {
@@ -67,81 +65,78 @@ class _PreviewScreenState extends State<PreviewScreen> {
     }
   }
 
-void showPopup() {
-  showDialog(
-    context: context,
-    builder: (context) {
-      return Dialog(
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(16.r),
-        ),
-        backgroundColor: Colors.white,
-        child: SizedBox(
-          width: 238.w,
-          height: 80.h,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleEdit();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Edit',
-                        style: dbTitleTextTextStyle14400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(height: 1, color: Colors.grey.shade300),
-              Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleDownload();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Download',
-                        style: dbTitleTextTextStyle14400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-              Container(height: 1, color: Colors.grey.shade300),
-               Expanded(
-                child: InkWell(
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleManufactureSuggestions();
-                  },
-                  child: Container(
-                    width: double.infinity,
-                    child: Center(
-                      child: Text(
-                        'Manufacture suggestions',
-                        style: dbTitleTextTextStyle14400,
-                      ),
-                    ),
-                  ),
-                ),
-              ),
-            ],
+  void showPopup() {
+    showDialog(
+      context: context,
+      builder: (context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(16.r),
           ),
-        ),
-      );
-    },
-  );
-}
+          backgroundColor: Colors.white,
+          child: SizedBox(
+            width: 238.w,
+            height: 80.h,
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _handleEdit();
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text('Edit', style: dbTitleTextTextStyle14400),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(height: 1, color: Colors.grey.shade300),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _handleDownload();
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Download',
+                          style: dbTitleTextTextStyle14400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+                Container(height: 1, color: Colors.grey.shade300),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _handleManufactureSuggestions();
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Manufacture suggestions',
+                          style: dbTitleTextTextStyle14400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
 
   // Handle Edit functionality - Navigate to creative brief with existing data
   void _handleEdit() {
@@ -149,22 +144,22 @@ void showPopup() {
     print('TechPack ID: ${widget.techPack.id}');
     print('Project Name: ${widget.techPack.projectName}');
     print('Collection Name: ${widget.techPack.collectionName}');
-    
+
     final arguments = {
       'editMode': true,
       'techPackModel': widget.techPack,
       'projectName': widget.techPack.projectName,
       'collectionName': widget.techPack.collectionName,
     };
-    
+
     print('=== ARGUMENTS BEING PASSED ===');
     print('Arguments: $arguments');
     print('EditMode: ${arguments['editMode']}');
     print('TechPack: ${arguments['techPackModel']}');
-    
+
     // In edit mode, skip onboarding and go directly to creative brief questionnaire
     Get.toNamed('/creative_brief', arguments: arguments);
-    
+
     print('=== NAVIGATION TO EDIT MODE TRIGGERED ===');
   }
 
@@ -184,8 +179,10 @@ void showPopup() {
       }
 
       // Filter out local asset images and keep only URL images
-      final urlImages = images.where((image) => image.startsWith('http')).toList();
-      
+      final urlImages = images
+          .where((image) => image.startsWith('http'))
+          .toList();
+
       if (urlImages.isEmpty) {
         Get.snackbar(
           'Info',
@@ -200,42 +197,43 @@ void showPopup() {
       showDialog(
         context: context,
         barrierDismissible: false,
-        builder: (context) => Obx(() => AlertDialog(
-          backgroundColor: Colors.white,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(16.r),
-          ),
-          content: SizedBox(
-            height: 100.h,
-            child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            CircularProgressIndicator(
-              value: _downloadProgress.value / urlImages.length,
-              color: Colors.black,
+        builder: (context) => Obx(
+          () => AlertDialog(
+            backgroundColor: Colors.white,
+            shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.circular(16.r),
             ),
-            SizedBox(height: 16.h),
-            Text(
-              'Downloading ${_downloadProgress.value} of ${urlImages.length}...',
-              style: TextStyle(
-            color: Colors.black,
-            fontSize: 14.sp,
-            fontWeight: FontWeight.w500,
+            content: SizedBox(
+              height: 100.h,
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  CircularProgressIndicator(
+                    value: _downloadProgress.value / urlImages.length,
+                    color: Colors.black,
+                  ),
+                  SizedBox(height: 16.h),
+                  Text(
+                    'Downloading ${_downloadProgress.value} of ${urlImages.length}...',
+                    style: TextStyle(
+                      color: Colors.black,
+                      fontSize: 14.sp,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
               ),
             ),
-          ],
-            ),
           ),
-        )),
+        ),
       );
 
       // Download all images
       await _downloadAllImages(urlImages);
-      
     } catch (e) {
       // Close dialog if open
       if (Get.isDialogOpen!) Get.back();
-      
+
       Get.snackbar(
         'Error',
         'Failed to download images: $e',
@@ -245,14 +243,15 @@ void showPopup() {
       );
     }
   }
-   void _handleManufactureSuggestions() {
-    print('=== MANUFACTURE SUGGESTIONS BUTTON CLICKED ===');      
+
+  void _handleManufactureSuggestions() {
+    print('=== MANUFACTURE SUGGESTIONS BUTTON CLICKED ===');
     print('TechPack ID: ${widget.techPack.id}');
-    print('Project Name: ${widget.techPack.projectName}');        
+    print('Project Name: ${widget.techPack.projectName}');
 
     // Navigate to RecommendedTechPackScreen
     Get.toNamed('/recommended_tech_pack');
-  
+
     print('=== NAVIGATION TO MANUFACTURE SUGGESTIONS TRIGGERED ===');
   }
 
@@ -268,16 +267,18 @@ void showPopup() {
         try {
           final imageUrl = imageUrls[i];
           final response = await http.get(Uri.parse(imageUrl));
-          
+
           if (response.statusCode == 200) {
             // Determine file name based on image type
             String fileName;
-            if (widget.techPack.selectedDesignImageUrl != null && 
+            if (widget.techPack.selectedDesignImageUrl != null &&
                 imageUrl == widget.techPack.selectedDesignImageUrl) {
               fileName = '${widget.techPack.projectName}_Design.jpg';
             } else {
-              final techPackIndex = widget.techPack.images.values.toList().indexOf(imageUrl) + 1;
-              fileName = '${widget.techPack.projectName}_TechPack_$techPackIndex.jpg';
+              final techPackIndex =
+                  widget.techPack.images.values.toList().indexOf(imageUrl) + 1;
+              fileName =
+                  '${widget.techPack.projectName}_TechPack_$techPackIndex.jpg';
             }
 
             // Save directly to gallery using Gal
@@ -289,15 +290,19 @@ void showPopup() {
               );
               downloadedFiles.add(fileName);
             } catch (e) {
-              failedDownloads.add('Image ${i + 1} (Failed to save to gallery: $e)');
+              failedDownloads.add(
+                'Image ${i + 1} (Failed to save to gallery: $e)',
+              );
             }
           } else {
-            failedDownloads.add('Image ${i + 1} (Status: ${response.statusCode})');
+            failedDownloads.add(
+              'Image ${i + 1} (Status: ${response.statusCode})',
+            );
           }
         } catch (e) {
           failedDownloads.add('Image ${i + 1} (Error: $e)');
         }
-        
+
         // Update progress
         _downloadProgress.value = i + 1;
       }
@@ -337,11 +342,10 @@ void showPopup() {
           snackPosition: SnackPosition.TOP,
         );
       }
-
     } catch (e) {
       // Close dialog if open
       if (Get.isDialogOpen!) Get.back();
-      
+
       Get.snackbar(
         'Error',
         'Download failed: $e',
@@ -352,8 +356,6 @@ void showPopup() {
       );
     }
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -368,7 +370,11 @@ void showPopup() {
               children: [
                 InkWell(
                   onTap: () => Navigator.of(context).pop(),
-                  child: Image.asset('assets/images/Arrow_Left.png', height: 40.h, width: 40.w),
+                  child: Image.asset(
+                    'assets/images/Arrow_Left.png',
+                    height: 40.h,
+                    width: 40.w,
+                  ),
                 ),
                 SizedBox(width: 8.w),
                 Text(
@@ -463,10 +469,7 @@ void showPopup() {
                             itemCount: allImages.length,
                             itemBuilder: (context, index) {
                               final imageUrl = allImages[index];
-                              // Check if this is the design image or tech pack image
-                              final isDesignImage = widget.techPack.selectedDesignImageUrl != null && 
-                                                   imageUrl == widget.techPack.selectedDesignImageUrl;
-                              
+
                               return Center(
                                 child: Container(
                                   width: 0.85.sw,
@@ -479,28 +482,31 @@ void showPopup() {
                                     borderRadius: BorderRadius.circular(20),
                                     child: Image.network(
                                       imageUrl,
-                                      // Use different fit for design vs tech pack images
-                                      fit: isDesignImage ? BoxFit.cover : BoxFit.contain,
-                                      loadingBuilder: (context, child, loadingProgress) {
-                                        if (loadingProgress == null) return child;
-                                        return Center(
-                                          child: Lottie.asset(
-                                            'assets/lottie/Loading_dots.json',
-                                            width: 100.w,
-                                            height: 100.h,
-                                            fit: BoxFit.cover,
-                                          ),
-                                        );
-                                      },
-                                      errorBuilder: (context, error, stackTrace) {
-                                        return Center(
-                                          child: Icon(
-                                            Icons.error_outline,
-                                            color: Colors.grey,
-                                            size: 48.sp,
-                                          ),
-                                        );
-                                      },
+                                      // Show full image without cropping for all images
+                                      fit: BoxFit.contain,
+                                      loadingBuilder:
+                                          (context, child, loadingProgress) {
+                                            if (loadingProgress == null)
+                                              return child;
+                                            return Center(
+                                              child: Lottie.asset(
+                                                'assets/lottie/Loading_dots.json',
+                                                width: 100.w,
+                                                height: 100.h,
+                                                fit: BoxFit.cover,
+                                              ),
+                                            );
+                                          },
+                                      errorBuilder:
+                                          (context, error, stackTrace) {
+                                            return Center(
+                                              child: Icon(
+                                                Icons.error_outline,
+                                                color: Colors.grey,
+                                                size: 48.sp,
+                                              ),
+                                            );
+                                          },
                                     ),
                                   ),
                                 ),
@@ -508,43 +514,47 @@ void showPopup() {
                             },
                           ),
                         ),
-                        
+
                         // Image indicators and labels
                         if (allImages.length > 1) ...[
                           SizedBox(height: 16.h),
-                          
+
                           // Page indicators
-                          Obx(() => Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: List.generate(
-                              allImages.length,
-                              (index) => Container(
-                                width: 8.w,
-                                height: 8.h,
-                                margin: EdgeInsets.symmetric(horizontal: 4.w),
-                                decoration: BoxDecoration(
-                                  shape: BoxShape.circle,
-                                  color: currentImageIndex.value == index
-                                      ? Colors.black
-                                      : Colors.grey.shade300,
+                          Obx(
+                            () => Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: List.generate(
+                                allImages.length,
+                                (index) => Container(
+                                  width: 8.w,
+                                  height: 8.h,
+                                  margin: EdgeInsets.symmetric(horizontal: 4.w),
+                                  decoration: BoxDecoration(
+                                    shape: BoxShape.circle,
+                                    color: currentImageIndex.value == index
+                                        ? Colors.black
+                                        : Colors.grey.shade300,
+                                  ),
                                 ),
                               ),
                             ),
-                          )),
-                          
+                          ),
+
                           SizedBox(height: 8.h),
-                          
+
                           // Image type label
-                          Obx(() => Text(
-                            _getImageTypeLabel(currentImageIndex.value),
-                            style: TextStyle(
-                              color: Colors.grey.shade600,
-                              fontSize: 12.sp,
-                              fontWeight: FontWeight.w500,
+                          Obx(
+                            () => Text(
+                              _getImageTypeLabel(currentImageIndex.value),
+                              style: TextStyle(
+                                color: Colors.grey.shade600,
+                                fontSize: 12.sp,
+                                fontWeight: FontWeight.w500,
+                              ),
                             ),
-                          )),
+                          ),
                         ],
-                        
+
                         SizedBox(height: 16.h),
                       ],
                     ),
