@@ -399,14 +399,14 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   topRight: Radius.circular(30.r),
                 ),
               ),
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Padding(
                     padding: EdgeInsets.symmetric(
                       horizontal: 16.w,
-                      vertical: 8.h,
+                      vertical: 4.h,
                     ),
                     child: Row(
                       children: [
@@ -455,7 +455,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       ],
                     ),
                   ),
-                  SizedBox(height: 12.h),
+                  SizedBox(height: 4.h),
                   Expanded(
                     child: Column(
                       children: [
@@ -473,7 +473,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
                               return Center(
                                 child: Container(
                                   width: 0.85.sw,
-                                  height: 0.6.sh,
                                   decoration: BoxDecoration(
                                     borderRadius: BorderRadius.circular(20),
                                     color: Colors.grey.shade100,
@@ -517,7 +516,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
                         // Image indicators and labels
                         if (allImages.length > 1) ...[
-                          SizedBox(height: 16.h),
+                          SizedBox(height: 8.h),
 
                           // Page indicators
                           Obx(
@@ -540,7 +539,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             ),
                           ),
 
-                          SizedBox(height: 8.h),
+                          SizedBox(height: 6.h),
 
                           // Image type label
                           Obx(
@@ -555,7 +554,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                           ),
                         ],
 
-                        SizedBox(height: 16.h),
+                        SizedBox(height: 8.h),
                       ],
                     ),
                   ),

@@ -715,10 +715,52 @@ class RefiningConceptController extends GetxController {
       _customSelectedForCategory.value = '';
     }
 
-    // Toggle/replace selection for this category
-    if (_tempCategorizedSelections[category] == option) {
+    // Check if clicking on the same option (deselection)
+    final isSameOptionSelected = _tempCategorizedSelections[category] == option;
+
+    // Also check if this option exists in the final answer
+    final existingAnswer = _answers[questionId];
+    final isInFinalAnswer = existingAnswer?.selectedOptions.any(
+      (opt) => opt == '$category:$option' || opt == option
+    ) ?? false;
+
+    if (isSameOptionSelected || isInFinalAnswer) {
+      // DESELECTION: User is clicking on already selected option
+      _categorizedDebounce?.cancel();
+
+      // Remove from temp selections
       _tempCategorizedSelections.remove(category);
+
+      // Also remove from final answer if it exists
+      if (existingAnswer != null) {
+        List<String> updatedOptions = existingAnswer.selectedOptions.toList();
+        updatedOptions.removeWhere(
+          (opt) => opt == option || opt == '$category:$option',
+        );
+
+        if (updatedOptions.isEmpty) {
+          // If no selections remain, remove the entire answer
+          _answers.remove(questionId);
+        } else {
+          // Update answer with remaining selections
+          _answers[questionId] = BriefAnswer(
+            questionId: questionId,
+            selectedOptions: updatedOptions,
+            textInput: existingAnswer.textInput,
+          );
+        }
+        _answers.refresh();
+      }
+
+      // Collapse and update UI
+      final categoryKey = '${questionId}_$category';
+      collapseCategory(categoryKey);
+      update();
+
+      // Don't schedule any new timers for deselection
+      return;
     } else {
+      // SELECTION: Set the new temp selection
       _tempCategorizedSelections[category] = option;
     }
 
@@ -728,13 +770,20 @@ class RefiningConceptController extends GetxController {
 
     update();
 
-    // Debounce confirmation (2 seconds)
-    _categorizedDebounce?.cancel();
-    _categorizedDebounce = Timer(const Duration(milliseconds: 2000), () {
-      if (_tempCategorizedSelections.isNotEmpty) {
-        _confirmCategorizedSelections(questionId);
-      }
-    });
+    // Check if this is an already answered question being edited
+    if (isQuestionAnswered(questionId) && _tempCategorizedSelections.isNotEmpty) {
+      // For editing existing answers, update immediately (no debounce)
+      _categorizedDebounce?.cancel();
+      _confirmCategorizedSelections(questionId);
+    } else if (_tempCategorizedSelections.isNotEmpty) {
+      // Debounce confirmation for new selections (2 seconds)
+      _categorizedDebounce?.cancel();
+      _categorizedDebounce = Timer(const Duration(milliseconds: 2000), () {
+        if (_tempCategorizedSelections.isNotEmpty) {
+          _confirmCategorizedSelections(questionId);
+        }
+      });
+    }
   }
 
   void _confirmCategorizedSelections(String questionId) {
