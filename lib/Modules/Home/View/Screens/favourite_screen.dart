@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Widgets/search_widget.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -30,6 +31,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
   
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: Padding(
@@ -40,7 +42,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                   Align(
                     alignment: Alignment.centerLeft,
                     child: Text(
-                      'Favorites',
+                      l10n.favorites,
                       style: ssTitleTextTextStyle208001.copyWith(
                         color: Colors.black,
                       ),
@@ -116,7 +118,7 @@ class _FavouriteScreenState extends State<FavouriteScreen> {
                           // Create new design button (only show if there are favorites)
                           if (controller.hasFavorites)
                             RoundButton(
-                              title: 'Create New Design',
+                              title: l10n.createNewDesign,
                               onTap: controller.startNewProject,
                               color: AppColors.buttonColor,
                               isloading: false,

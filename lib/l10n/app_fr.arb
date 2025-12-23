@@ -157,5 +157,9 @@
   "failedToSaveImages": "Échec de l'enregistrement des images dans la galerie.",
   "designImage": "Image de conception",
   "techPackImage": "Image de Tech Pack {number}",
-  "searchDesigns": "Rechercher des designs"
+  "searchDesigns": "Rechercher des designs",
+  "myDesigns": "Mes designs",
+  "myCollections": "Mes collections",
+  "createNewDesign": "Créer un nouveau design",
+  "seeAll": "Voir tout"
 }

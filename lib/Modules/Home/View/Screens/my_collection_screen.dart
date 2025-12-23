@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Widgets/search_widget.dart';
 import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
@@ -28,6 +29,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Padding(
         padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 54.h),
@@ -46,7 +48,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    'My Collections',
+                    l10n.myCollections,
                     style: ssTitleTextTextStyle208001.copyWith(
                       color: Colors.black,
                     ),
@@ -124,7 +126,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
                                     // You can implement this later if needed
                                   },
                                   child: Text(
-                                    'See All',
+                                    l10n.seeAll,
                                     style: ssTitleTextTextStyle14400,
                                   ),
                                 ),
@@ -173,7 +175,7 @@ class _MyCollectionScreenState extends State<MyCollectionScreen> {
 
               SizedBox(height: 20.h),
               RoundButton(
-                title: 'Create New Design',
+                title: l10n.createNewDesign,
                 onTap: controller.startNewProject,
                 color: Colors.black,
                 isloading: false,

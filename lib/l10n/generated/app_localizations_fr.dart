@@ -199,10 +199,10 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
-  String get myDesigns => 'Mes Designs';
+  String get myDesigns => 'Mes designs';
 
   @override
-  String get myCollections => 'Mes Collections';
+  String get myCollections => 'Mes collections';
 
   @override
   String get seeAll => 'Voir tout';

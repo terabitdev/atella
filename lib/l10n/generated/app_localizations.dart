@@ -458,19 +458,19 @@ abstract class AppLocalizations {
   /// **'{count} images saved to gallery in \"Atelia\" album'**
   String imagesSavedToGallery(int count);
 
-  /// My designs section title
+  /// My Designs screen title
   ///
   /// In en, this message translates to:
   /// **'My Designs'**
   String get myDesigns;
 
-  /// My collections section title
+  /// My Collections screen title
   ///
   /// In en, this message translates to:
   /// **'My Collections'**
   String get myCollections;
 
-  /// See all link text
+  /// See all button text
   ///
   /// In en, this message translates to:
   /// **'See All'**
@@ -482,7 +482,7 @@ abstract class AppLocalizations {
   /// **'Start New Project'**
   String get startNewProject;
 
-  /// Create new design button
+  /// Create new design button text
   ///
   /// In en, this message translates to:
   /// **'Create New Design'**

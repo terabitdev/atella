@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -11,6 +12,7 @@ class CreateScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -32,25 +34,25 @@ class CreateScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Gathering the Creative Brief ",
+                    l10n.gatheringCreativeBrief,
                     textAlign: TextAlign.center,
                     style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "As your expert virtual fashion designer.",
+                    l10n.asYourExpertDesigner,
                     textAlign: TextAlign.center,
                     style: gsTextStyle16600,
                   ),
                   SizedBox(height: 18.h),
                   Text(
-                    "I’m here to help you create a custom garment or collection.",
+                    l10n.hereToHelpCreate,
                     textAlign: TextAlign.center,
                     style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(
-                    title: "Get Started",
+                    title: l10n.getStarted,
                     onTap: () {
                       Get.toNamed('/creative_brief');
                     },

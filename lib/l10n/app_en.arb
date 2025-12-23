@@ -739,5 +739,21 @@
   "searchDesigns": "Search Designs",
   "@searchDesigns": {
     "description": "Search placeholder text"
+  },
+  "myDesigns": "My Designs",
+  "@myDesigns": {
+    "description": "My Designs screen title"
+  },
+  "myCollections": "My Collections",
+  "@myCollections": {
+    "description": "My Collections screen title"
+  },
+  "createNewDesign": "Create New Design",
+  "@createNewDesign": {
+    "description": "Create new design button text"
+  },
+  "seeAll": "See All",
+  "@seeAll": {
+    "description": "See all button text"
   }
 }
