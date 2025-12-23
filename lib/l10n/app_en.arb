@@ -1,0 +1,253 @@
+{
+  "@@locale": "en",
+  "appName": "Atelia",
+  "@appName": {
+    "description": "The app name"
+  },
+  "welcomeMessage": "Welcome to Atelia",
+  "@welcomeMessage": {
+    "description": "Welcome message shown on the home screen"
+  },
+  "login": "Login",
+  "@login": {
+    "description": "Login button text"
+  },
+  "logIn": "Log In",
+  "@logIn": {
+    "description": "Log in button text"
+  },
+  "loggingIn": "Logging In...",
+  "@loggingIn": {
+    "description": "Logging in loading text"
+  },
+  "signUp": "Sign Up",
+  "@signUp": {
+    "description": "Sign up button text"
+  },
+  "signingUp": "Signing Up...",
+  "@signingUp": {
+    "description": "Signing up loading text"
+  },
+  "signIn": "Sign In",
+  "@signIn": {
+    "description": "Sign in link text"
+  },
+  "email": "Email",
+  "@email": {
+    "description": "Email field label"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "confirmPassword": "Confirm Password",
+  "@confirmPassword": {
+    "description": "Confirm password field label"
+  },
+  "fullName": "Full Name",
+  "@fullName": {
+    "description": "Full name field label"
+  },
+  "forgotPassword": "Forgot Password?",
+  "@forgotPassword": {
+    "description": "Forgot password link text"
+  },
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": {
+    "description": "Google sign in button text"
+  },
+  "continueWithApple": "Continue with Apple",
+  "@continueWithApple": {
+    "description": "Apple sign in button text"
+  },
+  "orContinueWith": "Or continue with",
+  "@orContinueWith": {
+    "description": "Divider text for social login"
+  },
+  "createAccount": "Create Account",
+  "@createAccount": {
+    "description": "Create account button text"
+  },
+  "createYourAccount": "Create your account",
+  "@createYourAccount": {
+    "description": "Create your account header"
+  },
+  "alreadyHaveAccount": "Already have an account?",
+  "@alreadyHaveAccount": {
+    "description": "Text for existing users"
+  },
+  "alreadyJoined": "Already Joined?",
+  "@alreadyJoined": {
+    "description": "Already joined text for signup screen"
+  },
+  "dontHaveAccount": "Don't have an account?",
+  "@dontHaveAccount": {
+    "description": "Text for new users"
+  },
+  "joinNow": "Join Now",
+  "@joinNow": {
+    "description": "Join now button text"
+  },
+  "onboardingTitle": "Welcome to AteliA — Your\nFashion Brand Starts Here.",
+  "@onboardingTitle": {
+    "description": "Onboarding screen title"
+  },
+  "onboardingSubtitle": "Turn your ideas into real clothing — with AI-powered design tools and manufacturer support.",
+  "@onboardingSubtitle": {
+    "description": "Onboarding screen subtitle"
+  },
+  "verification": "Verification",
+  "@verification": {
+    "description": "Verification screen title"
+  },
+  "verificationDescription": "Enter your email address and we'll send you a verification link to reset your password.",
+  "@verificationDescription": {
+    "description": "Verification screen description"
+  },
+  "sendVerificationLink": "Send Verification Link",
+  "@sendVerificationLink": {
+    "description": "Send verification link button"
+  },
+  "home": "Home",
+  "@home": {
+    "description": "Home navigation item"
+  },
+  "profile": "Profile",
+  "@profile": {
+    "description": "Profile navigation item"
+  },
+  "settings": "Settings",
+  "@settings": {
+    "description": "Settings navigation item"
+  },
+  "logout": "Logout",
+  "@logout": {
+    "description": "Logout button text"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "confirm": "Confirm",
+  "@confirm": {
+    "description": "Confirm button text"
+  },
+  "save": "Save",
+  "@save": {
+    "description": "Save button text"
+  },
+  "delete": "Delete",
+  "@delete": {
+    "description": "Delete button text"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button text"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview screen title"
+  },
+  "loading": "Loading...",
+  "@loading": {
+    "description": "Loading indicator text"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error title"
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success title"
+  },
+  "retry": "Retry",
+  "@retry": {
+    "description": "Retry button text"
+  },
+  "next": "Next",
+  "@next": {
+    "description": "Next button text"
+  },
+  "back": "Back",
+  "@back": {
+    "description": "Back button text"
+  },
+  "done": "Done",
+  "@done": {
+    "description": "Done button text"
+  },
+  "skip": "Skip",
+  "@skip": {
+    "description": "Skip button text"
+  },
+  "language": "Language",
+  "@language": {
+    "description": "Language setting label"
+  },
+  "english": "English",
+  "@english": {
+    "description": "English language option"
+  },
+  "french": "French",
+  "@french": {
+    "description": "French language option"
+  },
+  "selectLanguage": "Select Language",
+  "@selectLanguage": {
+    "description": "Language selection title"
+  },
+  "techPack": "Tech Pack",
+  "@techPack": {
+    "description": "Tech pack label"
+  },
+  "designImage": "Design Image",
+  "@designImage": {
+    "description": "Design image label"
+  },
+  "techPackImageN": "Tech Pack Image {number}",
+  "@techPackImageN": {
+    "description": "Tech pack image label with number",
+    "placeholders": {
+      "number": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "manufactureSuggestions": "Manufacture suggestions",
+  "@manufactureSuggestions": {
+    "description": "Manufacture suggestions button text"
+  },
+  "noImagesAvailable": "No images available to download",
+  "@noImagesAvailable": {
+    "description": "Message when no images are available"
+  },
+  "downloadingNOfTotal": "Downloading {current} of {total}...",
+  "@downloadingNOfTotal": {
+    "description": "Download progress message",
+    "placeholders": {
+      "current": {
+        "type": "int",
+        "example": "1"
+      },
+      "total": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "imagesSavedToGallery": "{count} images saved to gallery in \"Atelia\" album",
+  "@imagesSavedToGallery": {
+    "description": "Success message for downloaded images",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  }
+}

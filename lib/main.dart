@@ -1,10 +1,12 @@
 import 'package:atella/Routes/app_pages.dart';
 import 'package:atella/core/themes/app_theme.dart';
+import 'package:atella/core/controllers/locale_controller.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
+import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -14,6 +16,7 @@ import 'services/firebase/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'services/PaymentService/subscription_manager_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -29,6 +32,9 @@ void main() async {
   await _initializePostHog();
   // Identify returning user (if already authenticated)
   await _identifyExistingUser();
+
+  // Initialize LocaleController for language management
+  Get.put(LocaleController());
 
   runApp(const MyApp());
 }
@@ -106,18 +112,28 @@ class MyApp extends StatelessWidget {
         designSize: const Size(375, 812),
         minTextAdapt: true,
         // useInheritedMediaQuery: true,
-        builder: (context, child) => GetMaterialApp(
-          title: 'Atelia',
-          theme: AppTheme.lightTheme,
-          themeMode: ThemeMode.light,
-          debugShowCheckedModeBanner: false,
-          initialRoute: AppPages.initial,
-          getPages: AppPages.routes,
-          // PostHog: Automatic screen view tracking
-          navigatorObservers: [PosthogObserver()],
-          // locale: DevicePreview.locale(context),
-          // builder: DevicePreview.appBuilder,
-        ),
+        builder: (context, child) {
+          final localeController = Get.find<LocaleController>();
+          return Obx(() => GetMaterialApp(
+            title: 'Atelia',
+            theme: AppTheme.lightTheme,
+            themeMode: ThemeMode.light,
+            debugShowCheckedModeBanner: false,
+            initialRoute: AppPages.initial,
+            getPages: AppPages.routes,
+            // PostHog: Automatic screen view tracking
+            navigatorObservers: [PosthogObserver()],
+            // Localization configuration
+            locale: localeController.currentLocale,
+            supportedLocales: LocaleController.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          ));
+        },
       ),
     );
   }

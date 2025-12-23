@@ -2,6 +2,7 @@ import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,6 +12,7 @@ class OnboardingScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -34,19 +36,19 @@ class OnboardingScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Welcome to AteliA — Your\nFashion Brand Starts Here.\"",
+                    l10n.onboardingTitle,
                     textAlign: TextAlign.center,
                     style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "Turn your ideas into real clothing — with AI-powered design tools and manufacturer support.",
+                    l10n.onboardingSubtitle,
                     textAlign: TextAlign.center,
                     style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(
-                    title: "Join Now",
+                    title: l10n.joinNow,
                     onTap: () {
                       Get.toNamed('/signup');
                     },
@@ -57,7 +59,7 @@ class OnboardingScreen extends StatelessWidget {
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
-                      Text("Already joined? ", style: osTextStyle165003),
+                      Text("${l10n.alreadyJoined} ", style: osTextStyle165003),
                       GestureDetector(
                         onTap: () {
                           // Navigate to sign-in
@@ -66,7 +68,7 @@ class OnboardingScreen extends StatelessWidget {
                           onTap: () {
                             Get.toNamed('/login');
                           },
-                          child: Text("Sign In", style: osTextStyle167004),
+                          child: Text(l10n.signIn, style: osTextStyle167004),
                         ),
                       ),
                     ],

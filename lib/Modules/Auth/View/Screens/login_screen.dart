@@ -4,6 +4,7 @@ import 'package:atella/Modules/Auth/View/Widgets/google_signin_button.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class LoginScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -23,9 +25,9 @@ class LoginScreen extends StatelessWidget {
           child: SingleChildScrollView(
             child: Column(
               children: [
-                AuthHeader(title: 'Log in'),
+                AuthHeader(title: l10n.logIn),
                 AuthTextField(
-                  label: 'Email',
+                  label: l10n.email,
                   controller: controller.emailController,
                 ),
                 Obx(
@@ -49,7 +51,7 @@ class LoginScreen extends StatelessWidget {
 
                 /// Password Field
                 AuthTextField(
-                  label: 'Password',
+                  label: l10n.password,
                   controller: controller.passwordController,
                   isPassword: true,
                 ),
@@ -77,13 +79,15 @@ class LoginScreen extends StatelessWidget {
                     onPressed: () {
                       Get.toNamed('/verification');
                     },
-                    child: Text("Forgot Password?", style: lLastTextStyle16700),
+                    child: Text(l10n.forgotPassword, style: lLastTextStyle16700),
                   ),
                 ),
                 SizedBox(height: 10.h),
                 Obx(
                   () => RoundButton(
-                    title: controller.isLoading.value ? "Logging In..." : "Log In",
+                    title: controller.isLoading.value
+                        ? l10n.loggingIn
+                        : l10n.logIn,
                     onTap: controller.isLoading.value
                         ? null
                         : () {
@@ -96,14 +100,14 @@ class LoginScreen extends StatelessWidget {
                 SizedBox(height: 30.h),
                 Center(
                   child: Text(
-                    "Or continue with",
+                    l10n.orContinueWith,
                     style: continuewithTextTextStyle13400,
                   ),
                 ),
                 SizedBox(height: 20.h),
                 Obx(
                   () => GoogleRoundButton(
-                    title: "Continue with Google",
+                    title: l10n.continueWithGoogle,
                     onTap: controller.isGoogleLoading.value
                         ? () {}
                         : () {
@@ -117,10 +121,10 @@ class LoginScreen extends StatelessWidget {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Don't have an account? ", style: lLastTextStyle16500),
+                    Text("${l10n.dontHaveAccount} ", style: lLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.offNamed('/signup'),
-                      child: Text("Sign Up", style: lLastTextStyle16700),
+                      child: Text(l10n.signUp, style: lLastTextStyle16700),
                     ),
                   ],
                 ),

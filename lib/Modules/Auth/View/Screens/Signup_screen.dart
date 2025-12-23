@@ -2,6 +2,7 @@ import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -14,6 +15,7 @@ class SignUpscreen extends GetView<SignupController> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.white,
       body: SafeArea(
@@ -23,10 +25,10 @@ class SignUpscreen extends GetView<SignupController> {
             child: Column(
               children: [
                 SizedBox(height: 24.h),
-                const AuthHeader(title: "Create your account"),
+                AuthHeader(title: l10n.createYourAccount),
                 SizedBox(height: 24.h),
                 AuthTextField(
-                  label: "Full Name",
+                  label: l10n.fullName,
                   controller: controller.nameController,
                 ),
                 Obx(
@@ -48,7 +50,7 @@ class SignUpscreen extends GetView<SignupController> {
                 ),
                 SizedBox(height: 16.h),
                 AuthTextField(
-                  label: "Email",
+                  label: l10n.email,
                   controller: controller.emailController,
                 ),
                 Obx(
@@ -70,7 +72,7 @@ class SignUpscreen extends GetView<SignupController> {
                 ),
                 SizedBox(height: 16.h),
                 AuthTextField(
-                  label: "Password",
+                  label: l10n.password,
                   controller: controller.passwordController,
                   isPassword: true,
                 ),
@@ -93,7 +95,7 @@ class SignUpscreen extends GetView<SignupController> {
                 ),
                 SizedBox(height: 16.h),
                 AuthTextField(
-                  label: "Confirm Password",
+                  label: l10n.confirmPassword,
                   controller: controller.confirmPasswordController,
                   isPassword: true,
                 ),
@@ -117,7 +119,7 @@ class SignUpscreen extends GetView<SignupController> {
                 SizedBox(height: 45.h),
                 Obx(
                   () => RoundButton(
-                    title: controller.isLoading.value ? "Signing Up..." : "Sign Up",
+                    title: controller.isLoading.value ? l10n.signingUp : l10n.signUp,
                     onTap: controller.isLoading.value
                         ? null
                         : () {
@@ -131,10 +133,10 @@ class SignUpscreen extends GetView<SignupController> {
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
-                    Text("Already Joined? ", style: lLastTextStyle16500),
+                    Text("${l10n.alreadyJoined} ", style: lLastTextStyle16500),
                     GestureDetector(
                       onTap: () => Get.offNamed('/login'),
-                      child: Text("Sign In", style: lLastTextStyle16700),
+                      child: Text(l10n.signIn, style: lLastTextStyle16700),
                     ),
                   ],
                 ),
