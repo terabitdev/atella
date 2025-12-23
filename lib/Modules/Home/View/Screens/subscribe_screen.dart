@@ -1,5 +1,6 @@
 import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -27,6 +28,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: TapTrackingWrapper(
@@ -55,7 +57,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Subscribe', style: ssTitleTextTextStyle208001),
+                  Text(l10n.subscribe, style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -77,12 +79,12 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     children: [
                       SizedBox(height: 16.h),
                       Text(
-                        "Choose Your Plan",
+                        l10n.chooseYourPlan,
                         style: ssTitleTextTextStyle327002,
                       ),
                       SizedBox(height: 12.h),
                       Text(
-                        'Start for free. Upgrade anytime.',
+                        l10n.startForFree,
                         style:ssTitleTextTextStyle124003,
                       ),
                       SizedBox(height: 40.h),
@@ -96,6 +98,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                             onTap: () {
                               Get.toNamed("/subscribe_free");
                             },
+                            l10n: l10n,
                           ),
                           SizedBox(height: 16.h),
                           _buildPlanCard(
@@ -104,6 +107,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                             onTap: () {
                               Get.toNamed("/subscribe_starter");
                             },
+                            l10n: l10n,
                           ),
                           SizedBox(height: 16.h),
                           _buildPlanCard(
@@ -112,6 +116,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                             onTap: () {
                               Get.toNamed("/subscribe_pro");
                             },
+                            l10n: l10n,
                           ),
                         ],
                       )),
@@ -131,6 +136,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
     required SubscriptionPlan plan,
     required bool isSelected,
     required VoidCallback onTap,
+    required AppLocalizations l10n,
   }) {
     return GestureDetector(
       onTap: onTap,
@@ -163,7 +169,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                       borderRadius: BorderRadius.circular(12.r),
                     ),
                     child: Text(
-                      'Current',
+                      l10n.current,
                       style: TextStyle(
                         color: Colors.white,
                         fontSize: 12.sp,
@@ -177,7 +183,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
             // Pricing display
             if (plan.price == 0)
               Text(
-                'Free',
+                l10n.free,
                 style: TextStyle(
                   fontSize: 14.sp,
                   color: Colors.grey[600],

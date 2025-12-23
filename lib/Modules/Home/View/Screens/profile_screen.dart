@@ -1,4 +1,5 @@
 import 'package:atella/Modules/Home/View/Widgets/profile_textField.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -22,6 +23,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: SafeArea(
         child: Padding(
@@ -30,20 +32,20 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              GlobalHeader(title: 'Edit Profile', onBack: () => Get.back()),
+              GlobalHeader(title: l10n.editProfile, onBack: () => Get.back()),
 
               SizedBox(height: 40.h),
 
               // Form Fields
               // Full Name
               AuthTextField(
-                label: 'Full Name',
+                label: l10n.fullName,
                 controller: controller.fullNameController,
               ),
 
               SizedBox(height: 20.h),
 
-              ProfileTextfield(label: 'Email', controller: controller.emailController, enabled: false),
+              ProfileTextfield(label: l10n.email, controller: controller.emailController, enabled: false),
 
               SizedBox(height: 24.h),
 
@@ -87,12 +89,12 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
                                 Text(
-                                  'Allow analytics',
+                                  l10n.allowAnalytics,
                                   style: gsTextStyle16600,
                                 ),
                                 SizedBox(height: 6.h),
                                 Text(
-                                    'We record sessions to improve your experience. Turn this off to stop all analytics and recordings.',
+                                    l10n.analyticsDescription,
                                     style: uiTextTextStyle13500.copyWith(
                                       color: Colors.grey[600],
                                     ),
@@ -150,7 +152,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                                 ),
                                 SizedBox(width: 12.w),
                                 Text(
-                                  'Updating...',
+                                  l10n.updating,
                                   style: TextStyle(
                                     color: Colors.white,
                                     fontSize: 16.sp,
@@ -160,7 +162,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                               ],
                             )
                           : Text(
-                              'Update',
+                              l10n.update,
                               style: TextStyle(
                                 color: Colors.white,
                                 fontSize: 16.sp,

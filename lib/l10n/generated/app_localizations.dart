@@ -104,6 +104,12 @@ abstract class AppLocalizations {
   /// **'Atelia'**
   String get appName;
 
+  /// Welcome message on home screen
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to ATELIA!'**
+  String get welcomeToAtelia;
+
   /// Welcome message shown on the home screen
   ///
   /// In en, this message translates to:
@@ -284,6 +290,12 @@ abstract class AppLocalizations {
   /// **'Logout'**
   String get logout;
 
+  /// Logout confirmation dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to logout?'**
+  String get logoutConfirmation;
+
   /// Cancel button text
   ///
   /// In en, this message translates to:
@@ -314,6 +326,12 @@ abstract class AppLocalizations {
   /// **'Edit'**
   String get edit;
 
+  /// Edit profile screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Profile'**
+  String get editProfile;
+
   /// Download button text
   ///
   /// In en, this message translates to:
@@ -332,13 +350,13 @@ abstract class AppLocalizations {
   /// **'Loading...'**
   String get loading;
 
-  /// Error title
+  /// Error message title
   ///
   /// In en, this message translates to:
   /// **'Error'**
   String get error;
 
-  /// Success title
+  /// Success message title
   ///
   /// In en, this message translates to:
   /// **'Success'**
@@ -422,7 +440,7 @@ abstract class AppLocalizations {
   /// **'Manufacture suggestions'**
   String get manufactureSuggestions;
 
-  /// Message when no images are available
+  /// No images message
   ///
   /// In en, this message translates to:
   /// **'No images available to download'**
@@ -434,11 +452,521 @@ abstract class AppLocalizations {
   /// **'Downloading {current} of {total}...'**
   String downloadingNOfTotal(int current, int total);
 
-  /// Success message for downloaded images
+  /// Images saved success message
   ///
   /// In en, this message translates to:
   /// **'{count} images saved to gallery in \"Atelia\" album'**
   String imagesSavedToGallery(int count);
+
+  /// My designs section title
+  ///
+  /// In en, this message translates to:
+  /// **'My Designs'**
+  String get myDesigns;
+
+  /// My collections section title
+  ///
+  /// In en, this message translates to:
+  /// **'My Collections'**
+  String get myCollections;
+
+  /// See all link text
+  ///
+  /// In en, this message translates to:
+  /// **'See All'**
+  String get seeAll;
+
+  /// Start new project button
+  ///
+  /// In en, this message translates to:
+  /// **'Start New Project'**
+  String get startNewProject;
+
+  /// Create new design button
+  ///
+  /// In en, this message translates to:
+  /// **'Create New Design'**
+  String get createNewDesign;
+
+  /// Create new project button
+  ///
+  /// In en, this message translates to:
+  /// **'Create a  new Project'**
+  String get createNewProject;
+
+  /// Favorites screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Favorites'**
+  String get favorites;
+
+  /// Empty favorites title
+  ///
+  /// In en, this message translates to:
+  /// **'No favorite projects yet'**
+  String get noFavoritesYet;
+
+  /// Empty favorites subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Start creating projects and mark your favorites to see them here.'**
+  String get noFavoritesSubtitle;
+
+  /// Home empty state title
+  ///
+  /// In en, this message translates to:
+  /// **'Here to guide you through creating the garment you have in mind.'**
+  String get homeEmptyStateTitle;
+
+  /// No search results message
+  ///
+  /// In en, this message translates to:
+  /// **'No results found for \"{query}\"'**
+  String noResultsFor(String query);
+
+  /// Search empty state subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your search terms or create a new project.'**
+  String get tryAdjustingSearch;
+
+  /// Clear search button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Search'**
+  String get clearSearch;
+
+  /// Personal information setting
+  ///
+  /// In en, this message translates to:
+  /// **'Personal Information'**
+  String get personalInformation;
+
+  /// Subscription plan setting
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Plan'**
+  String get subscriptionPlan;
+
+  /// Terms of use setting
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of use'**
+  String get termsOfUse;
+
+  /// Privacy policy setting
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy Policy'**
+  String get privacyPolicy;
+
+  /// Analytics toggle label
+  ///
+  /// In en, this message translates to:
+  /// **'Allow analytics'**
+  String get allowAnalytics;
+
+  /// Analytics toggle description
+  ///
+  /// In en, this message translates to:
+  /// **'We record sessions to improve your experience. Turn this off to stop all analytics and recordings.'**
+  String get analyticsDescription;
+
+  /// Update button
+  ///
+  /// In en, this message translates to:
+  /// **'Update'**
+  String get update;
+
+  /// Updating loading text
+  ///
+  /// In en, this message translates to:
+  /// **'Updating...'**
+  String get updating;
+
+  /// Subscribe screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Subscribe'**
+  String get subscribe;
+
+  /// Choose plan title
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Plan'**
+  String get chooseYourPlan;
+
+  /// Subscription subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Start for free. Upgrade anytime.'**
+  String get startForFree;
+
+  /// Current plan badge
+  ///
+  /// In en, this message translates to:
+  /// **'Current'**
+  String get current;
+
+  /// Free plan name
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get free;
+
+  /// Starter plan name
+  ///
+  /// In en, this message translates to:
+  /// **'Starter'**
+  String get starter;
+
+  /// Pro plan name
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get pro;
+
+  /// Monthly billing option
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get monthly;
+
+  /// Yearly billing option with savings
+  ///
+  /// In en, this message translates to:
+  /// **'Yearly (Save 17%)'**
+  String get yearlySavePercent;
+
+  /// Features include label
+  ///
+  /// In en, this message translates to:
+  /// **'Features include:'**
+  String get featuresInclude;
+
+  /// Starter plan description
+  ///
+  /// In en, this message translates to:
+  /// **'Ideal for launching your first productions.'**
+  String get idealForLaunching;
+
+  /// Pro plan description
+  ///
+  /// In en, this message translates to:
+  /// **'For creators ready to scale their vision.'**
+  String get forCreatorsReady;
+
+  /// Free plan description
+  ///
+  /// In en, this message translates to:
+  /// **'Perfect to test, imagine, and create freely.'**
+  String get perfectToTest;
+
+  /// Techpacks per month feature
+  ///
+  /// In en, this message translates to:
+  /// **'{count} techpacks per month'**
+  String techpacksPerMonth(int count);
+
+  /// Techpacks per month for yearly plans
+  ///
+  /// In en, this message translates to:
+  /// **'{count} techpacks per month ({total} total per year)'**
+  String techpacksPerMonthYearly(int count, int total);
+
+  /// Unlimited 3D visualization feature
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited 3D visualization'**
+  String get unlimited3DVisualization;
+
+  /// Custom PDF export feature
+  ///
+  /// In en, this message translates to:
+  /// **'Custom PDF export (with user\'s logo)'**
+  String get customPdfExport;
+
+  /// Fully customized PDF exports feature
+  ///
+  /// In en, this message translates to:
+  /// **'Fully customized PDF exports'**
+  String get fullyCustomizedPdfExports;
+
+  /// Access to manufacturers feature
+  ///
+  /// In en, this message translates to:
+  /// **'Access to manufacturers list'**
+  String get accessToManufacturers;
+
+  /// Free plan designs limit
+  ///
+  /// In en, this message translates to:
+  /// **'Up to 10 3D designs / month'**
+  String get upTo10Designs;
+
+  /// 3D visualization included feature
+  ///
+  /// In en, this message translates to:
+  /// **'3D Visualization included'**
+  String get visualization3DIncluded;
+
+  /// No techpack generation feature
+  ///
+  /// In en, this message translates to:
+  /// **'No techpack generation'**
+  String get noTechpackGeneration;
+
+  /// No PDF export feature
+  ///
+  /// In en, this message translates to:
+  /// **'No PDF export'**
+  String get noPdfExport;
+
+  /// No access to manufacturers feature
+  ///
+  /// In en, this message translates to:
+  /// **'No access to manufacturers'**
+  String get noAccessToManufacturers;
+
+  /// Start button
+  ///
+  /// In en, this message translates to:
+  /// **'Start'**
+  String get start;
+
+  /// Current plan button text
+  ///
+  /// In en, this message translates to:
+  /// **'Current Plan'**
+  String get currentPlan;
+
+  /// Cancel monthly plan first message
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Monthly plan first'**
+  String get cancelMonthlyPlanFirst;
+
+  /// Cancel yearly plan first message
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Yearly plan first'**
+  String get cancelYearlyPlanFirst;
+
+  /// Cancel subscription first message
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel subscription first'**
+  String get cancelSubscriptionFirst;
+
+  /// Upgrade plan button
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Plan'**
+  String get upgradePlan;
+
+  /// Cancel subscription button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription'**
+  String get cancelSubscription;
+
+  /// Keep subscription button
+  ///
+  /// In en, this message translates to:
+  /// **'Keep Subscription'**
+  String get keepSubscription;
+
+  /// Cancel subscription dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel Subscription'**
+  String get cancelSubscriptionTitle;
+
+  /// Cancel subscription dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'We\'re sorry to see you go. Please let us know why:'**
+  String get cancelSubscriptionMessage;
+
+  /// Please specify placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Please specify...'**
+  String get pleaseSpecify;
+
+  /// Terms agreement text
+  ///
+  /// In en, this message translates to:
+  /// **'By placing this order, you agree to the '**
+  String get termsAgreement;
+
+  /// Terms of service link
+  ///
+  /// In en, this message translates to:
+  /// **'Terms of Service'**
+  String get termsOfService;
+
+  /// And connector
+  ///
+  /// In en, this message translates to:
+  /// **' and\n'**
+  String get and;
+
+  /// Free plan upgrade message
+  ///
+  /// In en, this message translates to:
+  /// **'You can upgrade your plan to generate tech PDF\'s and access to manufacturers'**
+  String get upgradeMessage;
+
+  /// Free per month label
+  ///
+  /// In en, this message translates to:
+  /// **'Free/Month'**
+  String get freePerMonth;
+
+  /// Create screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Gathering the Creative Brief '**
+  String get gatheringCreativeBrief;
+
+  /// Create screen subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'As your expert virtual fashion designer.'**
+  String get asYourExpertDesigner;
+
+  /// Create screen description
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m here to help you create a custom garment or collection.'**
+  String get hereToHelpCreate;
+
+  /// Get started button
+  ///
+  /// In en, this message translates to:
+  /// **'Get Started'**
+  String get getStarted;
+
+  /// Info message title
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get info;
+
+  /// Local assets message
+  ///
+  /// In en, this message translates to:
+  /// **'All images are local assets and cannot be downloaded'**
+  String get allImagesLocalAssets;
+
+  /// Partial success message title
+  ///
+  /// In en, this message translates to:
+  /// **'Partial Success'**
+  String get partialSuccess;
+
+  /// Partial download message
+  ///
+  /// In en, this message translates to:
+  /// **'{saved} images saved to gallery. {failed} failed.'**
+  String imagesSavedFailed(int saved, int failed);
+
+  /// Failed to save images message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save images to gallery.'**
+  String get failedToSaveImages;
+
+  /// Download failed error message
+  ///
+  /// In en, this message translates to:
+  /// **'Download failed: {error}'**
+  String downloadFailed(String error);
+
+  /// Failed to download message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download images: {error}'**
+  String failedToDownload(String error);
+
+  /// Designs counter display
+  ///
+  /// In en, this message translates to:
+  /// **'Designs: {display}'**
+  String designs(String display);
+
+  /// Other option in cancellation reasons
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get other;
+
+  /// Cancellation reason - too expensive
+  ///
+  /// In en, this message translates to:
+  /// **'Too expensive'**
+  String get tooExpensive;
+
+  /// Cancellation reason - not using enough
+  ///
+  /// In en, this message translates to:
+  /// **'Not using it enough'**
+  String get notUsingEnough;
+
+  /// Cancellation reason - missing features
+  ///
+  /// In en, this message translates to:
+  /// **'Missing features I need'**
+  String get missingFeatures;
+
+  /// Cancellation reason - found alternative
+  ///
+  /// In en, this message translates to:
+  /// **'Found a better alternative'**
+  String get foundBetterAlternative;
+
+  /// Cancellation reason - technical issues
+  ///
+  /// In en, this message translates to:
+  /// **'Technical issues'**
+  String get technicalIssues;
+
+  /// All images are local message
+  ///
+  /// In en, this message translates to:
+  /// **'All images are local assets and cannot be downloaded'**
+  String get allImagesLocal;
+
+  /// Downloading progress message
+  ///
+  /// In en, this message translates to:
+  /// **'Downloading {current} of {total}...'**
+  String downloading(int current, int total);
+
+  /// Failed to download error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to download images: {error}'**
+  String failedToDownloadImages(String error);
+
+  /// Partial download success message
+  ///
+  /// In en, this message translates to:
+  /// **'{downloaded} images saved to gallery. {failed} failed.'**
+  String partialDownloadSuccess(int downloaded, int failed);
+
+  /// Tech pack image label
+  ///
+  /// In en, this message translates to:
+  /// **'Tech Pack Image {number}'**
+  String techPackImage(int number);
+
+  /// Search placeholder text
+  ///
+  /// In en, this message translates to:
+  /// **'Search Designs'**
+  String get searchDesigns;
 }
 
 class _AppLocalizationsDelegate

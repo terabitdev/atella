@@ -1,5 +1,6 @@
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -54,6 +55,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       resizeToAvoidBottomInset: true,
@@ -105,7 +107,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       ),
                       SizedBox(height: 40.h),
                       Text(
-                        'Welcome to ATELIA!',
+                        l10n.welcomeToAtelia,
                         style: hTitleTextStyle18600,
                       ),
                       SizedBox(height: 60.h),
@@ -167,13 +169,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('My Designs', style: hsTitleTextTextStyle18800),
+                        Text(l10n.myDesigns, style: hsTitleTextTextStyle18800),
                         if (controller.hasDesigns)
                           GestureDetector(
                             onTap: () {
                               Get.toNamed('/my_designs');
                             },
-                            child: Text('See All', style: ssTitleTextTextStyle14400),
+                            child: Text(l10n.seeAll, style: ssTitleTextTextStyle14400),
                           ),
                       ],
                     ),
@@ -224,13 +226,13 @@ class _HomeScreenState extends State<HomeScreen> {
                     Row(
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
-                        Text('My Collections', style: hsTitleTextTextStyle18800),
+                        Text(l10n.myCollections, style: hsTitleTextTextStyle18800),
                         if (controller.hasCollections)
                           GestureDetector(
                             onTap: () {
                               Get.toNamed('/collections');
                             },
-                            child: Text('See All', style: ssTitleTextTextStyle14400),
+                            child: Text(l10n.seeAll, style: ssTitleTextTextStyle14400),
                           ),
                       ],
                     ),
@@ -273,7 +275,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 return Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: RoundButton(
-                    title: 'Start New Project',
+                    title: l10n.startNewProject,
                     onTap: controller.startNewProject,
                     color: AppColors.buttonColor,
                     isloading: false,

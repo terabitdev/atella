@@ -12,6 +12,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get appName => 'Atelia';
 
   @override
+  String get welcomeToAtelia => 'Welcome to ATELIA!';
+
+  @override
   String get welcomeMessage => 'Welcome to Atelia';
 
   @override
@@ -105,6 +108,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get logout => 'Logout';
 
   @override
+  String get logoutConfirmation => 'Are you sure you want to logout?';
+
+  @override
   String get cancel => 'Cancel';
 
   @override
@@ -118,6 +124,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get edit => 'Edit';
+
+  @override
+  String get editProfile => 'Edit Profile';
 
   @override
   String get download => 'Download';
@@ -187,4 +196,290 @@ class AppLocalizationsEn extends AppLocalizations {
   String imagesSavedToGallery(int count) {
     return '$count images saved to gallery in \"Atelia\" album';
   }
+
+  @override
+  String get myDesigns => 'My Designs';
+
+  @override
+  String get myCollections => 'My Collections';
+
+  @override
+  String get seeAll => 'See All';
+
+  @override
+  String get startNewProject => 'Start New Project';
+
+  @override
+  String get createNewDesign => 'Create New Design';
+
+  @override
+  String get createNewProject => 'Create a  new Project';
+
+  @override
+  String get favorites => 'Favorites';
+
+  @override
+  String get noFavoritesYet => 'No favorite projects yet';
+
+  @override
+  String get noFavoritesSubtitle =>
+      'Start creating projects and mark your favorites to see them here.';
+
+  @override
+  String get homeEmptyStateTitle =>
+      'Here to guide you through creating the garment you have in mind.';
+
+  @override
+  String noResultsFor(String query) {
+    return 'No results found for \"$query\"';
+  }
+
+  @override
+  String get tryAdjustingSearch =>
+      'Try adjusting your search terms or create a new project.';
+
+  @override
+  String get clearSearch => 'Clear Search';
+
+  @override
+  String get personalInformation => 'Personal Information';
+
+  @override
+  String get subscriptionPlan => 'Subscription Plan';
+
+  @override
+  String get termsOfUse => 'Terms of use';
+
+  @override
+  String get privacyPolicy => 'Privacy Policy';
+
+  @override
+  String get allowAnalytics => 'Allow analytics';
+
+  @override
+  String get analyticsDescription =>
+      'We record sessions to improve your experience. Turn this off to stop all analytics and recordings.';
+
+  @override
+  String get update => 'Update';
+
+  @override
+  String get updating => 'Updating...';
+
+  @override
+  String get subscribe => 'Subscribe';
+
+  @override
+  String get chooseYourPlan => 'Choose Your Plan';
+
+  @override
+  String get startForFree => 'Start for free. Upgrade anytime.';
+
+  @override
+  String get current => 'Current';
+
+  @override
+  String get free => 'Free';
+
+  @override
+  String get starter => 'Starter';
+
+  @override
+  String get pro => 'Pro';
+
+  @override
+  String get monthly => 'Monthly';
+
+  @override
+  String get yearlySavePercent => 'Yearly (Save 17%)';
+
+  @override
+  String get featuresInclude => 'Features include:';
+
+  @override
+  String get idealForLaunching => 'Ideal for launching your first productions.';
+
+  @override
+  String get forCreatorsReady => 'For creators ready to scale their vision.';
+
+  @override
+  String get perfectToTest => 'Perfect to test, imagine, and create freely.';
+
+  @override
+  String techpacksPerMonth(int count) {
+    return '$count techpacks per month';
+  }
+
+  @override
+  String techpacksPerMonthYearly(int count, int total) {
+    return '$count techpacks per month ($total total per year)';
+  }
+
+  @override
+  String get unlimited3DVisualization => 'Unlimited 3D visualization';
+
+  @override
+  String get customPdfExport => 'Custom PDF export (with user\'s logo)';
+
+  @override
+  String get fullyCustomizedPdfExports => 'Fully customized PDF exports';
+
+  @override
+  String get accessToManufacturers => 'Access to manufacturers list';
+
+  @override
+  String get upTo10Designs => 'Up to 10 3D designs / month';
+
+  @override
+  String get visualization3DIncluded => '3D Visualization included';
+
+  @override
+  String get noTechpackGeneration => 'No techpack generation';
+
+  @override
+  String get noPdfExport => 'No PDF export';
+
+  @override
+  String get noAccessToManufacturers => 'No access to manufacturers';
+
+  @override
+  String get start => 'Start';
+
+  @override
+  String get currentPlan => 'Current Plan';
+
+  @override
+  String get cancelMonthlyPlanFirst => 'Cancel Monthly plan first';
+
+  @override
+  String get cancelYearlyPlanFirst => 'Cancel Yearly plan first';
+
+  @override
+  String get cancelSubscriptionFirst => 'Cancel subscription first';
+
+  @override
+  String get upgradePlan => 'Upgrade Plan';
+
+  @override
+  String get cancelSubscription => 'Cancel Subscription';
+
+  @override
+  String get keepSubscription => 'Keep Subscription';
+
+  @override
+  String get cancelSubscriptionTitle => 'Cancel Subscription';
+
+  @override
+  String get cancelSubscriptionMessage =>
+      'We\'re sorry to see you go. Please let us know why:';
+
+  @override
+  String get pleaseSpecify => 'Please specify...';
+
+  @override
+  String get termsAgreement => 'By placing this order, you agree to the ';
+
+  @override
+  String get termsOfService => 'Terms of Service';
+
+  @override
+  String get and => ' and\n';
+
+  @override
+  String get upgradeMessage =>
+      'You can upgrade your plan to generate tech PDF\'s and access to manufacturers';
+
+  @override
+  String get freePerMonth => 'Free/Month';
+
+  @override
+  String get gatheringCreativeBrief => 'Gathering the Creative Brief ';
+
+  @override
+  String get asYourExpertDesigner => 'As your expert virtual fashion designer.';
+
+  @override
+  String get hereToHelpCreate =>
+      'I\'m here to help you create a custom garment or collection.';
+
+  @override
+  String get getStarted => 'Get Started';
+
+  @override
+  String get info => 'Info';
+
+  @override
+  String get allImagesLocalAssets =>
+      'All images are local assets and cannot be downloaded';
+
+  @override
+  String get partialSuccess => 'Partial Success';
+
+  @override
+  String imagesSavedFailed(int saved, int failed) {
+    return '$saved images saved to gallery. $failed failed.';
+  }
+
+  @override
+  String get failedToSaveImages => 'Failed to save images to gallery.';
+
+  @override
+  String downloadFailed(String error) {
+    return 'Download failed: $error';
+  }
+
+  @override
+  String failedToDownload(String error) {
+    return 'Failed to download images: $error';
+  }
+
+  @override
+  String designs(String display) {
+    return 'Designs: $display';
+  }
+
+  @override
+  String get other => 'Other';
+
+  @override
+  String get tooExpensive => 'Too expensive';
+
+  @override
+  String get notUsingEnough => 'Not using it enough';
+
+  @override
+  String get missingFeatures => 'Missing features I need';
+
+  @override
+  String get foundBetterAlternative => 'Found a better alternative';
+
+  @override
+  String get technicalIssues => 'Technical issues';
+
+  @override
+  String get allImagesLocal =>
+      'All images are local assets and cannot be downloaded';
+
+  @override
+  String downloading(int current, int total) {
+    return 'Downloading $current of $total...';
+  }
+
+  @override
+  String failedToDownloadImages(String error) {
+    return 'Failed to download images: $error';
+  }
+
+  @override
+  String partialDownloadSuccess(int downloaded, int failed) {
+    return '$downloaded images saved to gallery. $failed failed.';
+  }
+
+  @override
+  String techPackImage(int number) {
+    return 'Tech Pack Image $number';
+  }
+
+  @override
+  String get searchDesigns => 'Search Designs';
 }

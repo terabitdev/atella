@@ -1,5 +1,6 @@
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -52,20 +53,22 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 
   // Get image type label for current index
-  String _getImageTypeLabel(int index) {
+  String _getImageTypeLabel(int index, BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final hasDesignImage =
         widget.techPack.selectedDesignImageUrl != null &&
         widget.techPack.selectedDesignImageUrl!.isNotEmpty;
 
     if (hasDesignImage && index == 0) {
-      return 'Design Image';
+      return l10n.designImage;
     } else {
       final techPackIndex = hasDesignImage ? index : index + 1;
-      return 'Tech Pack Image $techPackIndex';
+      return l10n.techPackImage(techPackIndex);
     }
   }
 
   void showPopup() {
+    final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
       builder: (context) {
@@ -89,7 +92,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     child: Container(
                       width: double.infinity,
                       child: Center(
-                        child: Text('Edit', style: dbTitleTextTextStyle14400),
+                        child: Text(l10n.edit, style: dbTitleTextTextStyle14400),
                       ),
                     ),
                   ),
@@ -105,7 +108,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       width: double.infinity,
                       child: Center(
                         child: Text(
-                          'Download',
+                          l10n.download,
                           style: dbTitleTextTextStyle14400,
                         ),
                       ),
@@ -123,7 +126,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                       width: double.infinity,
                       child: Center(
                         child: Text(
-                          'Manufacture suggestions',
+                          l10n.manufactureSuggestions,
                           style: dbTitleTextTextStyle14400,
                         ),
                       ),
@@ -165,12 +168,13 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   // Handle Download functionality - Download all images
   Future<void> _handleDownload() async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final images = allImages;
       if (images.isEmpty) {
         Get.snackbar(
-          'Info',
-          'No images available to download',
+          l10n.info,
+          l10n.noImagesAvailable,
           backgroundColor: Colors.orange,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -185,8 +189,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
       if (urlImages.isEmpty) {
         Get.snackbar(
-          'Info',
-          'All images are local assets and cannot be downloaded',
+          l10n.info,
+          l10n.allImagesLocal,
           backgroundColor: Colors.blue,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -214,7 +218,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                   ),
                   SizedBox(height: 16.h),
                   Text(
-                    'Downloading ${_downloadProgress.value} of ${urlImages.length}...',
+                    l10n.downloading(_downloadProgress.value, urlImages.length),
                     style: TextStyle(
                       color: Colors.black,
                       fontSize: 14.sp,
@@ -235,8 +239,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       if (Get.isDialogOpen!) Get.back();
 
       Get.snackbar(
-        'Error',
-        'Failed to download images: $e',
+        l10n.error,
+        l10n.failedToDownloadImages(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -257,6 +261,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   // Download all images method
   Future<void> _downloadAllImages(List<String> imageUrls) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       _downloadProgress.value = 0;
       List<String> downloadedFiles = [];
@@ -314,8 +319,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       if (downloadedFiles.isNotEmpty && failedDownloads.isEmpty) {
         // All downloads successful
         Get.snackbar(
-          'Success',
-          '${downloadedFiles.length} images saved to gallery in "Atelia" album',
+          l10n.success,
+          l10n.imagesSavedToGallery(downloadedFiles.length),
           backgroundColor: Colors.black,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -324,8 +329,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       } else if (downloadedFiles.isNotEmpty && failedDownloads.isNotEmpty) {
         // Partial success
         Get.snackbar(
-          'Partial Success',
-          '${downloadedFiles.length} images saved to gallery. ${failedDownloads.length} failed.',
+          l10n.partialSuccess,
+          l10n.partialDownloadSuccess(downloadedFiles.length, failedDownloads.length),
           backgroundColor: Colors.orange,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -334,8 +339,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       } else {
         // All failed
         Get.snackbar(
-          'Error',
-          'Failed to save images to gallery.',
+          l10n.error,
+          l10n.failedToSaveImages,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -347,8 +352,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       if (Get.isDialogOpen!) Get.back();
 
       Get.snackbar(
-        'Error',
-        'Download failed: $e',
+        l10n.error,
+        l10n.downloadFailed(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -359,6 +364,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: Column(
@@ -378,7 +384,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Preview',
+                  l10n.preview,
                   style: TextStyle(
                     color: Colors.white,
                     fontWeight: FontWeight.bold,
@@ -544,7 +550,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
                           // Image type label
                           Obx(
                             () => Text(
-                              _getImageTypeLabel(currentImageIndex.value),
+                              _getImageTypeLabel(currentImageIndex.value, context),
                               style: TextStyle(
                                 color: Colors.grey.shade600,
                                 fontSize: 12.sp,

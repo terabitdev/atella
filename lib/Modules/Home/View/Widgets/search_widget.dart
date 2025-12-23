@@ -1,5 +1,6 @@
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -22,11 +23,12 @@ class SearchWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     // Safely get the controller
-    final HomeController? homeController = Get.isRegistered<HomeController>() 
-        ? Get.find<HomeController>() 
+    final HomeController? homeController = Get.isRegistered<HomeController>()
+        ? Get.find<HomeController>()
         : null;
-    
+
     if (homeController == null) {
       // Return a basic text field if controller is not available
       return Container(
@@ -40,7 +42,7 @@ class SearchWidget extends StatelessWidget {
           onChanged: onChanged,
           style: osTextStyle165002,
           decoration: InputDecoration(
-            hintText: 'Search Designs',
+            hintText: l10n.searchDesigns,
             hintStyle: osTextStyle165002,
             border: InputBorder.none,
             contentPadding: EdgeInsets.symmetric(
@@ -51,13 +53,13 @@ class SearchWidget extends StatelessWidget {
         ),
       );
     }
-    
+
     final FocusNode searchFocusNode = focusNode ?? FocusNode();
-    
+
     return Obx(() {
       final isFocused = homeController.searchQuery.value.isNotEmpty;
       final hasText = homeController.searchQuery.value.isNotEmpty;
-      
+
       return Container(
         height: 56.h,
         decoration: BoxDecoration(
@@ -74,7 +76,7 @@ class SearchWidget extends StatelessWidget {
           onChanged: onChanged,
           style: osTextStyle165002,
           decoration: InputDecoration(
-            hintText: 'Search Designs',
+            hintText: l10n.searchDesigns,
             hintStyle: osTextStyle165002,
             prefixIcon: Padding(
               padding: EdgeInsets.all(12.w),

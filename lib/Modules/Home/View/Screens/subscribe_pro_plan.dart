@@ -1,4 +1,5 @@
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -34,7 +36,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Pro', style: ssTitleTextTextStyle208001),
+                  Text(l10n.pro, style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -66,60 +68,102 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                 color: Colors.grey[200],
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
-                              child: Obx(() => Row(
-                                children: [
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        if (controller.isYearlyBilling.value) {
-                                          controller.toggleBillingPeriod();
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                                        decoration: BoxDecoration(
-                                          color: !controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(6.r),
-                                        ),
-                                        child: Text(
-                                          'Monthly',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: !controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600,
+                              child: Obx(
+                                () => IntrinsicHeight(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (controller
+                                                .isYearlyBilling
+                                                .value) {
+                                              controller.toggleBillingPeriod();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 10.h,
+                                              horizontal: 6.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  !controller
+                                                      .isYearlyBilling
+                                                      .value
+                                                  ? Colors.black
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(
+                                                6.r,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                l10n.monthly,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color:
+                                                      !controller
+                                                          .isYearlyBilling
+                                                          .value
+                                                      ? Colors.white
+                                                      : Colors.grey[600],
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  height: 1.2,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ),
-                                  Expanded(
-                                    child: GestureDetector(
-                                      onTap: () {
-                                        if (!controller.isYearlyBilling.value) {
-                                          controller.toggleBillingPeriod();
-                                        }
-                                      },
-                                      child: Container(
-                                        padding: EdgeInsets.symmetric(vertical: 12.h),
-                                        decoration: BoxDecoration(
-                                          color: controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
-                                          borderRadius: BorderRadius.circular(6.r),
-                                        ),
-                                        child: Text(
-                                          'Yearly (Save 17%)',
-                                          textAlign: TextAlign.center,
-                                          style: TextStyle(
-                                            color: controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
-                                            fontSize: 14.sp,
-                                            fontWeight: FontWeight.w600,
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (!controller
+                                                .isYearlyBilling
+                                                .value) {
+                                              controller.toggleBillingPeriod();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 10.h,
+                                              horizontal: 6.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  controller.isYearlyBilling.value
+                                                  ? Colors.black
+                                                  : Colors.transparent,
+                                              borderRadius: BorderRadius.circular(
+                                                6.r,
+                                              ),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                l10n.yearlySavePercent,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color:
+                                                      controller
+                                                          .isYearlyBilling
+                                                          .value
+                                                      ? Colors.white
+                                                      : Colors.grey[600],
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  height: 1.2,
+                                                ),
+                                              ),
+                                            ),
                                           ),
                                         ),
                                       ),
-                                    ),
+                                    ],
                                   ),
-                                ],
-                              )),
+                                ),
+                              ),
                             ),
                             SizedBox(height: 16.h),
                             // Plan Header Container
@@ -135,15 +179,18 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Obx(() => Text(
-                                          controller.getProPriceText(),
-                                          style: sfpsTitleTextTextStyle18600,
-                                        )),
+                                        Obx(
+                                          () => Text(
+                                            controller.getProPriceText(),
+                                            style: sfpsTitleTextTextStyle18600,
+                                          ),
+                                        ),
                                         SizedBox(height: 4.h),
                                         Text(
-                                          "Features include:",
+                                          l10n.featuresInclude,
                                           style: sfpsTitleTextTextStyle14400,
                                         ),
                                       ],
@@ -164,36 +211,49 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Text(
-                                "For creators ready to scale their vision.",
+                                l10n.forCreatorsReady,
                                 style: sfpsTitleTextTextStyle14500,
                                 textAlign: TextAlign.center,
                               ),
                             ),
                             SizedBox(height: 24.h),
-                            
+
                             // Features List
-                            Column(
-                              children: [
-                                _buildFeatureItem("20 techpacks per month"),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem("Unlimited 3D visualization"),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem("Fully customized PDF exports"),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem("Access to manufacturers list"),
-                              ],
+                            Obx(
+                              () => Column(
+                                children: [
+                                  _buildFeatureItem(
+                                    controller.isYearlyBilling.value
+                                        ? l10n.techpacksPerMonthYearly(20, 240)
+                                        : l10n.techpacksPerMonth(20),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(
+                                    l10n.unlimited3DVisualization,
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(
+                                    l10n.fullyCustomizedPdfExports,
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(l10n.accessToManufacturers),
+                                ],
+                              ),
                             ),
                             SizedBox(height: 16.h),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       Obx(() {
-                          final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
+                        Obx(() {
+                          final currentPlan = controller
+                              .currentSubscription
+                              .value
+                              ?.subscriptionPlan;
                           final isYearly = controller.isYearlyBilling.value;
 
                           // Check EXACT match based on selected tab
@@ -201,24 +261,39 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                           bool isExactCurrentPlan = currentPlan == expectedPlan;
 
                           // Check if user has the opposite billing period for same tier
-                          bool hasOppositeBillingPeriod = (isYearly && currentPlan == 'PRO') ||
-                                                          (!isYearly && currentPlan == 'PRO_YEARLY');
+                          bool hasOppositeBillingPeriod =
+                              (isYearly && currentPlan == 'PRO') ||
+                              (!isYearly && currentPlan == 'PRO_YEARLY');
 
                           // Check if user is on Starter plan (for upgrade messaging)
-                          bool isStarterUser = currentPlan == 'STARTER' || currentPlan == 'STARTER_YEARLY';
-                          
+                          bool isStarterUser =
+                              currentPlan == 'STARTER' ||
+                              currentPlan == 'STARTER_YEARLY';
+
                           return Column(
                             children: [
                               // Main action button
                               InkWell(
-                                onTap: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod) ? null : () {
-                                  controller.subscribeToPlan(controller.getProPlan());
-                                },
+                                onTap:
+                                    (controller.isLoading.value ||
+                                        isExactCurrentPlan ||
+                                        hasOppositeBillingPeriod)
+                                    ? null
+                                    : () {
+                                        controller.subscribeToPlan(
+                                          controller.getProPlan(),
+                                        );
+                                      },
                                 child: Container(
                                   height: 50.h,
                                   width: 375.w,
                                   decoration: BoxDecoration(
-                                    color: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod) ? Colors.grey[400] : Colors.black,
+                                    color:
+                                        (controller.isLoading.value ||
+                                            isExactCurrentPlan ||
+                                            hasOppositeBillingPeriod)
+                                        ? Colors.grey[400]
+                                        : Colors.black,
                                     borderRadius: BorderRadius.circular(10.r),
                                   ),
                                   child: Center(
@@ -233,12 +308,14 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                           )
                                         : Text(
                                             isExactCurrentPlan
-                                                ? "Current Plan"
+                                                ? l10n.currentPlan
                                                 : hasOppositeBillingPeriod
-                                                    ? "Cancel ${isYearly ? 'Monthly' : 'Yearly'} plan first"
+                                                ? (isYearly
+                                                      ? l10n.cancelMonthlyPlanFirst
+                                                      : l10n.cancelYearlyPlanFirst)
                                                 : isStarterUser
-                                                    ? "Upgrade Plan"
-                                                    : "Start",
+                                                ? l10n.upgradePlan
+                                                : l10n.start,
                                             style: TextStyle(
                                               color: Colors.white,
                                               fontSize: 16.sp,
@@ -253,18 +330,29 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                               if (isExactCurrentPlan) ...[
                                 SizedBox(height: 16.h),
                                 InkWell(
-                                  onTap: controller.isCancellingSubscription.value ? null : () {
-                                    _showCancelConfirmationDialog();
-                                  },
+                                  onTap:
+                                      controller.isCancellingSubscription.value
+                                      ? null
+                                      : () {
+                                          _showCancelConfirmationDialog();
+                                        },
                                   child: Container(
                                     height: 50.h,
                                     width: 375.w,
                                     decoration: BoxDecoration(
-                                      color: controller.isCancellingSubscription.value ? Colors.grey[400] : Colors.red,
+                                      color:
+                                          controller
+                                              .isCancellingSubscription
+                                              .value
+                                          ? Colors.grey[400]
+                                          : Colors.red,
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                     child: Center(
-                                      child: controller.isCancellingSubscription.value
+                                      child:
+                                          controller
+                                              .isCancellingSubscription
+                                              .value
                                           ? SizedBox(
                                               height: 20.h,
                                               width: 20.w,
@@ -274,7 +362,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                               ),
                                             )
                                           : Text(
-                                              "Cancel Subscription",
+                                              l10n.cancelSubscription,
                                               style: TextStyle(
                                                 color: Colors.white,
                                                 fontSize: 16.sp,
@@ -298,16 +386,22 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                               height: 1.4,
                             ),
                             children: [
-                              TextSpan(text: "By placing this order, you agree to the ",style: ssTitleTextTextStyle124006),
                               TextSpan(
-                                text: "Terms of Service",
+                                text: l10n.termsAgreement,
+                                style: ssTitleTextTextStyle124006,
+                              ),
+                              TextSpan(
+                                text: l10n.termsOfService,
                                 style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(text: " and\n", style: ssTitleTextTextStyle124006),
                               TextSpan(
-                                text: "Privacy Policy",
+                                text: l10n.and,
+                                style: ssTitleTextTextStyle124006,
+                              ),
+                              TextSpan(
+                                text: l10n.privacyPolicy,
                                 style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
@@ -340,21 +434,23 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
             color: Colors.black,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.check,
-            color: Colors.white,
-            size: 14.sp,
-          ),
+          child: Icon(Icons.check, color: Colors.white, size: 14.sp),
         ),
         SizedBox(width: 12.w),
-        Expanded(
-          child: Text(
-            feature,
-            style: sfpsTitleTextTextStyle14500,
-          ),
-        ),
+        Expanded(child: Text(feature, style: sfpsTitleTextTextStyle14500)),
       ],
     );
+  }
+
+  List<String> _getLocalizedReasons(AppLocalizations l10n) {
+    return [
+      l10n.tooExpensive,
+      l10n.notUsingEnough,
+      l10n.missingFeatures,
+      l10n.foundBetterAlternative,
+      l10n.technicalIssues,
+      l10n.other,
+    ];
   }
 
   void _showCancelConfirmationDialog() {
@@ -363,59 +459,94 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
 
     Get.dialog(
       StatefulBuilder(
-        builder: (context, setState) => AlertDialog(
-          title: Text('Cancel Subscription', style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black)),
-          content: SingleChildScrollView(
-            child: Column(
-              mainAxisSize: MainAxisSize.min,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  'We\'re sorry to see you go. Please let us know why:',
-                  style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
-                ),
-                SizedBox(height: 16),
-                ...controller.cancellationReasons.map((reason) => RadioListTile<String>(
-                  title: Text(reason, style: ssTitleTextTextStyle14400.copyWith(color: Colors.black)),
-                  value: reason,
-                  groupValue: selectedReason,
-                  onChanged: (value) => setState(() => selectedReason = value),
-                  contentPadding: EdgeInsets.zero,
-                  dense: true,
-                )),
-                if (selectedReason == 'Other')
-                  Padding(
-                    padding: EdgeInsets.only(top: 8),
-                    child: TextField(
-                      controller: otherReasonController,
-                      decoration: InputDecoration(
-                        hintText: 'Please specify...',
-                        border: OutlineInputBorder(),
-                        contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
-                      ),
+        builder: (context, setState) {
+          final l10n = AppLocalizations.of(context)!;
+          final localizedReasons = _getLocalizedReasons(l10n);
+
+          return AlertDialog(
+            title: Text(
+              l10n.cancelSubscriptionTitle,
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black),
+            ),
+            content: SingleChildScrollView(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(
+                    l10n.cancelSubscriptionMessage,
+                    style: ssTitleTextTextStyle14400.copyWith(
+                      color: Colors.black,
                     ),
                   ),
-              ],
+                  SizedBox(height: 16),
+                  ...localizedReasons.map(
+                    (reason) => RadioListTile<String>(
+                      title: Text(
+                        reason,
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          color: Colors.black,
+                        ),
+                      ),
+                      value: reason,
+                      groupValue: selectedReason,
+                      onChanged: (value) =>
+                          setState(() => selectedReason = value),
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    ),
+                  ),
+                  if (selectedReason == l10n.other)
+                    Padding(
+                      padding: EdgeInsets.only(top: 8),
+                      child: TextField(
+                        controller: otherReasonController,
+                        decoration: InputDecoration(
+                          hintText: l10n.pleaseSpecify,
+                          border: OutlineInputBorder(),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
+                        ),
+                      ),
+                    ),
+                ],
+              ),
             ),
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Get.back(),
-              child: Text('Keep Subscription', style: ssTitleTextTextStyle14400.copyWith(color: Colors.black, fontWeight: FontWeight.bold)),
-            ),
-            TextButton(
-              onPressed: () {
-                final reason = selectedReason == 'Other'
-                    ? otherReasonController.text.isNotEmpty ? otherReasonController.text : 'Other'
-                    : selectedReason;
-                Get.back();
-                controller.cancelSubscription(reason: reason);
-              },
-              style: TextButton.styleFrom(foregroundColor: Colors.red),
-              child: Text('Cancel Subscription', style: ssTitleTextTextStyle14400.copyWith(color: Colors.red, fontWeight: FontWeight.bold)),
-            ),
-          ],
-        ),
+            actions: [
+              TextButton(
+                onPressed: () => Get.back(),
+                child: Text(
+                  l10n.keepSubscription,
+                  style: ssTitleTextTextStyle14400.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+              TextButton(
+                onPressed: () {
+                  final reason = selectedReason == l10n.other
+                      ? otherReasonController.text.isNotEmpty
+                            ? otherReasonController.text
+                            : l10n.other
+                      : selectedReason;
+                  Get.back();
+                  controller.cancelSubscription(reason: reason);
+                },
+                style: TextButton.styleFrom(foregroundColor: Colors.red),
+                child: Text(
+                  l10n.cancelSubscription,
+                  style: ssTitleTextTextStyle14400.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
+              ),
+            ],
+          );
+        },
       ),
     );
   }

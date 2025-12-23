@@ -4,6 +4,10 @@
   "@appName": {
     "description": "The app name"
   },
+  "welcomeToAtelia": "Welcome to ATELIA!",
+  "@welcomeToAtelia": {
+    "description": "Welcome message on home screen"
+  },
   "welcomeMessage": "Welcome to Atelia",
   "@welcomeMessage": {
     "description": "Welcome message shown on the home screen"
@@ -124,6 +128,10 @@
   "@logout": {
     "description": "Logout button text"
   },
+  "logoutConfirmation": "Are you sure you want to logout?",
+  "@logoutConfirmation": {
+    "description": "Logout confirmation dialog message"
+  },
   "cancel": "Cancel",
   "@cancel": {
     "description": "Cancel button text"
@@ -143,6 +151,10 @@
   "edit": "Edit",
   "@edit": {
     "description": "Edit button text"
+  },
+  "editProfile": "Edit Profile",
+  "@editProfile": {
+    "description": "Edit profile screen title"
   },
   "download": "Download",
   "@download": {
@@ -249,5 +261,483 @@
         "example": "3"
       }
     }
+  },
+  "myDesigns": "My Designs",
+  "@myDesigns": {
+    "description": "My designs section title"
+  },
+  "myCollections": "My Collections",
+  "@myCollections": {
+    "description": "My collections section title"
+  },
+  "seeAll": "See All",
+  "@seeAll": {
+    "description": "See all link text"
+  },
+  "startNewProject": "Start New Project",
+  "@startNewProject": {
+    "description": "Start new project button"
+  },
+  "createNewDesign": "Create New Design",
+  "@createNewDesign": {
+    "description": "Create new design button"
+  },
+  "createNewProject": "Create a  new Project",
+  "@createNewProject": {
+    "description": "Create new project button"
+  },
+  "favorites": "Favorites",
+  "@favorites": {
+    "description": "Favorites screen title"
+  },
+  "noFavoritesYet": "No favorite projects yet",
+  "@noFavoritesYet": {
+    "description": "Empty favorites title"
+  },
+  "noFavoritesSubtitle": "Start creating projects and mark your favorites to see them here.",
+  "@noFavoritesSubtitle": {
+    "description": "Empty favorites subtitle"
+  },
+  "homeEmptyStateTitle": "Here to guide you through creating the garment you have in mind.",
+  "@homeEmptyStateTitle": {
+    "description": "Home empty state title"
+  },
+  "noResultsFor": "No results found for \"{query}\"",
+  "@noResultsFor": {
+    "description": "No search results message",
+    "placeholders": {
+      "query": {
+        "type": "String",
+        "example": "shirt"
+      }
+    }
+  },
+  "tryAdjustingSearch": "Try adjusting your search terms or create a new project.",
+  "@tryAdjustingSearch": {
+    "description": "Search empty state subtitle"
+  },
+  "clearSearch": "Clear Search",
+  "@clearSearch": {
+    "description": "Clear search button"
+  },
+  "personalInformation": "Personal Information",
+  "@personalInformation": {
+    "description": "Personal information setting"
+  },
+  "subscriptionPlan": "Subscription Plan",
+  "@subscriptionPlan": {
+    "description": "Subscription plan setting"
+  },
+  "termsOfUse": "Terms of use",
+  "@termsOfUse": {
+    "description": "Terms of use setting"
+  },
+  "privacyPolicy": "Privacy Policy",
+  "@privacyPolicy": {
+    "description": "Privacy policy setting"
+  },
+  "allowAnalytics": "Allow analytics",
+  "@allowAnalytics": {
+    "description": "Analytics toggle label"
+  },
+  "analyticsDescription": "We record sessions to improve your experience. Turn this off to stop all analytics and recordings.",
+  "@analyticsDescription": {
+    "description": "Analytics toggle description"
+  },
+  "update": "Update",
+  "@update": {
+    "description": "Update button"
+  },
+  "updating": "Updating...",
+  "@updating": {
+    "description": "Updating loading text"
+  },
+  "subscribe": "Subscribe",
+  "@subscribe": {
+    "description": "Subscribe screen title"
+  },
+  "chooseYourPlan": "Choose Your Plan",
+  "@chooseYourPlan": {
+    "description": "Choose plan title"
+  },
+  "startForFree": "Start for free. Upgrade anytime.",
+  "@startForFree": {
+    "description": "Subscription subtitle"
+  },
+  "current": "Current",
+  "@current": {
+    "description": "Current plan badge"
+  },
+  "free": "Free",
+  "@free": {
+    "description": "Free plan name"
+  },
+  "starter": "Starter",
+  "@starter": {
+    "description": "Starter plan name"
+  },
+  "pro": "Pro",
+  "@pro": {
+    "description": "Pro plan name"
+  },
+  "monthly": "Monthly",
+  "@monthly": {
+    "description": "Monthly billing option"
+  },
+  "yearlySavePercent": "Yearly (Save 17%)",
+  "@yearlySavePercent": {
+    "description": "Yearly billing option with savings"
+  },
+  "featuresInclude": "Features include:",
+  "@featuresInclude": {
+    "description": "Features include label"
+  },
+  "idealForLaunching": "Ideal for launching your first productions.",
+  "@idealForLaunching": {
+    "description": "Starter plan description"
+  },
+  "forCreatorsReady": "For creators ready to scale their vision.",
+  "@forCreatorsReady": {
+    "description": "Pro plan description"
+  },
+  "perfectToTest": "Perfect to test, imagine, and create freely.",
+  "@perfectToTest": {
+    "description": "Free plan description"
+  },
+  "techpacksPerMonth": "{count} techpacks per month",
+  "@techpacksPerMonth": {
+    "description": "Techpacks per month feature",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      }
+    }
+  },
+  "techpacksPerMonthYearly": "{count} techpacks per month ({total} total per year)",
+  "@techpacksPerMonthYearly": {
+    "description": "Techpacks per month for yearly plans",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "3"
+      },
+      "total": {
+        "type": "int",
+        "example": "36"
+      }
+    }
+  },
+  "unlimited3DVisualization": "Unlimited 3D visualization",
+  "@unlimited3DVisualization": {
+    "description": "Unlimited 3D visualization feature"
+  },
+  "customPdfExport": "Custom PDF export (with user's logo)",
+  "@customPdfExport": {
+    "description": "Custom PDF export feature"
+  },
+  "fullyCustomizedPdfExports": "Fully customized PDF exports",
+  "@fullyCustomizedPdfExports": {
+    "description": "Fully customized PDF exports feature"
+  },
+  "accessToManufacturers": "Access to manufacturers list",
+  "@accessToManufacturers": {
+    "description": "Access to manufacturers feature"
+  },
+  "upTo10Designs": "Up to 10 3D designs / month",
+  "@upTo10Designs": {
+    "description": "Free plan designs limit"
+  },
+  "visualization3DIncluded": "3D Visualization included",
+  "@visualization3DIncluded": {
+    "description": "3D visualization included feature"
+  },
+  "noTechpackGeneration": "No techpack generation",
+  "@noTechpackGeneration": {
+    "description": "No techpack generation feature"
+  },
+  "noPdfExport": "No PDF export",
+  "@noPdfExport": {
+    "description": "No PDF export feature"
+  },
+  "noAccessToManufacturers": "No access to manufacturers",
+  "@noAccessToManufacturers": {
+    "description": "No access to manufacturers feature"
+  },
+  "start": "Start",
+  "@start": {
+    "description": "Start button"
+  },
+  "currentPlan": "Current Plan",
+  "@currentPlan": {
+    "description": "Current plan button text"
+  },
+  "cancelMonthlyPlanFirst": "Cancel Monthly plan first",
+  "@cancelMonthlyPlanFirst": {
+    "description": "Cancel monthly plan first message"
+  },
+  "cancelYearlyPlanFirst": "Cancel Yearly plan first",
+  "@cancelYearlyPlanFirst": {
+    "description": "Cancel yearly plan first message"
+  },
+  "cancelSubscriptionFirst": "Cancel subscription first",
+  "@cancelSubscriptionFirst": {
+    "description": "Cancel subscription first message"
+  },
+  "upgradePlan": "Upgrade Plan",
+  "@upgradePlan": {
+    "description": "Upgrade plan button"
+  },
+  "cancelSubscription": "Cancel Subscription",
+  "@cancelSubscription": {
+    "description": "Cancel subscription button"
+  },
+  "keepSubscription": "Keep Subscription",
+  "@keepSubscription": {
+    "description": "Keep subscription button"
+  },
+  "cancelSubscriptionTitle": "Cancel Subscription",
+  "@cancelSubscriptionTitle": {
+    "description": "Cancel subscription dialog title"
+  },
+  "cancelSubscriptionMessage": "We're sorry to see you go. Please let us know why:",
+  "@cancelSubscriptionMessage": {
+    "description": "Cancel subscription dialog message"
+  },
+  "pleaseSpecify": "Please specify...",
+  "@pleaseSpecify": {
+    "description": "Please specify placeholder"
+  },
+  "termsAgreement": "By placing this order, you agree to the ",
+  "@termsAgreement": {
+    "description": "Terms agreement text"
+  },
+  "termsOfService": "Terms of Service",
+  "@termsOfService": {
+    "description": "Terms of service link"
+  },
+  "and": " and\n",
+  "@and": {
+    "description": "And connector"
+  },
+  "upgradeMessage": "You can upgrade your plan to generate tech PDF's and access to manufacturers",
+  "@upgradeMessage": {
+    "description": "Free plan upgrade message"
+  },
+  "freePerMonth": "Free/Month",
+  "@freePerMonth": {
+    "description": "Free per month label"
+  },
+  "gatheringCreativeBrief": "Gathering the Creative Brief ",
+  "@gatheringCreativeBrief": {
+    "description": "Create screen title"
+  },
+  "asYourExpertDesigner": "As your expert virtual fashion designer.",
+  "@asYourExpertDesigner": {
+    "description": "Create screen subtitle"
+  },
+  "hereToHelpCreate": "I'm here to help you create a custom garment or collection.",
+  "@hereToHelpCreate": {
+    "description": "Create screen description"
+  },
+  "getStarted": "Get Started",
+  "@getStarted": {
+    "description": "Get started button"
+  },
+  "info": "Info",
+  "@info": {
+    "description": "Info snackbar title"
+  },
+  "allImagesLocalAssets": "All images are local assets and cannot be downloaded",
+  "@allImagesLocalAssets": {
+    "description": "Local assets message"
+  },
+  "partialSuccess": "Partial Success",
+  "@partialSuccess": {
+    "description": "Partial success title"
+  },
+  "imagesSavedFailed": "{saved} images saved to gallery. {failed} failed.",
+  "@imagesSavedFailed": {
+    "description": "Partial download message",
+    "placeholders": {
+      "saved": {
+        "type": "int",
+        "example": "2"
+      },
+      "failed": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "failedToSaveImages": "Failed to save images to gallery.",
+  "@failedToSaveImages": {
+    "description": "Failed to save images message"
+  },
+  "downloadFailed": "Download failed: {error}",
+  "@downloadFailed": {
+    "description": "Download failed message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "failedToDownload": "Failed to download images: {error}",
+  "@failedToDownload": {
+    "description": "Failed to download message",
+    "placeholders": {
+      "error": {
+        "type": "String",
+        "example": "Network error"
+      }
+    }
+  },
+  "designs": "Designs: {display}",
+  "@designs": {
+    "description": "Designs counter display",
+    "placeholders": {
+      "display": {
+        "type": "String",
+        "example": "5/10"
+      }
+    }
+  },
+  "other": "Other",
+  "@other": {
+    "description": "Other option in cancellation reasons"
+  },
+  "tooExpensive": "Too expensive",
+  "@tooExpensive": {
+    "description": "Cancellation reason - too expensive"
+  },
+  "notUsingEnough": "Not using it enough",
+  "@notUsingEnough": {
+    "description": "Cancellation reason - not using enough"
+  },
+  "missingFeatures": "Missing features I need",
+  "@missingFeatures": {
+    "description": "Cancellation reason - missing features"
+  },
+  "foundBetterAlternative": "Found a better alternative",
+  "@foundBetterAlternative": {
+    "description": "Cancellation reason - found alternative"
+  },
+  "technicalIssues": "Technical issues",
+  "@technicalIssues": {
+    "description": "Cancellation reason - technical issues"
+  },
+  "preview": "Preview",
+  "@preview": {
+    "description": "Preview screen title"
+  },
+  "edit": "Edit",
+  "@edit": {
+    "description": "Edit button text"
+  },
+  "download": "Download",
+  "@download": {
+    "description": "Download button text"
+  },
+  "manufactureSuggestions": "Manufacture suggestions",
+  "@manufactureSuggestions": {
+    "description": "Manufacture suggestions button text"
+  },
+  "info": "Info",
+  "@info": {
+    "description": "Info message title"
+  },
+  "noImagesAvailable": "No images available to download",
+  "@noImagesAvailable": {
+    "description": "No images message"
+  },
+  "allImagesLocal": "All images are local assets and cannot be downloaded",
+  "@allImagesLocal": {
+    "description": "All images are local message"
+  },
+  "downloading": "Downloading {current} of {total}...",
+  "@downloading": {
+    "description": "Downloading progress message",
+    "placeholders": {
+      "current": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error message title"
+  },
+  "failedToDownloadImages": "Failed to download images: {error}",
+  "@failedToDownloadImages": {
+    "description": "Failed to download error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "downloadFailed": "Download failed: {error}",
+  "@downloadFailed": {
+    "description": "Download failed error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "success": "Success",
+  "@success": {
+    "description": "Success message title"
+  },
+  "imagesSavedToGallery": "{count} images saved to gallery in \"Atelia\" album",
+  "@imagesSavedToGallery": {
+    "description": "Images saved success message",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "partialSuccess": "Partial Success",
+  "@partialSuccess": {
+    "description": "Partial success message title"
+  },
+  "partialDownloadSuccess": "{downloaded} images saved to gallery. {failed} failed.",
+  "@partialDownloadSuccess": {
+    "description": "Partial download success message",
+    "placeholders": {
+      "downloaded": {
+        "type": "int"
+      },
+      "failed": {
+        "type": "int"
+      }
+    }
+  },
+  "failedToSaveImages": "Failed to save images to gallery.",
+  "@failedToSaveImages": {
+    "description": "Failed to save images message"
+  },
+  "designImage": "Design Image",
+  "@designImage": {
+    "description": "Design image label"
+  },
+  "techPackImage": "Tech Pack Image {number}",
+  "@techPackImage": {
+    "description": "Tech pack image label",
+    "placeholders": {
+      "number": {
+        "type": "int"
+      }
+    }
+  },
+  "searchDesigns": "Search Designs",
+  "@searchDesigns": {
+    "description": "Search placeholder text"
   }
 }

@@ -1,6 +1,7 @@
 import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -16,6 +17,7 @@ class _SettingScreenState extends State<SettingScreen> {
   final ProfileController controller = Get.put(ProfileController());
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(
@@ -27,7 +29,7 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Row(
                 children: [
                   SizedBox(width: 8.w),
-                  Text('Settings', style: ssTitleTextTextStyle208001),
+                  Text(l10n.settings, style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -51,35 +53,35 @@ class _SettingScreenState extends State<SettingScreen> {
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
                       SettingCard(
-                        title: 'Personal Information',
+                        title: l10n.personalInformation,
                         onTap: () {
                           Get.toNamed('/profile');
                         },
                       ),
                       SettingCard(
-                        title: 'Subscription Plan',
+                        title: l10n.subscriptionPlan,
                         onTap: () {
                           Get.toNamed('/subscribe');
                         },
                       ),
                       SettingCard(
-                        title: 'Terms of use',
+                        title: l10n.termsOfUse,
                         onTap: () {
                           // Get.toNamed('/terms');
                         },
                       ),
                       SettingCard(
-                        title: 'Privacy Policy',
+                        title: l10n.privacyPolicy,
                         onTap: () {
                           // Get.toNamed('/terms');
                         },
                       ),
                       SettingCard(
-                        title: 'Logout',
+                        title: l10n.logout,
                         onTap: () {
                           showDialog(
                             context: context,
-                            builder: (context) {
+                            builder: (dialogContext) {
                               return Dialog(
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -93,50 +95,66 @@ class _SettingScreenState extends State<SettingScreen> {
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
                                       Text(
-                                        "Are you sure you want to logout?",
+                                        l10n.logoutConfirmation,
                                         textAlign: TextAlign.center,
                                         style: lLastTextStyle16500,
                                       ),
                                       const SizedBox(height: 24),
-                                      Row(
-                                        children: [
-                                          Expanded(
-                                            child: OutlinedButton(
-                                              style: OutlinedButton.styleFrom(
-                                                foregroundColor: Colors.black,
-                                                side: BorderSide(
-                                                  color: Colors.black,
+                                      IntrinsicHeight(
+                                        child: Row(
+                                          children: [
+                                            Expanded(
+                                              child: OutlinedButton(
+                                                style: OutlinedButton.styleFrom(
+                                                  foregroundColor: Colors.black,
+                                                  side: BorderSide(
+                                                    color: Colors.black,
+                                                  ),
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 12,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  Navigator.of(dialogContext).pop();
+                                                },
+                                                child: Text(
+                                                  l10n.cancel,
+                                                  textAlign: TextAlign.center,
+                                                  style: lLastTextStyle16500.copyWith(
+                                                    fontSize: 14,
+                                                    height: 1.2,
+                                                  ),
                                                 ),
                                               ),
-                                              onPressed: () {
-                                                Navigator.of(context).pop();
-                                              },
-                                              child: Text(
-                                                "Cancel",
-                                                style: lLastTextStyle16500,
+                                            ),
+                                            const SizedBox(width: 8),
+                                            Expanded(
+                                              child: ElevatedButton(
+                                                style: ElevatedButton.styleFrom(
+                                                  backgroundColor: Colors.black,
+                                                  foregroundColor: Colors.white,
+                                                  padding: EdgeInsets.symmetric(
+                                                    vertical: 12,
+                                                    horizontal: 12,
+                                                  ),
+                                                ),
+                                                onPressed: () {
+                                                  controller.logout();
+                                                },
+                                                child: Text(
+                                                  l10n.logout,
+                                                  textAlign: TextAlign.center,
+                                                  style: lLastTextStyle16500.copyWith(
+                                                    color: Colors.white,
+                                                    fontSize: 14,
+                                                    height: 1.2,
+                                                  ),
+                                                ),
                                               ),
                                             ),
-                                          ),
-                                          const SizedBox(width: 8),
-                                          Expanded(
-                                            child: ElevatedButton(
-                                              style: ElevatedButton.styleFrom(
-                                                backgroundColor: Colors.black,
-                                                foregroundColor: Colors.white,
-                                              ),
-                                              onPressed: () {
-                                                controller.logout();
-                                              },
-                                              child: Text(
-                                                "Logout",
-                                                style: lLastTextStyle16500
-                                                    .copyWith(
-                                                      color: Colors.white,
-                                                    ),
-                                              ),
-                                            ),
-                                          ),
-                                        ],
+                                          ],
+                                        ),
                                       ),
                                     ],
                                   ),

@@ -1,5 +1,6 @@
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -10,6 +11,7 @@ class SubscribeFreePlan extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final SubscribeController controller = Get.find<SubscribeController>();
     return Scaffold(
       backgroundColor: Colors.black,
@@ -29,7 +31,7 @@ class SubscribeFreePlan extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Free', style: ssTitleTextTextStyle208001),
+                  Text(l10n.free, style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -69,12 +71,12 @@ class SubscribeFreePlan extends StatelessWidget {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Text(
-                                          "Free/Month",
+                                          l10n.freePerMonth,
                                           style: sfpsTitleTextTextStyle18600,
                                         ),
                                         SizedBox(height: 4.h),
                                         Text(
-                                          "Features include:",
+                                          l10n.featuresInclude,
                                           style: sfpsTitleTextTextStyle14400,
                                         ),
                                         SizedBox(height: 8.h),
@@ -83,7 +85,7 @@ class SubscribeFreePlan extends StatelessWidget {
                                           final subscription = controller.currentSubscription.value;
                                           if (subscription != null && subscription.subscriptionPlan == 'FREE') {
                                             return Text(
-                                              'Designs: ${subscription.designCounterDisplay}',
+                                              l10n.designs(subscription.designCounterDisplay),
                                               style: TextStyle(
                                                 fontSize: 14.sp,
                                                 color: subscription.remainingDesigns > 0
@@ -113,7 +115,7 @@ class SubscribeFreePlan extends StatelessWidget {
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Text(
-                                "Perfect to test, imagine, and create freely.",
+                                l10n.perfectToTest,
                                 style: sfpsTitleTextTextStyle14500,
                                 textAlign: TextAlign.center,
                               ),
@@ -121,15 +123,15 @@ class SubscribeFreePlan extends StatelessWidget {
                             SizedBox(height: 24.h),
                             
                             // Features List
-                            _buildFeatureItem("Up to 10 3D designs / month"),
+                            _buildFeatureItem(l10n.upTo10Designs),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("3D Visualization included"),
+                            _buildFeatureItem(l10n.visualization3DIncluded),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No techpack generation",isAvailable: false),
+                            _buildFeatureItem(l10n.noTechpackGeneration, isAvailable: false),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No PDF export", isAvailable: false ),
+                            _buildFeatureItem(l10n.noPdfExport, isAvailable: false),
                             SizedBox(height: 16.h),
-                            _buildFeatureItem("No access to manufacturers", isAvailable: false),
+                            _buildFeatureItem(l10n.noAccessToManufacturers, isAvailable: false),
                             SizedBox(height: 40.h),
                           ],
                         ),
@@ -148,13 +150,13 @@ class SubscribeFreePlan extends StatelessWidget {
                             borderRadius: BorderRadius.circular(12.r),
                           ),
                           child: Text(
-                            "You can upgrade your plan to generate tech PDF's and access to manufacturers",
+                            l10n.upgradeMessage,
                             style: sfpsTitleTextTextStyle14500,
                             textAlign: TextAlign.center,
                           ),
                         ),
                         RoundButton(
-                          title: "Upgrade plan", 
+                          title: l10n.upgradePlan, 
                           onTap: () {
                             Get.back();
                           }, 
@@ -171,16 +173,16 @@ class SubscribeFreePlan extends StatelessWidget {
                               height: 1.4,
                             ),
                             children: [
-                              TextSpan(text: "By placing this order, you agree to the ",style: ssTitleTextTextStyle124006),
+                              TextSpan(text: l10n.termsAgreement, style: ssTitleTextTextStyle124006),
                               TextSpan(
-                                text: "Terms of Service",
+                                text: l10n.termsOfService,
                                 style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(text: " and\n", style: ssTitleTextTextStyle124006),
+                              TextSpan(text: l10n.and, style: ssTitleTextTextStyle124006),
                               TextSpan(
-                                text: "Privacy Policy",
+                                text: l10n.privacyPolicy,
                                 style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
