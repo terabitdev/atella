@@ -2792,27 +2792,111 @@ class CreativeBriefController extends GetxController {
           }
           break;
         case 'colors':
+          print('=== PROCESSING COLORS FOR API ===');
+          print('Raw answer.textInput: ${answer.textInput}');
+          print('Raw answer.selectedOptions: ${answer.selectedOptions}');
+
           // Multi-part colors: solid colors, print, technique
-          // textInput contains solid colors separated by |||
-          // selectedOptions contains [print, technique]
+          // textInput format: "solidColors|||customPrint|||customTechnique"
+          // selectedOptions contains ['Prints:value', 'Techniques:value'] where value can be regular option or 'Custom'
+
+          String? customPrintText;
+          String? customTechniqueText;
+          List<String> solidColorsList = [];
+
+          // Parse textInput to extract solid colors and custom texts
           if (answer.textInput?.isNotEmpty == true) {
-            final solidColors = answer.textInput!.split('|||');
-            creativeBriefData['solidColors'] = solidColors; // Save as array
-          } else {
-            creativeBriefData['solidColors'] = [];
-          }
-          if (answer.selectedOptions.isNotEmpty) {
-            creativeBriefData['print'] = answer.selectedOptions.first;
-            if (answer.selectedOptions.length > 1) {
-              creativeBriefData['technique'] = answer.selectedOptions[1];
+            final parts = answer.textInput!.split('|||');
+            print('Split parts: $parts');
+            if (parts.isNotEmpty) {
+              // First part is solid colors (can be empty or hex codes separated by commas)
+              if (parts[0].isNotEmpty && parts[0].contains('#')) {
+                solidColorsList = parts[0].split(',').map((e) => e.trim()).toList();
+              }
+              // Second part is custom print text (if exists)
+              if (parts.length >= 2 && parts[1].isNotEmpty) {
+                customPrintText = parts[1];
+                print('Custom print text found: $customPrintText');
+              }
+              // Third part is custom technique text (if exists)
+              if (parts.length >= 3 && parts[2].isNotEmpty) {
+                customTechniqueText = parts[2];
+                print('Custom technique text found: $customTechniqueText');
+              }
             }
           }
+
+          creativeBriefData['solidColors'] = solidColorsList;
+
+          // Process print - replace 'Custom' with actual custom text
+          if (answer.selectedOptions.isNotEmpty) {
+            final printOption = answer.selectedOptions.firstWhere(
+              (opt) => opt.startsWith('Prints:'),
+              orElse: () => '',
+            );
+            if (printOption.isNotEmpty) {
+              final printValue = printOption.substring('Prints:'.length);
+              if (printValue == 'Custom' && customPrintText != null) {
+                creativeBriefData['print'] = customPrintText; // Use actual custom text
+                print('Using custom print text: $customPrintText');
+              } else {
+                creativeBriefData['print'] = printValue; // Use regular option
+                print('Using regular print option: $printValue');
+              }
+            }
+          }
+
+          // Process technique - replace 'Custom' with actual custom text
+          if (answer.selectedOptions.length > 1) {
+            final techniqueOption = answer.selectedOptions.firstWhere(
+              (opt) => opt.startsWith('Techniques:'),
+              orElse: () => '',
+            );
+            if (techniqueOption.isNotEmpty) {
+              final techniqueValue = techniqueOption.substring('Techniques:'.length);
+              if (techniqueValue == 'Custom' && customTechniqueText != null) {
+                creativeBriefData['technique'] = customTechniqueText; // Use actual custom text
+                print('Using custom technique text: $customTechniqueText');
+              } else {
+                creativeBriefData['technique'] = techniqueValue; // Use regular option
+                print('Using regular technique option: $techniqueValue');
+              }
+            }
+          }
+
+          print('Final print value for API: ${creativeBriefData['print']}');
+          print('Final technique value for API: ${creativeBriefData['technique']}');
           break;
         case 'fabrics':
-          // Fabrics is now a categorized chips question (selectedOptions)
-          creativeBriefData['fabrics'] = answer.selectedOptions.isNotEmpty
-              ? answer.selectedOptions.first
-              : '';
+          print('=== PROCESSING FABRICS FOR API ===');
+          print('Raw answer.selectedOptions: ${answer.selectedOptions}');
+          print('Raw answer.textInput: ${answer.textInput}');
+
+          // Fabrics is a categorized chips question (selectedOptions)
+          // Format: "categoryName:value" where value can be regular option or 'Custom'
+          // If Custom, textInput contains the actual custom text
+          if (answer.selectedOptions.isNotEmpty) {
+            final fabricOption = answer.selectedOptions.first;
+            if (fabricOption.contains(':')) {
+              final parts = fabricOption.split(':');
+              final fabricValue = parts.length > 1 ? parts[1] : fabricOption;
+
+              // If value is "Custom", use the textInput instead
+              if (fabricValue == 'Custom' && answer.textInput?.isNotEmpty == true) {
+                creativeBriefData['fabrics'] = answer.textInput!; // Use actual custom text
+                print('Using custom fabric text: ${answer.textInput}');
+              } else {
+                creativeBriefData['fabrics'] = fabricValue; // Use regular option
+                print('Using regular fabric option: $fabricValue');
+              }
+            } else {
+              creativeBriefData['fabrics'] = fabricOption;
+            }
+          } else {
+            creativeBriefData['fabrics'] = '';
+          }
+
+          print('Final fabrics value for API: ${creativeBriefData['fabrics']}');
           break;
       }
     }
