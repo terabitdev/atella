@@ -851,6 +851,9 @@ class CreativeBriefController extends GetxController {
       // Clear any temporary selection
       _tempSelections.remove(questionId);
 
+      // Clear any existing answer (allow switching from regular option to custom)
+      _answers.remove(questionId);
+
       update();
       return; // Don't advance to next question yet
     }
