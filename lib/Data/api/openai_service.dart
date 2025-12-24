@@ -318,6 +318,7 @@ IMPORTANT: ABSOLUTE RULES (do not omit, paraphrase, or weaken):
 3) DO NOT mention or request a mannequin, dress form, torso, or human shadow.
 4) If the generated image includes any human or mannequin, the generation must be considered INVALID and retried.
 5) Do NOT add any logos, branding, brand names, text, lettering, numbers, symbols, or writing on the garment unless the user explicitly requests logos/text or provides a logo reference.
+6) Do NOT add any patterns, prints, textures, or decorative graphics on the garment unless the user explicitly requests a pattern/print or provides a clear pattern reference.
 
 PRINTS + TECHNIQUES MUST BE PROMINENT
 You MUST apply the print pattern and technique very clearly and prominently on the garment.  
@@ -398,7 +399,7 @@ CRITICAL INSTRUCTIONS:
 7. Mention any special features like necklines, sleeves, closures, pockets
 8. Include material/fabric details and seasonal considerations
 9. Use the budget level from Refined Concept to determine quality/finish
-10. START the prompt with: "Product-only fashion photography of a [garment type], no human, no model, no mannequin, no body visible, no logos, no text or writing on the garment unless explicitly requested. The garment should be look realistic and according the the type of realistic world garment style, lenght and properties."
+10. START the prompt with: "Product-only fashion photography of a [garment type], no human, no model, no mannequin, no body visible, no logos, no text or writing, no patterns, prints, textures, or decorative graphics on the garment unless explicitly requested. The garment should be look realistic and according the the type of realistic world garment style, lenght and properties."
 11. END the prompt with: "Isolated floating garment, pure white background, invisible ghost mannequin effect, e-commerce product shot, absolutely no people or body parts."
 
 Generate a comprehensive visual prompt that captures ALL the design elements from the user's questionnaire answers.

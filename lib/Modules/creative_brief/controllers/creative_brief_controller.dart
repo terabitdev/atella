@@ -2828,38 +2828,62 @@ class CreativeBriefController extends GetxController {
 
           creativeBriefData['solidColors'] = solidColorsList;
 
-          // Process print - replace 'Custom' with actual custom text
+          // Process print - handle both regular options and custom
+          // Regular format: selectedOptions: ['Floral', 'Embroidery']
+          // Custom format: selectedOptions: ['Prints:Custom'] with textInput containing custom text
           if (answer.selectedOptions.isNotEmpty) {
-            final printOption = answer.selectedOptions.firstWhere(
+            // Try to find option with "Prints:" prefix (Custom case)
+            final printOptionWithPrefix = answer.selectedOptions.firstWhere(
               (opt) => opt.startsWith('Prints:'),
               orElse: () => '',
             );
-            if (printOption.isNotEmpty) {
-              final printValue = printOption.substring('Prints:'.length);
+
+            if (printOptionWithPrefix.isNotEmpty) {
+              // Custom option format: "Prints:Custom"
+              final printValue = printOptionWithPrefix.substring('Prints:'.length);
               if (printValue == 'Custom' && customPrintText != null) {
                 creativeBriefData['print'] = customPrintText; // Use actual custom text
                 print('Using custom print text: $customPrintText');
               } else {
-                creativeBriefData['print'] = printValue; // Use regular option
-                print('Using regular print option: $printValue');
+                creativeBriefData['print'] = printValue;
+                print('Using print option with prefix: $printValue');
+              }
+            } else {
+              // Regular option format: just the option name (first item in selectedOptions)
+              final regularPrintOption = answer.selectedOptions.first;
+              // Make sure it's not a Techniques option
+              if (!regularPrintOption.startsWith('Techniques:')) {
+                creativeBriefData['print'] = regularPrintOption;
+                print('Using regular print option: $regularPrintOption');
               }
             }
           }
 
-          // Process technique - replace 'Custom' with actual custom text
-          if (answer.selectedOptions.length > 1) {
-            final techniqueOption = answer.selectedOptions.firstWhere(
+          // Process technique - handle both regular options and custom
+          if (answer.selectedOptions.isNotEmpty) {
+            // Try to find option with "Techniques:" prefix (Custom case)
+            final techniqueOptionWithPrefix = answer.selectedOptions.firstWhere(
               (opt) => opt.startsWith('Techniques:'),
               orElse: () => '',
             );
-            if (techniqueOption.isNotEmpty) {
-              final techniqueValue = techniqueOption.substring('Techniques:'.length);
+
+            if (techniqueOptionWithPrefix.isNotEmpty) {
+              // Custom option format: "Techniques:Custom"
+              final techniqueValue = techniqueOptionWithPrefix.substring('Techniques:'.length);
               if (techniqueValue == 'Custom' && customTechniqueText != null) {
                 creativeBriefData['technique'] = customTechniqueText; // Use actual custom text
                 print('Using custom technique text: $customTechniqueText');
               } else {
-                creativeBriefData['technique'] = techniqueValue; // Use regular option
-                print('Using regular technique option: $techniqueValue');
+                creativeBriefData['technique'] = techniqueValue;
+                print('Using technique option with prefix: $techniqueValue');
+              }
+            } else if (answer.selectedOptions.length > 1) {
+              // Regular option format: second item in selectedOptions
+              final regularTechniqueOption = answer.selectedOptions[1];
+              // Make sure it's not a Prints option
+              if (!regularTechniqueOption.startsWith('Prints:')) {
+                creativeBriefData['technique'] = regularTechniqueOption;
+                print('Using regular technique option: $regularTechniqueOption');
               }
             }
           }
