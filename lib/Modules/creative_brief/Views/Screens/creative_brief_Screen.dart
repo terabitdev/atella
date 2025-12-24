@@ -40,15 +40,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             ),
           ),
           Obx(() {
-            // Show button if we're showing last two questions or all questions are answered
-            if (controller.shouldShowButton) {
-              return _buildBottomButton();
-            }
-            // Show custom text input at bottom when custom is selected for regular chips
-            if (controller.isCustomSelectedForCurrentQuestion() &&
-                controller.currentQuestion.type == 'chips') {
-              return _buildBottomCustomInput();
-            }
+            // IMPORTANT: Check for custom input fields FIRST before showing the button
+            // This allows editing/switching to custom inputs even after all questions are completed
+
             // Show custom text input for categorized questions (for ANY question, not just current)
             final customInfo = controller.getAnyCustomSelectedCategory();
             if (customInfo != null) {
@@ -57,11 +51,24 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 customInfo['categoryName']!,
               );
             }
+
+            // Show custom text input at bottom when custom is selected for ANY regular chip question
+            final customQuestionId = controller.getAnyCustomSelectedQuestion();
+            if (customQuestionId != null) {
+              return _buildBottomCustomInput();
+            }
+
             // Show bottom input area only for text questions (not chip questions)
             if (controller.shouldShowBottomInput &&
                 controller.currentQuestion.type == 'text') {
               return _buildBottomInputArea();
             }
+
+            // Show button if we're showing last two questions or all questions are answered
+            if (controller.shouldShowButton) {
+              return _buildBottomButton();
+            }
+
             // For last two questions, show individual input areas in the list
             return const SizedBox.shrink();
           }),
@@ -745,8 +752,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       return Obx(() {
         // Access the observable list to trigger reactivity
         final images = controller.inspirationImages.toList();
-        // Check if question is answered reactively
-        final questionAnswered = controller.isQuestionAnswered(question.id);
 
         return Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -763,8 +768,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               placeholder: 'Upload visual inspiration images (optional)',
             ),
 
-            // Skip button - only show if question is not answered and no images selected
-            if (!questionAnswered && images.isEmpty) ...[
+            // Skip button - show when no images are selected
+            // This allows skipping during initial flow AND during modification
+            if (images.isEmpty) ...[
               SizedBox(height: 16.h),
               Center(
                 child: TextButton(

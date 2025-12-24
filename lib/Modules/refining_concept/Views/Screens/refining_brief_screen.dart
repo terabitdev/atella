@@ -47,13 +47,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             ),
           ),
           Obx(() {
-            final allQuestionsAnswered =
-                controller.answers.length >= controller.questions.length;
+            // IMPORTANT: Check for custom input fields FIRST before checking if all questions are answered
+            // This allows editing custom inputs even after all questions are completed
 
-            // Show button when all questions are answered (temporary selections will auto-confirm)
-            if (allQuestionsAnswered) {
-              return _buildBottomButton();
-            }
             // Show categorized custom input when a category custom is selected (for ANY question, not just current)
             final customInfo = controller.getAnyCustomSelectedCategory();
             if (customInfo != null) {
@@ -62,10 +58,20 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                 customInfo['categoryName']!,
               );
             }
-            // Show custom input if custom is selected
-            if (controller.isCustomSelectedForCurrentQuestion()) {
+
+            // Show custom input if custom is selected for ANY regular chip question
+            final customQuestionId = controller.getAnyCustomSelectedQuestion();
+            if (customQuestionId != null) {
               return _buildBottomCustomInput();
             }
+
+            // Show button when all questions are answered (temporary selections will auto-confirm)
+            final allQuestionsAnswered =
+                controller.answers.length >= controller.questions.length;
+            if (allQuestionsAnswered) {
+              return _buildBottomButton();
+            }
+
             return const SizedBox.shrink();
           }),
         ],
@@ -241,9 +247,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             _buildCategorizedChipOptions(question, isAnswered, answer),
 
           // Show custom answer if answered with custom text
-          if (isAnswered &&
-              (question.type == 'chips' ||
-                  question.type == 'chips_categorized'))
+          // ONLY for regular chips (not categorized - those show custom within categories)
+          if (isAnswered && question.type == 'chips')
             _buildCustomAnswerDisplay(answer),
         ],
       ),
@@ -353,6 +358,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
         categoryName,
       );
       if (tempCatSelection != null) {
+        if (questionId == 'specific_features') {
+          print('[$categoryName] Temp selection found: $tempCatSelection');
+        }
         return tempCatSelection;
       }
 
@@ -360,9 +368,16 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       if (answer?.selectedOptions.isNotEmpty == true) {
         for (final opt in answer!.selectedOptions) {
           if (opt.startsWith('$categoryName:')) {
-            return opt.substring('$categoryName:'.length);
+            final value = opt.substring('$categoryName:'.length);
+            if (questionId == 'specific_features') {
+              print('[$categoryName] Final selection found: $value');
+            }
+            return value;
           }
         }
+      }
+      if (questionId == 'specific_features') {
+        print('[$categoryName] No selection found');
       }
       return null;
     }
@@ -370,7 +385,16 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     // Get custom text for category
     String? getCustomText() {
       final textInput = answer?.textInput;
-      if (textInput == null || textInput.isEmpty) return null;
+      if (textInput == null || textInput.isEmpty) {
+        if (questionId == 'specific_features') {
+          print('[$categoryName] No textInput');
+        }
+        return null;
+      }
+
+      if (questionId == 'specific_features') {
+        print('[$categoryName] Checking textInput: $textInput');
+      }
 
       if (textInput.contains('|||')) {
         final parts = textInput.split('|||');
@@ -380,6 +404,9 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             final key = part.substring(0, separatorIndex);
             final value = part.substring(separatorIndex + 1);
             if (key == categoryName) {
+              if (questionId == 'specific_features') {
+                print('[$categoryName] Custom text found (multi): $value');
+              }
               return value;
             }
           }
@@ -390,9 +417,15 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           final key = textInput.substring(0, separatorIndex);
           final value = textInput.substring(separatorIndex + 1);
           if (key == categoryName) {
+            if (questionId == 'specific_features') {
+              print('[$categoryName] Custom text found (single): $value');
+            }
             return value;
           }
         }
+      }
+      if (questionId == 'specific_features') {
+        print('[$categoryName] No custom text found for this category');
       }
       return null;
     }
@@ -402,6 +435,15 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       final selectedValue = getSelectedValue();
       final customTextForCategory = getCustomText();
       final hasSelection = selectedValue != null;
+
+      if (questionId == 'specific_features') {
+        print('=== CHECKING 2ND QUESTION: $categoryName ===');
+        print('Selected Value: $selectedValue');
+        print('Custom Text: $customTextForCategory');
+        print('Has Selection: $hasSelection');
+        print('Answer selectedOptions: ${answer?.selectedOptions}');
+        print('Answer textInput: ${answer?.textInput}');
+      }
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -583,9 +625,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
               ],
             ),
-          // Show custom answer if answered with custom text
-          if (isAnswered &&
-              selectedValue == 'Custom' &&
+          // Show custom text within category section (no isAnswered check needed)
+          if (selectedValue == 'Custom' &&
               customTextForCategory != null &&
               customTextForCategory.isNotEmpty) ...[
             SizedBox(height: 8.h),

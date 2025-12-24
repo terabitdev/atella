@@ -522,6 +522,14 @@ class RefiningConceptController extends GetxController {
     return null;
   }
 
+  // Get custom selected question ID for ANY regular chip question (not just current)
+  String? getAnyCustomSelectedQuestion() {
+    if (_customSelectedForQuestion.value.isNotEmpty) {
+      return _customSelectedForQuestion.value;
+    }
+    return null;
+  }
+
   String? getTempSelectionForCategory(String categoryName) {
     return _tempCategorizedSelections[categoryName];
   }
@@ -564,6 +572,14 @@ class RefiningConceptController extends GetxController {
 
       // Clear any temporary selection
       _tempSelections.remove(questionId);
+
+      // Navigate to the question if it's not the current one
+      if (questionId != currentQuestion.id) {
+        final questionIndex = questions.indexWhere((q) => q.id == questionId);
+        if (questionIndex != -1) {
+          _currentQuestionIndex.value = questionIndex;
+        }
+      }
 
       update();
       return; // Don't advance to next question yet
@@ -691,6 +707,15 @@ class RefiningConceptController extends GetxController {
     String category,
     String option,
   ) {
+    if (questionId == 'specific_features') {
+      print('=== SELECTING CATEGORIZED OPTION ===');
+      print('Question: $questionId');
+      print('Category: $category');
+      print('Option: $option');
+      print('Current temp selections: $_tempCategorizedSelections');
+      print('Current answer: ${_answers[questionId]}');
+    }
+
     if (currentQuestion.id != questionId) {
       final qIndex = questions.indexWhere((q) => q.id == questionId);
       if (qIndex != -1) {
@@ -702,7 +727,7 @@ class RefiningConceptController extends GetxController {
     if (option == 'Custom') {
       print(
         'Custom selected for question: $questionId, category: $category',
-      ); // Debug
+      );
       _customSelectedForCategory.value = '$questionId:$category';
       // Clear any temporary selection for this category
       _tempCategorizedSelections.remove(category);
@@ -724,8 +749,16 @@ class RefiningConceptController extends GetxController {
       (opt) => opt == '$category:$option' || opt == option
     ) ?? false;
 
+    if (questionId == 'specific_features') {
+      print('Is same option selected: $isSameOptionSelected');
+      print('Is in final answer: $isInFinalAnswer');
+    }
+
     if (isSameOptionSelected || isInFinalAnswer) {
       // DESELECTION: User is clicking on already selected option
+      if (questionId == 'specific_features') {
+        print('DESELECTING option');
+      }
       _categorizedDebounce?.cancel();
 
       // Remove from temp selections
@@ -737,6 +770,10 @@ class RefiningConceptController extends GetxController {
         updatedOptions.removeWhere(
           (opt) => opt == option || opt == '$category:$option',
         );
+
+        if (questionId == 'specific_features') {
+          print('Updated options after deselection: $updatedOptions');
+        }
 
         if (updatedOptions.isEmpty) {
           // If no selections remain, remove the entire answer
@@ -761,6 +798,9 @@ class RefiningConceptController extends GetxController {
       return;
     } else {
       // SELECTION: Set the new temp selection
+      if (questionId == 'specific_features') {
+        print('SELECTING option - adding to temp');
+      }
       _tempCategorizedSelections[category] = option;
     }
 
@@ -789,11 +829,46 @@ class RefiningConceptController extends GetxController {
   void _confirmCategorizedSelections(String questionId) {
     if (_tempCategorizedSelections.isEmpty) return;
 
+    if (questionId == 'specific_features') {
+      print('=== CONFIRMING CATEGORIZED SELECTIONS ===');
+      print('Question: $questionId');
+      print('Temp selections to confirm: $_tempCategorizedSelections');
+    }
+
     // Get existing answer to preserve custom selections
     final existingAnswer = _answers[questionId];
     List<String> selectedOptions =
         existingAnswer?.selectedOptions.toList() ?? [];
     String? customText = existingAnswer?.textInput;
+
+    if (questionId == 'specific_features') {
+      print('Existing selectedOptions: $selectedOptions');
+      print('Existing customText: $customText');
+    }
+
+    // Parse existing custom texts to clean up when switching to regular options
+    Map<String, String> customTexts = {};
+    if (customText != null && customText.contains('|||')) {
+      final parts = customText.split('|||');
+      for (var part in parts) {
+        if (part.contains(':')) {
+          final keyValue = part.split(':');
+          if (keyValue.length >= 2) {
+            customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+          }
+        }
+      }
+    } else if (customText != null && customText.isNotEmpty && customText.contains(':')) {
+      // Single custom text format
+      final separatorIndex = customText.indexOf(':');
+      final key = customText.substring(0, separatorIndex);
+      final value = customText.substring(separatorIndex + 1);
+      customTexts[key] = value;
+    }
+
+    if (questionId == 'specific_features') {
+      print('Parsed customTexts: $customTexts');
+    }
 
     // Add new selections with category prefix format: "categoryName:optionName"
     // This allows us to track which category each option belongs to
@@ -804,12 +879,25 @@ class RefiningConceptController extends GetxController {
       );
       // Add the new selection with category prefix
       selectedOptions.add('${entry.key}:${entry.value}');
+
+      // Remove custom text for this category if switching to a regular option
+      customTexts.remove(entry.key);
+    }
+
+    // Reconstruct custom text string
+    final customTextString = customTexts.entries
+        .map((e) => '${e.key}:${e.value}')
+        .join('|||');
+
+    if (questionId == 'specific_features') {
+      print('Final selectedOptions: $selectedOptions');
+      print('Final customTextString: $customTextString');
     }
 
     _answers[questionId] = BriefAnswer(
       questionId: questionId,
       selectedOptions: selectedOptions,
-      textInput: customText, // Preserve custom text if it exists
+      textInput: customTextString.isNotEmpty ? customTextString : null,
     );
     _tempCategorizedSelections.clear();
     _answers.refresh();
@@ -926,6 +1014,11 @@ class RefiningConceptController extends GetxController {
     String existingText,
     TextEditingController controller,
   ) {
+    print('=== EDITING CATEGORIZED CUSTOM ANSWER ===');
+    print('Question ID: $questionId');
+    print('Category: $categoryName');
+    print('Existing Text: $existingText');
+
     // Load the custom text into the provided controller
     controller.text = existingText;
 
@@ -935,6 +1028,9 @@ class RefiningConceptController extends GetxController {
     // Get existing answer
     final existingAnswer = _answers[questionId];
     if (existingAnswer != null) {
+      print('Current answer before edit: ${existingAnswer.selectedOptions}');
+      print('Current textInput before edit: ${existingAnswer.textInput}');
+
       // Remove the custom option for this category from selectedOptions
       // so it can be re-submitted
       List<String> updatedOptions = existingAnswer.selectedOptions
@@ -945,14 +1041,27 @@ class RefiningConceptController extends GetxController {
       String? customText = existingAnswer.textInput;
       Map<String, String> customTexts = {};
 
-      if (customText != null && customText.contains('|||')) {
-        final parts = customText.split('|||');
-        for (var part in parts) {
-          if (part.contains(':')) {
-            final keyValue = part.split(':');
-            if (keyValue.length >= 2 && keyValue[0] != categoryName) {
-              customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+      // Parse existing custom texts - handle both single and multiple entries
+      if (customText != null && customText.isNotEmpty) {
+        if (customText.contains('|||')) {
+          // Multiple custom texts
+          final parts = customText.split('|||');
+          for (var part in parts) {
+            if (part.contains(':')) {
+              final keyValue = part.split(':');
+              if (keyValue.length >= 2 && keyValue[0] != categoryName) {
+                customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+              }
             }
+          }
+        } else if (customText.contains(':')) {
+          // Single custom text
+          final separatorIndex = customText.indexOf(':');
+          final key = customText.substring(0, separatorIndex);
+          final value = customText.substring(separatorIndex + 1);
+          // Only keep it if it's not the category being edited
+          if (key != categoryName) {
+            customTexts[key] = value;
           }
         }
       }
@@ -960,6 +1069,9 @@ class RefiningConceptController extends GetxController {
       final customTextString = customTexts.entries
           .map((e) => '${e.key}:${e.value}')
           .join('|||');
+
+      print('Updated selectedOptions: $updatedOptions');
+      print('Updated textInput: $customTextString');
 
       // Update answer without this category's custom
       _answers[questionId] = BriefAnswer(
@@ -975,6 +1087,7 @@ class RefiningConceptController extends GetxController {
       _currentQuestionIndex.value = questionIndex;
     }
 
+    print('Edit mode activated for $categoryName');
     update();
   }
 
@@ -984,9 +1097,10 @@ class RefiningConceptController extends GetxController {
     String categoryName,
     TextEditingController controller,
   ) async {
-    print(
-      'Submitting categorized custom answer: ${controller.text} for $questionId:$categoryName',
-    ); // Debug
+    print('=== SUBMITTING CATEGORIZED CUSTOM ANSWER ===');
+    print('Question ID: $questionId');
+    print('Category: $categoryName');
+    print('Custom Text: ${controller.text}');
 
     if (controller.text.trim().isEmpty) {
       return;
@@ -1003,6 +1117,9 @@ class RefiningConceptController extends GetxController {
     List<String> selectedOptions =
         existingAnswer?.selectedOptions.toList() ?? [];
 
+    print('Existing selectedOptions before: $selectedOptions');
+    print('Existing textInput before: ${existingAnswer?.textInput}');
+
     // Remove any existing option for this category (if it exists)
     // For categorized questions, we store options as "categoryName:optionName" or "categoryName:Custom"
     selectedOptions.removeWhere((opt) => opt.startsWith('$categoryName:'));
@@ -1016,15 +1133,24 @@ class RefiningConceptController extends GetxController {
     Map<String, String> customTexts = {};
 
     // Parse existing custom texts if they exist (format: "category1:text1|||category2:text2")
-    if (customText != null && customText.contains('|||')) {
-      final parts = customText.split('|||');
-      for (var part in parts) {
-        if (part.contains(':')) {
-          final keyValue = part.split(':');
-          if (keyValue.length >= 2) {
-            customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+    if (customText != null && customText.isNotEmpty) {
+      if (customText.contains('|||')) {
+        // Multiple custom texts
+        final parts = customText.split('|||');
+        for (var part in parts) {
+          if (part.contains(':')) {
+            final keyValue = part.split(':');
+            if (keyValue.length >= 2) {
+              customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+            }
           }
         }
+      } else if (customText.contains(':')) {
+        // Single custom text
+        final separatorIndex = customText.indexOf(':');
+        final key = customText.substring(0, separatorIndex);
+        final value = customText.substring(separatorIndex + 1);
+        customTexts[key] = value;
       }
     }
 
@@ -1036,11 +1162,17 @@ class RefiningConceptController extends GetxController {
         .map((e) => '${e.key}:${e.value}')
         .join('|||');
 
+    print('Custom texts map: $customTexts');
+    print('Final customTextString: $customTextString');
+    print('Final selectedOptions: $selectedOptions');
+
     _answers[questionId] = BriefAnswer(
       questionId: questionId,
       selectedOptions: selectedOptions,
       textInput: customTextString.isNotEmpty ? customTextString : null,
     );
+
+    print('Answer stored: ${_answers[questionId]}');
 
     // Clear custom selection and controller
     _customSelectedForCategory.value = '';
@@ -1216,6 +1348,12 @@ class RefiningConceptController extends GetxController {
       return questions.length;
     }
 
+    // If all questions have been answered, keep showing all questions
+    // This prevents questions from disappearing when user edits a previous question
+    if (isAllQuestionsCompleted) {
+      return questions.length;
+    }
+
     if (currentQuestionIndex >= 5) {
       return questions.length; // Show all questions after question 5
     }
@@ -1242,13 +1380,69 @@ class RefiningConceptController extends GetxController {
           }
           break;
         case 'specific_features':
-          // Features can be from multiple categories; join all selections
-          refinedConceptData['features'] = answer.selectedOptions.isNotEmpty
-              ? answer.selectedOptions.join(', ')
-              : '';
+          print('=== PROCESSING SPECIFIC_FEATURES FOR API ===');
+          print('Raw answer.selectedOptions: ${answer.selectedOptions}');
+          print('Raw answer.textInput: ${answer.textInput}');
+
+          // Features can be from multiple categories
+          // Parse custom texts to replace "Custom" with actual values
+          Map<String, String> customTexts = {};
           if (answer.textInput?.isNotEmpty == true) {
-            refinedConceptData['customFeatures'] = answer.textInput;
+            final textInput = answer.textInput!;
+            if (textInput.contains('|||')) {
+              final parts = textInput.split('|||');
+              for (var part in parts) {
+                if (part.contains(':')) {
+                  final keyValue = part.split(':');
+                  if (keyValue.length >= 2) {
+                    customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+                  }
+                }
+              }
+            } else if (textInput.contains(':')) {
+              final separatorIndex = textInput.indexOf(':');
+              final key = textInput.substring(0, separatorIndex);
+              final value = textInput.substring(separatorIndex + 1);
+              customTexts[key] = value;
+            }
           }
+
+          print('Parsed customTexts map: $customTexts');
+
+          // Process selected options and replace "Custom" with actual values
+          List<String> processedFeatures = [];
+          for (var option in answer.selectedOptions) {
+            print('Processing option: $option');
+            if (option.contains(':')) {
+              final parts = option.split(':');
+              final category = parts[0];
+              final value = parts[1];
+
+              print('  Category: $category, Value: $value');
+
+              if (value == 'Custom' && customTexts.containsKey(category)) {
+                // Replace "Custom" with the actual custom text
+                final replacedValue = '$category:${customTexts[category]}';
+                print('  Replacing with: $replacedValue');
+                processedFeatures.add(replacedValue);
+              } else {
+                // Keep regular option as is
+                print('  Keeping as is: $option');
+                processedFeatures.add(option);
+              }
+            } else {
+              print('  No colon, keeping as is: $option');
+              processedFeatures.add(option);
+            }
+          }
+
+          print('Final processedFeatures: $processedFeatures');
+          final featuresString = processedFeatures.isNotEmpty
+              ? processedFeatures.join(', ')
+              : '';
+          print('Final features string for API: $featuresString');
+
+          refinedConceptData['features'] = featuresString;
           break;
         case 'seasonal_constraint':
           refinedConceptData['season'] = answer.selectedOptions.isNotEmpty

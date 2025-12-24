@@ -791,6 +791,14 @@ class CreativeBriefController extends GetxController {
     return null;
   }
 
+  // Get custom selected question ID for ANY regular chip question (not just current)
+  String? getAnyCustomSelectedQuestion() {
+    if (_customSelectedForQuestion.value.isNotEmpty) {
+      return _customSelectedForQuestion.value;
+    }
+    return null;
+  }
+
   void selectOption(
     String option, {
     String? forQuestionId,
@@ -853,6 +861,14 @@ class CreativeBriefController extends GetxController {
 
       // Clear any existing answer (allow switching from regular option to custom)
       _answers.remove(questionId);
+
+      // Navigate to the question if it's not the current one
+      if (questionId != currentQuestion.id) {
+        final questionIndex = questions.indexWhere((q) => q.id == questionId);
+        if (questionIndex != -1) {
+          _currentQuestionIndex.value = questionIndex;
+        }
+      }
 
       update();
       return; // Don't advance to next question yet
