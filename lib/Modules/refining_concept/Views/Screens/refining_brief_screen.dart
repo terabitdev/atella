@@ -135,19 +135,38 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   // Display custom answer - matching creative brief style
   Widget _buildCustomAnswerDisplay(BriefAnswer? answer) {
     if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
-      return Container(
-        margin: EdgeInsets.only(top: 8.h, left: 8.w),
-        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-        decoration: BoxDecoration(
-          color: AppColors.buttonColor,
-          borderRadius: BorderRadius.circular(20.r),
-        ),
-        child: Text(
-          answer.textInput!,
-          style: TextStyle(
-            fontSize: 14.sp,
-            color: Colors.white,
-            fontWeight: FontWeight.w500,
+      return GestureDetector(
+        onTap: () {
+          // Allow user to edit the custom answer by re-selecting Custom
+          controller.editCustomAnswer(answer.questionId, answer.textInput!);
+        },
+        child: Container(
+          margin: EdgeInsets.only(top: 8.h, left: 8.w),
+          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+          decoration: BoxDecoration(
+            color: AppColors.buttonColor,
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Flexible(
+                child: Text(
+                  answer.textInput!,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    color: Colors.white,
+                    fontWeight: FontWeight.w500,
+                  ),
+                ),
+              ),
+              SizedBox(width: 8.w),
+              Icon(
+                Icons.edit,
+                size: 16.sp,
+                color: Colors.white.withValues(alpha: 0.8),
+              ),
+            ],
           ),
         ),
       );
@@ -570,19 +589,44 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               customTextForCategory != null &&
               customTextForCategory.isNotEmpty) ...[
             SizedBox(height: 8.h),
-            Container(
-              margin: EdgeInsets.only(left: 8.w),
-              padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
-              decoration: BoxDecoration(
-                color: AppColors.buttonColor,
-                borderRadius: BorderRadius.circular(20.r),
-              ),
-              child: Text(
-                customTextForCategory,
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: Colors.white,
-                  fontWeight: FontWeight.w500,
+            GestureDetector(
+              onTap: () {
+                // Allow user to edit the categorized custom answer
+                final textController = controller.specificFeaturesCustomController;
+                controller.editCategorizedCustomAnswer(
+                  questionId,
+                  categoryName,
+                  customTextForCategory,
+                  textController,
+                );
+              },
+              child: Container(
+                margin: EdgeInsets.only(left: 8.w),
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 8.h),
+                decoration: BoxDecoration(
+                  color: AppColors.buttonColor,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: Row(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Flexible(
+                      child: Text(
+                        customTextForCategory,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          color: Colors.white,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                    SizedBox(width: 8.w),
+                    Icon(
+                      Icons.edit,
+                      size: 16.sp,
+                      color: Colors.white.withValues(alpha: 0.8),
+                    ),
+                  ],
                 ),
               ),
             ),

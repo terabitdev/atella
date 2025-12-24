@@ -205,9 +205,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           // Show custom answer if answered with custom text
           if (isAnswered && question.type == 'chips')
             _buildCustomAnswerDisplay(question),
-          // Show custom answer for categorized chips
-          if (isAnswered && question.type == 'chips_categorized')
-            _buildCategorizedCustomAnswerDisplay(question),
+          // Custom answer for categorized chips is now shown within each category section
         ],
       ),
     );
@@ -295,53 +293,41 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     return Obx(() {
       final answer = controller.getAnswer(question.id);
       if (answer?.textInput != null && answer!.textInput!.isNotEmpty) {
-        return Container(
-          margin: const EdgeInsets.only(top: 8),
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
-          decoration: BoxDecoration(
-            color: AppColors.buttonColor,
-            borderRadius: BorderRadius.circular(20),
-          ),
-          child: Text(
-            answer.textInput!,
-            style: const TextStyle(
-              fontSize: 14,
-              color: Colors.white,
-              fontWeight: FontWeight.w500,
-            ),
-          ),
-        );
-      }
-      return const SizedBox.shrink();
-    });
-  }
-
-  Widget _buildCategorizedCustomAnswerDisplay(BriefQuestion question) {
-    return Obx(() {
-      final answer = controller.getAnswer(question.id);
-      // Check if answer has Custom selection (format: "CategoryName:Custom")
-      if (answer?.selectedOptions.isNotEmpty == true) {
-        final selectedOption = answer!.selectedOptions.first;
-        if (selectedOption.endsWith(':Custom') &&
-            answer.textInput != null &&
-            answer.textInput!.isNotEmpty) {
-          return Container(
-            margin: const EdgeInsets.only(top: 8, left: 8),
+        return GestureDetector(
+          onTap: () {
+            // Allow user to edit the custom answer
+            controller.editCustomAnswer(question.id, answer.textInput!);
+          },
+          child: Container(
+            margin: const EdgeInsets.only(top: 8),
             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
             decoration: BoxDecoration(
               color: AppColors.buttonColor,
               borderRadius: BorderRadius.circular(20),
             ),
-            child: Text(
-              answer.textInput!,
-              style: const TextStyle(
-                fontSize: 14,
-                color: Colors.white,
-                fontWeight: FontWeight.w500,
-              ),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Flexible(
+                  child: Text(
+                    answer.textInput!,
+                    style: const TextStyle(
+                      fontSize: 14,
+                      color: Colors.white,
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ),
+                const SizedBox(width: 8),
+                Icon(
+                  Icons.edit,
+                  size: 16,
+                  color: Colors.white.withValues(alpha: 0.8),
+                ),
+              ],
             ),
-          );
-        }
+          ),
+        );
       }
       return const SizedBox.shrink();
     });
@@ -425,6 +411,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
       final hasSelection = selectedValue != null;
 
+      // Get custom text if this category has custom selection
+      String? customText;
+      if (selectedValue == 'Custom' && answer?.textInput != null) {
+        customText = answer!.textInput!;
+      }
+
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -440,8 +432,64 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               ),
             ),
           ),
-          // Show selected + 2 more options when collapsed
-          if (hasSelection && !isExpanded)
+          // Show custom text if selected
+          if (hasSelection && selectedValue == 'Custom' && customText != null)
+            Padding(
+              padding: EdgeInsets.only(bottom: 8.h, left: 8.w),
+              child: GestureDetector(
+                onTap: () {
+                  // Determine the correct controller based on question ID
+                  TextEditingController? textController;
+                  if (questionId == 'garment_type') {
+                    textController = controller.garmentTypeCustomController;
+                  } else if (questionId == 'fabrics') {
+                    textController = controller.fabricCustomController;
+                  }
+
+                  if (textController != null && customText != null) {
+                    controller.editCategorizedCustomAnswer(
+                      questionId,
+                      categoryName,
+                      customText,
+                      textController,
+                    );
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.buttonColor,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          customText,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Icon(
+                        Icons.edit,
+                        size: 16.sp,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            )
+          // Show selected + 2 more options when collapsed (only if NOT custom with text)
+          else if (hasSelection && !isExpanded)
             Wrap(
               spacing: 6.w,
               runSpacing: 6.h,
@@ -817,22 +865,45 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 if (customPrintText.isNotEmpty) {
                   return Padding(
                     padding: EdgeInsets.only(top: 8.h),
-                    child: Container(
-                      margin: EdgeInsets.only(left: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.buttonColor,
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        customPrintText,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Allow user to edit the custom print
+                        controller.editColorCustomAnswer(
+                          'Prints',
+                          answer.textInput!,
+                          controller.printCustomController,
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 8.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.buttonColor,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                customPrintText,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              Icons.edit,
+                              size: 16.sp,
+                              color: Colors.white.withValues(alpha: 0.8),
+                            ),
+                          ],
                         ),
                       ),
                     ),
@@ -871,22 +942,45 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                 if (customTechniqueText.isNotEmpty) {
                   return Padding(
                     padding: EdgeInsets.only(top: 8.h),
-                    child: Container(
-                      margin: EdgeInsets.only(left: 8.w),
-                      padding: EdgeInsets.symmetric(
-                        horizontal: 16.w,
-                        vertical: 8.h,
-                      ),
-                      decoration: BoxDecoration(
-                        color: AppColors.buttonColor,
-                        borderRadius: BorderRadius.circular(20.r),
-                      ),
-                      child: Text(
-                        customTechniqueText,
-                        style: TextStyle(
-                          fontSize: 14.sp,
-                          color: Colors.white,
-                          fontWeight: FontWeight.w500,
+                    child: GestureDetector(
+                      onTap: () {
+                        // Allow user to edit the custom technique
+                        controller.editColorCustomAnswer(
+                          'Techniques',
+                          answer.textInput!,
+                          controller.techniqueCustomController,
+                        );
+                      },
+                      child: Container(
+                        margin: EdgeInsets.only(left: 8.w),
+                        padding: EdgeInsets.symmetric(
+                          horizontal: 16.w,
+                          vertical: 8.h,
+                        ),
+                        decoration: BoxDecoration(
+                          color: AppColors.buttonColor,
+                          borderRadius: BorderRadius.circular(20.r),
+                        ),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            Flexible(
+                              child: Text(
+                                customTechniqueText,
+                                style: TextStyle(
+                                  fontSize: 14.sp,
+                                  color: Colors.white,
+                                  fontWeight: FontWeight.w500,
+                                ),
+                              ),
+                            ),
+                            SizedBox(width: 8.w),
+                            Icon(
+                              Icons.edit,
+                              size: 16.sp,
+                              color: Colors.white.withValues(alpha: 0.8),
+                            ),
+                          ],
                         ),
                       ),
                     ),

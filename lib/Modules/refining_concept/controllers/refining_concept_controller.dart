@@ -866,6 +866,26 @@ class RefiningConceptController extends GetxController {
     }
   }
 
+  // Edit existing custom answer - reload text for editing
+  void editCustomAnswer(String questionId, String existingText) {
+    // Load the custom text into the controller
+    customController.text = existingText;
+
+    // Mark custom as selected for this question
+    _customSelectedForQuestion.value = questionId;
+
+    // Remove the answer so it can be re-submitted
+    _answers.remove(questionId);
+
+    // Navigate to the question if needed
+    final questionIndex = questions.indexWhere((q) => q.id == questionId);
+    if (questionIndex != -1) {
+      _currentQuestionIndex.value = questionIndex;
+    }
+
+    update();
+  }
+
   // Submit custom answer
   void submitCustomAnswer() async {
     print('Submitting custom answer: ${customController.text}'); // Debug
@@ -897,6 +917,65 @@ class RefiningConceptController extends GetxController {
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
     _nextQuestion();
+  }
+
+  // Edit existing categorized custom answer - reload text for editing
+  void editCategorizedCustomAnswer(
+    String questionId,
+    String categoryName,
+    String existingText,
+    TextEditingController controller,
+  ) {
+    // Load the custom text into the provided controller
+    controller.text = existingText;
+
+    // Mark custom as selected for this category
+    _customSelectedForCategory.value = '$questionId:$categoryName';
+
+    // Get existing answer
+    final existingAnswer = _answers[questionId];
+    if (existingAnswer != null) {
+      // Remove the custom option for this category from selectedOptions
+      // so it can be re-submitted
+      List<String> updatedOptions = existingAnswer.selectedOptions
+          .where((opt) => !opt.startsWith('$categoryName:'))
+          .toList();
+
+      // Also remove this category's custom text from textInput
+      String? customText = existingAnswer.textInput;
+      Map<String, String> customTexts = {};
+
+      if (customText != null && customText.contains('|||')) {
+        final parts = customText.split('|||');
+        for (var part in parts) {
+          if (part.contains(':')) {
+            final keyValue = part.split(':');
+            if (keyValue.length >= 2 && keyValue[0] != categoryName) {
+              customTexts[keyValue[0]] = keyValue.sublist(1).join(':');
+            }
+          }
+        }
+      }
+
+      final customTextString = customTexts.entries
+          .map((e) => '${e.key}:${e.value}')
+          .join('|||');
+
+      // Update answer without this category's custom
+      _answers[questionId] = BriefAnswer(
+        questionId: questionId,
+        selectedOptions: updatedOptions,
+        textInput: customTextString.isNotEmpty ? customTextString : null,
+      );
+    }
+
+    // Navigate to the question if needed
+    final questionIndex = questions.indexWhere((q) => q.id == questionId);
+    if (questionIndex != -1) {
+      _currentQuestionIndex.value = questionIndex;
+    }
+
+    update();
   }
 
   // Submit custom answer for categorized questions (specific_features)

@@ -1000,6 +1000,142 @@ class CreativeBriefController extends GetxController {
     }
   }
 
+  // Edit existing custom answer - reload text for editing
+  void editCustomAnswer(String questionId, String existingText) {
+    // Load the custom text into the controller
+    customController.text = existingText;
+
+    // Mark custom as selected for this question
+    _customSelectedForQuestion.value = questionId;
+
+    // Remove the answer so it can be re-submitted
+    _answers.remove(questionId);
+
+    // Navigate to the question if needed
+    final questionIndex = questions.indexWhere((q) => q.id == questionId);
+    if (questionIndex != -1) {
+      _currentQuestionIndex.value = questionIndex;
+    }
+
+    update();
+  }
+
+  // Edit existing categorized custom answer - reload text for editing
+  void editCategorizedCustomAnswer(
+    String questionId,
+    String categoryName,
+    String existingText,
+    TextEditingController controller,
+  ) {
+    // Load the custom text into the provided controller
+    controller.text = existingText;
+
+    // Mark custom as selected for this category
+    _customSelectedForCategory.value = '$questionId:$categoryName';
+
+    // For single-selection questions (garment_type, fabrics):
+    // Simply remove the answer so it can be re-submitted
+    _answers.remove(questionId);
+
+    // Navigate to the question if needed
+    final questionIndex = questions.indexWhere((q) => q.id == questionId);
+    if (questionIndex != -1) {
+      _currentQuestionIndex.value = questionIndex;
+    }
+
+    update();
+  }
+
+  // Edit existing color custom answer (Prints or Techniques) - reload text for editing
+  void editColorCustomAnswer(
+    String categoryName,
+    String fullTextInput,
+    TextEditingController controller,
+  ) {
+    // Parse the special format: solidColors|||customPrint|||customTechnique
+    String existingText = '';
+
+    if (fullTextInput.contains('|||')) {
+      final parts = fullTextInput.split('|||');
+      if (parts.length >= 3) {
+        // Extract the relevant part based on category
+        if (categoryName == 'Prints') {
+          existingText = parts[1]; // Custom print is at index 1
+        } else if (categoryName == 'Techniques') {
+          existingText = parts[2]; // Custom technique is at index 2
+        }
+      }
+    }
+
+    // Load the custom text into the provided controller
+    controller.text = existingText;
+
+    // Mark custom as selected for this category
+    _customSelectedForCategory.value = 'colors:$categoryName';
+
+    // Get existing answer for colors question
+    final existingAnswer = _answers['colors'];
+    if (existingAnswer != null) {
+      // Remove the custom option for this category from selectedOptions
+      // so it can be re-submitted
+      List<String> updatedOptions = existingAnswer.selectedOptions.toList();
+
+      if (categoryName == 'Prints') {
+        updatedOptions.removeWhere(
+          (opt) => opt == _selectedPrint.value || opt == 'Prints:Custom',
+        );
+        _selectedPrint.value = ''; // Clear selection
+      } else if (categoryName == 'Techniques') {
+        updatedOptions.removeWhere(
+          (opt) => opt == _selectedTechnique.value || opt == 'Techniques:Custom',
+        );
+        _selectedTechnique.value = ''; // Clear selection
+      }
+
+      // Parse and preserve the other parts of textInput
+      String? solidColorsText;
+      List<String> customParts = ['', '']; // [customPrint, customTechnique]
+
+      if (fullTextInput.contains('|||')) {
+        final parts = fullTextInput.split('|||');
+        if (parts.length >= 3) {
+          solidColorsText = parts[0];
+          customParts[0] = parts[1]; // Custom print
+          customParts[1] = parts[2]; // Custom technique
+        }
+      }
+
+      // Clear the part we're editing
+      if (categoryName == 'Prints') {
+        customParts[0] = ''; // Clear custom print
+      } else if (categoryName == 'Techniques') {
+        customParts[1] = ''; // Clear custom technique
+      }
+
+      // Reconstruct textInput without the part being edited
+      String finalTextInput = solidColorsText ?? '';
+      if (customParts[0].isNotEmpty || customParts[1].isNotEmpty) {
+        finalTextInput =
+            '${solidColorsText ?? ''}|||${customParts[0]}|||${customParts[1]}';
+      }
+
+      // Update answer without this category's custom
+      _answers['colors'] = BriefAnswer(
+        questionId: 'colors',
+        selectedOptions: updatedOptions,
+        textInput: finalTextInput.isNotEmpty ? finalTextInput : null,
+      );
+    }
+
+    // Navigate to the colors question if needed
+    final questionIndex = questions.indexWhere((q) => q.id == 'colors');
+    if (questionIndex != -1) {
+      _currentQuestionIndex.value = questionIndex;
+    }
+
+    update();
+  }
+
   // Submit custom answer
   void submitCustomAnswer() async {
     print('Submitting custom answer: ${customController.text}'); // Debug
@@ -1053,12 +1189,12 @@ class CreativeBriefController extends GetxController {
     // Simulate processing
     await Future.delayed(const Duration(milliseconds: 800));
 
-    // Store custom answer with category:Custom format and custom text
-    // Format: "categoryName:Custom" in selectedOptions, custom text in textInput
+    // For garment_type and fabrics: SINGLE SELECTION ONLY
+    // Store only this custom option, replacing any previous selection
     _answers[questionId] = BriefAnswer(
       questionId: questionId,
       selectedOptions: ['$categoryName:Custom'],
-      textInput: controller.text.trim(), // Store custom text
+      textInput: controller.text.trim(), // Store simple custom text
     );
 
     // Clear custom selection and controller
