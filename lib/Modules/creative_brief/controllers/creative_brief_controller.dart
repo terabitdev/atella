@@ -1668,7 +1668,8 @@ class CreativeBriefController extends GetxController {
     );
     _answers.refresh();
 
-    if (!hadAnswer && currentQuestion.id == 'colors') {
+    // Auto-advance to next question after selection (both initial and modification)
+    if (currentQuestion.id == 'colors') {
       final currentIndex = currentQuestionIndex;
       Future.delayed(const Duration(milliseconds: 1200), () {
         if (_currentQuestionIndex.value == currentIndex &&
