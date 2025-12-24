@@ -23,6 +23,33 @@ class RecommendedManufactureScreen extends StatelessWidget {
             Obx(
               () => Column(
                 children: [
+                  // Back button row
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
+                    child: Row(
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            Get.back();
+                          },
+                          child: Image.asset(
+                            'assets/images/Arrow_Left.png',
+                            height: 40.h,
+                            width: 40.w,
+                          ),
+                        ),
+                        SizedBox(width: 8.w),
+                        Text(
+                          'Manufacturer Suggestions',
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
                   SegmentedTabSwitcher(controller: controller),
                   Expanded(
                     child: controller.tabIndex.value == 0
