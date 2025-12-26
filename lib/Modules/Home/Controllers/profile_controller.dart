@@ -4,6 +4,7 @@ import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ProfileController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
@@ -39,9 +40,10 @@ class ProfileController extends GetxController {
       }
     } catch (e) {
       print('Error loading user data: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'Failed to load profile data',
+        l10n.error,
+        l10n.failedToLoadProfile,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
       );
@@ -64,11 +66,12 @@ class ProfileController extends GetxController {
           name: fullNameController.text.trim(),
         );
         print('📥 Update result: $success');
+        final l10n = AppLocalizations.of(Get.context!)!;
 
         if (success) {
           Get.snackbar(
-            'Success',
-            'Profile updated successfully',
+            l10n.success,
+            l10n.profileUpdatedSuccessfully,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.black,
             colorText: Colors.white,
@@ -76,8 +79,8 @@ class ProfileController extends GetxController {
           );
         } else {
           Get.snackbar(
-            'Error',
-            'Failed to update profile. Please try again.',
+            l10n.error,
+            l10n.failedToUpdateProfile,
             snackPosition: SnackPosition.TOP,
             backgroundColor: Colors.red.shade100,
             colorText: Colors.red.shade800,
@@ -86,9 +89,10 @@ class ProfileController extends GetxController {
         }
       } catch (e) {
         print('❌ Error updating profile: $e');
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Error',
-          'An error occurred while updating profile',
+          l10n.error,
+          l10n.errorUpdatingProfile,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.red.shade100,
           colorText: Colors.red.shade800,
@@ -104,10 +108,11 @@ class ProfileController extends GetxController {
   }
 
   bool validateForm() {
+    final l10n = AppLocalizations.of(Get.context!)!;
     if (fullNameController.text.trim().isEmpty) {
       Get.snackbar(
-        'Error',
-        'Please enter your full name',
+        l10n.error,
+        l10n.pleaseEnterFullName,
         duration: const Duration(milliseconds: 1500),
       );
       return false;
@@ -154,13 +159,14 @@ class ProfileController extends GetxController {
   }
 
   Future<void> toggleAnalyticsOptIn(bool enabled) async {
+    final l10n = AppLocalizations.of(Get.context!)!;
     analyticsOptIn.value = enabled;
     await PostHogAnalyticsService().setAnalyticsOptIn(enabled);
     Get.snackbar(
-      enabled ? 'Analytics enabled' : 'Analytics disabled',
+      enabled ? l10n.analyticsEnabled : l10n.analyticsDisabled,
       enabled
-          ? 'Helps improve the app. Session replays remain sampled.'
-          : 'We will stop sending analytics and session replays.',
+          ? l10n.analyticsEnabledMessage
+          : l10n.analyticsDisabledMessage,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Colors.black,
       colorText: Colors.white,

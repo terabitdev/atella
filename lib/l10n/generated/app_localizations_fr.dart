@@ -491,4 +491,128 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get searchDesigns => 'Rechercher des designs';
+
+  @override
+  String get emailIsRequired => 'L\'e-mail est requis';
+
+  @override
+  String get enterValidEmail => 'Entrez un e-mail valide';
+
+  @override
+  String get passwordIsRequired => 'Le mot de passe est requis';
+
+  @override
+  String get passwordMinLength =>
+      'Le mot de passe doit contenir au moins 6 caractères';
+
+  @override
+  String get nameIsRequired => 'Le nom est requis';
+
+  @override
+  String get confirmYourPassword => 'Confirmez votre mot de passe';
+
+  @override
+  String get passwordsDoNotMatch => 'Les mots de passe ne correspondent pas';
+
+  @override
+  String get userSuccessfullyLoggedIn => 'Utilisateur connecté avec succès';
+
+  @override
+  String get successfullySignedInWithGoogle => 'Connexion réussie avec Google';
+
+  @override
+  String get userRegisteredSuccessfully => 'Utilisateur enregistré avec succès';
+
+  @override
+  String get userAlreadyExistsWithEmail =>
+      'Un utilisateur existe déjà avec cet e-mail';
+
+  @override
+  String get verificationLinkSent => 'Lien de vérification envoyé';
+
+  @override
+  String passwordResetLinkSent(String email) {
+    return 'Un lien de réinitialisation du mot de passe a été envoyé à $email.';
+  }
+
+  @override
+  String get failedToSendVerificationLink =>
+      'Échec de l\'envoi du lien de vérification. Veuillez réessayer.';
+
+  @override
+  String get failedToUpdateFavorite =>
+      'Échec de la mise à jour du statut favori';
+
+  @override
+  String get failedToLoadProfile => 'Échec du chargement des données du profil';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profil mis à jour avec succès';
+
+  @override
+  String get failedToUpdateProfile =>
+      'Échec de la mise à jour du profil. Veuillez réessayer.';
+
+  @override
+  String get errorUpdatingProfile =>
+      'Une erreur s\'est produite lors de la mise à jour du profil';
+
+  @override
+  String get pleaseEnterFullName => 'Veuillez entrer votre nom complet';
+
+  @override
+  String get analyticsEnabled => 'Analytique activée';
+
+  @override
+  String get analyticsDisabled => 'Analytique désactivée';
+
+  @override
+  String get analyticsEnabledMessage =>
+      'Aide à améliorer l\'application. Les replays de session restent échantillonnés.';
+
+  @override
+  String get analyticsDisabledMessage =>
+      'Nous arrêterons d\'envoyer des analyses et des replays de session.';
+
+  @override
+  String get infoMessage => 'Info';
+
+  @override
+  String get youAreOnFreePlan => 'Vous êtes sur le plan gratuit';
+
+  @override
+  String get subscriptionSuccessTitle => 'Succès! 🎉';
+
+  @override
+  String welcomeToPlan(String plan) {
+    return 'Bienvenue dans $plan! Vous pouvez maintenant générer des techpacks.';
+  }
+
+  @override
+  String get subscriptionActive => 'Abonnement actif! 🎉';
+
+  @override
+  String get canNowGenerateTechpack =>
+      'Vous pouvez maintenant générer votre techpack. Cliquez sur le bouton \"Générer Tech Pack\".';
+
+  @override
+  String get failedToCompleteSubscription =>
+      'Échec de la finalisation de l\'abonnement';
+
+  @override
+  String get subscriptionCancelledSuccessfully =>
+      'Abonnement annulé avec succès';
+
+  @override
+  String get failedToCancelSubscription =>
+      'Échec de l\'annulation de l\'abonnement';
+
+  @override
+  String get failedToLoadSubscription =>
+      'Échec du chargement des détails de l\'abonnement';
+
+  @override
+  String anErrorOccurred(String error) {
+    return 'Une erreur s\'est produite: $error';
+  }
 }

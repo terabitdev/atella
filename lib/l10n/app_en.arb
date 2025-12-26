@@ -755,5 +755,160 @@
   "seeAll": "See All",
   "@seeAll": {
     "description": "See all button text"
+  },
+  "emailIsRequired": "Email is required",
+  "@emailIsRequired": {
+    "description": "Email validation error"
+  },
+  "enterValidEmail": "Enter a valid email",
+  "@enterValidEmail": {
+    "description": "Email format validation error"
+  },
+  "passwordIsRequired": "Password is required",
+  "@passwordIsRequired": {
+    "description": "Password validation error"
+  },
+  "passwordMinLength": "Password must be at least 6 characters",
+  "@passwordMinLength": {
+    "description": "Password length validation error"
+  },
+  "nameIsRequired": "Name is required",
+  "@nameIsRequired": {
+    "description": "Name validation error"
+  },
+  "confirmYourPassword": "Confirm your password",
+  "@confirmYourPassword": {
+    "description": "Confirm password validation error"
+  },
+  "passwordsDoNotMatch": "Passwords do not match",
+  "@passwordsDoNotMatch": {
+    "description": "Password mismatch validation error"
+  },
+  "userSuccessfullyLoggedIn": "User successfully logged in",
+  "@userSuccessfullyLoggedIn": {
+    "description": "Login success message"
+  },
+  "successfullySignedInWithGoogle": "Successfully signed in with Google",
+  "@successfullySignedInWithGoogle": {
+    "description": "Google sign in success message"
+  },
+  "userRegisteredSuccessfully": "User registered successfully",
+  "@userRegisteredSuccessfully": {
+    "description": "Signup success message"
+  },
+  "userAlreadyExistsWithEmail": "User already exists with this email",
+  "@userAlreadyExistsWithEmail": {
+    "description": "Duplicate email error"
+  },
+  "verificationLinkSent": "Verification Link Sent",
+  "@verificationLinkSent": {
+    "description": "Password reset link sent title"
+  },
+  "passwordResetLinkSent": "A password reset link has been sent to {email}.",
+  "@passwordResetLinkSent": {
+    "description": "Password reset link sent message",
+    "placeholders": {
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToSendVerificationLink": "Failed to send verification link. Please try again.",
+  "@failedToSendVerificationLink": {
+    "description": "Password reset link error"
+  },
+  "failedToUpdateFavorite": "Failed to update favorite status",
+  "@failedToUpdateFavorite": {
+    "description": "Error updating favorite"
+  },
+  "failedToLoadProfile": "Failed to load profile data",
+  "@failedToLoadProfile": {
+    "description": "Error loading profile"
+  },
+  "profileUpdatedSuccessfully": "Profile updated successfully",
+  "@profileUpdatedSuccessfully": {
+    "description": "Profile update success"
+  },
+  "failedToUpdateProfile": "Failed to update profile. Please try again.",
+  "@failedToUpdateProfile": {
+    "description": "Profile update error"
+  },
+  "errorUpdatingProfile": "An error occurred while updating profile",
+  "@errorUpdatingProfile": {
+    "description": "Profile update exception"
+  },
+  "pleaseEnterFullName": "Please enter your full name",
+  "@pleaseEnterFullName": {
+    "description": "Name field validation"
+  },
+  "analyticsEnabled": "Analytics enabled",
+  "@analyticsEnabled": {
+    "description": "Analytics toggle on title"
+  },
+  "analyticsDisabled": "Analytics disabled",
+  "@analyticsDisabled": {
+    "description": "Analytics toggle off title"
+  },
+  "analyticsEnabledMessage": "Helps improve the app. Session replays remain sampled.",
+  "@analyticsEnabledMessage": {
+    "description": "Analytics enabled message"
+  },
+  "analyticsDisabledMessage": "We will stop sending analytics and session replays.",
+  "@analyticsDisabledMessage": {
+    "description": "Analytics disabled message"
+  },
+  "infoMessage": "Info",
+  "@infoMessage": {
+    "description": "Info snackbar title"
+  },
+  "youAreOnFreePlan": "You are on the free plan",
+  "@youAreOnFreePlan": {
+    "description": "Free plan info message"
+  },
+  "subscriptionSuccessTitle": "Success! 🎉",
+  "@subscriptionSuccessTitle": {
+    "description": "Subscription success title"
+  },
+  "welcomeToPlan": "Welcome to {plan}! You can now generate techpacks.",
+  "@welcomeToPlan": {
+    "description": "Welcome message for new plan",
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "subscriptionActive": "Subscription Active! 🎉",
+  "@subscriptionActive": {
+    "description": "Subscription active title"
+  },
+  "canNowGenerateTechpack": "You can now generate your techpack. Click \"Generate Tech Pack\" button.",
+  "@canNowGenerateTechpack": {
+    "description": "Techpack generation enabled message"
+  },
+  "failedToCompleteSubscription": "Failed to complete subscription",
+  "@failedToCompleteSubscription": {
+    "description": "Subscription error"
+  },
+  "subscriptionCancelledSuccessfully": "Subscription cancelled successfully",
+  "@subscriptionCancelledSuccessfully": {
+    "description": "Cancellation success"
+  },
+  "failedToCancelSubscription": "Failed to cancel subscription",
+  "@failedToCancelSubscription": {
+    "description": "Cancellation error"
+  },
+  "failedToLoadSubscription": "Failed to load subscription details",
+  "@failedToLoadSubscription": {
+    "description": "Subscription load error"
+  },
+  "anErrorOccurred": "An error occurred: {error}",
+  "@anErrorOccurred": {
+    "description": "Generic error with details",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
   }
 }

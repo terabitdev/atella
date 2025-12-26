@@ -3,6 +3,7 @@ import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
 
@@ -79,7 +80,8 @@ class SubscribeController extends GetxController {
       );
     } catch (e) {
       print('❌ Error loading subscription: $e');
-      Get.snackbar('Error', 'Failed to load subscription details',
+      final l10n = AppLocalizations.of(Get.context!)!;
+      Get.snackbar(l10n.error, l10n.failedToLoadSubscription,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -114,7 +116,8 @@ class SubscribeController extends GetxController {
   Future<void> subscribeToPlan(SubscriptionPlan plan) async {
     if (plan.type == SubscriptionPlanType.FREE) {
       // Free plan doesn't need payment
-      Get.snackbar('Info', 'You are on the free plan',
+      final l10n = AppLocalizations.of(Get.context!)!;
+      Get.snackbar(l10n.infoMessage, l10n.youAreOnFreePlan,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -146,9 +149,10 @@ class SubscribeController extends GetxController {
         );
 
         if (showSuccessMessage) {
+          final l10n = AppLocalizations.of(Get.context!)!;
           Get.snackbar(
-            'Success! 🎉',
-            'Welcome to ${plan.displayName}! You can now generate techpacks.',
+            l10n.subscriptionSuccessTitle,
+            l10n.welcomeToPlan(plan.displayName),
             snackPosition: SnackPosition.TOP,
             duration: const Duration(milliseconds: 1500),
             backgroundColor: Colors.black,
@@ -174,9 +178,10 @@ class SubscribeController extends GetxController {
             
             // Show success message after a short delay
             Future.delayed(Duration(milliseconds: 500), () {
+              final l10n = AppLocalizations.of(Get.context!)!;
               Get.snackbar(
-                'Subscription Active! 🎉',
-                'You can now generate your techpack. Click "Generate Tech Pack" button.',
+                l10n.subscriptionActive,
+                l10n.canNowGenerateTechpack,
                 snackPosition: SnackPosition.TOP,
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
@@ -204,9 +209,10 @@ class SubscribeController extends GetxController {
           Get.back();
         }
       } else {
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Error',
-          'Failed to complete subscription',
+          l10n.error,
+          l10n.failedToCompleteSubscription,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
@@ -215,9 +221,10 @@ class SubscribeController extends GetxController {
       }
     } catch (e) {
       print('Error in subscribeToPlan: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'An error occurred: $e',
+        l10n.error,
+        l10n.anErrorOccurred(e.toString()),
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.black,
@@ -251,18 +258,20 @@ class SubscribeController extends GetxController {
           reason: reason,
         );
 
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Success',
-          'Subscription cancelled successfully',
+          l10n.success,
+          l10n.subscriptionCancelledSuccessfully,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
           colorText: Colors.white,
         );
       } else {
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Error',
-          'Failed to cancel subscription',
+          l10n.error,
+          l10n.failedToCancelSubscription,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
@@ -270,9 +279,10 @@ class SubscribeController extends GetxController {
         );
       }
     } catch (e) {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'An error occurred: $e',
+        l10n.error,
+        l10n.anErrorOccurred(e.toString()),
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.red,

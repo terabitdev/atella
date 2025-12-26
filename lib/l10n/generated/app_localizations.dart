@@ -967,6 +967,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Search Designs'**
   String get searchDesigns;
+
+  /// Email validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Email is required'**
+  String get emailIsRequired;
+
+  /// Email format validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Enter a valid email'**
+  String get enterValidEmail;
+
+  /// Password validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password is required'**
+  String get passwordIsRequired;
+
+  /// Password length validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Password must be at least 6 characters'**
+  String get passwordMinLength;
+
+  /// Name validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Name is required'**
+  String get nameIsRequired;
+
+  /// Confirm password validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm your password'**
+  String get confirmYourPassword;
+
+  /// Password mismatch validation error
+  ///
+  /// In en, this message translates to:
+  /// **'Passwords do not match'**
+  String get passwordsDoNotMatch;
+
+  /// Login success message
+  ///
+  /// In en, this message translates to:
+  /// **'User successfully logged in'**
+  String get userSuccessfullyLoggedIn;
+
+  /// Google sign in success message
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully signed in with Google'**
+  String get successfullySignedInWithGoogle;
+
+  /// Signup success message
+  ///
+  /// In en, this message translates to:
+  /// **'User registered successfully'**
+  String get userRegisteredSuccessfully;
+
+  /// Duplicate email error
+  ///
+  /// In en, this message translates to:
+  /// **'User already exists with this email'**
+  String get userAlreadyExistsWithEmail;
+
+  /// Password reset link sent title
+  ///
+  /// In en, this message translates to:
+  /// **'Verification Link Sent'**
+  String get verificationLinkSent;
+
+  /// Password reset link sent message
+  ///
+  /// In en, this message translates to:
+  /// **'A password reset link has been sent to {email}.'**
+  String passwordResetLinkSent(String email);
+
+  /// Password reset link error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send verification link. Please try again.'**
+  String get failedToSendVerificationLink;
+
+  /// Error updating favorite
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update favorite status'**
+  String get failedToUpdateFavorite;
+
+  /// Error loading profile
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load profile data'**
+  String get failedToLoadProfile;
+
+  /// Profile update success
+  ///
+  /// In en, this message translates to:
+  /// **'Profile updated successfully'**
+  String get profileUpdatedSuccessfully;
+
+  /// Profile update error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to update profile. Please try again.'**
+  String get failedToUpdateProfile;
+
+  /// Profile update exception
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while updating profile'**
+  String get errorUpdatingProfile;
+
+  /// Name field validation
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your full name'**
+  String get pleaseEnterFullName;
+
+  /// Analytics toggle on title
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics enabled'**
+  String get analyticsEnabled;
+
+  /// Analytics toggle off title
+  ///
+  /// In en, this message translates to:
+  /// **'Analytics disabled'**
+  String get analyticsDisabled;
+
+  /// Analytics enabled message
+  ///
+  /// In en, this message translates to:
+  /// **'Helps improve the app. Session replays remain sampled.'**
+  String get analyticsEnabledMessage;
+
+  /// Analytics disabled message
+  ///
+  /// In en, this message translates to:
+  /// **'We will stop sending analytics and session replays.'**
+  String get analyticsDisabledMessage;
+
+  /// Info snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Info'**
+  String get infoMessage;
+
+  /// Free plan info message
+  ///
+  /// In en, this message translates to:
+  /// **'You are on the free plan'**
+  String get youAreOnFreePlan;
+
+  /// Subscription success title
+  ///
+  /// In en, this message translates to:
+  /// **'Success! 🎉'**
+  String get subscriptionSuccessTitle;
+
+  /// Welcome message for new plan
+  ///
+  /// In en, this message translates to:
+  /// **'Welcome to {plan}! You can now generate techpacks.'**
+  String welcomeToPlan(String plan);
+
+  /// Subscription active title
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription Active! 🎉'**
+  String get subscriptionActive;
+
+  /// Techpack generation enabled message
+  ///
+  /// In en, this message translates to:
+  /// **'You can now generate your techpack. Click \"Generate Tech Pack\" button.'**
+  String get canNowGenerateTechpack;
+
+  /// Subscription error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to complete subscription'**
+  String get failedToCompleteSubscription;
+
+  /// Cancellation success
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription cancelled successfully'**
+  String get subscriptionCancelledSuccessfully;
+
+  /// Cancellation error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to cancel subscription'**
+  String get failedToCancelSubscription;
+
+  /// Subscription load error
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load subscription details'**
+  String get failedToLoadSubscription;
+
+  /// Generic error with details
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred: {error}'**
+  String anErrorOccurred(String error);
 }
 
 class _AppLocalizationsDelegate

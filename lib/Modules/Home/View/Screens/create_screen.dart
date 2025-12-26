@@ -14,18 +14,18 @@ class CreateScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      body: Column(
-        children: [
-          // Top Image Section
-          SizedBox(
-            height: 450.h,
-            width: double.infinity,
-            child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
-          ),
-          Expanded(
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            // Top Image Section
+            SizedBox(
+              height: 450.h,
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
+            ),
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
@@ -45,10 +45,13 @@ class CreateScreen extends StatelessWidget {
                     style: gsTextStyle16600,
                   ),
                   SizedBox(height: 18.h),
-                  Text(
-                    l10n.hereToHelpCreate,
-                    textAlign: TextAlign.center,
-                    style: osTextStyle165002,
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 8.w),
+                    child: Text(
+                      l10n.hereToHelpCreate,
+                      textAlign: TextAlign.center,
+                      style: osTextStyle165002,
+                    ),
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(
@@ -62,8 +65,8 @@ class CreateScreen extends StatelessWidget {
                 ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

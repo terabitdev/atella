@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 
 class HomeController extends GetxController {
@@ -198,12 +199,13 @@ class HomeController extends GetxController {
       }
 
       print('Toggled favorite for ${techPack.projectName}: $newFavoriteStatus');
-      
+
     } catch (e) {
       print('Error toggling favorite: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'Failed to update favorite status',
+        l10n.error,
+        l10n.failedToUpdateFavorite,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),

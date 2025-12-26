@@ -482,4 +482,123 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get searchDesigns => 'Search Designs';
+
+  @override
+  String get emailIsRequired => 'Email is required';
+
+  @override
+  String get enterValidEmail => 'Enter a valid email';
+
+  @override
+  String get passwordIsRequired => 'Password is required';
+
+  @override
+  String get passwordMinLength => 'Password must be at least 6 characters';
+
+  @override
+  String get nameIsRequired => 'Name is required';
+
+  @override
+  String get confirmYourPassword => 'Confirm your password';
+
+  @override
+  String get passwordsDoNotMatch => 'Passwords do not match';
+
+  @override
+  String get userSuccessfullyLoggedIn => 'User successfully logged in';
+
+  @override
+  String get successfullySignedInWithGoogle =>
+      'Successfully signed in with Google';
+
+  @override
+  String get userRegisteredSuccessfully => 'User registered successfully';
+
+  @override
+  String get userAlreadyExistsWithEmail =>
+      'User already exists with this email';
+
+  @override
+  String get verificationLinkSent => 'Verification Link Sent';
+
+  @override
+  String passwordResetLinkSent(String email) {
+    return 'A password reset link has been sent to $email.';
+  }
+
+  @override
+  String get failedToSendVerificationLink =>
+      'Failed to send verification link. Please try again.';
+
+  @override
+  String get failedToUpdateFavorite => 'Failed to update favorite status';
+
+  @override
+  String get failedToLoadProfile => 'Failed to load profile data';
+
+  @override
+  String get profileUpdatedSuccessfully => 'Profile updated successfully';
+
+  @override
+  String get failedToUpdateProfile =>
+      'Failed to update profile. Please try again.';
+
+  @override
+  String get errorUpdatingProfile => 'An error occurred while updating profile';
+
+  @override
+  String get pleaseEnterFullName => 'Please enter your full name';
+
+  @override
+  String get analyticsEnabled => 'Analytics enabled';
+
+  @override
+  String get analyticsDisabled => 'Analytics disabled';
+
+  @override
+  String get analyticsEnabledMessage =>
+      'Helps improve the app. Session replays remain sampled.';
+
+  @override
+  String get analyticsDisabledMessage =>
+      'We will stop sending analytics and session replays.';
+
+  @override
+  String get infoMessage => 'Info';
+
+  @override
+  String get youAreOnFreePlan => 'You are on the free plan';
+
+  @override
+  String get subscriptionSuccessTitle => 'Success! 🎉';
+
+  @override
+  String welcomeToPlan(String plan) {
+    return 'Welcome to $plan! You can now generate techpacks.';
+  }
+
+  @override
+  String get subscriptionActive => 'Subscription Active! 🎉';
+
+  @override
+  String get canNowGenerateTechpack =>
+      'You can now generate your techpack. Click \"Generate Tech Pack\" button.';
+
+  @override
+  String get failedToCompleteSubscription => 'Failed to complete subscription';
+
+  @override
+  String get subscriptionCancelledSuccessfully =>
+      'Subscription cancelled successfully';
+
+  @override
+  String get failedToCancelSubscription => 'Failed to cancel subscription';
+
+  @override
+  String get failedToLoadSubscription => 'Failed to load subscription details';
+
+  @override
+  String anErrorOccurred(String error) {
+    return 'An error occurred: $error';
+  }
 }

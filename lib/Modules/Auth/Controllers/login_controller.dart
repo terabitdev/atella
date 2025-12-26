@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class LoginController extends GetxController {
   final emailController = TextEditingController();
@@ -16,14 +17,16 @@ class LoginController extends GetxController {
   final AuthService _authService = AuthService();
 
   String? validateEmail(String value) {
-    if (value.trim().isEmpty) return 'Email is required';
-    if (!GetUtils.isEmail(value.trim())) return 'Enter a valid email';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.trim().isEmpty) return l10n.emailIsRequired;
+    if (!GetUtils.isEmail(value.trim())) return l10n.enterValidEmail;
     return null;
   }
 
   String? validatePassword(String value) {
-    if (value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.isEmpty) return l10n.passwordIsRequired;
+    if (value.length < 6) return l10n.passwordMinLength;
     return null;
   }
 
@@ -61,9 +64,10 @@ class LoginController extends GetxController {
       // Track login event
       PostHogAnalyticsService().trackUserLoggedIn(method: 'email');
 
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Success',
-        'User successfully logged in',
+        l10n.success,
+        l10n.userSuccessfullyLoggedIn,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -77,8 +81,9 @@ class LoginController extends GetxController {
       } else if (result.toLowerCase().contains('password')) {
         passwordError.value = result;
       } else {
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Error',
+          l10n.error,
           result,
           backgroundColor: Colors.red,
           colorText: Colors.white,
@@ -92,7 +97,7 @@ class LoginController extends GetxController {
     isGoogleLoading.value = true;
     final result = await _authService.signInWithGoogle();
     isGoogleLoading.value = false;
-    
+
     if (result == null) {
       // Identify user for PostHog
       final user = _authService.currentUser;
@@ -106,9 +111,10 @@ class LoginController extends GetxController {
       // Track Google login event
       PostHogAnalyticsService().trackUserLoggedIn(method: 'google');
 
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Success',
-        'Successfully signed in with Google',
+        l10n.success,
+        l10n.successfullySignedInWithGoogle,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -116,8 +122,9 @@ class LoginController extends GetxController {
       );
       Get.offAllNamed('/nav_bar');
     } else {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
+        l10n.error,
         result,
         backgroundColor: Colors.red,
         colorText: Colors.white,

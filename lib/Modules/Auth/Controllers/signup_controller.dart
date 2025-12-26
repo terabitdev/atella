@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class SignupController extends GetxController {
   final nameController = TextEditingController();
@@ -20,25 +21,29 @@ class SignupController extends GetxController {
   final AuthService _authService = AuthService();
 
   String? validateName(String value) {
-    if (value.trim().isEmpty) return 'Name is required';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.trim().isEmpty) return l10n.nameIsRequired;
     return null;
   }
 
   String? validateEmail(String value) {
-    if (value.trim().isEmpty) return 'Email is required';
-    if (!GetUtils.isEmail(value.trim())) return 'Enter a valid email';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.trim().isEmpty) return l10n.emailIsRequired;
+    if (!GetUtils.isEmail(value.trim())) return l10n.enterValidEmail;
     return null;
   }
 
   String? validatePassword(String value) {
-    if (value.isEmpty) return 'Password is required';
-    if (value.length < 6) return 'Password must be at least 6 characters';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.isEmpty) return l10n.passwordIsRequired;
+    if (value.length < 6) return l10n.passwordMinLength;
     return null;
   }
 
   String? validateConfirmPassword(String value) {
-    if (value.isEmpty) return 'Confirm your password';
-    if (value != passwordController.text) return 'Passwords do not match';
+    final l10n = AppLocalizations.of(Get.context!)!;
+    if (value.isEmpty) return l10n.confirmYourPassword;
+    if (value != passwordController.text) return l10n.passwordsDoNotMatch;
     return null;
   }
 
@@ -85,13 +90,15 @@ class SignupController extends GetxController {
       password: password,
     );
     isLoading.value = false;
+    final l10n = AppLocalizations.of(Get.context!)!;
+
     if (result == null) {
       // Success - Track signup event
       PostHogAnalyticsService().trackUserSignedUp(method: 'email');
 
       Get.snackbar(
-        'Success',
-        'User registered successfully',
+        l10n.success,
+        l10n.userRegisteredSuccessfully,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -103,10 +110,10 @@ class SignupController extends GetxController {
       // Check for duplicate email error
       if (result.toLowerCase().contains('email') &&
           result.toLowerCase().contains('already')) {
-        emailError.value = 'User already exists with this email';
+        emailError.value = l10n.userAlreadyExistsWithEmail;
       } else {
         Get.snackbar(
-          'Error',
+          l10n.error,
           result,
           backgroundColor: Colors.red,
           colorText: Colors.white,
