@@ -135,7 +135,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get preview => 'Preview';
 
   @override
-  String get loading => 'Loading...';
+  String get loading => 'Loading';
 
   @override
   String get error => 'Error';
@@ -601,4 +601,494 @@ class AppLocalizationsEn extends AppLocalizations {
   String anErrorOccurred(String error) {
     return 'An error occurred: $error';
   }
+
+  @override
+  String get creativeBrief => 'Creative Brief';
+
+  @override
+  String get gatheringTheCreativeBrief => 'Gathering the Creative Brief';
+
+  @override
+  String get asYourExpertVirtualFashionDesigner =>
+      'As your expert virtual fashion designer.';
+
+  @override
+  String get imHereToHelpCreateCustomGarment =>
+      'I\'m here to help you create a custom garment or collection.';
+
+  @override
+  String get cbQuestionGarmentType =>
+      'What type of garment are you creating? 👕';
+
+  @override
+  String get cbQuestionStyle => 'What is the overall desired style? ✨';
+
+  @override
+  String get cbQuestionTargetAudience => 'Who is this garment intended for? 👤';
+
+  @override
+  String get cbQuestionOccasion => 'What is the intended occasion or use? 📅';
+
+  @override
+  String get cbQuestionInspiration =>
+      'Do you have any visual inspirations or references? 🖼️';
+
+  @override
+  String get cbQuestionColors =>
+      'What colors and patterns should the design include? 🎨';
+
+  @override
+  String get cbQuestionFabrics =>
+      'Which fabric or material would you like to use? 🧵';
+
+  @override
+  String get cbCategoryTops => 'Tops';
+
+  @override
+  String get cbCategoryBottoms => 'Bottoms';
+
+  @override
+  String get cbCategoryDresses => 'Dresses';
+
+  @override
+  String get cbCategoryJumpsuits => 'Jumpsuits';
+
+  @override
+  String get cbCategoryOuterwear => 'Outerwear';
+
+  @override
+  String get cbCategorySportswear => 'Sportswear';
+
+  @override
+  String get cbCategoryAccessories => 'Accessories';
+
+  @override
+  String get cbCategoryCotton => 'Cotton';
+
+  @override
+  String get cbCategoryWool => 'Wool';
+
+  @override
+  String get cbCategorySilk => 'Silk';
+
+  @override
+  String get cbCategoryLinen => 'Linen';
+
+  @override
+  String get cbCategorySynthetic => 'Synthetic';
+
+  @override
+  String get cbCategoryEcoOptions => 'Eco options';
+
+  @override
+  String get cbCategoryLeatherFauxLeather => 'Leather/Faux leather';
+
+  @override
+  String get cbCategoryKnitwear => 'Knitwear';
+
+  @override
+  String get cbCategoryPrints => 'Prints';
+
+  @override
+  String get cbCategoryTechniques => 'Techniques';
+
+  @override
+  String get cbOptionTShirt => 'T-shirt';
+
+  @override
+  String get cbOptionShirt => 'Shirt';
+
+  @override
+  String get cbOptionBlouse => 'Blouse';
+
+  @override
+  String get cbOptionHoodie => 'Hoodie';
+
+  @override
+  String get cbOptionJacket => 'Jacket';
+
+  @override
+  String get cbOptionCoat => 'Coat';
+
+  @override
+  String get cbOptionVest => 'Vest';
+
+  @override
+  String get cbOptionTankTop => 'Tank top';
+
+  @override
+  String get cbOptionCropTop => 'Crop top';
+
+  @override
+  String get cbOptionSweater => 'Sweater';
+
+  @override
+  String get cbOptionPants => 'Pants';
+
+  @override
+  String get cbOptionJeans => 'Jeans';
+
+  @override
+  String get cbOptionSkirts => 'Skirts';
+
+  @override
+  String get cbOptionShorts => 'Shorts';
+
+  @override
+  String get cbOptionLeggings => 'Leggings';
+
+  @override
+  String get cbOptionCulottes => 'Culottes';
+
+  @override
+  String get cbOptionPalazzo => 'Palazzo';
+
+  @override
+  String get cbOptionJoggers => 'Joggers';
+
+  @override
+  String get cbOptionCasualDress => 'Casual dress';
+
+  @override
+  String get cbOptionEvening => 'Evening';
+
+  @override
+  String get cbOptionCocktailDress => 'Cocktail dress';
+
+  @override
+  String get cbOptionGown => 'Gown';
+
+  @override
+  String get cbOptionMaxiDress => 'Maxi dress';
+
+  @override
+  String get cbOptionMidiDress => 'Midi dress';
+
+  @override
+  String get cbOptionMiniDress => 'Mini dress';
+
+  @override
+  String get cbOptionJumpsuit => 'Jumpsuit';
+
+  @override
+  String get cbOptionRomper => 'Romper';
+
+  @override
+  String get cbOptionPlaysuit => 'Playsuit';
+
+  @override
+  String get cbOptionOveralls => 'Overalls';
+
+  @override
+  String get cbOptionTrenchCoat => 'Trench coat';
+
+  @override
+  String get cbOptionBomberJacket => 'Bomber jacket';
+
+  @override
+  String get cbOptionBlazer => 'Blazer';
+
+  @override
+  String get cbOptionPufferJacket => 'Puffer jacket';
+
+  @override
+  String get cbOptionTracksuit => 'Tracksuit';
+
+  @override
+  String get cbOptionActivewear => 'Activewear';
+
+  @override
+  String get cbOptionSwimwear => 'Swimwear';
+
+  @override
+  String get cbOptionHat => 'Hat';
+
+  @override
+  String get cbOptionBag => 'Bag';
+
+  @override
+  String get cbOptionScarf => 'Scarf';
+
+  @override
+  String get cbOptionGloves => 'Gloves';
+
+  @override
+  String get cbOptionCasual => 'Casual';
+
+  @override
+  String get cbOptionChic => 'Chic';
+
+  @override
+  String get cbOptionSporty => 'Sporty';
+
+  @override
+  String get cbOptionStreetwear => 'Streetwear';
+
+  @override
+  String get cbOptionWorkwear => 'Workwear';
+
+  @override
+  String get cbOptionWoman => 'Woman';
+
+  @override
+  String get cbOptionMan => 'Man';
+
+  @override
+  String get cbOptionChild => 'Child';
+
+  @override
+  String get cbOptionUnisex => 'Unisex';
+
+  @override
+  String get cbOptionTargetAge => 'Target Age';
+
+  @override
+  String get cbOptionEverydayWear => 'Everyday wear';
+
+  @override
+  String get cbOptionSpecialEvent => 'Special event';
+
+  @override
+  String get cbOptionSports => 'Sports';
+
+  @override
+  String get cbOptionActivity => 'Activity';
+
+  @override
+  String get cbOptionFloral => 'Floral';
+
+  @override
+  String get cbOptionAbstract => 'Abstract';
+
+  @override
+  String get cbOptionCamouflage => 'Camouflage';
+
+  @override
+  String get cbOptionStripes => 'Stripes';
+
+  @override
+  String get cbOptionPolkaDots => 'Polka dots';
+
+  @override
+  String get cbOptionTieDye => 'Tie-dye';
+
+  @override
+  String get cbOptionColorBlocking => 'Color blocking';
+
+  @override
+  String get cbOptionGradientOmbre => 'Gradient/Ombré';
+
+  @override
+  String get cbOptionEmbroidery => 'Embroidery';
+
+  @override
+  String get cbOptionJacquard => 'Jacquard';
+
+  @override
+  String get cbOptionLightweight => 'Lightweight (poplin, voile)';
+
+  @override
+  String get cbOptionMedium => 'Medium (twill)';
+
+  @override
+  String get cbOptionHeavy => 'Heavy (denim, canvas)';
+
+  @override
+  String get cbOptionMerino => 'Merino';
+
+  @override
+  String get cbOptionCashmere => 'Cashmere';
+
+  @override
+  String get cbOptionTweed => 'Tweed';
+
+  @override
+  String get cbOptionFelt => 'Felt';
+
+  @override
+  String get cbOptionSatin => 'Satin';
+
+  @override
+  String get cbOptionChiffon => 'Chiffon';
+
+  @override
+  String get cbOptionOrganza => 'Organza';
+
+  @override
+  String get cbOptionPlain => 'Plain';
+
+  @override
+  String get cbOptionTextured => 'Textured';
+
+  @override
+  String get cbOptionBlended => 'Blended';
+
+  @override
+  String get cbOptionPolyester => 'Polyester';
+
+  @override
+  String get cbOptionNylon => 'Nylon';
+
+  @override
+  String get cbOptionSpandex => 'Spandex';
+
+  @override
+  String get cbOptionNeoprene => 'Neoprene';
+
+  @override
+  String get cbOptionOrganicCotton => 'Organic cotton';
+
+  @override
+  String get cbOptionRecycledPolyester => 'Recycled polyester';
+
+  @override
+  String get cbOptionBamboo => 'Bamboo';
+
+  @override
+  String get cbOptionHemp => 'Hemp';
+
+  @override
+  String get cbOptionLeather => 'Leather';
+
+  @override
+  String get cbOptionFauxLeather => 'Faux leather';
+
+  @override
+  String get cbOptionJersey => 'Jersey';
+
+  @override
+  String get cbOptionRibKnit => 'Rib knit';
+
+  @override
+  String get cbOptionInterlock => 'Interlock';
+
+  @override
+  String get cbOptionCustom => 'Custom';
+
+  @override
+  String get enterYourCustomAnswer => 'Enter your custom answer...';
+
+  @override
+  String enterCustom(String category) {
+    return 'Enter custom $category...';
+  }
+
+  @override
+  String get enterPreferredColors => 'Enter preferred colors...';
+
+  @override
+  String get uploadVisualInspirationImages =>
+      'Upload visual inspiration images (optional)';
+
+  @override
+  String get uploadInspirationImages =>
+      'Upload visual inspiration images (optional)';
+
+  @override
+  String get skipNoReferenceImages => 'Skip - No reference images';
+
+  @override
+  String get uploadImage => 'Upload image';
+
+  @override
+  String get nextSteps => 'Next Steps';
+
+  @override
+  String get addMoreImages => 'Add more images';
+
+  @override
+  String get tapToSelectFromGallery => 'Tap to select from gallery';
+
+  @override
+  String get imageAdded => 'Image Added';
+
+  @override
+  String get imageAddedSuccessfully => 'Image added successfully';
+
+  @override
+  String get failedToPickImage => 'Failed to pick image. Please try again.';
+
+  @override
+  String get imageError => 'Error';
+
+  @override
+  String get imageSelected => 'Image Selected';
+
+  @override
+  String get imageSelectedSuccessfully => 'Image selected successfully';
+
+  @override
+  String get failedToLoadImage => 'Failed to load image';
+
+  @override
+  String get change => 'Change';
+
+  @override
+  String get solidColors => 'Solid colors';
+
+  @override
+  String get pickAColor => 'Pick a color';
+
+  @override
+  String get selectAColor => 'Select a Color';
+
+  @override
+  String get select => 'Select';
+
+  @override
+  String get loadingExistingDesignData => 'Loading existing design data...';
+
+  @override
+  String get editMode => 'Edit Mode';
+
+  @override
+  String editingDesign(String designName) {
+    return 'Editing design: $designName';
+  }
+
+  @override
+  String get failedToLoadExistingData =>
+      'Failed to load existing data. Using defaults.';
+
+  @override
+  String get dataLoaded => 'Data Loaded';
+
+  @override
+  String get previousAnswersLoadedForEditing =>
+      'Previous answers have been loaded for editing';
+
+  @override
+  String get briefComplete => 'Brief Complete!';
+
+  @override
+  String get briefCompletedSuccessfully =>
+      'Your creative brief has been completed successfully.';
+
+  @override
+  String get invalidInput => 'Invalid Input';
+
+  @override
+  String pleaseEnterCustomAnswer(String category) {
+    return 'Please enter a custom answer for $category';
+  }
+
+  @override
+  String get pleaseEnterCustomAnswerGeneric => 'Please enter a custom answer';
+
+  @override
+  String get pleaseEnterCustomPrint => 'Please enter a custom print';
+
+  @override
+  String get pleaseEnterCustomTechnique => 'Please enter a custom technique';
+
+  @override
+  String get answerUpdated => 'Answer Updated';
+
+  @override
+  String get answerUpdatedSuccessfully =>
+      'Your answer has been updated successfully';
+
+  @override
+  String get printsAndTechniquesUpdated =>
+      'Your prints and techniques have been updated successfully';
 }

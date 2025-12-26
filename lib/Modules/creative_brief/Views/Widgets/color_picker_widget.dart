@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_colorpicker/flutter_colorpicker.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ColorPickerWidget extends StatelessWidget {
   final Function(String) onColorSelected;
@@ -16,6 +17,7 @@ class ColorPickerWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -23,7 +25,7 @@ class ColorPickerWidget extends StatelessWidget {
         Padding(
           padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
           child: Text(
-            'Solid colors',
+            l10n.solidColors,
             style: TextStyle(
               fontSize: 14.sp,
               fontWeight: FontWeight.w600,
@@ -64,7 +66,7 @@ class ColorPickerWidget extends StatelessWidget {
                 ),
                 SizedBox(width: 8.w),
                 Text(
-                  'Pick a color',
+                  l10n.pickAColor,
                   style: TextStyle(
                     fontSize: 14.sp,
                     color: Colors.black,
@@ -125,6 +127,7 @@ class ColorPickerWidget extends StatelessWidget {
   }
 
   void _showColorPicker(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     Color pickerColor = selectedColors.isNotEmpty
         ? _hexToColor(selectedColors.last)
         : Colors.blue;
@@ -134,7 +137,7 @@ class ColorPickerWidget extends StatelessWidget {
       builder: (BuildContext dialogContext) {
         return AlertDialog(
           title: Text(
-            'Select a Color',
+            l10n.selectAColor,
             style: TextStyle(fontSize: 18.sp, fontWeight: FontWeight.w600),
           ),
           content: StatefulBuilder(
@@ -190,7 +193,7 @@ class ColorPickerWidget extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(dialogContext).pop(),
-              child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+              child: Text(l10n.cancel, style: TextStyle(color: Colors.grey[600])),
             ),
             ElevatedButton(
               onPressed: () {
@@ -205,7 +208,7 @@ class ColorPickerWidget extends StatelessWidget {
                   borderRadius: BorderRadius.circular(8),
                 ),
               ),
-              child: const Text('Select'),
+              child: Text(l10n.select),
             ),
           ],
         );

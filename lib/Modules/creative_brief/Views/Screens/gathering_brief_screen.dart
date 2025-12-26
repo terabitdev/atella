@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -11,59 +12,72 @@ class GatheringBriefScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
-      body: Column(
-        children: [
-          SizedBox(
-            height: 450.h,
-            width: double.infinity,
-            child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
-          ),
-          Expanded(
-            child: Container(
+      body: SingleChildScrollView(
+        child: Column(
+          children: [
+            SizedBox(
+              height: 400.h,
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 24.w),
+              child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
+            ),
+            Container(
+              width: double.infinity,
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              padding: EdgeInsets.only(
+                left: 24.w,
+                right: 24.w,
+                top: 40.h,
+                bottom: 60.h,
+              ),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
               ),
-              child: SingleChildScrollView(
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.center,
-                  children: [
-                    SizedBox(height: 40.h),
-                    Text(
-                      "Gathering the Creative Brief ",
-                      textAlign: TextAlign.center,
-                      style: osTextStyle18600,
-                    ),
-                    SizedBox(height: 12.h),
-                    Text(
-                      "As your expert virtual fashion designer.",
-                      textAlign: TextAlign.center,
-                      style: gsTextStyle16600,
-                    ),
-                    SizedBox(height: 18.h),
-                    Text(
-                      "I’m here to help you create a custom garment or collection.",
-                      textAlign: TextAlign.center,
-                      style: osTextStyle165002,
-                    ),
-                    SizedBox(height: 24.h),
-                    RoundButton(
-                      title: "Get Started",
-                      onTap: () {
-                        Get.toNamed('/creative_brief');
-                      },
-                      color: AppColors.buttonColor,
-                      isloading: false,
-                    ),
-                  ],
-                ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  Column(
+                    children: [
+                      Text(
+                        l10n.gatheringTheCreativeBrief,
+                        textAlign: TextAlign.center,
+                        style: osTextStyle18600,
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        l10n.asYourExpertVirtualFashionDesigner,
+                        textAlign: TextAlign.center,
+                        style: gsTextStyle16600,
+                      ),
+                      SizedBox(height: 18.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: Text(
+                          l10n.imHereToHelpCreateCustomGarment,
+                          textAlign: TextAlign.center,
+                          style: osTextStyle165002,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 40.h),
+                  RoundButton(
+                    title: l10n.getStarted,
+                    onTap: () {
+                      Get.toNamed('/creative_brief');
+                    },
+                    color: AppColors.buttonColor,
+                    isloading: false,
+                  ),
+                ],
               ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

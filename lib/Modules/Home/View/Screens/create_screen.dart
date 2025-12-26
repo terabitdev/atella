@@ -19,41 +19,53 @@ class CreateScreen extends StatelessWidget {
           children: [
             // Top Image Section
             SizedBox(
-              height: 450.h,
+              height: 400.h,
               width: double.infinity,
               child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
             ),
             Container(
               width: double.infinity,
-              padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 40.h),
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height * 0.5,
+              ),
+              padding: EdgeInsets.only(
+                left: 24.w,
+                right: 24.w,
+                top: 40.h,
+                bottom: 60.h,
+              ),
               decoration: const BoxDecoration(
                 color: Colors.white,
                 borderRadius: BorderRadius.vertical(top: Radius.circular(60)),
               ),
               child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    l10n.gatheringCreativeBrief,
-                    textAlign: TextAlign.center,
-                    style: osTextStyle18600,
+                  Column(
+                    children: [
+                      Text(
+                        l10n.gatheringCreativeBrief,
+                        textAlign: TextAlign.center,
+                        style: osTextStyle18600,
+                      ),
+                      SizedBox(height: 12.h),
+                      Text(
+                        l10n.asYourExpertDesigner,
+                        textAlign: TextAlign.center,
+                        style: gsTextStyle16600,
+                      ),
+                      SizedBox(height: 18.h),
+                      Padding(
+                        padding: EdgeInsets.symmetric(horizontal: 8.w),
+                        child: Text(
+                          l10n.hereToHelpCreate,
+                          textAlign: TextAlign.center,
+                          style: osTextStyle165002,
+                        ),
+                      ),
+                    ],
                   ),
-                  SizedBox(height: 12.h),
-                  Text(
-                    l10n.asYourExpertDesigner,
-                    textAlign: TextAlign.center,
-                    style: gsTextStyle16600,
-                  ),
-                  SizedBox(height: 18.h),
-                  Padding(
-                    padding: EdgeInsets.symmetric(horizontal: 8.w),
-                    child: Text(
-                      l10n.hereToHelpCreate,
-                      textAlign: TextAlign.center,
-                      style: osTextStyle165002,
-                    ),
-                  ),
-                  SizedBox(height: 50.h),
+                  SizedBox(height: 40.h),
                   RoundButton(
                     title: l10n.getStarted,
                     onTap: () {

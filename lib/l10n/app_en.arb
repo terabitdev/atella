@@ -910,5 +910,390 @@
         "type": "String"
       }
     }
+  },
+  "creativeBrief": "Creative Brief",
+  "@creativeBrief": {
+    "description": "Creative Brief screen title"
+  },
+  "gatheringTheCreativeBrief": "Gathering the Creative Brief",
+  "@gatheringTheCreativeBrief": {
+    "description": "Gathering brief screen title"
+  },
+  "asYourExpertVirtualFashionDesigner": "As your expert virtual fashion designer.",
+  "@asYourExpertVirtualFashionDesigner": {
+    "description": "Gathering brief subtitle"
+  },
+  "imHereToHelpCreateCustomGarment": "I'm here to help you create a custom garment or collection.",
+  "@imHereToHelpCreateCustomGarment": {
+    "description": "Gathering brief description"
+  },
+  "cbQuestionGarmentType": "What type of garment are you creating? 👕",
+  "@cbQuestionGarmentType": {
+    "description": "Creative Brief question: garment type"
+  },
+  "cbQuestionStyle": "What is the overall desired style? ✨",
+  "@cbQuestionStyle": {
+    "description": "Creative Brief question: style"
+  },
+  "cbQuestionTargetAudience": "Who is this garment intended for? 👤",
+  "@cbQuestionTargetAudience": {
+    "description": "Creative Brief question: target audience"
+  },
+  "cbQuestionOccasion": "What is the intended occasion or use? 📅",
+  "@cbQuestionOccasion": {
+    "description": "Creative Brief question: occasion"
+  },
+  "cbQuestionInspiration": "Do you have any visual inspirations or references? 🖼️",
+  "@cbQuestionInspiration": {
+    "description": "Creative Brief question: inspiration"
+  },
+  "cbQuestionColors": "What colors and patterns should the design include? 🎨",
+  "@cbQuestionColors": {
+    "description": "Creative Brief question: colors"
+  },
+  "cbQuestionFabrics": "Which fabric or material would you like to use? 🧵",
+  "@cbQuestionFabrics": {
+    "description": "Creative Brief question: fabrics"
+  },
+  "cbCategoryTops": "Tops",
+  "@cbCategoryTops": {
+    "description": "Garment category: Tops"
+  },
+  "cbCategoryBottoms": "Bottoms",
+  "@cbCategoryBottoms": {
+    "description": "Garment category: Bottoms"
+  },
+  "cbCategoryDresses": "Dresses",
+  "@cbCategoryDresses": {
+    "description": "Garment category: Dresses"
+  },
+  "cbCategoryJumpsuits": "Jumpsuits",
+  "@cbCategoryJumpsuits": {
+    "description": "Garment category: Jumpsuits"
+  },
+  "cbCategoryOuterwear": "Outerwear",
+  "@cbCategoryOuterwear": {
+    "description": "Garment category: Outerwear"
+  },
+  "cbCategorySportswear": "Sportswear",
+  "@cbCategorySportswear": {
+    "description": "Garment category: Sportswear"
+  },
+  "cbCategoryAccessories": "Accessories",
+  "@cbCategoryAccessories": {
+    "description": "Garment category: Accessories"
+  },
+  "cbCategoryCotton": "Cotton",
+  "@cbCategoryCotton": {
+    "description": "Fabric category: Cotton"
+  },
+  "cbCategoryWool": "Wool",
+  "@cbCategoryWool": {
+    "description": "Fabric category: Wool"
+  },
+  "cbCategorySilk": "Silk",
+  "@cbCategorySilk": {
+    "description": "Fabric category: Silk"
+  },
+  "cbCategoryLinen": "Linen",
+  "@cbCategoryLinen": {
+    "description": "Fabric category: Linen"
+  },
+  "cbCategorySynthetic": "Synthetic",
+  "@cbCategorySynthetic": {
+    "description": "Fabric category: Synthetic"
+  },
+  "cbCategoryEcoOptions": "Eco options",
+  "@cbCategoryEcoOptions": {
+    "description": "Fabric category: Eco options"
+  },
+  "cbCategoryLeatherFauxLeather": "Leather/Faux leather",
+  "@cbCategoryLeatherFauxLeather": {
+    "description": "Fabric category: Leather/Faux leather"
+  },
+  "cbCategoryKnitwear": "Knitwear",
+  "@cbCategoryKnitwear": {
+    "description": "Fabric category: Knitwear"
+  },
+  "cbCategoryPrints": "Prints",
+  "@cbCategoryPrints": {
+    "description": "Colors category: Prints"
+  },
+  "cbCategoryTechniques": "Techniques",
+  "@cbCategoryTechniques": {
+    "description": "Colors category: Techniques"
+  },
+  "cbOptionTShirt": "T-shirt",
+  "cbOptionShirt": "Shirt",
+  "cbOptionBlouse": "Blouse",
+  "cbOptionHoodie": "Hoodie",
+  "cbOptionJacket": "Jacket",
+  "cbOptionCoat": "Coat",
+  "cbOptionVest": "Vest",
+  "cbOptionTankTop": "Tank top",
+  "cbOptionCropTop": "Crop top",
+  "cbOptionSweater": "Sweater",
+  "cbOptionPants": "Pants",
+  "cbOptionJeans": "Jeans",
+  "cbOptionSkirts": "Skirts",
+  "cbOptionShorts": "Shorts",
+  "cbOptionLeggings": "Leggings",
+  "cbOptionCulottes": "Culottes",
+  "cbOptionPalazzo": "Palazzo",
+  "cbOptionJoggers": "Joggers",
+  "cbOptionCasualDress": "Casual dress",
+  "cbOptionEvening": "Evening",
+  "cbOptionCocktailDress": "Cocktail dress",
+  "cbOptionGown": "Gown",
+  "cbOptionMaxiDress": "Maxi dress",
+  "cbOptionMidiDress": "Midi dress",
+  "cbOptionMiniDress": "Mini dress",
+  "cbOptionJumpsuit": "Jumpsuit",
+  "cbOptionRomper": "Romper",
+  "cbOptionPlaysuit": "Playsuit",
+  "cbOptionOveralls": "Overalls",
+  "cbOptionTrenchCoat": "Trench coat",
+  "cbOptionBomberJacket": "Bomber jacket",
+  "cbOptionBlazer": "Blazer",
+  "cbOptionPufferJacket": "Puffer jacket",
+  "cbOptionTracksuit": "Tracksuit",
+  "cbOptionActivewear": "Activewear",
+  "cbOptionSwimwear": "Swimwear",
+  "cbOptionHat": "Hat",
+  "cbOptionBag": "Bag",
+  "cbOptionScarf": "Scarf",
+  "cbOptionGloves": "Gloves",
+  "cbOptionCasual": "Casual",
+  "cbOptionChic": "Chic",
+  "cbOptionSporty": "Sporty",
+  "cbOptionStreetwear": "Streetwear",
+  "cbOptionWorkwear": "Workwear",
+  "cbOptionWoman": "Woman",
+  "cbOptionMan": "Man",
+  "cbOptionChild": "Child",
+  "cbOptionUnisex": "Unisex",
+  "cbOptionTargetAge": "Target Age",
+  "cbOptionEverydayWear": "Everyday wear",
+  "cbOptionSpecialEvent": "Special event",
+  "cbOptionSports": "Sports",
+  "cbOptionActivity": "Activity",
+  "cbOptionFloral": "Floral",
+  "cbOptionAbstract": "Abstract",
+  "cbOptionCamouflage": "Camouflage",
+  "cbOptionStripes": "Stripes",
+  "cbOptionPolkaDots": "Polka dots",
+  "cbOptionTieDye": "Tie-dye",
+  "cbOptionColorBlocking": "Color blocking",
+  "cbOptionGradientOmbre": "Gradient/Ombré",
+  "cbOptionEmbroidery": "Embroidery",
+  "cbOptionJacquard": "Jacquard",
+  "cbOptionLightweight": "Lightweight (poplin, voile)",
+  "cbOptionMedium": "Medium (twill)",
+  "cbOptionHeavy": "Heavy (denim, canvas)",
+  "cbOptionMerino": "Merino",
+  "cbOptionCashmere": "Cashmere",
+  "cbOptionTweed": "Tweed",
+  "cbOptionFelt": "Felt",
+  "cbOptionSatin": "Satin",
+  "cbOptionChiffon": "Chiffon",
+  "cbOptionOrganza": "Organza",
+  "cbOptionPlain": "Plain",
+  "cbOptionTextured": "Textured",
+  "cbOptionBlended": "Blended",
+  "cbOptionPolyester": "Polyester",
+  "cbOptionNylon": "Nylon",
+  "cbOptionSpandex": "Spandex",
+  "cbOptionNeoprene": "Neoprene",
+  "cbOptionOrganicCotton": "Organic cotton",
+  "cbOptionRecycledPolyester": "Recycled polyester",
+  "cbOptionBamboo": "Bamboo",
+  "cbOptionHemp": "Hemp",
+  "cbOptionLeather": "Leather",
+  "cbOptionFauxLeather": "Faux leather",
+  "cbOptionJersey": "Jersey",
+  "cbOptionRibKnit": "Rib knit",
+  "cbOptionInterlock": "Interlock",
+  "cbOptionCustom": "Custom",
+  "@cbOptionCustom": {
+    "description": "Custom option label"
+  },
+  "enterYourCustomAnswer": "Enter your custom answer...",
+  "@enterYourCustomAnswer": {
+    "description": "Placeholder for custom answer input"
+  },
+  "enterCustom": "Enter custom {category}...",
+  "@enterCustom": {
+    "description": "Placeholder for custom category input",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "enterPreferredColors": "Enter preferred colors...",
+  "@enterPreferredColors": {
+    "description": "Placeholder for colors input"
+  },
+  "uploadVisualInspirationImages": "Upload visual inspiration images (optional)",
+  "@uploadVisualInspirationImages": {
+    "description": "Placeholder for image upload"
+  },
+  "uploadInspirationImages": "Upload visual inspiration images (optional)",
+  "@uploadInspirationImages": {
+    "description": "Placeholder for inspiration image upload"
+  },
+  "skipNoReferenceImages": "Skip - No reference images",
+  "@skipNoReferenceImages": {
+    "description": "Skip button text for image upload"
+  },
+  "uploadImage": "Upload image",
+  "@uploadImage": {
+    "description": "Upload image button text"
+  },
+  "nextSteps": "Next Steps",
+  "@nextSteps": {
+    "description": "Next steps button text"
+  },
+  "addMoreImages": "Add more images",
+  "@addMoreImages": {
+    "description": "Button text to add more images"
+  },
+  "tapToSelectFromGallery": "Tap to select from gallery",
+  "@tapToSelectFromGallery": {
+    "description": "Instruction text for image selection"
+  },
+  "imageAdded": "Image Added",
+  "@imageAdded": {
+    "description": "Success message for image added"
+  },
+  "imageAddedSuccessfully": "Image added successfully",
+  "@imageAddedSuccessfully": {
+    "description": "Success message details for image added"
+  },
+  "error": "Error",
+  "@error": {
+    "description": "Error title"
+  },
+  "failedToPickImage": "Failed to pick image. Please try again.",
+  "@failedToPickImage": {
+    "description": "Error message for failed image pick"
+  },
+  "imageError": "Error",
+  "@imageError": {
+    "description": "Error text for broken image"
+  },
+  "imageSelected": "Image Selected",
+  "@imageSelected": {
+    "description": "Success message for image selection"
+  },
+  "imageSelectedSuccessfully": "Image selected successfully",
+  "@imageSelectedSuccessfully": {
+    "description": "Success message details for image selection"
+  },
+  "failedToLoadImage": "Failed to load image",
+  "@failedToLoadImage": {
+    "description": "Error message for failed image load"
+  },
+  "change": "Change",
+  "@change": {
+    "description": "Change button text"
+  },
+  "solidColors": "Solid colors",
+  "@solidColors": {
+    "description": "Section title for solid colors"
+  },
+  "pickAColor": "Pick a color",
+  "@pickAColor": {
+    "description": "Button text to pick a color"
+  },
+  "selectAColor": "Select a Color",
+  "@selectAColor": {
+    "description": "Dialog title for color picker"
+  },
+  "cancel": "Cancel",
+  "@cancel": {
+    "description": "Cancel button text"
+  },
+  "select": "Select",
+  "@select": {
+    "description": "Select button text"
+  },
+  "loading": "Loading",
+  "@loading": {
+    "description": "Loading title"
+  },
+  "loadingExistingDesignData": "Loading existing design data...",
+  "@loadingExistingDesignData": {
+    "description": "Loading message for existing design"
+  },
+  "editMode": "Edit Mode",
+  "@editMode": {
+    "description": "Edit mode title"
+  },
+  "editingDesign": "Editing design: {designName}",
+  "@editingDesign": {
+    "description": "Message showing which design is being edited",
+    "placeholders": {
+      "designName": {
+        "type": "String"
+      }
+    }
+  },
+  "failedToLoadExistingData": "Failed to load existing data. Using defaults.",
+  "@failedToLoadExistingData": {
+    "description": "Error message for failed data load"
+  },
+  "dataLoaded": "Data Loaded",
+  "@dataLoaded": {
+    "description": "Data loaded title"
+  },
+  "previousAnswersLoadedForEditing": "Previous answers have been loaded for editing",
+  "@previousAnswersLoadedForEditing": {
+    "description": "Message for loaded previous answers"
+  },
+  "briefComplete": "Brief Complete!",
+  "@briefComplete": {
+    "description": "Brief completion title"
+  },
+  "briefCompletedSuccessfully": "Your creative brief has been completed successfully.",
+  "@briefCompletedSuccessfully": {
+    "description": "Brief completion message"
+  },
+  "invalidInput": "Invalid Input",
+  "@invalidInput": {
+    "description": "Invalid input title"
+  },
+  "pleaseEnterCustomAnswer": "Please enter a custom answer for {category}",
+  "@pleaseEnterCustomAnswer": {
+    "description": "Prompt to enter custom answer",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "pleaseEnterCustomAnswerGeneric": "Please enter a custom answer",
+  "@pleaseEnterCustomAnswerGeneric": {
+    "description": "Generic prompt to enter custom answer"
+  },
+  "pleaseEnterCustomPrint": "Please enter a custom print",
+  "@pleaseEnterCustomPrint": {
+    "description": "Prompt to enter custom print"
+  },
+  "pleaseEnterCustomTechnique": "Please enter a custom technique",
+  "@pleaseEnterCustomTechnique": {
+    "description": "Prompt to enter custom technique"
+  },
+  "answerUpdated": "Answer Updated",
+  "@answerUpdated": {
+    "description": "Answer updated title"
+  },
+  "answerUpdatedSuccessfully": "Your answer has been updated successfully",
+  "@answerUpdatedSuccessfully": {
+    "description": "Answer updated message"
+  },
+  "printsAndTechniquesUpdated": "Your prints and techniques have been updated successfully",
+  "@printsAndTechniquesUpdated": {
+    "description": "Prints and techniques updated message"
   }
 }

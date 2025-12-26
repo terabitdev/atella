@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ImageUploadContainer extends StatelessWidget {
   final Function(String?) onImageSelected;
@@ -16,17 +17,18 @@ class ImageUploadContainer extends StatelessWidget {
     this.placeholder = 'Upload visual inspiration image (optional)',
   }) : super(key: key);
 
-  Future<void> _pickImageFromGallery() async {
+  Future<void> _pickImageFromGallery(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
-      
+
       if (image != null) {
         onImageSelected(image.path);
-        
+
         Get.snackbar(
-          'Image Selected',
-          'Image selected successfully',
+          l10n.imageSelected,
+          l10n.imageSelectedSuccessfully,
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -36,8 +38,8 @@ class ImageUploadContainer extends StatelessWidget {
     } catch (e) {
       print('Error picking image: $e');
       Get.snackbar(
-        'Error',
-        'Failed to pick image. Please try again.',
+        l10n.error,
+        l10n.failedToPickImage,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -52,6 +54,7 @@ class ImageUploadContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -59,7 +62,7 @@ class ImageUploadContainer extends StatelessWidget {
         if (initialImage == null || initialImage!.isEmpty)
           // Upload container
           GestureDetector(
-            onTap: _pickImageFromGallery,
+            onTap: () => _pickImageFromGallery(context),
             child: Container(
               width: double.infinity,
               height: 120.h,
@@ -92,7 +95,7 @@ class ImageUploadContainer extends StatelessWidget {
                   ),
                   SizedBox(height: 4.h),
                   Text(
-                    'Tap to select from gallery',
+                    l10n.tapToSelectFromGallery,
                     style: TextStyle(
                       fontSize: 12.sp,
                       color: const Color(0xFF999999),
@@ -123,6 +126,7 @@ class ImageUploadContainer extends StatelessWidget {
                     File(initialImage!),
                     fit: BoxFit.cover,
                     errorBuilder: (context, error, stackTrace) {
+                      final l10n = AppLocalizations.of(context)!;
                       return Container(
                         color: const Color(0xFFF5F5F5),
                         child: Column(
@@ -135,7 +139,7 @@ class ImageUploadContainer extends StatelessWidget {
                             ),
                             SizedBox(height: 8.h),
                             Text(
-                              'Failed to load image',
+                              l10n.failedToLoadImage,
                               style: TextStyle(
                                 fontSize: 12.sp,
                                 color: const Color(0xFF999999),
@@ -174,7 +178,7 @@ class ImageUploadContainer extends StatelessWidget {
                 bottom: 8,
                 right: 8,
                 child: GestureDetector(
-                  onTap: _pickImageFromGallery,
+                  onTap: () => _pickImageFromGallery(context),
                   child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 12.w,
@@ -194,7 +198,7 @@ class ImageUploadContainer extends StatelessWidget {
                         ),
                         SizedBox(width: 4.w),
                         Text(
-                          'Change',
+                          l10n.change,
                           style: TextStyle(
                             color: Colors.white,
                             fontSize: 12.sp,

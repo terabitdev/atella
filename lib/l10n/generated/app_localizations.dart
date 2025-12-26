@@ -344,13 +344,13 @@ abstract class AppLocalizations {
   /// **'Preview'**
   String get preview;
 
-  /// Loading indicator text
+  /// Loading title
   ///
   /// In en, this message translates to:
-  /// **'Loading...'**
+  /// **'Loading'**
   String get loading;
 
-  /// Error message title
+  /// Error title
   ///
   /// In en, this message translates to:
   /// **'Error'**
@@ -1177,6 +1177,948 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'An error occurred: {error}'**
   String anErrorOccurred(String error);
+
+  /// Creative Brief screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Creative Brief'**
+  String get creativeBrief;
+
+  /// Gathering brief screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Gathering the Creative Brief'**
+  String get gatheringTheCreativeBrief;
+
+  /// Gathering brief subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'As your expert virtual fashion designer.'**
+  String get asYourExpertVirtualFashionDesigner;
+
+  /// Gathering brief description
+  ///
+  /// In en, this message translates to:
+  /// **'I\'m here to help you create a custom garment or collection.'**
+  String get imHereToHelpCreateCustomGarment;
+
+  /// Creative Brief question: garment type
+  ///
+  /// In en, this message translates to:
+  /// **'What type of garment are you creating? 👕'**
+  String get cbQuestionGarmentType;
+
+  /// Creative Brief question: style
+  ///
+  /// In en, this message translates to:
+  /// **'What is the overall desired style? ✨'**
+  String get cbQuestionStyle;
+
+  /// Creative Brief question: target audience
+  ///
+  /// In en, this message translates to:
+  /// **'Who is this garment intended for? 👤'**
+  String get cbQuestionTargetAudience;
+
+  /// Creative Brief question: occasion
+  ///
+  /// In en, this message translates to:
+  /// **'What is the intended occasion or use? 📅'**
+  String get cbQuestionOccasion;
+
+  /// Creative Brief question: inspiration
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have any visual inspirations or references? 🖼️'**
+  String get cbQuestionInspiration;
+
+  /// Creative Brief question: colors
+  ///
+  /// In en, this message translates to:
+  /// **'What colors and patterns should the design include? 🎨'**
+  String get cbQuestionColors;
+
+  /// Creative Brief question: fabrics
+  ///
+  /// In en, this message translates to:
+  /// **'Which fabric or material would you like to use? 🧵'**
+  String get cbQuestionFabrics;
+
+  /// Garment category: Tops
+  ///
+  /// In en, this message translates to:
+  /// **'Tops'**
+  String get cbCategoryTops;
+
+  /// Garment category: Bottoms
+  ///
+  /// In en, this message translates to:
+  /// **'Bottoms'**
+  String get cbCategoryBottoms;
+
+  /// Garment category: Dresses
+  ///
+  /// In en, this message translates to:
+  /// **'Dresses'**
+  String get cbCategoryDresses;
+
+  /// Garment category: Jumpsuits
+  ///
+  /// In en, this message translates to:
+  /// **'Jumpsuits'**
+  String get cbCategoryJumpsuits;
+
+  /// Garment category: Outerwear
+  ///
+  /// In en, this message translates to:
+  /// **'Outerwear'**
+  String get cbCategoryOuterwear;
+
+  /// Garment category: Sportswear
+  ///
+  /// In en, this message translates to:
+  /// **'Sportswear'**
+  String get cbCategorySportswear;
+
+  /// Garment category: Accessories
+  ///
+  /// In en, this message translates to:
+  /// **'Accessories'**
+  String get cbCategoryAccessories;
+
+  /// Fabric category: Cotton
+  ///
+  /// In en, this message translates to:
+  /// **'Cotton'**
+  String get cbCategoryCotton;
+
+  /// Fabric category: Wool
+  ///
+  /// In en, this message translates to:
+  /// **'Wool'**
+  String get cbCategoryWool;
+
+  /// Fabric category: Silk
+  ///
+  /// In en, this message translates to:
+  /// **'Silk'**
+  String get cbCategorySilk;
+
+  /// Fabric category: Linen
+  ///
+  /// In en, this message translates to:
+  /// **'Linen'**
+  String get cbCategoryLinen;
+
+  /// Fabric category: Synthetic
+  ///
+  /// In en, this message translates to:
+  /// **'Synthetic'**
+  String get cbCategorySynthetic;
+
+  /// Fabric category: Eco options
+  ///
+  /// In en, this message translates to:
+  /// **'Eco options'**
+  String get cbCategoryEcoOptions;
+
+  /// Fabric category: Leather/Faux leather
+  ///
+  /// In en, this message translates to:
+  /// **'Leather/Faux leather'**
+  String get cbCategoryLeatherFauxLeather;
+
+  /// Fabric category: Knitwear
+  ///
+  /// In en, this message translates to:
+  /// **'Knitwear'**
+  String get cbCategoryKnitwear;
+
+  /// Colors category: Prints
+  ///
+  /// In en, this message translates to:
+  /// **'Prints'**
+  String get cbCategoryPrints;
+
+  /// Colors category: Techniques
+  ///
+  /// In en, this message translates to:
+  /// **'Techniques'**
+  String get cbCategoryTechniques;
+
+  /// No description provided for @cbOptionTShirt.
+  ///
+  /// In en, this message translates to:
+  /// **'T-shirt'**
+  String get cbOptionTShirt;
+
+  /// No description provided for @cbOptionShirt.
+  ///
+  /// In en, this message translates to:
+  /// **'Shirt'**
+  String get cbOptionShirt;
+
+  /// No description provided for @cbOptionBlouse.
+  ///
+  /// In en, this message translates to:
+  /// **'Blouse'**
+  String get cbOptionBlouse;
+
+  /// No description provided for @cbOptionHoodie.
+  ///
+  /// In en, this message translates to:
+  /// **'Hoodie'**
+  String get cbOptionHoodie;
+
+  /// No description provided for @cbOptionJacket.
+  ///
+  /// In en, this message translates to:
+  /// **'Jacket'**
+  String get cbOptionJacket;
+
+  /// No description provided for @cbOptionCoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Coat'**
+  String get cbOptionCoat;
+
+  /// No description provided for @cbOptionVest.
+  ///
+  /// In en, this message translates to:
+  /// **'Vest'**
+  String get cbOptionVest;
+
+  /// No description provided for @cbOptionTankTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Tank top'**
+  String get cbOptionTankTop;
+
+  /// No description provided for @cbOptionCropTop.
+  ///
+  /// In en, this message translates to:
+  /// **'Crop top'**
+  String get cbOptionCropTop;
+
+  /// No description provided for @cbOptionSweater.
+  ///
+  /// In en, this message translates to:
+  /// **'Sweater'**
+  String get cbOptionSweater;
+
+  /// No description provided for @cbOptionPants.
+  ///
+  /// In en, this message translates to:
+  /// **'Pants'**
+  String get cbOptionPants;
+
+  /// No description provided for @cbOptionJeans.
+  ///
+  /// In en, this message translates to:
+  /// **'Jeans'**
+  String get cbOptionJeans;
+
+  /// No description provided for @cbOptionSkirts.
+  ///
+  /// In en, this message translates to:
+  /// **'Skirts'**
+  String get cbOptionSkirts;
+
+  /// No description provided for @cbOptionShorts.
+  ///
+  /// In en, this message translates to:
+  /// **'Shorts'**
+  String get cbOptionShorts;
+
+  /// No description provided for @cbOptionLeggings.
+  ///
+  /// In en, this message translates to:
+  /// **'Leggings'**
+  String get cbOptionLeggings;
+
+  /// No description provided for @cbOptionCulottes.
+  ///
+  /// In en, this message translates to:
+  /// **'Culottes'**
+  String get cbOptionCulottes;
+
+  /// No description provided for @cbOptionPalazzo.
+  ///
+  /// In en, this message translates to:
+  /// **'Palazzo'**
+  String get cbOptionPalazzo;
+
+  /// No description provided for @cbOptionJoggers.
+  ///
+  /// In en, this message translates to:
+  /// **'Joggers'**
+  String get cbOptionJoggers;
+
+  /// No description provided for @cbOptionCasualDress.
+  ///
+  /// In en, this message translates to:
+  /// **'Casual dress'**
+  String get cbOptionCasualDress;
+
+  /// No description provided for @cbOptionEvening.
+  ///
+  /// In en, this message translates to:
+  /// **'Evening'**
+  String get cbOptionEvening;
+
+  /// No description provided for @cbOptionCocktailDress.
+  ///
+  /// In en, this message translates to:
+  /// **'Cocktail dress'**
+  String get cbOptionCocktailDress;
+
+  /// No description provided for @cbOptionGown.
+  ///
+  /// In en, this message translates to:
+  /// **'Gown'**
+  String get cbOptionGown;
+
+  /// No description provided for @cbOptionMaxiDress.
+  ///
+  /// In en, this message translates to:
+  /// **'Maxi dress'**
+  String get cbOptionMaxiDress;
+
+  /// No description provided for @cbOptionMidiDress.
+  ///
+  /// In en, this message translates to:
+  /// **'Midi dress'**
+  String get cbOptionMidiDress;
+
+  /// No description provided for @cbOptionMiniDress.
+  ///
+  /// In en, this message translates to:
+  /// **'Mini dress'**
+  String get cbOptionMiniDress;
+
+  /// No description provided for @cbOptionJumpsuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Jumpsuit'**
+  String get cbOptionJumpsuit;
+
+  /// No description provided for @cbOptionRomper.
+  ///
+  /// In en, this message translates to:
+  /// **'Romper'**
+  String get cbOptionRomper;
+
+  /// No description provided for @cbOptionPlaysuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Playsuit'**
+  String get cbOptionPlaysuit;
+
+  /// No description provided for @cbOptionOveralls.
+  ///
+  /// In en, this message translates to:
+  /// **'Overalls'**
+  String get cbOptionOveralls;
+
+  /// No description provided for @cbOptionTrenchCoat.
+  ///
+  /// In en, this message translates to:
+  /// **'Trench coat'**
+  String get cbOptionTrenchCoat;
+
+  /// No description provided for @cbOptionBomberJacket.
+  ///
+  /// In en, this message translates to:
+  /// **'Bomber jacket'**
+  String get cbOptionBomberJacket;
+
+  /// No description provided for @cbOptionBlazer.
+  ///
+  /// In en, this message translates to:
+  /// **'Blazer'**
+  String get cbOptionBlazer;
+
+  /// No description provided for @cbOptionPufferJacket.
+  ///
+  /// In en, this message translates to:
+  /// **'Puffer jacket'**
+  String get cbOptionPufferJacket;
+
+  /// No description provided for @cbOptionTracksuit.
+  ///
+  /// In en, this message translates to:
+  /// **'Tracksuit'**
+  String get cbOptionTracksuit;
+
+  /// No description provided for @cbOptionActivewear.
+  ///
+  /// In en, this message translates to:
+  /// **'Activewear'**
+  String get cbOptionActivewear;
+
+  /// No description provided for @cbOptionSwimwear.
+  ///
+  /// In en, this message translates to:
+  /// **'Swimwear'**
+  String get cbOptionSwimwear;
+
+  /// No description provided for @cbOptionHat.
+  ///
+  /// In en, this message translates to:
+  /// **'Hat'**
+  String get cbOptionHat;
+
+  /// No description provided for @cbOptionBag.
+  ///
+  /// In en, this message translates to:
+  /// **'Bag'**
+  String get cbOptionBag;
+
+  /// No description provided for @cbOptionScarf.
+  ///
+  /// In en, this message translates to:
+  /// **'Scarf'**
+  String get cbOptionScarf;
+
+  /// No description provided for @cbOptionGloves.
+  ///
+  /// In en, this message translates to:
+  /// **'Gloves'**
+  String get cbOptionGloves;
+
+  /// No description provided for @cbOptionCasual.
+  ///
+  /// In en, this message translates to:
+  /// **'Casual'**
+  String get cbOptionCasual;
+
+  /// No description provided for @cbOptionChic.
+  ///
+  /// In en, this message translates to:
+  /// **'Chic'**
+  String get cbOptionChic;
+
+  /// No description provided for @cbOptionSporty.
+  ///
+  /// In en, this message translates to:
+  /// **'Sporty'**
+  String get cbOptionSporty;
+
+  /// No description provided for @cbOptionStreetwear.
+  ///
+  /// In en, this message translates to:
+  /// **'Streetwear'**
+  String get cbOptionStreetwear;
+
+  /// No description provided for @cbOptionWorkwear.
+  ///
+  /// In en, this message translates to:
+  /// **'Workwear'**
+  String get cbOptionWorkwear;
+
+  /// No description provided for @cbOptionWoman.
+  ///
+  /// In en, this message translates to:
+  /// **'Woman'**
+  String get cbOptionWoman;
+
+  /// No description provided for @cbOptionMan.
+  ///
+  /// In en, this message translates to:
+  /// **'Man'**
+  String get cbOptionMan;
+
+  /// No description provided for @cbOptionChild.
+  ///
+  /// In en, this message translates to:
+  /// **'Child'**
+  String get cbOptionChild;
+
+  /// No description provided for @cbOptionUnisex.
+  ///
+  /// In en, this message translates to:
+  /// **'Unisex'**
+  String get cbOptionUnisex;
+
+  /// No description provided for @cbOptionTargetAge.
+  ///
+  /// In en, this message translates to:
+  /// **'Target Age'**
+  String get cbOptionTargetAge;
+
+  /// No description provided for @cbOptionEverydayWear.
+  ///
+  /// In en, this message translates to:
+  /// **'Everyday wear'**
+  String get cbOptionEverydayWear;
+
+  /// No description provided for @cbOptionSpecialEvent.
+  ///
+  /// In en, this message translates to:
+  /// **'Special event'**
+  String get cbOptionSpecialEvent;
+
+  /// No description provided for @cbOptionSports.
+  ///
+  /// In en, this message translates to:
+  /// **'Sports'**
+  String get cbOptionSports;
+
+  /// No description provided for @cbOptionActivity.
+  ///
+  /// In en, this message translates to:
+  /// **'Activity'**
+  String get cbOptionActivity;
+
+  /// No description provided for @cbOptionFloral.
+  ///
+  /// In en, this message translates to:
+  /// **'Floral'**
+  String get cbOptionFloral;
+
+  /// No description provided for @cbOptionAbstract.
+  ///
+  /// In en, this message translates to:
+  /// **'Abstract'**
+  String get cbOptionAbstract;
+
+  /// No description provided for @cbOptionCamouflage.
+  ///
+  /// In en, this message translates to:
+  /// **'Camouflage'**
+  String get cbOptionCamouflage;
+
+  /// No description provided for @cbOptionStripes.
+  ///
+  /// In en, this message translates to:
+  /// **'Stripes'**
+  String get cbOptionStripes;
+
+  /// No description provided for @cbOptionPolkaDots.
+  ///
+  /// In en, this message translates to:
+  /// **'Polka dots'**
+  String get cbOptionPolkaDots;
+
+  /// No description provided for @cbOptionTieDye.
+  ///
+  /// In en, this message translates to:
+  /// **'Tie-dye'**
+  String get cbOptionTieDye;
+
+  /// No description provided for @cbOptionColorBlocking.
+  ///
+  /// In en, this message translates to:
+  /// **'Color blocking'**
+  String get cbOptionColorBlocking;
+
+  /// No description provided for @cbOptionGradientOmbre.
+  ///
+  /// In en, this message translates to:
+  /// **'Gradient/Ombré'**
+  String get cbOptionGradientOmbre;
+
+  /// No description provided for @cbOptionEmbroidery.
+  ///
+  /// In en, this message translates to:
+  /// **'Embroidery'**
+  String get cbOptionEmbroidery;
+
+  /// No description provided for @cbOptionJacquard.
+  ///
+  /// In en, this message translates to:
+  /// **'Jacquard'**
+  String get cbOptionJacquard;
+
+  /// No description provided for @cbOptionLightweight.
+  ///
+  /// In en, this message translates to:
+  /// **'Lightweight (poplin, voile)'**
+  String get cbOptionLightweight;
+
+  /// No description provided for @cbOptionMedium.
+  ///
+  /// In en, this message translates to:
+  /// **'Medium (twill)'**
+  String get cbOptionMedium;
+
+  /// No description provided for @cbOptionHeavy.
+  ///
+  /// In en, this message translates to:
+  /// **'Heavy (denim, canvas)'**
+  String get cbOptionHeavy;
+
+  /// No description provided for @cbOptionMerino.
+  ///
+  /// In en, this message translates to:
+  /// **'Merino'**
+  String get cbOptionMerino;
+
+  /// No description provided for @cbOptionCashmere.
+  ///
+  /// In en, this message translates to:
+  /// **'Cashmere'**
+  String get cbOptionCashmere;
+
+  /// No description provided for @cbOptionTweed.
+  ///
+  /// In en, this message translates to:
+  /// **'Tweed'**
+  String get cbOptionTweed;
+
+  /// No description provided for @cbOptionFelt.
+  ///
+  /// In en, this message translates to:
+  /// **'Felt'**
+  String get cbOptionFelt;
+
+  /// No description provided for @cbOptionSatin.
+  ///
+  /// In en, this message translates to:
+  /// **'Satin'**
+  String get cbOptionSatin;
+
+  /// No description provided for @cbOptionChiffon.
+  ///
+  /// In en, this message translates to:
+  /// **'Chiffon'**
+  String get cbOptionChiffon;
+
+  /// No description provided for @cbOptionOrganza.
+  ///
+  /// In en, this message translates to:
+  /// **'Organza'**
+  String get cbOptionOrganza;
+
+  /// No description provided for @cbOptionPlain.
+  ///
+  /// In en, this message translates to:
+  /// **'Plain'**
+  String get cbOptionPlain;
+
+  /// No description provided for @cbOptionTextured.
+  ///
+  /// In en, this message translates to:
+  /// **'Textured'**
+  String get cbOptionTextured;
+
+  /// No description provided for @cbOptionBlended.
+  ///
+  /// In en, this message translates to:
+  /// **'Blended'**
+  String get cbOptionBlended;
+
+  /// No description provided for @cbOptionPolyester.
+  ///
+  /// In en, this message translates to:
+  /// **'Polyester'**
+  String get cbOptionPolyester;
+
+  /// No description provided for @cbOptionNylon.
+  ///
+  /// In en, this message translates to:
+  /// **'Nylon'**
+  String get cbOptionNylon;
+
+  /// No description provided for @cbOptionSpandex.
+  ///
+  /// In en, this message translates to:
+  /// **'Spandex'**
+  String get cbOptionSpandex;
+
+  /// No description provided for @cbOptionNeoprene.
+  ///
+  /// In en, this message translates to:
+  /// **'Neoprene'**
+  String get cbOptionNeoprene;
+
+  /// No description provided for @cbOptionOrganicCotton.
+  ///
+  /// In en, this message translates to:
+  /// **'Organic cotton'**
+  String get cbOptionOrganicCotton;
+
+  /// No description provided for @cbOptionRecycledPolyester.
+  ///
+  /// In en, this message translates to:
+  /// **'Recycled polyester'**
+  String get cbOptionRecycledPolyester;
+
+  /// No description provided for @cbOptionBamboo.
+  ///
+  /// In en, this message translates to:
+  /// **'Bamboo'**
+  String get cbOptionBamboo;
+
+  /// No description provided for @cbOptionHemp.
+  ///
+  /// In en, this message translates to:
+  /// **'Hemp'**
+  String get cbOptionHemp;
+
+  /// No description provided for @cbOptionLeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Leather'**
+  String get cbOptionLeather;
+
+  /// No description provided for @cbOptionFauxLeather.
+  ///
+  /// In en, this message translates to:
+  /// **'Faux leather'**
+  String get cbOptionFauxLeather;
+
+  /// No description provided for @cbOptionJersey.
+  ///
+  /// In en, this message translates to:
+  /// **'Jersey'**
+  String get cbOptionJersey;
+
+  /// No description provided for @cbOptionRibKnit.
+  ///
+  /// In en, this message translates to:
+  /// **'Rib knit'**
+  String get cbOptionRibKnit;
+
+  /// No description provided for @cbOptionInterlock.
+  ///
+  /// In en, this message translates to:
+  /// **'Interlock'**
+  String get cbOptionInterlock;
+
+  /// Custom option label
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get cbOptionCustom;
+
+  /// Placeholder for custom answer input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your custom answer...'**
+  String get enterYourCustomAnswer;
+
+  /// Placeholder for custom category input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom {category}...'**
+  String enterCustom(String category);
+
+  /// Placeholder for colors input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter preferred colors...'**
+  String get enterPreferredColors;
+
+  /// Placeholder for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload visual inspiration images (optional)'**
+  String get uploadVisualInspirationImages;
+
+  /// Placeholder for inspiration image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Upload visual inspiration images (optional)'**
+  String get uploadInspirationImages;
+
+  /// Skip button text for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Skip - No reference images'**
+  String get skipNoReferenceImages;
+
+  /// Upload image button text
+  ///
+  /// In en, this message translates to:
+  /// **'Upload image'**
+  String get uploadImage;
+
+  /// Next steps button text
+  ///
+  /// In en, this message translates to:
+  /// **'Next Steps'**
+  String get nextSteps;
+
+  /// Button text to add more images
+  ///
+  /// In en, this message translates to:
+  /// **'Add more images'**
+  String get addMoreImages;
+
+  /// Instruction text for image selection
+  ///
+  /// In en, this message translates to:
+  /// **'Tap to select from gallery'**
+  String get tapToSelectFromGallery;
+
+  /// Success message for image added
+  ///
+  /// In en, this message translates to:
+  /// **'Image Added'**
+  String get imageAdded;
+
+  /// Success message details for image added
+  ///
+  /// In en, this message translates to:
+  /// **'Image added successfully'**
+  String get imageAddedSuccessfully;
+
+  /// Error message for failed image pick
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image. Please try again.'**
+  String get failedToPickImage;
+
+  /// Error text for broken image
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get imageError;
+
+  /// Success message for image selection
+  ///
+  /// In en, this message translates to:
+  /// **'Image Selected'**
+  String get imageSelected;
+
+  /// Success message details for image selection
+  ///
+  /// In en, this message translates to:
+  /// **'Image selected successfully'**
+  String get imageSelectedSuccessfully;
+
+  /// Error message for failed image load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get failedToLoadImage;
+
+  /// Change button text
+  ///
+  /// In en, this message translates to:
+  /// **'Change'**
+  String get change;
+
+  /// Section title for solid colors
+  ///
+  /// In en, this message translates to:
+  /// **'Solid colors'**
+  String get solidColors;
+
+  /// Button text to pick a color
+  ///
+  /// In en, this message translates to:
+  /// **'Pick a color'**
+  String get pickAColor;
+
+  /// Dialog title for color picker
+  ///
+  /// In en, this message translates to:
+  /// **'Select a Color'**
+  String get selectAColor;
+
+  /// Select button text
+  ///
+  /// In en, this message translates to:
+  /// **'Select'**
+  String get select;
+
+  /// Loading message for existing design
+  ///
+  /// In en, this message translates to:
+  /// **'Loading existing design data...'**
+  String get loadingExistingDesignData;
+
+  /// Edit mode title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Mode'**
+  String get editMode;
+
+  /// Message showing which design is being edited
+  ///
+  /// In en, this message translates to:
+  /// **'Editing design: {designName}'**
+  String editingDesign(String designName);
+
+  /// Error message for failed data load
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load existing data. Using defaults.'**
+  String get failedToLoadExistingData;
+
+  /// Data loaded title
+  ///
+  /// In en, this message translates to:
+  /// **'Data Loaded'**
+  String get dataLoaded;
+
+  /// Message for loaded previous answers
+  ///
+  /// In en, this message translates to:
+  /// **'Previous answers have been loaded for editing'**
+  String get previousAnswersLoadedForEditing;
+
+  /// Brief completion title
+  ///
+  /// In en, this message translates to:
+  /// **'Brief Complete!'**
+  String get briefComplete;
+
+  /// Brief completion message
+  ///
+  /// In en, this message translates to:
+  /// **'Your creative brief has been completed successfully.'**
+  String get briefCompletedSuccessfully;
+
+  /// Invalid input title
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Input'**
+  String get invalidInput;
+
+  /// Prompt to enter custom answer
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom answer for {category}'**
+  String pleaseEnterCustomAnswer(String category);
+
+  /// Generic prompt to enter custom answer
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom answer'**
+  String get pleaseEnterCustomAnswerGeneric;
+
+  /// Prompt to enter custom print
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom print'**
+  String get pleaseEnterCustomPrint;
+
+  /// Prompt to enter custom technique
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom technique'**
+  String get pleaseEnterCustomTechnique;
+
+  /// Answer updated title
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Updated'**
+  String get answerUpdated;
+
+  /// Answer updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer has been updated successfully'**
+  String get answerUpdatedSuccessfully;
+
+  /// Prints and techniques updated message
+  ///
+  /// In en, this message translates to:
+  /// **'Your prints and techniques have been updated successfully'**
+  String get printsAndTechniquesUpdated;
 }
 
 class _AppLocalizationsDelegate

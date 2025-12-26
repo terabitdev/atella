@@ -4,6 +4,8 @@ import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/localization/creative_brief_localization_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -317,9 +319,10 @@ class CreativeBriefController extends GetxController {
       );
 
       // Show loading indicator
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Loading',
-        'Loading existing design data...',
+        l10n.loading,
+        l10n.loadingExistingDesignData,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -357,9 +360,10 @@ class CreativeBriefController extends GetxController {
           );
         }
 
+        final l10n = AppLocalizations.of(Get.context!)!;
         Get.snackbar(
-          'Edit Mode',
-          'Editing design: ${_editingTechPack!.projectName}',
+          l10n.editMode,
+          l10n.editingDesign(_editingTechPack!.projectName),
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -371,9 +375,10 @@ class CreativeBriefController extends GetxController {
       }
     } catch (e) {
       print('Error loading edit data: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'Failed to load existing data. Using defaults.',
+        l10n.error,
+        l10n.failedToLoadExistingData,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -694,9 +699,10 @@ class CreativeBriefController extends GetxController {
 
     // Show success message
     Future.delayed(Duration(seconds: 2), () {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Data Loaded',
-        'Previous answers have been loaded for editing',
+        l10n.dataLoaded,
+        l10n.previousAnswersLoadedForEditing,
         backgroundColor: Colors.green,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -1730,9 +1736,10 @@ class CreativeBriefController extends GetxController {
   void _showCompletionScreen() {
     // Only show completion message if all questions are actually answered
     if (isAllQuestionsCompleted) {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Brief Complete!',
-        'Your creative brief has been completed successfully.',
+        l10n.briefComplete,
+        l10n.briefCompletedSuccessfully,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -2211,9 +2218,10 @@ class CreativeBriefController extends GetxController {
                   );
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
+                    final l10n = AppLocalizations.of(Get.context!)!;
                     Get.snackbar(
-                      'Invalid Input',
-                      'Please enter a custom answer for ${category.key}',
+                      l10n.invalidInput,
+                      l10n.pleaseEnterCustomAnswer(category.key),
                       backgroundColor: Colors.black,
                       colorText: Colors.white,
                       snackPosition: SnackPosition.TOP,
@@ -2254,9 +2262,10 @@ class CreativeBriefController extends GetxController {
                 // Validate custom input if Custom is selected
                 if (tempSelectedOptions.contains('Custom') &&
                     tempCustomController.text.trim().isEmpty) {
+                  final l10n = AppLocalizations.of(Get.context!)!;
                   Get.snackbar(
-                    'Invalid Input',
-                    'Please enter a custom answer',
+                    l10n.invalidInput,
+                    l10n.pleaseEnterCustomAnswerGeneric,
                     backgroundColor: Colors.black,
                     colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
@@ -2280,9 +2289,10 @@ class CreativeBriefController extends GetxController {
 
               // Then update and show success message
               update();
+              final l10n = AppLocalizations.of(Get.context!)!;
               Get.snackbar(
-                'Answer Updated',
-                'Your answer has been updated successfully',
+                l10n.answerUpdated,
+                l10n.answerUpdatedSuccessfully,
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
                 duration: const Duration(milliseconds: 1500),
@@ -2547,11 +2557,12 @@ class CreativeBriefController extends GetxController {
           ),
           ElevatedButton(
             onPressed: () {
+              final l10n = AppLocalizations.of(Get.context!)!;
               if (tempPrint.value == 'Custom' &&
                   printCustomController.text.trim().isEmpty) {
                 Get.snackbar(
-                  'Invalid Input',
-                  'Please enter a custom print',
+                  l10n.invalidInput,
+                  l10n.pleaseEnterCustomPrint,
                   backgroundColor: Colors.black,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.TOP,
@@ -2563,8 +2574,8 @@ class CreativeBriefController extends GetxController {
               if (tempTechnique.value == 'Custom' &&
                   techniqueCustomController.text.trim().isEmpty) {
                 Get.snackbar(
-                  'Invalid Input',
-                  'Please enter a custom technique',
+                  l10n.invalidInput,
+                  l10n.pleaseEnterCustomTechnique,
                   backgroundColor: Colors.black,
                   colorText: Colors.white,
                   snackPosition: SnackPosition.TOP,
@@ -2592,9 +2603,10 @@ class CreativeBriefController extends GetxController {
               Navigator.of(Get.overlayContext!).pop();
 
               update();
+              final l10nSnack = AppLocalizations.of(Get.context!)!;
               Get.snackbar(
-                'Answer Updated',
-                'Your prints and techniques have been updated successfully',
+                l10nSnack.answerUpdated,
+                l10nSnack.printsAndTechniquesUpdated,
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
                 duration: const Duration(milliseconds: 1500),
@@ -2962,5 +2974,64 @@ class CreativeBriefController extends GetxController {
     } else {
       Get.toNamed('/refine_concept');
     }
+  }
+
+  // ============================================================================
+  // LOCALIZATION HELPER METHODS (Presentation Layer Only)
+  // ============================================================================
+  // CRITICAL: These methods are ONLY for UI display purposes.
+  // All internal storage, business logic, and API calls continue to use English.
+  // Language changes affect ONLY what users see, not internal data.
+
+  /// Get localized question text for display
+  /// Internal questionId remains in English
+  String getLocalizedQuestionText(BuildContext context, String questionId) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getLocalizedQuestion(questionId);
+  }
+
+  /// Get localized category name for display
+  /// Internal category storage remains in English
+  String getLocalizedCategoryName(BuildContext context, String categoryName) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getLocalizedCategory(categoryName);
+  }
+
+  /// Get localized option for display
+  /// Internal option storage remains in English
+  String getLocalizedOption(BuildContext context, String englishOption) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getLocalizedOption(englishOption);
+  }
+
+  /// Get localized list of options for display
+  /// Internal options list remains in English
+  List<String> getLocalizedOptions(BuildContext context, List<String> englishOptions) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getLocalizedOptions(englishOptions);
+  }
+
+  /// Get localized categories map for display
+  /// Internal categories map remains in English
+  Map<String, List<String>> getLocalizedCategories(
+    BuildContext context,
+    Map<String, List<String>> englishCategories,
+  ) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getLocalizedCategories(englishCategories);
+  }
+
+  /// Convert user-selected localized option back to English for storage
+  /// This ensures internal storage always uses English
+  String getEnglishOptionFromLocalized(BuildContext context, String localizedOption) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getEnglishOption(localizedOption);
+  }
+
+  /// Convert user-selected localized category back to English for storage
+  /// This ensures internal storage always uses English
+  String getEnglishCategoryFromLocalized(BuildContext context, String localizedCategory) {
+    final service = CreativeBriefLocalizationService(context);
+    return service.getEnglishCategory(localizedCategory);
   }
 }

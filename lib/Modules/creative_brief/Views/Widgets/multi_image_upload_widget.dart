@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class MultiImageUploadWidget extends StatelessWidget {
   final List<String> selectedImages;
@@ -18,7 +19,8 @@ class MultiImageUploadWidget extends StatelessWidget {
     this.placeholder = 'Upload visual inspiration images (optional)',
   }) : super(key: key);
 
-  Future<void> _pickImageFromGallery() async {
+  Future<void> _pickImageFromGallery(BuildContext context) async {
+    final l10n = AppLocalizations.of(context)!;
     try {
       final ImagePicker picker = ImagePicker();
       final XFile? image = await picker.pickImage(source: ImageSource.gallery);
@@ -27,8 +29,8 @@ class MultiImageUploadWidget extends StatelessWidget {
         onImageAdded(image.path);
 
         Get.snackbar(
-          'Image Added',
-          'Image added successfully',
+          l10n.imageAdded,
+          l10n.imageAddedSuccessfully,
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -38,8 +40,8 @@ class MultiImageUploadWidget extends StatelessWidget {
     } catch (e) {
       print('Error picking image: $e');
       Get.snackbar(
-        'Error',
-        'Failed to pick image. Please try again.',
+        l10n.error,
+        l10n.failedToPickImage,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -50,15 +52,16 @@ class MultiImageUploadWidget extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         // Upload button - always visible to add more images
         GestureDetector(
-          onTap: _pickImageFromGallery,
+          onTap: () => _pickImageFromGallery(context),
           child: Container(
             width: double.infinity,
-            height: 100.h,
+            constraints: BoxConstraints(minHeight: 100.h),
             decoration: BoxDecoration(
               color: const Color(0xFFF8F9FA),
               borderRadius: BorderRadius.circular(12.r),
@@ -68,34 +71,42 @@ class MultiImageUploadWidget extends StatelessWidget {
                 style: BorderStyle.solid,
               ),
             ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                Icon(
-                  Icons.add_photo_alternate_outlined,
-                  size: 28.w,
-                  color: const Color(0xFF666666),
-                ),
-                SizedBox(height: 6.h),
-                Text(
-                  selectedImages.isEmpty ? placeholder : 'Add more images',
-                  style: TextStyle(
-                    fontSize: 14.sp,
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  Icon(
+                    Icons.add_photo_alternate_outlined,
+                    size: 28.w,
                     color: const Color(0xFF666666),
-                    fontWeight: FontWeight.w500,
                   ),
-                  textAlign: TextAlign.center,
-                ),
-                SizedBox(height: 2.h),
-                Text(
-                  'Tap to select from gallery',
-                  style: TextStyle(
-                    fontSize: 11.sp,
-                    color: const Color(0xFF999999),
-                    fontWeight: FontWeight.w400,
+                  SizedBox(height: 6.h),
+                  Text(
+                    selectedImages.isEmpty ? placeholder : l10n.addMoreImages,
+                    style: TextStyle(
+                      fontSize: 14.sp,
+                      color: const Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
                   ),
-                ),
-              ],
+                  SizedBox(height: 2.h),
+                  Text(
+                    l10n.tapToSelectFromGallery,
+                    style: TextStyle(
+                      fontSize: 11.sp,
+                      color: const Color(0xFF999999),
+                      fontWeight: FontWeight.w400,
+                    ),
+                    textAlign: TextAlign.center,
+                    maxLines: 2,
+                    overflow: TextOverflow.ellipsis,
+                  ),
+                ],
+              ),
             ),
           ),
         ),
@@ -134,6 +145,7 @@ class MultiImageUploadWidget extends StatelessWidget {
               File(imagePath),
               fit: BoxFit.cover,
               errorBuilder: (context, error, stackTrace) {
+                final l10n = AppLocalizations.of(context)!;
                 return Container(
                   color: const Color(0xFFF5F5F5),
                   child: Column(
@@ -146,7 +158,7 @@ class MultiImageUploadWidget extends StatelessWidget {
                       ),
                       SizedBox(height: 4.h),
                       Text(
-                        'Error',
+                        l10n.imageError,
                         style: TextStyle(
                           fontSize: 10.sp,
                           color: const Color(0xFF999999),

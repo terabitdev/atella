@@ -1,4 +1,5 @@
 import 'package:atella/Data/Models/brief_questions_model.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/image_upload_container.dart';
@@ -18,11 +19,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
           AppHeader(
-            title: 'Creative Brief',
+            title: l10n.creativeBrief,
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
             onBack: () => Navigator.of(context).pop(),
@@ -47,6 +49,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             final customInfo = controller.getAnyCustomSelectedCategory();
             if (customInfo != null) {
               return _buildBottomCategorizedCustomInput(
+                context,
                 customInfo['questionId']!,
                 customInfo['categoryName']!,
               );
@@ -55,18 +58,18 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             // Show custom text input at bottom when custom is selected for ANY regular chip question
             final customQuestionId = controller.getAnyCustomSelectedQuestion();
             if (customQuestionId != null) {
-              return _buildBottomCustomInput();
+              return _buildBottomCustomInput(context);
             }
 
             // Show bottom input area only for text questions (not chip questions)
             if (controller.shouldShowBottomInput &&
                 controller.currentQuestion.type == 'text') {
-              return _buildBottomInputArea();
+              return _buildBottomInputArea(context);
             }
 
             // Show button if we're showing last two questions or all questions are answered
             if (controller.shouldShowButton) {
-              return _buildBottomButton();
+              return _buildBottomButton(context);
             }
 
             // For last two questions, show individual input areas in the list
@@ -104,6 +107,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           return Column(
             children: [
               _buildQuestionItem(
+                context,
                 question,
                 isAnswered,
                 isCurrentQuestion,
@@ -137,6 +141,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildQuestionItem(
+    BuildContext context,
     BriefQuestion question,
     bool isAnswered,
     bool isCurrentQuestion,
@@ -164,7 +169,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               children: [
                 Expanded(
                   child: Text(
-                    question.question,
+                    // Display localized question text, but question.id remains in English internally
+                    controller.getLocalizedQuestionText(context, question.id),
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
@@ -194,19 +200,19 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           ),
           SizedBox(height: 16.h),
           if (question.type == 'chips')
-            _buildChipOptions(question, isAnswered)
+            _buildChipOptions(context, question, isAnswered)
           else if (question.type == 'chips_categorized')
-            _buildCategorizedChipOptions(question, isAnswered)
+            _buildCategorizedChipOptions(context, question, isAnswered)
           else if (question.type == 'multi_part_color')
-            _buildMultiPartColorSelection(question, isAnswered)
+            _buildMultiPartColorSelection(context, question, isAnswered)
           else if (question.type == 'image')
-            _buildImageUploadForQuestion(question, isAnswered)
+            _buildImageUploadForQuestion(context, question, isAnswered)
           else if (question.type == 'text' &&
               isCurrentQuestion &&
               !controller.showLastTwoQuestions)
-            _buildTextInputForQuestion(question)
+            _buildTextInputForQuestion(context, question)
           else if (shouldShowInput)
-            _buildTextInputForQuestion(question),
+            _buildTextInputForQuestion(context, question),
           if (isAnswered && question.type == 'text')
             _buildAnsweredText(question),
           // Show custom answer if answered with custom text
@@ -219,13 +225,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   // Custom text input widget at bottom of screen
-  Widget _buildBottomCustomInput() {
+  Widget _buildBottomCustomInput(BuildContext context) {
     print('Building bottom custom text input'); // Debug
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
       child: TextInputWithSend(
         controller: controller.customController,
-        placeholder: 'Enter your custom answer...',
+        placeholder: l10n.enterYourCustomAnswer,
         onSend: () {
           print('Custom send button pressed'); // Debug
           controller.submitCustomAnswer();
@@ -237,6 +244,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
   // Custom text input for categorized questions
   Widget _buildBottomCategorizedCustomInput(
+    BuildContext context,
     String questionId,
     String categoryName,
   ) {
@@ -284,11 +292,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
       return const SizedBox.shrink();
     }
 
+    final l10n = AppLocalizations.of(context)!;
+    final localizedCategory = controller.getLocalizedCategoryName(context, categoryName);
+
     return Container(
       padding: const EdgeInsets.all(24),
       child: TextInputWithSend(
         controller: textController,
-        placeholder: 'Enter custom $categoryName...',
+        placeholder: l10n.enterCustom(localizedCategory),
         onSend: onSend,
         isLoading: controller.isTextLoading,
       ),
@@ -340,12 +351,13 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
-  Widget _buildChipOptions(BriefQuestion question, bool isAnswered) {
+  Widget _buildChipOptions(BuildContext context, BriefQuestion question, bool isAnswered) {
     return Obx(() {
       final answer = controller.getAnswer(question.id);
       final selectedOptions = answer?.selectedOptions ?? [];
 
       return _buildExpandableChipSection(
+        context: context,
         questionId: question.id,
         options: question.options,
         selectedOptions: selectedOptions,
@@ -355,7 +367,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
-  Widget _buildCategorizedChipOptions(BriefQuestion question, bool isAnswered) {
+  Widget _buildCategorizedChipOptions(BuildContext context, BriefQuestion question, bool isAnswered) {
     if (question.categories == null) {
       return const SizedBox.shrink();
     }
@@ -367,6 +379,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: question.categories!.entries.map((category) {
           return _buildExpandableCategorizedSection(
+            context: context,
             questionId: question.id,
             categoryName: category.key,
             options: category.value,
@@ -383,6 +396,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   }
 
   Widget _buildExpandableCategorizedSection({
+    required BuildContext context,
     required String questionId,
     required String categoryName,
     required List<String> options,
@@ -431,7 +445,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           Padding(
             padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
             child: Text(
-              categoryName,
+              // Display localized category name, but categoryName remains in English internally
+              controller.getLocalizedCategoryName(context, categoryName),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -514,7 +529,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      selectedValue,
+                      // Display localized option, but selectedValue remains in English internally
+                      controller.getLocalizedOption(context, selectedValue),
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
@@ -543,7 +559,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         ),
                       ),
                       child: Text(
-                        option,
+                        // Display localized option, but option remains in English internally
+                        controller.getLocalizedOption(context, option),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -608,7 +625,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         ),
                       ),
                       child: Text(
-                        option,
+                        // Display localized option, but option remains in English internally
+                        controller.getLocalizedOption(context, option),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -650,11 +668,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
-  Widget _buildTextInputForQuestion(BriefQuestion question) {
+  Widget _buildTextInputForQuestion(BuildContext context, BriefQuestion question) {
     // Only colors question should use text input now (fabrics is chips_categorized)
+    final l10n = AppLocalizations.of(context)!;
     final textController = controller.colorController;
 
-    String hintText = 'Enter preferred colors...';
+    String hintText = l10n.enterPreferredColors;
 
     return SizedBox(
       height: 45.h,
@@ -701,13 +720,14 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     );
   }
 
-  Widget _buildBottomInputArea() {
+  Widget _buildBottomInputArea(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Obx(() {
       final currentQuestion = controller.currentQuestion;
       // Only colors question uses text input at bottom (fabrics is chips_categorized)
       return TextInputWithSend(
         controller: controller.colorController,
-        placeholder: 'Enter preferred colors...',
+        placeholder: l10n.enterCustom('colors'),
         onSend: () {
           controller.submitTextAnswer(
             currentQuestion.id,
@@ -719,11 +739,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     });
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Container(
       padding: const EdgeInsets.all(24),
       child: RoundButton(
-        title: 'Next Steps',
+        title: l10n.nextSteps,
         onTap: () async {
           // Submit any pending text answers before proceeding
           if (controller.showLastTwoQuestions) {
@@ -747,7 +768,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
     );
   }
 
-  Widget _buildImageUploadForQuestion(BriefQuestion question, bool isAnswered) {
+  Widget _buildImageUploadForQuestion(BuildContext context, BriefQuestion question, bool isAnswered) {
+    final l10n = AppLocalizations.of(context)!;
+
     if (question.id == 'inspiration') {
       return Obx(() {
         // Access the observable list to trigger reactivity
@@ -765,7 +788,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               onImageRemoved: (imagePath) {
                 controller.removeImage(imagePath);
               },
-              placeholder: 'Upload visual inspiration images (optional)',
+              placeholder: l10n.uploadInspirationImages,
             ),
 
             // Skip button - show when no images are selected
@@ -791,7 +814,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     ),
                   ),
                   child: Text(
-                    'Skip - No reference images',
+                    l10n.skipNoReferenceImages,
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: const Color(0xFF666666),
@@ -812,11 +835,12 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
         controller.selectImage(imagePath);
       },
       initialImage: null,
-      placeholder: 'Upload image',
+      placeholder: l10n.uploadImage,
     );
   }
 
   Widget _buildMultiPartColorSelection(
+    BuildContext context,
     BriefQuestion question,
     bool isAnswered,
   ) {
@@ -847,6 +871,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
           // Part 2: Prints
           _buildExpandableCategory(
+            context: context,
             categoryName: 'Prints',
             options: question.categories!['Prints'] ?? [],
             selectedValue: selectedPrint,
@@ -923,6 +948,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
           // Part 3: Techniques
           _buildExpandableCategory(
+            context: context,
             categoryName: 'Techniques',
             options: question.categories!['Techniques'] ?? [],
             selectedValue: selectedTechnique,
@@ -1005,6 +1031,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   // Expandable chip section for regular chip options
   // Expandable chip section for regular chip options
   Widget _buildExpandableChipSection({
+    required BuildContext context,
     required String questionId,
     required List<String> options,
     required List<String> selectedOptions,
@@ -1041,7 +1068,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
-                  selectedValue,
+                  controller.getLocalizedOption(context, selectedValue),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
@@ -1070,7 +1097,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                     ),
                   ),
                   child: Text(
-                    option,
+                    controller.getLocalizedOption(context, option),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
@@ -1131,7 +1158,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   ),
                 ),
                 child: Text(
-                  option,
+                  controller.getLocalizedOption(context, option),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
@@ -1171,6 +1198,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
   // Expandable category section for prints/techniques
   // Expandable category section for prints/techniques - UPDATED to match refining brief behavior
   Widget _buildExpandableCategory({
+    required BuildContext context,
     required String categoryName,
     required List<String> options,
     required String? selectedValue,
@@ -1192,7 +1220,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
           Padding(
             padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
             child: Text(
-              categoryName,
+              // Display localized category name, but categoryName remains in English internally
+              controller.getLocalizedCategoryName(context, categoryName),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -1219,7 +1248,9 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      hasCustom ? 'Custom' : selectedValue!,
+                      hasCustom
+                        ? controller.getLocalizedOption(context, 'Custom')
+                        : controller.getLocalizedOption(context, selectedValue!),
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
@@ -1251,7 +1282,7 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                             ),
                           ),
                           child: Text(
-                            option,
+                            controller.getLocalizedOption(context, option),
                             style: TextStyle(
                               fontSize: 13.sp,
                               fontWeight: FontWeight.w500,
@@ -1318,7 +1349,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                         ),
                       ),
                       child: Text(
-                        option,
+                        // Display localized option, but option remains in English internally
+                        controller.getLocalizedOption(context, option),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
