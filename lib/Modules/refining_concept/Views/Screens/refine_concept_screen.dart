@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -11,6 +12,7 @@ class RefineConceptScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       body: Column(
         children: [
@@ -32,25 +34,25 @@ class RefineConceptScreen extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Refining the Concept ",
+                    l10n.rcRefiningTheConcept,
                     textAlign: TextAlign.center,
                     style: osTextStyle18600,
                   ),
                   SizedBox(height: 12.h),
                   Text(
-                    "Now, to help me refine the 3D design",
+                    l10n.rcNowToHelpMeRefine,
                     textAlign: TextAlign.center,
                     style: gsTextStyle16600,
                   ),
                   SizedBox(height: 18.h),
                   Text(
-                    "And propose 3 concept options, I need a few more details.",
+                    l10n.rcProposeThreeConceptOptions,
                     textAlign: TextAlign.center,
                     style: osTextStyle165002,
                   ),
                   SizedBox(height: 50.h),
                   RoundButton(
-                    title: "Continue",
+                    title: l10n.rcContinue,
                     onTap: () {
                       // Pass through any arguments (like edit mode data) to the next screen
                       final arguments = Get.arguments;

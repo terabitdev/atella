@@ -1091,4 +1091,256 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get printsAndTechniquesUpdated =>
       'Your prints and techniques have been updated successfully';
+
+  @override
+  String get rcRefiningTheConcept => 'Refining the Concept';
+
+  @override
+  String get rcNowToHelpMeRefine => 'Now, to help me refine the 3D design';
+
+  @override
+  String get rcProposeThreeConceptOptions =>
+      'And propose 3 concept options, I need a few more details.';
+
+  @override
+  String get rcContinue => 'Continue';
+
+  @override
+  String get rcEnterYourCustomAnswer => 'Enter your custom answer...';
+
+  @override
+  String rcEnterCustomCategory(String category) {
+    return 'Enter custom $category...';
+  }
+
+  @override
+  String get rcGenerateDesign => 'Generate Design';
+
+  @override
+  String get rcQuestionGarmentType =>
+      'What fit are you aiming for? (multiple selection) 📏';
+
+  @override
+  String get rcQuestionSpecificFeatures =>
+      'Do you want to add special details? (multiple selection) ✂️';
+
+  @override
+  String get rcQuestionSeasonalConstraint =>
+      'Is there a seasonal constraint? 🌤️';
+
+  @override
+  String get rcQuestionTargetBudget =>
+      'What is your target budget per piece? 💵';
+
+  @override
+  String get rcQuestionFunctionalitiesValues =>
+      'Would you like to include any specific functionalities or values? 🧶';
+
+  @override
+  String get rcCategoryNecklines => 'Necklines';
+
+  @override
+  String get rcCategorySleeves => 'Sleeves';
+
+  @override
+  String get rcCategoryClosures => 'Closures';
+
+  @override
+  String get rcCategoryPockets => 'Pockets';
+
+  @override
+  String get rcCategoryWaist => 'Waist';
+
+  @override
+  String get rcCategoryLegs => 'Legs';
+
+  @override
+  String get rcCategoryFinishes => 'Finishes';
+
+  @override
+  String get rcOptionSlim => 'Slim';
+
+  @override
+  String get rcOptionOversized => 'Oversized';
+
+  @override
+  String get rcOptionRegular => 'Regular';
+
+  @override
+  String get rcOptionStraight => 'Straight';
+
+  @override
+  String get rcOptionFitted => 'Fitted';
+
+  @override
+  String get rcOptionTailored => 'Tailored';
+
+  @override
+  String get rcOptionCropped => 'Cropped';
+
+  @override
+  String get rcOptionRelaxed => 'Relaxed';
+
+  @override
+  String get rcOptionLong => 'Long';
+
+  @override
+  String get rcOptionCrew => 'Crew';
+
+  @override
+  String get rcOptionVNeck => 'V-neck';
+
+  @override
+  String get rcOptionSquare => 'Square';
+
+  @override
+  String get rcOptionHalfShoulder => 'Half-shoulder';
+
+  @override
+  String get rcOptionScoop => 'Scoop';
+
+  @override
+  String get rcOptionBoatNeck => 'Boat neck';
+
+  @override
+  String get rcOptionSleeveless => 'Sleeveless';
+
+  @override
+  String get rcOptionShortThreeQuarter => 'Short ¾';
+
+  @override
+  String get rcOptionPuff => 'Puff';
+
+  @override
+  String get rcOptionRaglan => 'Raglan';
+
+  @override
+  String get rcOptionCap => 'Cap';
+
+  @override
+  String get rcOptionZipper => 'Zipper (metal/plastic/invisible)';
+
+  @override
+  String get rcOptionButtons => 'Buttons';
+
+  @override
+  String get rcOptionHooks => 'Hooks';
+
+  @override
+  String get rcOptionVelcro => 'Velcro';
+
+  @override
+  String get rcOptionSnaps => 'Snaps';
+
+  @override
+  String get rcOptionPatch => 'Patch';
+
+  @override
+  String get rcOptionWelt => 'Welt';
+
+  @override
+  String get rcOptionFlap => 'Flap';
+
+  @override
+  String get rcOptionHidden => 'Hidden';
+
+  @override
+  String get rcOptionCargo => 'Cargo';
+
+  @override
+  String get rcOptionElastic => 'Elastic';
+
+  @override
+  String get rcOptionHighWaist => 'High-waist';
+
+  @override
+  String get rcOptionLowRise => 'Low-rise';
+
+  @override
+  String get rcOptionBelted => 'Belted';
+
+  @override
+  String get rcOptionDrawstring => 'Drawstring';
+
+  @override
+  String get rcOptionStraightLeg => 'Straight leg';
+
+  @override
+  String get rcOptionTapered => 'Tapered';
+
+  @override
+  String get rcOptionWideLeg => 'Wide leg';
+
+  @override
+  String get rcOptionBootcut => 'Bootcut';
+
+  @override
+  String get rcOptionFlared => 'Flared';
+
+  @override
+  String get rcOptionLining => 'Lining';
+
+  @override
+  String get rcOptionTopstitching => 'Topstitching';
+
+  @override
+  String get rcOptionEmbroidery => 'Embroidery';
+
+  @override
+  String get rcOptionLace => 'Lace';
+
+  @override
+  String get rcOptionSequins => 'Sequins';
+
+  @override
+  String get rcOptionAppliques => 'Appliqués';
+
+  @override
+  String get rcOptionSummer => 'Summer';
+
+  @override
+  String get rcOptionMidSeason => 'Mid-Season';
+
+  @override
+  String get rcOptionAllSeason => 'All-Season';
+
+  @override
+  String get rcOptionPriceRangeInEuro => 'Price Range In €';
+
+  @override
+  String get rcOptionIndicationOfMarketLevel =>
+      'An Indication Of The Market Level';
+
+  @override
+  String get rcOptionEntry => 'Entry';
+
+  @override
+  String get rcOptionMidRange => 'Mid-Range';
+
+  @override
+  String get rcOptionPremium => 'Premium';
+
+  @override
+  String get rcOptionOrganicFabric => 'Organic Fabric';
+
+  @override
+  String get rcOptionLocallyMade => 'Locally Made';
+
+  @override
+  String get rcOptionUpcycled => 'Upcycled';
+
+  @override
+  String get rcOptionUVProtection => 'UV Protection';
+
+  @override
+  String get rcOptionQuickDry => 'Quick-Dry';
+
+  @override
+  String get rcOptionWrinkleFree => 'Wrinkle-Free';
+
+  @override
+  String get rcOptionCustom => 'Custom';
+
+  @override
+  String get today => 'Today';
 }

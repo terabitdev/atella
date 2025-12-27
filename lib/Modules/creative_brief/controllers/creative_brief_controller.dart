@@ -733,7 +733,12 @@ class CreativeBriefController extends GetxController {
     final now = DateTime.now();
     final timeString =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-    _currentTime.value = 'Today, $timeString';
+    // Get localized "Today" text
+    final context = Get.context;
+    final todayText = context != null
+        ? AppLocalizations.of(context)?.today ?? 'Today'
+        : 'Today';
+    _currentTime.value = '$todayText, $timeString';
   }
 
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];

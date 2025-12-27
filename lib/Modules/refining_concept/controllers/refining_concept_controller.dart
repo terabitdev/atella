@@ -7,6 +7,8 @@ import 'package:atella/Modules/creative_brief/controllers/creative_brief_control
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/localization/refining_concept_localization_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -438,7 +440,12 @@ class RefiningConceptController extends GetxController {
     final now = DateTime.now();
     final timeString =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-    _currentTime.value = 'Today, $timeString';
+    // Get localized "Today" text
+    final context = Get.context;
+    final todayText = context != null
+        ? AppLocalizations.of(context)?.today ?? 'Today'
+        : 'Today';
+    _currentTime.value = '$todayText, $timeString';
   }
 
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
@@ -2135,5 +2142,50 @@ class RefiningConceptController extends GetxController {
         ],
       ),
     );
+  }
+
+  // ============================================================================
+  // LOCALIZATION HELPER METHODS
+  // ============================================================================
+  // These methods handle the presentation layer localization while keeping
+  // internal data storage and API communication in English
+
+  /// Get localized question text for display
+  String getLocalizedQuestionText(BuildContext context, String questionId) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getLocalizedQuestion(questionId);
+  }
+
+  /// Get localized category name for display
+  String getLocalizedCategoryName(BuildContext context, String categoryName) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getLocalizedCategory(categoryName);
+  }
+
+  /// Get localized option for display (single option)
+  String getLocalizedOption(BuildContext context, String englishOption) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getLocalizedOption(englishOption);
+  }
+
+  /// Get localized options for display (list of options)
+  List<String> getLocalizedOptions(BuildContext context, List<String> englishOptions) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getLocalizedOptions(englishOptions);
+  }
+
+  /// Get localized categories map for display
+  Map<String, List<String>> getLocalizedCategories(
+    BuildContext context,
+    Map<String, List<String>> englishCategories,
+  ) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getLocalizedCategories(englishCategories);
+  }
+
+  /// Convert localized option back to English for API/storage
+  String getEnglishOptionFromLocalized(BuildContext context, String localizedOption) {
+    final service = RefiningConceptLocalizationService(context);
+    return service.getEnglishOption(localizedOption);
   }
 }

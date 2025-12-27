@@ -1295,5 +1295,151 @@
   "printsAndTechniquesUpdated": "Your prints and techniques have been updated successfully",
   "@printsAndTechniquesUpdated": {
     "description": "Prints and techniques updated message"
+  },
+  "rcRefiningTheConcept": "Refining the Concept",
+  "@rcRefiningTheConcept": {
+    "description": "Title for refining concept screen"
+  },
+  "rcNowToHelpMeRefine": "Now, to help me refine the 3D design",
+  "@rcNowToHelpMeRefine": {
+    "description": "Subtitle for refining concept intro"
+  },
+  "rcProposeThreeConceptOptions": "And propose 3 concept options, I need a few more details.",
+  "@rcProposeThreeConceptOptions": {
+    "description": "Description text for refining concept intro"
+  },
+  "rcContinue": "Continue",
+  "@rcContinue": {
+    "description": "Continue button text for refining concept"
+  },
+  "rcEnterYourCustomAnswer": "Enter your custom answer...",
+  "@rcEnterYourCustomAnswer": {
+    "description": "Placeholder for custom answer input in refining concept"
+  },
+  "rcEnterCustomCategory": "Enter custom {category}...",
+  "@rcEnterCustomCategory": {
+    "description": "Placeholder for custom category input in refining concept",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "rcGenerateDesign": "Generate Design",
+  "@rcGenerateDesign": {
+    "description": "Button text to generate design in refining concept"
+  },
+  "rcQuestionGarmentType": "What fit are you aiming for? (multiple selection) 📏",
+  "@rcQuestionGarmentType": {
+    "description": "Refining Concept question: garment type/fit"
+  },
+  "rcQuestionSpecificFeatures": "Do you want to add special details? (multiple selection) ✂️",
+  "@rcQuestionSpecificFeatures": {
+    "description": "Refining Concept question: specific features"
+  },
+  "rcQuestionSeasonalConstraint": "Is there a seasonal constraint? 🌤️",
+  "@rcQuestionSeasonalConstraint": {
+    "description": "Refining Concept question: seasonal constraint"
+  },
+  "rcQuestionTargetBudget": "What is your target budget per piece? 💵",
+  "@rcQuestionTargetBudget": {
+    "description": "Refining Concept question: target budget"
+  },
+  "rcQuestionFunctionalitiesValues": "Would you like to include any specific functionalities or values? 🧶",
+  "@rcQuestionFunctionalitiesValues": {
+    "description": "Refining Concept question: functionalities or values"
+  },
+  "rcCategoryNecklines": "Necklines",
+  "@rcCategoryNecklines": {
+    "description": "Refining Concept category: Necklines"
+  },
+  "rcCategorySleeves": "Sleeves",
+  "@rcCategorySleeves": {
+    "description": "Refining Concept category: Sleeves"
+  },
+  "rcCategoryClosures": "Closures",
+  "@rcCategoryClosures": {
+    "description": "Refining Concept category: Closures"
+  },
+  "rcCategoryPockets": "Pockets",
+  "@rcCategoryPockets": {
+    "description": "Refining Concept category: Pockets"
+  },
+  "rcCategoryWaist": "Waist",
+  "@rcCategoryWaist": {
+    "description": "Refining Concept category: Waist"
+  },
+  "rcCategoryLegs": "Legs",
+  "@rcCategoryLegs": {
+    "description": "Refining Concept category: Legs"
+  },
+  "rcCategoryFinishes": "Finishes",
+  "@rcCategoryFinishes": {
+    "description": "Refining Concept category: Finishes"
+  },
+  "rcOptionSlim": "Slim",
+  "rcOptionOversized": "Oversized",
+  "rcOptionRegular": "Regular",
+  "rcOptionStraight": "Straight",
+  "rcOptionFitted": "Fitted",
+  "rcOptionTailored": "Tailored",
+  "rcOptionCropped": "Cropped",
+  "rcOptionRelaxed": "Relaxed",
+  "rcOptionLong": "Long",
+  "rcOptionCrew": "Crew",
+  "rcOptionVNeck": "V-neck",
+  "rcOptionSquare": "Square",
+  "rcOptionHalfShoulder": "Half-shoulder",
+  "rcOptionScoop": "Scoop",
+  "rcOptionBoatNeck": "Boat neck",
+  "rcOptionSleeveless": "Sleeveless",
+  "rcOptionShortThreeQuarter": "Short ¾",
+  "rcOptionPuff": "Puff",
+  "rcOptionRaglan": "Raglan",
+  "rcOptionCap": "Cap",
+  "rcOptionZipper": "Zipper (metal/plastic/invisible)",
+  "rcOptionButtons": "Buttons",
+  "rcOptionHooks": "Hooks",
+  "rcOptionVelcro": "Velcro",
+  "rcOptionSnaps": "Snaps",
+  "rcOptionPatch": "Patch",
+  "rcOptionWelt": "Welt",
+  "rcOptionFlap": "Flap",
+  "rcOptionHidden": "Hidden",
+  "rcOptionCargo": "Cargo",
+  "rcOptionElastic": "Elastic",
+  "rcOptionHighWaist": "High-waist",
+  "rcOptionLowRise": "Low-rise",
+  "rcOptionBelted": "Belted",
+  "rcOptionDrawstring": "Drawstring",
+  "rcOptionStraightLeg": "Straight leg",
+  "rcOptionTapered": "Tapered",
+  "rcOptionWideLeg": "Wide leg",
+  "rcOptionBootcut": "Bootcut",
+  "rcOptionFlared": "Flared",
+  "rcOptionLining": "Lining",
+  "rcOptionTopstitching": "Topstitching",
+  "rcOptionEmbroidery": "Embroidery",
+  "rcOptionLace": "Lace",
+  "rcOptionSequins": "Sequins",
+  "rcOptionAppliques": "Appliqués",
+  "rcOptionSummer": "Summer",
+  "rcOptionMidSeason": "Mid-Season",
+  "rcOptionAllSeason": "All-Season",
+  "rcOptionPriceRangeInEuro": "Price Range In €",
+  "rcOptionIndicationOfMarketLevel": "An Indication Of The Market Level",
+  "rcOptionEntry": "Entry",
+  "rcOptionMidRange": "Mid-Range",
+  "rcOptionPremium": "Premium",
+  "rcOptionOrganicFabric": "Organic Fabric",
+  "rcOptionLocallyMade": "Locally Made",
+  "rcOptionUpcycled": "Upcycled",
+  "rcOptionUVProtection": "UV Protection",
+  "rcOptionQuickDry": "Quick-Dry",
+  "rcOptionWrinkleFree": "Wrinkle-Free",
+  "rcOptionCustom": "Custom",
+  "today": "Today",
+  "@today": {
+    "description": "Today text for time display"
   }
 }

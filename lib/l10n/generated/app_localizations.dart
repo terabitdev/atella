@@ -2119,6 +2119,492 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your prints and techniques have been updated successfully'**
   String get printsAndTechniquesUpdated;
+
+  /// Title for refining concept screen
+  ///
+  /// In en, this message translates to:
+  /// **'Refining the Concept'**
+  String get rcRefiningTheConcept;
+
+  /// Subtitle for refining concept intro
+  ///
+  /// In en, this message translates to:
+  /// **'Now, to help me refine the 3D design'**
+  String get rcNowToHelpMeRefine;
+
+  /// Description text for refining concept intro
+  ///
+  /// In en, this message translates to:
+  /// **'And propose 3 concept options, I need a few more details.'**
+  String get rcProposeThreeConceptOptions;
+
+  /// Continue button text for refining concept
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get rcContinue;
+
+  /// Placeholder for custom answer input in refining concept
+  ///
+  /// In en, this message translates to:
+  /// **'Enter your custom answer...'**
+  String get rcEnterYourCustomAnswer;
+
+  /// Placeholder for custom category input in refining concept
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom {category}...'**
+  String rcEnterCustomCategory(String category);
+
+  /// Button text to generate design in refining concept
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Design'**
+  String get rcGenerateDesign;
+
+  /// Refining Concept question: garment type/fit
+  ///
+  /// In en, this message translates to:
+  /// **'What fit are you aiming for? (multiple selection) 📏'**
+  String get rcQuestionGarmentType;
+
+  /// Refining Concept question: specific features
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to add special details? (multiple selection) ✂️'**
+  String get rcQuestionSpecificFeatures;
+
+  /// Refining Concept question: seasonal constraint
+  ///
+  /// In en, this message translates to:
+  /// **'Is there a seasonal constraint? 🌤️'**
+  String get rcQuestionSeasonalConstraint;
+
+  /// Refining Concept question: target budget
+  ///
+  /// In en, this message translates to:
+  /// **'What is your target budget per piece? 💵'**
+  String get rcQuestionTargetBudget;
+
+  /// Refining Concept question: functionalities or values
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to include any specific functionalities or values? 🧶'**
+  String get rcQuestionFunctionalitiesValues;
+
+  /// Refining Concept category: Necklines
+  ///
+  /// In en, this message translates to:
+  /// **'Necklines'**
+  String get rcCategoryNecklines;
+
+  /// Refining Concept category: Sleeves
+  ///
+  /// In en, this message translates to:
+  /// **'Sleeves'**
+  String get rcCategorySleeves;
+
+  /// Refining Concept category: Closures
+  ///
+  /// In en, this message translates to:
+  /// **'Closures'**
+  String get rcCategoryClosures;
+
+  /// Refining Concept category: Pockets
+  ///
+  /// In en, this message translates to:
+  /// **'Pockets'**
+  String get rcCategoryPockets;
+
+  /// Refining Concept category: Waist
+  ///
+  /// In en, this message translates to:
+  /// **'Waist'**
+  String get rcCategoryWaist;
+
+  /// Refining Concept category: Legs
+  ///
+  /// In en, this message translates to:
+  /// **'Legs'**
+  String get rcCategoryLegs;
+
+  /// Refining Concept category: Finishes
+  ///
+  /// In en, this message translates to:
+  /// **'Finishes'**
+  String get rcCategoryFinishes;
+
+  /// No description provided for @rcOptionSlim.
+  ///
+  /// In en, this message translates to:
+  /// **'Slim'**
+  String get rcOptionSlim;
+
+  /// No description provided for @rcOptionOversized.
+  ///
+  /// In en, this message translates to:
+  /// **'Oversized'**
+  String get rcOptionOversized;
+
+  /// No description provided for @rcOptionRegular.
+  ///
+  /// In en, this message translates to:
+  /// **'Regular'**
+  String get rcOptionRegular;
+
+  /// No description provided for @rcOptionStraight.
+  ///
+  /// In en, this message translates to:
+  /// **'Straight'**
+  String get rcOptionStraight;
+
+  /// No description provided for @rcOptionFitted.
+  ///
+  /// In en, this message translates to:
+  /// **'Fitted'**
+  String get rcOptionFitted;
+
+  /// No description provided for @rcOptionTailored.
+  ///
+  /// In en, this message translates to:
+  /// **'Tailored'**
+  String get rcOptionTailored;
+
+  /// No description provided for @rcOptionCropped.
+  ///
+  /// In en, this message translates to:
+  /// **'Cropped'**
+  String get rcOptionCropped;
+
+  /// No description provided for @rcOptionRelaxed.
+  ///
+  /// In en, this message translates to:
+  /// **'Relaxed'**
+  String get rcOptionRelaxed;
+
+  /// No description provided for @rcOptionLong.
+  ///
+  /// In en, this message translates to:
+  /// **'Long'**
+  String get rcOptionLong;
+
+  /// No description provided for @rcOptionCrew.
+  ///
+  /// In en, this message translates to:
+  /// **'Crew'**
+  String get rcOptionCrew;
+
+  /// No description provided for @rcOptionVNeck.
+  ///
+  /// In en, this message translates to:
+  /// **'V-neck'**
+  String get rcOptionVNeck;
+
+  /// No description provided for @rcOptionSquare.
+  ///
+  /// In en, this message translates to:
+  /// **'Square'**
+  String get rcOptionSquare;
+
+  /// No description provided for @rcOptionHalfShoulder.
+  ///
+  /// In en, this message translates to:
+  /// **'Half-shoulder'**
+  String get rcOptionHalfShoulder;
+
+  /// No description provided for @rcOptionScoop.
+  ///
+  /// In en, this message translates to:
+  /// **'Scoop'**
+  String get rcOptionScoop;
+
+  /// No description provided for @rcOptionBoatNeck.
+  ///
+  /// In en, this message translates to:
+  /// **'Boat neck'**
+  String get rcOptionBoatNeck;
+
+  /// No description provided for @rcOptionSleeveless.
+  ///
+  /// In en, this message translates to:
+  /// **'Sleeveless'**
+  String get rcOptionSleeveless;
+
+  /// No description provided for @rcOptionShortThreeQuarter.
+  ///
+  /// In en, this message translates to:
+  /// **'Short ¾'**
+  String get rcOptionShortThreeQuarter;
+
+  /// No description provided for @rcOptionPuff.
+  ///
+  /// In en, this message translates to:
+  /// **'Puff'**
+  String get rcOptionPuff;
+
+  /// No description provided for @rcOptionRaglan.
+  ///
+  /// In en, this message translates to:
+  /// **'Raglan'**
+  String get rcOptionRaglan;
+
+  /// No description provided for @rcOptionCap.
+  ///
+  /// In en, this message translates to:
+  /// **'Cap'**
+  String get rcOptionCap;
+
+  /// No description provided for @rcOptionZipper.
+  ///
+  /// In en, this message translates to:
+  /// **'Zipper (metal/plastic/invisible)'**
+  String get rcOptionZipper;
+
+  /// No description provided for @rcOptionButtons.
+  ///
+  /// In en, this message translates to:
+  /// **'Buttons'**
+  String get rcOptionButtons;
+
+  /// No description provided for @rcOptionHooks.
+  ///
+  /// In en, this message translates to:
+  /// **'Hooks'**
+  String get rcOptionHooks;
+
+  /// No description provided for @rcOptionVelcro.
+  ///
+  /// In en, this message translates to:
+  /// **'Velcro'**
+  String get rcOptionVelcro;
+
+  /// No description provided for @rcOptionSnaps.
+  ///
+  /// In en, this message translates to:
+  /// **'Snaps'**
+  String get rcOptionSnaps;
+
+  /// No description provided for @rcOptionPatch.
+  ///
+  /// In en, this message translates to:
+  /// **'Patch'**
+  String get rcOptionPatch;
+
+  /// No description provided for @rcOptionWelt.
+  ///
+  /// In en, this message translates to:
+  /// **'Welt'**
+  String get rcOptionWelt;
+
+  /// No description provided for @rcOptionFlap.
+  ///
+  /// In en, this message translates to:
+  /// **'Flap'**
+  String get rcOptionFlap;
+
+  /// No description provided for @rcOptionHidden.
+  ///
+  /// In en, this message translates to:
+  /// **'Hidden'**
+  String get rcOptionHidden;
+
+  /// No description provided for @rcOptionCargo.
+  ///
+  /// In en, this message translates to:
+  /// **'Cargo'**
+  String get rcOptionCargo;
+
+  /// No description provided for @rcOptionElastic.
+  ///
+  /// In en, this message translates to:
+  /// **'Elastic'**
+  String get rcOptionElastic;
+
+  /// No description provided for @rcOptionHighWaist.
+  ///
+  /// In en, this message translates to:
+  /// **'High-waist'**
+  String get rcOptionHighWaist;
+
+  /// No description provided for @rcOptionLowRise.
+  ///
+  /// In en, this message translates to:
+  /// **'Low-rise'**
+  String get rcOptionLowRise;
+
+  /// No description provided for @rcOptionBelted.
+  ///
+  /// In en, this message translates to:
+  /// **'Belted'**
+  String get rcOptionBelted;
+
+  /// No description provided for @rcOptionDrawstring.
+  ///
+  /// In en, this message translates to:
+  /// **'Drawstring'**
+  String get rcOptionDrawstring;
+
+  /// No description provided for @rcOptionStraightLeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Straight leg'**
+  String get rcOptionStraightLeg;
+
+  /// No description provided for @rcOptionTapered.
+  ///
+  /// In en, this message translates to:
+  /// **'Tapered'**
+  String get rcOptionTapered;
+
+  /// No description provided for @rcOptionWideLeg.
+  ///
+  /// In en, this message translates to:
+  /// **'Wide leg'**
+  String get rcOptionWideLeg;
+
+  /// No description provided for @rcOptionBootcut.
+  ///
+  /// In en, this message translates to:
+  /// **'Bootcut'**
+  String get rcOptionBootcut;
+
+  /// No description provided for @rcOptionFlared.
+  ///
+  /// In en, this message translates to:
+  /// **'Flared'**
+  String get rcOptionFlared;
+
+  /// No description provided for @rcOptionLining.
+  ///
+  /// In en, this message translates to:
+  /// **'Lining'**
+  String get rcOptionLining;
+
+  /// No description provided for @rcOptionTopstitching.
+  ///
+  /// In en, this message translates to:
+  /// **'Topstitching'**
+  String get rcOptionTopstitching;
+
+  /// No description provided for @rcOptionEmbroidery.
+  ///
+  /// In en, this message translates to:
+  /// **'Embroidery'**
+  String get rcOptionEmbroidery;
+
+  /// No description provided for @rcOptionLace.
+  ///
+  /// In en, this message translates to:
+  /// **'Lace'**
+  String get rcOptionLace;
+
+  /// No description provided for @rcOptionSequins.
+  ///
+  /// In en, this message translates to:
+  /// **'Sequins'**
+  String get rcOptionSequins;
+
+  /// No description provided for @rcOptionAppliques.
+  ///
+  /// In en, this message translates to:
+  /// **'Appliqués'**
+  String get rcOptionAppliques;
+
+  /// No description provided for @rcOptionSummer.
+  ///
+  /// In en, this message translates to:
+  /// **'Summer'**
+  String get rcOptionSummer;
+
+  /// No description provided for @rcOptionMidSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Season'**
+  String get rcOptionMidSeason;
+
+  /// No description provided for @rcOptionAllSeason.
+  ///
+  /// In en, this message translates to:
+  /// **'All-Season'**
+  String get rcOptionAllSeason;
+
+  /// No description provided for @rcOptionPriceRangeInEuro.
+  ///
+  /// In en, this message translates to:
+  /// **'Price Range In €'**
+  String get rcOptionPriceRangeInEuro;
+
+  /// No description provided for @rcOptionIndicationOfMarketLevel.
+  ///
+  /// In en, this message translates to:
+  /// **'An Indication Of The Market Level'**
+  String get rcOptionIndicationOfMarketLevel;
+
+  /// No description provided for @rcOptionEntry.
+  ///
+  /// In en, this message translates to:
+  /// **'Entry'**
+  String get rcOptionEntry;
+
+  /// No description provided for @rcOptionMidRange.
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Range'**
+  String get rcOptionMidRange;
+
+  /// No description provided for @rcOptionPremium.
+  ///
+  /// In en, this message translates to:
+  /// **'Premium'**
+  String get rcOptionPremium;
+
+  /// No description provided for @rcOptionOrganicFabric.
+  ///
+  /// In en, this message translates to:
+  /// **'Organic Fabric'**
+  String get rcOptionOrganicFabric;
+
+  /// No description provided for @rcOptionLocallyMade.
+  ///
+  /// In en, this message translates to:
+  /// **'Locally Made'**
+  String get rcOptionLocallyMade;
+
+  /// No description provided for @rcOptionUpcycled.
+  ///
+  /// In en, this message translates to:
+  /// **'Upcycled'**
+  String get rcOptionUpcycled;
+
+  /// No description provided for @rcOptionUVProtection.
+  ///
+  /// In en, this message translates to:
+  /// **'UV Protection'**
+  String get rcOptionUVProtection;
+
+  /// No description provided for @rcOptionQuickDry.
+  ///
+  /// In en, this message translates to:
+  /// **'Quick-Dry'**
+  String get rcOptionQuickDry;
+
+  /// No description provided for @rcOptionWrinkleFree.
+  ///
+  /// In en, this message translates to:
+  /// **'Wrinkle-Free'**
+  String get rcOptionWrinkleFree;
+
+  /// No description provided for @rcOptionCustom.
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get rcOptionCustom;
+
+  /// Today text for time display
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get today;
 }
 
 class _AppLocalizationsDelegate

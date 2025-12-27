@@ -1112,4 +1112,257 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get printsAndTechniquesUpdated =>
       'Vos impressions et techniques ont été mises à jour avec succès';
+
+  @override
+  String get rcRefiningTheConcept => 'Affiner le concept';
+
+  @override
+  String get rcNowToHelpMeRefine =>
+      'Maintenant, pour m\'aider à affiner le design 3D';
+
+  @override
+  String get rcProposeThreeConceptOptions =>
+      'Et proposer 3 options de concept, j\'ai besoin de quelques détails supplémentaires.';
+
+  @override
+  String get rcContinue => 'Continuer';
+
+  @override
+  String get rcEnterYourCustomAnswer => 'Entrez votre réponse personnalisée...';
+
+  @override
+  String rcEnterCustomCategory(String category) {
+    return 'Entrez $category personnalisé...';
+  }
+
+  @override
+  String get rcGenerateDesign => 'Générer le design';
+
+  @override
+  String get rcQuestionGarmentType =>
+      'Quelle coupe visez-vous ? (sélection multiple) 📏';
+
+  @override
+  String get rcQuestionSpecificFeatures =>
+      'Voulez-vous ajouter des détails spéciaux ? (sélection multiple) ✂️';
+
+  @override
+  String get rcQuestionSeasonalConstraint =>
+      'Y a-t-il une contrainte saisonnière ? 🌤️';
+
+  @override
+  String get rcQuestionTargetBudget =>
+      'Quel est votre budget cible par pièce ? 💵';
+
+  @override
+  String get rcQuestionFunctionalitiesValues =>
+      'Souhaitez-vous inclure des fonctionnalités ou valeurs spécifiques ? 🧶';
+
+  @override
+  String get rcCategoryNecklines => 'Encolures';
+
+  @override
+  String get rcCategorySleeves => 'Manches';
+
+  @override
+  String get rcCategoryClosures => 'Fermetures';
+
+  @override
+  String get rcCategoryPockets => 'Poches';
+
+  @override
+  String get rcCategoryWaist => 'Taille';
+
+  @override
+  String get rcCategoryLegs => 'Jambes';
+
+  @override
+  String get rcCategoryFinishes => 'Finitions';
+
+  @override
+  String get rcOptionSlim => 'Ajusté';
+
+  @override
+  String get rcOptionOversized => 'Oversize';
+
+  @override
+  String get rcOptionRegular => 'Regular';
+
+  @override
+  String get rcOptionStraight => 'Droit';
+
+  @override
+  String get rcOptionFitted => 'Cintré';
+
+  @override
+  String get rcOptionTailored => 'Sur mesure';
+
+  @override
+  String get rcOptionCropped => 'Court';
+
+  @override
+  String get rcOptionRelaxed => 'Décontracté';
+
+  @override
+  String get rcOptionLong => 'Long';
+
+  @override
+  String get rcOptionCrew => 'Ras du cou';
+
+  @override
+  String get rcOptionVNeck => 'Col en V';
+
+  @override
+  String get rcOptionSquare => 'Carré';
+
+  @override
+  String get rcOptionHalfShoulder => 'Demi-épaule';
+
+  @override
+  String get rcOptionScoop => 'Évasé';
+
+  @override
+  String get rcOptionBoatNeck => 'Col bateau';
+
+  @override
+  String get rcOptionSleeveless => 'Sans manches';
+
+  @override
+  String get rcOptionShortThreeQuarter => 'Court ¾';
+
+  @override
+  String get rcOptionPuff => 'Bouffant';
+
+  @override
+  String get rcOptionRaglan => 'Raglan';
+
+  @override
+  String get rcOptionCap => 'Mancheron';
+
+  @override
+  String get rcOptionZipper => 'Fermeture éclair (métal/plastique/invisible)';
+
+  @override
+  String get rcOptionButtons => 'Boutons';
+
+  @override
+  String get rcOptionHooks => 'Crochets';
+
+  @override
+  String get rcOptionVelcro => 'Velcro';
+
+  @override
+  String get rcOptionSnaps => 'Pressions';
+
+  @override
+  String get rcOptionPatch => 'Plaquée';
+
+  @override
+  String get rcOptionWelt => 'Passepoilée';
+
+  @override
+  String get rcOptionFlap => 'À rabat';
+
+  @override
+  String get rcOptionHidden => 'Cachée';
+
+  @override
+  String get rcOptionCargo => 'Cargo';
+
+  @override
+  String get rcOptionElastic => 'Élastique';
+
+  @override
+  String get rcOptionHighWaist => 'Taille haute';
+
+  @override
+  String get rcOptionLowRise => 'Taille basse';
+
+  @override
+  String get rcOptionBelted => 'Avec ceinture';
+
+  @override
+  String get rcOptionDrawstring => 'Cordon de serrage';
+
+  @override
+  String get rcOptionStraightLeg => 'Jambe droite';
+
+  @override
+  String get rcOptionTapered => 'Fuselé';
+
+  @override
+  String get rcOptionWideLeg => 'Jambe large';
+
+  @override
+  String get rcOptionBootcut => 'Évasé';
+
+  @override
+  String get rcOptionFlared => 'Évasé';
+
+  @override
+  String get rcOptionLining => 'Doublure';
+
+  @override
+  String get rcOptionTopstitching => 'Surpiqûre';
+
+  @override
+  String get rcOptionEmbroidery => 'Broderie';
+
+  @override
+  String get rcOptionLace => 'Dentelle';
+
+  @override
+  String get rcOptionSequins => 'Paillettes';
+
+  @override
+  String get rcOptionAppliques => 'Appliqués';
+
+  @override
+  String get rcOptionSummer => 'Été';
+
+  @override
+  String get rcOptionMidSeason => 'Mi-saison';
+
+  @override
+  String get rcOptionAllSeason => 'Toute saison';
+
+  @override
+  String get rcOptionPriceRangeInEuro => 'Fourchette de prix en €';
+
+  @override
+  String get rcOptionIndicationOfMarketLevel =>
+      'Une indication du niveau de marché';
+
+  @override
+  String get rcOptionEntry => 'Entrée de gamme';
+
+  @override
+  String get rcOptionMidRange => 'Milieu de gamme';
+
+  @override
+  String get rcOptionPremium => 'Premium';
+
+  @override
+  String get rcOptionOrganicFabric => 'Tissu biologique';
+
+  @override
+  String get rcOptionLocallyMade => 'Fabriqué localement';
+
+  @override
+  String get rcOptionUpcycled => 'Recyclé';
+
+  @override
+  String get rcOptionUVProtection => 'Protection UV';
+
+  @override
+  String get rcOptionQuickDry => 'Séchage rapide';
+
+  @override
+  String get rcOptionWrinkleFree => 'Anti-froissement';
+
+  @override
+  String get rcOptionCustom => 'Personnalisé';
+
+  @override
+  String get today => 'Aujourd\'hui';
 }

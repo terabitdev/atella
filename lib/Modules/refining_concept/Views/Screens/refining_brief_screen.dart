@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Modules/refining_concept/controllers/refining_concept_controller.dart';
 import 'package:atella/Modules/creative_brief/Views/Widgets/text_input_send_widget.dart';
@@ -16,6 +17,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     SystemChrome.setSystemUIOverlayStyle(
       const SystemUiOverlayStyle(
         statusBarColor: Colors.transparent,
@@ -29,7 +31,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       body: Column(
         children: [
           AppHeader(
-            title: 'Refining the Concept',
+            title: l10n.rcRefiningTheConcept,
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
             onBack: () => Navigator.of(context).pop(),
@@ -54,6 +56,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             final customInfo = controller.getAnyCustomSelectedCategory();
             if (customInfo != null) {
               return _buildBottomCategorizedCustomInput(
+                l10n,
                 customInfo['questionId']!,
                 customInfo['categoryName']!,
               );
@@ -62,14 +65,14 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             // Show custom input if custom is selected for ANY regular chip question
             final customQuestionId = controller.getAnyCustomSelectedQuestion();
             if (customQuestionId != null) {
-              return _buildBottomCustomInput();
+              return _buildBottomCustomInput(l10n);
             }
 
             // Show button when all questions are answered (temporary selections will auto-confirm)
             final allQuestionsAnswered =
                 controller.answers.length >= controller.questions.length;
             if (allQuestionsAnswered) {
-              return _buildBottomButton();
+              return _buildBottomButton(l10n);
             }
 
             return const SizedBox.shrink();
@@ -111,7 +114,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
           return Column(
             children: [
-              _buildQuestionItem(question, index),
+              _buildQuestionItem(context, question, index),
               // Show animation below current unanswered question's answers
               if (controller.shouldShowAnimationAfterQuestion(index))
                 _buildLottieAnimation(),
@@ -180,7 +183,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     return const SizedBox.shrink();
   }
 
-  Widget _buildQuestionItem(BriefQuestion question, int index) {
+  Widget _buildQuestionItem(BuildContext context, BriefQuestion question, int index) {
     final isAnswered = controller.isQuestionAnswered(question.id);
     final answer = controller.getAnswer(question.id);
 
@@ -207,7 +210,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
               children: [
                 Expanded(
                   child: Text(
-                    question.question,
+                    // Display localized question text, but question.id remains in English internally
+                    controller.getLocalizedQuestionText(context, question.id),
                     style: TextStyle(
                       fontSize: 15.sp,
                       fontWeight: FontWeight.w600,
@@ -240,11 +244,11 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
 
           // Answer Options
           if (question.type == 'chips')
-            _buildChipOptions(question, isAnswered, answer),
+            _buildChipOptions(context, question, isAnswered, answer),
 
           // Answer Options for categorized chips
           if (question.type == 'chips_categorized')
-            _buildCategorizedChipOptions(question, isAnswered, answer),
+            _buildCategorizedChipOptions(context, question, isAnswered, answer),
 
           // Show custom answer if answered with custom text
           // ONLY for regular chips (not categorized - those show custom within categories)
@@ -256,6 +260,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildChipOptions(
+    BuildContext context,
     BriefQuestion question,
     bool isAnswered,
     BriefAnswer? answer,
@@ -270,6 +275,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
             : (latestAnswer?.selectedOptions ?? []);
 
         return _buildExpandableMultiSelectSection(
+          context: context,
           questionId: question.id,
           options: question.options,
           selectedOptions: selectedOptions,
@@ -287,6 +293,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       final selectedOptions = latestAnswer?.selectedOptions ?? [];
 
       return _buildExpandableChipSection(
+        context: context,
         questionId: question.id,
         options: question.options,
         selectedOptions: selectedOptions,
@@ -298,6 +305,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildCategorizedChipOptions(
+    BuildContext context,
     BriefQuestion question,
     bool isAnswered,
     BriefAnswer? answer,
@@ -310,6 +318,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: question.categories!.entries.map((category) {
         return _buildCategorySection(
+          context: context,
           categoryName: category.key,
           options: category.value,
           question: question,
@@ -321,6 +330,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildCategorySection({
+    required BuildContext context,
     required String categoryName,
     required List<String> options,
     required BriefQuestion question,
@@ -328,6 +338,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     required BriefAnswer? answer,
   }) {
     return _buildExpandableCategorizedSection(
+      context: context,
       questionId: question.id,
       categoryName: categoryName,
       options: options,
@@ -342,6 +353,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   // Expandable categorized section - matching creative brief behavior
   // Expandable categorized section - matching creative brief behavior
   Widget _buildExpandableCategorizedSection({
+    required BuildContext context,
     required String questionId,
     required String categoryName,
     required List<String> options,
@@ -452,7 +464,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           Padding(
             padding: EdgeInsets.only(bottom: 8.h, top: 8.h),
             child: Text(
-              categoryName,
+              // Display localized category name, but categoryName remains in English internally
+              controller.getLocalizedCategoryName(context, categoryName),
               style: TextStyle(
                 fontSize: 14.sp,
                 fontWeight: FontWeight.w600,
@@ -479,7 +492,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                       borderRadius: BorderRadius.circular(20.r),
                     ),
                     child: Text(
-                      selectedValue,
+                      // Display localized option, but selectedValue remains in English internally
+                      controller.getLocalizedOption(context, selectedValue),
                       style: TextStyle(
                         fontSize: 13.sp,
                         fontWeight: FontWeight.w500,
@@ -508,7 +522,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                         ),
                       ),
                       child: Text(
-                        option,
+                        // Display localized option, but option remains in English internally
+                        controller.getLocalizedOption(context, option),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -589,7 +604,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                         ),
                       ),
                       child: Text(
-                        option,
+                        // Display localized option, but option remains in English internally
+                        controller.getLocalizedOption(context, option),
                         style: TextStyle(
                           fontSize: 13.sp,
                           fontWeight: FontWeight.w500,
@@ -678,7 +694,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
     });
   }
 
-  Widget _buildBottomCustomInput() {
+  Widget _buildBottomCustomInput(AppLocalizations l10n) {
     return Obx(() {
       // FIXED: Only show custom input when custom is selected
       if (controller.isCustomSelectedForCurrentQuestion()) {
@@ -686,7 +702,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
           padding: EdgeInsets.all(24.w),
           child: TextInputWithSend(
             controller: controller.customController,
-            placeholder: 'Enter your custom answer...',
+            placeholder: l10n.rcEnterYourCustomAnswer,
             onSend: () {
               controller.submitCustomAnswer();
             },
@@ -699,6 +715,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   }
 
   Widget _buildBottomCategorizedCustomInput(
+    AppLocalizations l10n,
     String questionId,
     String categoryName,
   ) {
@@ -724,18 +741,18 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       padding: EdgeInsets.all(24.w),
       child: TextInputWithSend(
         controller: textController,
-        placeholder: 'Enter custom ${categoryName.toLowerCase()}...',
+        placeholder: l10n.rcEnterCustomCategory(categoryName.toLowerCase()),
         onSend: onSend,
         isLoading: controller.isTextLoading,
       ),
     );
   }
 
-  Widget _buildBottomButton() {
+  Widget _buildBottomButton(AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
       child: RoundButton(
-        title: 'Generate Design',
+        title: l10n.rcGenerateDesign,
         onTap: () {
           controller.proceedToDesignGeneration();
         },
@@ -748,6 +765,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   // Expandable chip section for single-select chip options - matching creative brief behavior
   // Expandable chip section for single-select chip options - matching creative brief behavior
   Widget _buildExpandableChipSection({
+    required BuildContext context,
     required String questionId,
     required List<String> options,
     required List<String> selectedOptions,
@@ -785,7 +803,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   borderRadius: BorderRadius.circular(20.r),
                 ),
                 child: Text(
-                  selectedValue,
+                  // Display localized option, but selectedValue remains in English internally
+                  controller.getLocalizedOption(context, selectedValue),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
@@ -814,7 +833,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     ),
                   ),
                   child: Text(
-                    option,
+                    // Display localized option, but option remains in English internally
+                    controller.getLocalizedOption(context, option),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
@@ -880,7 +900,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                 ),
                 child: Text(
-                  option,
+                  // Display localized option, but option remains in English internally
+                  controller.getLocalizedOption(context, option),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
@@ -920,6 +941,7 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   // Expandable section for multi-select questions - matching creative brief behavior
   // Expandable section for multi-select questions - matching creative brief behavior
   Widget _buildExpandableMultiSelectSection({
+    required BuildContext context,
     required String questionId,
     required List<String> options,
     required List<String> selectedOptions,
@@ -957,7 +979,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     borderRadius: BorderRadius.circular(20.r),
                   ),
                   child: Text(
-                    selectedValue,
+                    // Display localized option, but selectedValue remains in English internally
+                    controller.getLocalizedOption(context, selectedValue),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
@@ -985,7 +1008,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                     ),
                   ),
                   child: Text(
-                    option,
+                    // Display localized option, but option remains in English internally
+                    controller.getLocalizedOption(context, option),
                     style: TextStyle(
                       fontSize: 13.sp,
                       fontWeight: FontWeight.w500,
@@ -1046,7 +1070,8 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
                   ),
                 ),
                 child: Text(
-                  option,
+                  // Display localized option, but option remains in English internally
+                  controller.getLocalizedOption(context, option),
                   style: TextStyle(
                     fontSize: 13.sp,
                     fontWeight: FontWeight.w500,
