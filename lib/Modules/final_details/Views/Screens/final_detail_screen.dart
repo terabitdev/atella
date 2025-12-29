@@ -10,13 +10,15 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:lottie/lottie.dart'; // Add this import
+import 'package:lottie/lottie.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class FinalDetailsScreen extends GetView<FinalDetailsController> {
   const FinalDetailsScreen({Key? key}) : super(key: key);
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       resizeToAvoidBottomInset: false,
@@ -24,7 +26,7 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
       body: Column(
         children: [
           AppHeader(
-            title: 'Final Details',
+            title: l10n.fdFinalDetails,
             timeTextGetter: () => controller.currentTime,
             titleStyle: qTextStyle14600,
             onBack: () => Navigator.of(context).pop(),
@@ -48,12 +50,17 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
         if (controller.isEditMode) {
           return Padding(
             padding: const EdgeInsets.all(24),
-            child: GenerateRoundButton(
-              title: 'Generate',
-              onTap: controller.generateDesign,
-              color: AppColors.buttonColor,
-              imagePath: generateIcon,
-              loading: controller.isLoading,
+            child: Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return GenerateRoundButton(
+                  title: l10n.fdGenerate,
+                  onTap: controller.generateDesign,
+                  color: AppColors.buttonColor,
+                  imagePath: generateIcon,
+                  loading: controller.isLoading,
+                );
+              }
             ),
           );
         }
@@ -77,24 +84,34 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
           // Only show generate button for question 4 (no duplicate text field since it's inline)
           return Padding(
             padding: const EdgeInsets.all(24),
-            child: GenerateRoundButton(
-              title: 'Generate',
-              onTap: controller.generateDesign,
-              color: AppColors.buttonColor,
-              imagePath: generateIcon,
-              loading: controller.isLoading,
+            child: Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return GenerateRoundButton(
+                  title: l10n.fdGenerate,
+                  onTap: controller.generateDesign,
+                  color: AppColors.buttonColor,
+                  imagePath: generateIcon,
+                  loading: controller.isLoading,
+                );
+              }
             ),
           );
         } else if (isOnQuestion3 && hasAnyFeatureSelected && !hasSelectedOther) {
           // Show generate button when desired_features is answered with any option except "Other"
           return Padding(
             padding: const EdgeInsets.all(24),
-            child: GenerateRoundButton(
-              title: 'Generate',
-              onTap: controller.generateDesign,
-              color: AppColors.buttonColor,
-              imagePath: generateIcon,
-              loading: controller.isLoading,
+            child: Builder(
+              builder: (context) {
+                final l10n = AppLocalizations.of(context)!;
+                return GenerateRoundButton(
+                  title: l10n.fdGenerate,
+                  onTap: controller.generateDesign,
+                  color: AppColors.buttonColor,
+                  imagePath: generateIcon,
+                  loading: controller.isLoading,
+                );
+              }
             ),
           );
         } else {
@@ -154,37 +171,39 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     bool isCurrentQuestion,
     int index,
   ) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: 32),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (index < 3) _buildSectionTitle(question.id),
-          Container(
-            padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
-            decoration: BoxDecoration(
-              color: const Color(0xFFF8F9FA),
-              borderRadius: BorderRadius.circular(12.r),
-              border: Border.all(
-                color: isAnswered
-                    ? AppColors.buttonColor.withValues(alpha: 0.3)
-                    : const Color(0xFFE8E8E8),
-                width: 1,
-              ),
-            ),
-            child: Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Expanded(
-                  child: Text(
-                    question.question,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      fontWeight: FontWeight.w500,
-                      color: Colors.black87,
-                    ),
+    return Builder(
+      builder: (context) {
+        return Container(
+          margin: const EdgeInsets.only(bottom: 32),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (index < 3) _buildSectionTitle(question.id),
+              Container(
+                padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+                decoration: BoxDecoration(
+                  color: const Color(0xFFF8F9FA),
+                  borderRadius: BorderRadius.circular(12.r),
+                  border: Border.all(
+                    color: isAnswered
+                        ? AppColors.buttonColor.withValues(alpha: 0.3)
+                        : const Color(0xFFE8E8E8),
+                    width: 1,
                   ),
                 ),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Expanded(
+                      child: Text(
+                        controller.getLocalizedQuestionText(context, question.id),
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w500,
+                          color: Colors.black87,
+                        ),
+                      ),
+                    ),
                 if (isAnswered) ...[
                   SizedBox(width: 12.w),
                   Container(
@@ -212,28 +231,35 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
         ],
       ),
     );
+      }
+    );
   }
 
   Widget _buildSectionTitle(String questionId) {
-    String title = '';
-    switch (questionId) {
-      case 'target_season':
-        title = 'Target Season:';
-        break;
-      case 'target_budget':
-        title = 'Target Budget per Piece:';
-        break;
-      case 'desired_features':
-        title = 'Desired Features or Values:';
-        break;
-    }
+    return Builder(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        String title = '';
+        switch (questionId) {
+          case 'target_season':
+            title = l10n.fdTargetSeason;
+            break;
+          case 'target_budget':
+            title = l10n.fdTargetBudget;
+            break;
+          case 'desired_features':
+            title = l10n.fdDesiredFeatures;
+            break;
+        }
 
-    return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      child: Text(
-        title,
-        style: qTextStyle14600.copyWith(color: AppColors.buttonColor),
-      ),
+        return Container(
+          margin: const EdgeInsets.only(bottom: 16),
+          child: Text(
+            title,
+            style: qTextStyle14600.copyWith(color: AppColors.buttonColor),
+          ),
+        );
+      }
     );
   }
 
@@ -243,21 +269,25 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     bool isCurrentQuestion,
   ) {
     return Obx(() {
-        return Column(
-          children: [
-            ...question.options.map((option) {
-              if (option == 'Other: ?') {
-                return _buildOtherOption(question, option);
-              }
+        return Builder(
+          builder: (context) {
+            return Column(
+              children: [
+                ...question.options.map((option) {
+                  if (option == 'Other: ?') {
+                    return _buildOtherOption(question, option);
+                  }
 
-              return CustomCheckboxWidget(
-                text: option,
-                isSelected: controller.isOptionSelected(question.id, option),
-                onTap: () => controller.toggleOption(question.id, option),
-                allowMultiple: question.allowMultiple,
-              );
-            }).toList(),
-          ],
+                  return CustomCheckboxWidget(
+                    text: controller.getLocalizedOption(context, option),
+                    isSelected: controller.isOptionSelected(question.id, option),
+                    onTap: () => controller.toggleOption(question.id, option),
+                    allowMultiple: question.allowMultiple,
+                  );
+                }).toList(),
+              ],
+            );
+          }
         );
     });
   }
@@ -266,58 +296,67 @@ class FinalDetailsScreen extends GetView<FinalDetailsController> {
     return Obx(() {
         final isSelected = controller.isOptionSelected(question.id, option);
 
-        return CustomCheckboxWidget(
-          text: option,
-          isSelected: isSelected,
-          onTap: () => controller.toggleOption(question.id, option),
-          allowMultiple: question.allowMultiple,
+        return Builder(
+          builder: (context) {
+            return CustomCheckboxWidget(
+              text: controller.getLocalizedOption(context, option),
+              isSelected: isSelected,
+              onTap: () => controller.toggleOption(question.id, option),
+              allowMultiple: question.allowMultiple,
+            );
+          }
         );
     });
   }
 
   
   Widget _buildInlineTextField() {
-    return Container(
-      padding: EdgeInsets.symmetric(horizontal: 4.w),
-      child: SizedBox(
-        height: 45.h,
-        child: TextField(
-          controller: controller.customInputController,
-          style: authLableTextTextStyle144001,
-          decoration: InputDecoration(
-            filled: true,
-            fillColor: const Color.fromRGBO(236, 239, 246, 1),
-            hintText: "Type your custom features here...",
-            hintStyle: authLableTextTextStyle144002,
-            enabledBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: const BorderSide(
-                color: Color.fromRGBO(233, 233, 233, 1),
-                width: 1.2,
+    return Builder(
+      builder: (context) {
+        final l10n = AppLocalizations.of(context)!;
+        return Container(
+          padding: EdgeInsets.symmetric(horizontal: 4.w),
+          child: SizedBox(
+            height: 45.h,
+            child: TextField(
+              controller: controller.customInputController,
+              style: authLableTextTextStyle144001,
+              decoration: InputDecoration(
+                filled: true,
+                fillColor: const Color.fromRGBO(236, 239, 246, 1),
+                hintText: l10n.fdCustomFeaturesHint,
+                hintStyle: authLableTextTextStyle144002,
+                enabledBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    color: Color.fromRGBO(233, 233, 233, 1),
+                    width: 1.2,
+                  ),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderRadius: BorderRadius.circular(12.r),
+                  borderSide: const BorderSide(
+                    color: AppColors.buttonColor,
+                    width: 1.2,
+                  ),
+                ),
+                contentPadding: EdgeInsets.symmetric(
+                  vertical: 12.h,
+                  horizontal: 12.w,
+                ),
               ),
-            ),
-            focusedBorder: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(12.r),
-              borderSide: const BorderSide(
-                color: AppColors.buttonColor,
-                width: 1.2,
-              ),
-            ),
-            contentPadding: EdgeInsets.symmetric(
-              vertical: 12.h,
-              horizontal: 12.w,
+              onSubmitted: (value) {
+                if (value.trim().isNotEmpty) {
+                  controller.submitTextAnswer(
+                    'additional_details',
+                    controller.customInputController,
+                  );
+                }
+              },
             ),
           ),
-          onSubmitted: (value) {
-            if (value.trim().isNotEmpty) {
-              controller.submitTextAnswer(
-                'additional_details',
-                controller.customInputController,
-              );
-            }
-          },
-        ),
-      ),
+        );
+      }
     );
   }
 

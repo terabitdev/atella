@@ -1570,5 +1570,149 @@
   "cbDialogEnterCustomTechnique": "Enter custom technique...",
   "@cbDialogEnterCustomTechnique": {
     "description": "Placeholder for custom technique input - Creative Brief"
+  },
+  "fdFinalDetails": "Final Details",
+  "@fdFinalDetails": {
+    "description": "Final Details screen title"
+  },
+  "fdFinalDetailsToProvide": "Final Details to Provide",
+  "@fdFinalDetailsToProvide": {
+    "description": "Final Details onboard screen title"
+  },
+  "fdContinue": "Continue",
+  "@fdContinue": {
+    "description": "Continue button - Final Details"
+  },
+  "fdGenerate": "Generate",
+  "@fdGenerate": {
+    "description": "Generate button - Final Details"
+  },
+  "fdTargetSeason": "Target Season:",
+  "@fdTargetSeason": {
+    "description": "Target Season section title"
+  },
+  "fdTargetBudget": "Target Budget per Piece:",
+  "@fdTargetBudget": {
+    "description": "Target Budget section title"
+  },
+  "fdDesiredFeatures": "Desired Features or Values:",
+  "@fdDesiredFeatures": {
+    "description": "Desired Features section title"
+  },
+  "fdCustomFeaturesHint": "Type your custom features here...",
+  "@fdCustomFeaturesHint": {
+    "description": "Placeholder for custom features input"
+  },
+  "fdQuestionSeason": "Great! Let's make sure your piece fits perfectly with the season. What kind of weather will it be designed for?",
+  "@fdQuestionSeason": {
+    "description": "Question 1 - Target Season"
+  },
+  "fdOptionSummer": "Summer (Lightweight, Short Or Roll-Up Sleeves)",
+  "@fdOptionSummer": {
+    "description": "Season option - Summer"
+  },
+  "fdOptionMidSeason": "Mid-Season",
+  "@fdOptionMidSeason": {
+    "description": "Season option - Mid-Season"
+  },
+  "fdOptionAllSeason": "All-Season (Layer-Friendly)",
+  "@fdOptionAllSeason": {
+    "description": "Season option - All-Season"
+  },
+  "fdQuestionBudget": "Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.",
+  "@fdQuestionBudget": {
+    "description": "Question 2 - Target Budget"
+  },
+  "fdOptionEntryLevel": "Entry-Level (€15-30 Production / €35-60 Retail)",
+  "@fdOptionEntryLevel": {
+    "description": "Budget option - Entry Level"
+  },
+  "fdOptionMidRange": "Mid-Range (€30-50 Production / €60-120 Retail)",
+  "@fdOptionMidRange": {
+    "description": "Budget option - Mid Range"
+  },
+  "fdOptionPremium": "Premium (€60+ Production / €120+ Retail)",
+  "@fdOptionPremium": {
+    "description": "Budget option - Premium"
+  },
+  "fdQuestionFeatures": "Would you like to include any special values or features that matter to you or your brand? I can make sure they're part of the final concept",
+  "@fdQuestionFeatures": {
+    "description": "Question 3 - Desired Features"
+  },
+  "fdOptionOrganicFabric": "Organic Fabric",
+  "@fdOptionOrganicFabric": {
+    "description": "Feature option - Organic Fabric"
+  },
+  "fdOptionUpcycled": "Upcycled Materials",
+  "@fdOptionUpcycled": {
+    "description": "Feature option - Upcycled Materials"
+  },
+  "fdOptionLocallyMade": "Locally Made (Europe)",
+  "@fdOptionLocallyMade": {
+    "description": "Feature option - Locally Made"
+  },
+  "fdOptionUVProtection": "UV Protection",
+  "@fdOptionUVProtection": {
+    "description": "Feature option - UV Protection"
+  },
+  "fdOptionQuickDry": "Quick-Dry",
+  "@fdOptionQuickDry": {
+    "description": "Feature option - Quick-Dry"
+  },
+  "fdOptionWrinkleFree": "Wrinkle-Free",
+  "@fdOptionWrinkleFree": {
+    "description": "Feature option - Wrinkle-Free"
+  },
+  "fdOptionOther": "Other: ?",
+  "@fdOptionOther": {
+    "description": "Feature option - Other/Custom"
+  },
+  "fdQuestionAdditional": "Cool — feel free to type in anything else you have in mind!",
+  "@fdQuestionAdditional": {
+    "description": "Question 4 - Additional Details"
+  },
+  "fdSnackbarRegeneratingDesigns": "Regenerating Designs!",
+  "@fdSnackbarRegeneratingDesigns": {
+    "description": "Snackbar title when regenerating designs"
+  },
+  "fdSnackbarRegeneratingMessage": "Creating 3 new designs based on your updated preferences...",
+  "@fdSnackbarRegeneratingMessage": {
+    "description": "Snackbar message when regenerating designs"
+  },
+  "fdSnackbarGeneratingDesigns": "Generating Designs!",
+  "@fdSnackbarGeneratingDesigns": {
+    "description": "Snackbar title when generating designs"
+  },
+  "fdSnackbarGeneratingMessage": "Creating 3 unique designs based on your preferences...",
+  "@fdSnackbarGeneratingMessage": {
+    "description": "Snackbar message when generating designs"
+  },
+  "fdSnackbarExtraDesigns": "Extra Designs Added!",
+  "@fdSnackbarExtraDesigns": {
+    "description": "Snackbar title when extra designs added"
+  },
+  "fdSnackbarExtraDesignsMessage": "20 extra designs have been added to your account.",
+  "@fdSnackbarExtraDesignsMessage": {
+    "description": "Snackbar message when extra designs added"
+  },
+  "fdDialogLimitExceeded": "Limit Exceeded",
+  "@fdDialogLimitExceeded": {
+    "description": "Limit exceeded dialog title"
+  },
+  "fdDialogLimitMessage": "You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.",
+  "@fdDialogLimitMessage": {
+    "description": "Limit exceeded dialog message"
+  },
+  "fdDialogGetExtraDesigns": "Get Extra Designs (€3.99)",
+  "@fdDialogGetExtraDesigns": {
+    "description": "Get extra designs button text"
+  },
+  "fdDialogUpgradePlan": "Upgrade Plan",
+  "@fdDialogUpgradePlan": {
+    "description": "Upgrade plan button text"
+  },
+  "fdDialogMaybeLater": "Maybe Later",
+  "@fdDialogMaybeLater": {
+    "description": "Maybe later button text"
   }
 }

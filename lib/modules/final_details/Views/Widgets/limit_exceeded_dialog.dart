@@ -1,6 +1,7 @@
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class LimitExceededDialog extends StatelessWidget {
   final VoidCallback onGetExtraDesigns;
@@ -16,6 +17,8 @@ class LimitExceededDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       shape: RoundedRectangleBorder(
         borderRadius: BorderRadius.circular(16),
@@ -34,13 +37,13 @@ class LimitExceededDialog extends StatelessWidget {
             SizedBox(height: 16.h),
             // Title
             Text(
-              'Limit Exceeded',
+              l10n.fdDialogLimitExceeded,
               style: ssTitleTextTextStyle186004,
             ),
             SizedBox(height: 12.h),
             // Message
             Text(
-              'You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.',
+              l10n.fdDialogLimitMessage,
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
@@ -62,7 +65,7 @@ class LimitExceededDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Get Extra Designs (€3.99)',
+                      l10n.fdDialogGetExtraDesigns,
                       style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -86,7 +89,7 @@ class LimitExceededDialog extends StatelessWidget {
                       ),
                     ),
                     child: Text(
-                      'Upgrade Plan',
+                      l10n.fdDialogUpgradePlan,
                       style:  ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -100,7 +103,7 @@ class LimitExceededDialog extends StatelessWidget {
                 TextButton(
                   onPressed: onMaybeLater,
                   child: Text(
-                    'Maybe Later',
+                    l10n.fdDialogMaybeLater,
                     style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,

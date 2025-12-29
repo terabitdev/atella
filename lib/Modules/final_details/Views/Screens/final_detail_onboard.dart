@@ -5,12 +5,15 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class FinalDetailOnboard extends StatelessWidget {
   const FinalDetailOnboard({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: Column(
         children: [
@@ -32,13 +35,13 @@ class FinalDetailOnboard extends StatelessWidget {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
                   Text(
-                    "Final Details to Provide ",
+                    l10n.fdFinalDetailsToProvide,
                     textAlign: TextAlign.center,
                     style: osTextStyle18600,
                   ),
                   SizedBox(height: 70.h),
                   RoundButton(
-                    title: "Continue",
+                    title: l10n.fdContinue,
                     onTap: () {
                       // Pass through any arguments (like edit mode data) to the next screen
                       final arguments = Get.arguments;

@@ -6,6 +6,8 @@ import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controll
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
+import 'package:atella/services/localization/final_details_localization_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -468,9 +470,11 @@ class FinalDetailsController extends GetxController {
         'forceRegenerate': true,  // Add flag to force regeneration
       });
       
+      final context = Get.context;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        'Regenerating Designs!',
-        'Creating 3 new designs based on your updated preferences...',
+        l10n?.fdSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
+        l10n?.fdSnackbarRegeneratingMessage ?? 'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor:Colors.black,
         colorText: Colors.white,
@@ -480,10 +484,12 @@ class FinalDetailsController extends GetxController {
       Get.toNamed('/generate_tech_pack', arguments: {
         'forceRegenerate': true,  // Add flag to force regeneration
       });
-      
+
+      final context = Get.context;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        'Generating Designs!',
-        'Creating 3 unique designs based on your preferences...',
+        l10n?.fdSnackbarGeneratingDesigns ?? 'Generating Designs!',
+        l10n?.fdSnackbarGeneratingMessage ?? 'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -497,12 +503,18 @@ class FinalDetailsController extends GetxController {
     Get.dialog(
       LimitExceededDialog(
         onGetExtraDesigns: () async {
+          // Get localized strings before async operation
+          final context = Get.context;
+          final l10n = context != null ? AppLocalizations.of(context) : null;
+          final titleText = l10n?.fdSnackbarExtraDesigns ?? 'Extra Designs Added!';
+          final messageText = l10n?.fdSnackbarExtraDesignsMessage ?? '20 extra designs have been added to your account.';
+
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
           if (success) {
             Get.snackbar(
-              'Extra Designs Added!',
-              '20 extra designs have been added to your account.',
+              titleText,
+              messageText,
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.black,
               colorText: Colors.white,
@@ -637,6 +649,32 @@ class FinalDetailsController extends GetxController {
     otherFeaturesController.clear();
     customInputController.clear();
     update();
+  }
+
+  // ==================== LOCALIZATION HELPER METHODS ====================
+
+  /// Get localized question text
+  String getLocalizedQuestionText(BuildContext context, String questionId) {
+    final service = FinalDetailsLocalizationService(context);
+    return service.getLocalizedQuestion(questionId);
+  }
+
+  /// Get localized option text (English -> Localized)
+  String getLocalizedOption(BuildContext context, String englishOption) {
+    final service = FinalDetailsLocalizationService(context);
+    return service.getLocalizedOption(englishOption);
+  }
+
+  /// Get English option text (Localized -> English) - for API payloads
+  String getEnglishOption(BuildContext context, String localizedOption) {
+    final service = FinalDetailsLocalizationService(context);
+    return service.getEnglishOption(localizedOption);
+  }
+
+  /// Get list of localized options
+  List<String> getLocalizedOptions(BuildContext context, List<String> englishOptions) {
+    final service = FinalDetailsLocalizationService(context);
+    return service.getLocalizedOptions(englishOptions);
   }
 
 }

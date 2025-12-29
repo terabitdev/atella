@@ -1444,4 +1444,122 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cbDialogEnterCustomTechnique => 'Enter custom technique...';
+
+  @override
+  String get fdFinalDetails => 'Final Details';
+
+  @override
+  String get fdFinalDetailsToProvide => 'Final Details to Provide';
+
+  @override
+  String get fdContinue => 'Continue';
+
+  @override
+  String get fdGenerate => 'Generate';
+
+  @override
+  String get fdTargetSeason => 'Target Season:';
+
+  @override
+  String get fdTargetBudget => 'Target Budget per Piece:';
+
+  @override
+  String get fdDesiredFeatures => 'Desired Features or Values:';
+
+  @override
+  String get fdCustomFeaturesHint => 'Type your custom features here...';
+
+  @override
+  String get fdQuestionSeason =>
+      'Great! Let\'s make sure your piece fits perfectly with the season. What kind of weather will it be designed for?';
+
+  @override
+  String get fdOptionSummer => 'Summer (Lightweight, Short Or Roll-Up Sleeves)';
+
+  @override
+  String get fdOptionMidSeason => 'Mid-Season';
+
+  @override
+  String get fdOptionAllSeason => 'All-Season (Layer-Friendly)';
+
+  @override
+  String get fdQuestionBudget =>
+      'Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.';
+
+  @override
+  String get fdOptionEntryLevel =>
+      'Entry-Level (€15-30 Production / €35-60 Retail)';
+
+  @override
+  String get fdOptionMidRange =>
+      'Mid-Range (€30-50 Production / €60-120 Retail)';
+
+  @override
+  String get fdOptionPremium => 'Premium (€60+ Production / €120+ Retail)';
+
+  @override
+  String get fdQuestionFeatures =>
+      'Would you like to include any special values or features that matter to you or your brand? I can make sure they\'re part of the final concept';
+
+  @override
+  String get fdOptionOrganicFabric => 'Organic Fabric';
+
+  @override
+  String get fdOptionUpcycled => 'Upcycled Materials';
+
+  @override
+  String get fdOptionLocallyMade => 'Locally Made (Europe)';
+
+  @override
+  String get fdOptionUVProtection => 'UV Protection';
+
+  @override
+  String get fdOptionQuickDry => 'Quick-Dry';
+
+  @override
+  String get fdOptionWrinkleFree => 'Wrinkle-Free';
+
+  @override
+  String get fdOptionOther => 'Other: ?';
+
+  @override
+  String get fdQuestionAdditional =>
+      'Cool — feel free to type in anything else you have in mind!';
+
+  @override
+  String get fdSnackbarRegeneratingDesigns => 'Regenerating Designs!';
+
+  @override
+  String get fdSnackbarRegeneratingMessage =>
+      'Creating 3 new designs based on your updated preferences...';
+
+  @override
+  String get fdSnackbarGeneratingDesigns => 'Generating Designs!';
+
+  @override
+  String get fdSnackbarGeneratingMessage =>
+      'Creating 3 unique designs based on your preferences...';
+
+  @override
+  String get fdSnackbarExtraDesigns => 'Extra Designs Added!';
+
+  @override
+  String get fdSnackbarExtraDesignsMessage =>
+      '20 extra designs have been added to your account.';
+
+  @override
+  String get fdDialogLimitExceeded => 'Limit Exceeded';
+
+  @override
+  String get fdDialogLimitMessage =>
+      'You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.';
+
+  @override
+  String get fdDialogGetExtraDesigns => 'Get Extra Designs (€3.99)';
+
+  @override
+  String get fdDialogUpgradePlan => 'Upgrade Plan';
+
+  @override
+  String get fdDialogMaybeLater => 'Maybe Later';
 }

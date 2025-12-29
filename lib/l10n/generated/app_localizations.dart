@@ -2791,6 +2791,222 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter custom technique...'**
   String get cbDialogEnterCustomTechnique;
+
+  /// Final Details screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Final Details'**
+  String get fdFinalDetails;
+
+  /// Final Details onboard screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Final Details to Provide'**
+  String get fdFinalDetailsToProvide;
+
+  /// Continue button - Final Details
+  ///
+  /// In en, this message translates to:
+  /// **'Continue'**
+  String get fdContinue;
+
+  /// Generate button - Final Details
+  ///
+  /// In en, this message translates to:
+  /// **'Generate'**
+  String get fdGenerate;
+
+  /// Target Season section title
+  ///
+  /// In en, this message translates to:
+  /// **'Target Season:'**
+  String get fdTargetSeason;
+
+  /// Target Budget section title
+  ///
+  /// In en, this message translates to:
+  /// **'Target Budget per Piece:'**
+  String get fdTargetBudget;
+
+  /// Desired Features section title
+  ///
+  /// In en, this message translates to:
+  /// **'Desired Features or Values:'**
+  String get fdDesiredFeatures;
+
+  /// Placeholder for custom features input
+  ///
+  /// In en, this message translates to:
+  /// **'Type your custom features here...'**
+  String get fdCustomFeaturesHint;
+
+  /// Question 1 - Target Season
+  ///
+  /// In en, this message translates to:
+  /// **'Great! Let\'s make sure your piece fits perfectly with the season. What kind of weather will it be designed for?'**
+  String get fdQuestionSeason;
+
+  /// Season option - Summer
+  ///
+  /// In en, this message translates to:
+  /// **'Summer (Lightweight, Short Or Roll-Up Sleeves)'**
+  String get fdOptionSummer;
+
+  /// Season option - Mid-Season
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Season'**
+  String get fdOptionMidSeason;
+
+  /// Season option - All-Season
+  ///
+  /// In en, this message translates to:
+  /// **'All-Season (Layer-Friendly)'**
+  String get fdOptionAllSeason;
+
+  /// Question 2 - Target Budget
+  ///
+  /// In en, this message translates to:
+  /// **'Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.'**
+  String get fdQuestionBudget;
+
+  /// Budget option - Entry Level
+  ///
+  /// In en, this message translates to:
+  /// **'Entry-Level (€15-30 Production / €35-60 Retail)'**
+  String get fdOptionEntryLevel;
+
+  /// Budget option - Mid Range
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Range (€30-50 Production / €60-120 Retail)'**
+  String get fdOptionMidRange;
+
+  /// Budget option - Premium
+  ///
+  /// In en, this message translates to:
+  /// **'Premium (€60+ Production / €120+ Retail)'**
+  String get fdOptionPremium;
+
+  /// Question 3 - Desired Features
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to include any special values or features that matter to you or your brand? I can make sure they\'re part of the final concept'**
+  String get fdQuestionFeatures;
+
+  /// Feature option - Organic Fabric
+  ///
+  /// In en, this message translates to:
+  /// **'Organic Fabric'**
+  String get fdOptionOrganicFabric;
+
+  /// Feature option - Upcycled Materials
+  ///
+  /// In en, this message translates to:
+  /// **'Upcycled Materials'**
+  String get fdOptionUpcycled;
+
+  /// Feature option - Locally Made
+  ///
+  /// In en, this message translates to:
+  /// **'Locally Made (Europe)'**
+  String get fdOptionLocallyMade;
+
+  /// Feature option - UV Protection
+  ///
+  /// In en, this message translates to:
+  /// **'UV Protection'**
+  String get fdOptionUVProtection;
+
+  /// Feature option - Quick-Dry
+  ///
+  /// In en, this message translates to:
+  /// **'Quick-Dry'**
+  String get fdOptionQuickDry;
+
+  /// Feature option - Wrinkle-Free
+  ///
+  /// In en, this message translates to:
+  /// **'Wrinkle-Free'**
+  String get fdOptionWrinkleFree;
+
+  /// Feature option - Other/Custom
+  ///
+  /// In en, this message translates to:
+  /// **'Other: ?'**
+  String get fdOptionOther;
+
+  /// Question 4 - Additional Details
+  ///
+  /// In en, this message translates to:
+  /// **'Cool — feel free to type in anything else you have in mind!'**
+  String get fdQuestionAdditional;
+
+  /// Snackbar title when regenerating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerating Designs!'**
+  String get fdSnackbarRegeneratingDesigns;
+
+  /// Snackbar message when regenerating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 new designs based on your updated preferences...'**
+  String get fdSnackbarRegeneratingMessage;
+
+  /// Snackbar title when generating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Generating Designs!'**
+  String get fdSnackbarGeneratingDesigns;
+
+  /// Snackbar message when generating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 unique designs based on your preferences...'**
+  String get fdSnackbarGeneratingMessage;
+
+  /// Snackbar title when extra designs added
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Designs Added!'**
+  String get fdSnackbarExtraDesigns;
+
+  /// Snackbar message when extra designs added
+  ///
+  /// In en, this message translates to:
+  /// **'20 extra designs have been added to your account.'**
+  String get fdSnackbarExtraDesignsMessage;
+
+  /// Limit exceeded dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Limit Exceeded'**
+  String get fdDialogLimitExceeded;
+
+  /// Limit exceeded dialog message
+  ///
+  /// In en, this message translates to:
+  /// **'You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.'**
+  String get fdDialogLimitMessage;
+
+  /// Get extra designs button text
+  ///
+  /// In en, this message translates to:
+  /// **'Get Extra Designs (€3.99)'**
+  String get fdDialogGetExtraDesigns;
+
+  /// Upgrade plan button text
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Plan'**
+  String get fdDialogUpgradePlan;
+
+  /// Maybe later button text
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get fdDialogMaybeLater;
 }
 
 class _AppLocalizationsDelegate
