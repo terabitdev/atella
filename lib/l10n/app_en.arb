@@ -1906,5 +1906,494 @@
   "tpDialogUpgradeInstead": "Upgrade Instead",
   "@tpDialogUpgradeInstead": {
     "description": "Upgrade instead button text"
+  },
+  "mfManufacturerSuggestions": "Manufacturer Suggestions",
+  "@mfManufacturerSuggestions": {
+    "description": "Manufacturer suggestions screen title"
+  },
+  "mfLoadingManufacturers": "Loading manufacturers...",
+  "@mfLoadingManufacturers": {
+    "description": "Loading message for manufacturers"
+  },
+  "mfFoundManufacturers": "We found {count} manufacturers from around the world.",
+  "@mfFoundManufacturers": {
+    "description": "Message showing manufacturer count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "mfNoManufacturersAvailable": "No manufacturers available",
+  "@mfNoManufacturersAvailable": {
+    "description": "Empty state when no manufacturers"
+  },
+  "mfAllManufacturersLoaded": "All manufacturers loaded",
+  "@mfAllManufacturersLoaded": {
+    "description": "Message when all manufacturers loaded"
+  },
+  "mfFilterManufacturers": "Filter Manufacturers",
+  "@mfFilterManufacturers": {
+    "description": "Filter manufacturers title"
+  },
+  "mfUseFiltersBelow": "Use filters below to search our manufacturer directory:",
+  "@mfUseFiltersBelow": {
+    "description": "Filter instructions"
+  },
+  "mfCountryOrRegion": "Country or Region",
+  "@mfCountryOrRegion": {
+    "description": "Country filter label"
+  },
+  "mfSearchCountry": "Search",
+  "@mfSearchCountry": {
+    "description": "Country search label"
+  },
+  "mfSearchCountryHint": "Start typing to search",
+  "@mfSearchCountryHint": {
+    "description": "Country search hint"
+  },
+  "mfAllCountries": "All Countries",
+  "@mfAllCountries": {
+    "description": "All countries option"
+  },
+  "mfSearch": "Search",
+  "@mfSearch": {
+    "description": "Search label"
+  },
+  "mfStartTypingToSearch": "Start typing to search",
+  "@mfStartTypingToSearch": {
+    "description": "Search placeholder"
+  },
+  "mfClearFilter": "Clear Filter",
+  "@mfClearFilter": {
+    "description": "Clear filter button"
+  },
+  "mfNoManufacturersFound": "No manufacturers found",
+  "@mfNoManufacturersFound": {
+    "description": "Empty search results"
+  },
+  "mfTryAdjustingFilters": "Try adjusting your filters",
+  "@mfTryAdjustingFilters": {
+    "description": "Empty search suggestion"
+  },
+  "mfManufacturersFound": "{count} manufacturer{plural} found",
+  "@mfManufacturersFound": {
+    "description": "Filtered results count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "mfSendingEmail": "Sending Email...",
+  "@mfSendingEmail": {
+    "description": "Sending email loading title"
+  },
+  "mfPreparingTechPack": "Preparing your tech pack\nand sending to manufacturer",
+  "@mfPreparingTechPack": {
+    "description": "Sending email loading message"
+  },
+  "mfSendViaEmail": "Send via Email",
+  "@mfSendViaEmail": {
+    "description": "Send via email button"
+  },
+  "mfContact": "Contact",
+  "@mfContact": {
+    "description": "Contact button"
+  },
+  "mfHideDetails": "Hide Details",
+  "@mfHideDetails": {
+    "description": "Hide details button"
+  },
+  "mfMoreDetails": "More Details",
+  "@mfMoreDetails": {
+    "description": "More details button"
+  },
+  "mfMinimumOrderQuantity": "Minimum Order Quantity",
+  "@mfMinimumOrderQuantity": {
+    "description": "MOQ label"
+  },
+  "mfCertifications": "Certifications",
+  "@mfCertifications": {
+    "description": "Certifications label"
+  },
+  "mfProductsCapabilities": "Products & Capabilities",
+  "@mfProductsCapabilities": {
+    "description": "Products label"
+  },
+  "mfContactManufacturer": "Contact {name}",
+  "@mfContactManufacturer": {
+    "description": "Contact dialog title",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mfEmail": "Email",
+  "@mfEmail": {
+    "description": "Email label"
+  },
+  "mfWebsite": "Website",
+  "@mfWebsite": {
+    "description": "Website label"
+  },
+  "mfInstagram": "Instagram",
+  "@mfInstagram": {
+    "description": "Instagram label"
+  },
+  "mfNotAvailable": "Not available",
+  "@mfNotAvailable": {
+    "description": "Not available text"
+  },
+  "mfClose": "Close",
+  "@mfClose": {
+    "description": "Close button"
+  },
+  "mfError": "Error",
+  "@mfError": {
+    "description": "Error title"
+  },
+  "mfEmailNotAvailable": "Email not available",
+  "@mfEmailNotAvailable": {
+    "description": "Email not available error"
+  },
+  "mfWebsiteNotAvailable": "Website not available",
+  "@mfWebsiteNotAvailable": {
+    "description": "Website not available error"
+  },
+  "mfCouldNotOpenLink": "Could not open link",
+  "@mfCouldNotOpenLink": {
+    "description": "Link open error"
+  },
+  "mfNoEmailAvailable": "No Email Available",
+  "@mfNoEmailAvailable": {
+    "description": "No email available snackbar title"
+  },
+  "mfManufacturerNoEmail": "This manufacturer does not have an email address on file.",
+  "@mfManufacturerNoEmail": {
+    "description": "No email message"
+  },
+  "mfEmailSentSuccessfully": "Email Sent Successfully!",
+  "@mfEmailSentSuccessfully": {
+    "description": "Email sent success title"
+  },
+  "mfTechPackSentTo": "Your tech pack has been sent to {name} at {email}",
+  "@mfTechPackSentTo": {
+    "description": "Email sent success message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "email": {
+        "type": "String"
+      }
+    }
+  },
+  "mfEmailFailed": "Email Failed",
+  "@mfEmailFailed": {
+    "description": "Email failed title"
+  },
+  "mfFailedToSendEmail": "Failed to send email to {name}. Please try again.",
+  "@mfFailedToSendEmail": {
+    "description": "Email failed message",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      }
+    }
+  },
+  "mfErrorSendingEmail": "An error occurred while sending email: {error}",
+  "@mfErrorSendingEmail": {
+    "description": "Email error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "mfPreviewEmail": "Preview Email",
+  "@mfPreviewEmail": {
+    "description": "Preview email dialog title"
+  },
+  "mfCancel": "Cancel",
+  "@mfCancel": {
+    "description": "Cancel button"
+  },
+  "mfSendEmail": "Send Email",
+  "@mfSendEmail": {
+    "description": "Send email button"
+  },
+  "mfTechPackSummary": "Tech Pack Summary",
+  "@mfTechPackSummary": {
+    "description": "Tech pack summary label"
+  },
+  "mfMaterial": "Material",
+  "@mfMaterial": {
+    "description": "Material label"
+  },
+  "mfPrimaryColor": "Primary Color",
+  "@mfPrimaryColor": {
+    "description": "Primary color label"
+  },
+  "mfSizeRange": "Size Range",
+  "@mfSizeRange": {
+    "description": "Size range label"
+  },
+  "mfQuantity": "Quantity",
+  "@mfQuantity": {
+    "description": "Quantity label"
+  },
+  "mfTargetCost": "Target Cost",
+  "@mfTargetCost": {
+    "description": "Target cost label"
+  },
+  "mfDelivery": "Delivery",
+  "@mfDelivery": {
+    "description": "Delivery label"
+  },
+  "mfPDFAttachment": "PDF attachment: {name} ({size} KB)",
+  "@mfPDFAttachment": {
+    "description": "PDF attachment info",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "size": {
+        "type": "String"
+      }
+    }
+  },
+  "mfImagesAttached": "Images attached: {count}",
+  "@mfImagesAttached": {
+    "description": "Images attached count",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      }
+    }
+  },
+  "tpdFinalDesignValidated": "Final Design Validated",
+  "@tpdFinalDesignValidated": {
+    "description": "Tech Pack Details screen title"
+  },
+  "tpdMaterialsFabrics": "Materials & Fabrics",
+  "@tpdMaterialsFabrics": {
+    "description": "Materials section title"
+  },
+  "tpdMainFabricLabel": "What is the main fabric used?",
+  "@tpdMainFabricLabel": {
+    "description": "Main fabric question label"
+  },
+  "tpdMainFabricHint": "Main Fabric: Organic cotton twill",
+  "@tpdMainFabricHint": {
+    "description": "Main fabric hint text"
+  },
+  "tpdSecondaryMaterialsLabel": "Are there any secondary materials or linings?",
+  "@tpdSecondaryMaterialsLabel": {
+    "description": "Secondary materials question label"
+  },
+  "tpdSecondaryMaterialsHint": "Polyester mesh lining",
+  "@tpdSecondaryMaterialsHint": {
+    "description": "Secondary materials hint text"
+  },
+  "tpdFabricPropertiesLabel": "Does the fabric have any technical properties? (e.g. organic, stretch, water-repellent)",
+  "@tpdFabricPropertiesLabel": {
+    "description": "Fabric properties question label"
+  },
+  "tpdFabricPropertiesHint": "Breathable, stretchable, water-repellent",
+  "@tpdFabricPropertiesHint": {
+    "description": "Fabric properties hint text"
+  },
+  "tpdColors": "Colors",
+  "@tpdColors": {
+    "description": "Colors section title"
+  },
+  "tpdPrimaryColorLabel": "What is the primary color of the garment?",
+  "@tpdPrimaryColorLabel": {
+    "description": "Primary color question label"
+  },
+  "tpdPrimaryColorHint": "Sky blue",
+  "@tpdPrimaryColorHint": {
+    "description": "Primary color hint text"
+  },
+  "tpdAlternateColorwaysLabel": "Are there any alternate colorways to produce?",
+  "@tpdAlternateColorwaysLabel": {
+    "description": "Alternate colorways question label"
+  },
+  "tpdAlternateColorwaysHint": "Sage green, off-white",
+  "@tpdAlternateColorwaysHint": {
+    "description": "Alternate colorways hint text"
+  },
+  "tpdPantoneLabel": "Do you have Pantone references or HEX codes for the colors?",
+  "@tpdPantoneLabel": {
+    "description": "Pantone question label"
+  },
+  "tpdPantoneHint": "Pantone 290C, #C1DAD6",
+  "@tpdPantoneHint": {
+    "description": "Pantone hint text"
+  },
+  "tpdSizesMeasurements": "Sizes & Measurements",
+  "@tpdSizesMeasurements": {
+    "description": "Sizes section title"
+  },
+  "tpdSizeRangeLabel": "Do you want to use standard size charts or enter custom measurements? (e.g. XS–XL)",
+  "@tpdSizeRangeLabel": {
+    "description": "Size range question label"
+  },
+  "tpdMeasurementChartLabel": "Will you provide a measurement chart by size?",
+  "@tpdMeasurementChartLabel": {
+    "description": "Measurement chart question label"
+  },
+  "tpdOr": "or",
+  "@tpdOr": {
+    "description": "Or separator text"
+  },
+  "tpdAutogeneratedLabel": "Or should the AI auto-generate one from the 3D model?",
+  "@tpdAutogeneratedLabel": {
+    "description": "Auto-generated question label"
+  },
+  "tpdTechnicalDetails": "Technical Details",
+  "@tpdTechnicalDetails": {
+    "description": "Technical details section title"
+  },
+  "tpdAccessoriesLabel": "Are there any accessories?",
+  "@tpdAccessoriesLabel": {
+    "description": "Accessories question label"
+  },
+  "tpdAccessoriesHint": "Zipper, buttons, drawcord",
+  "@tpdAccessoriesHint": {
+    "description": "Accessories hint text"
+  },
+  "tpdStitchingLabel": "Which stitch type should be used?",
+  "@tpdStitchingLabel": {
+    "description": "Stitching question label"
+  },
+  "tpdStitchingHint": "Single, double, overlock etc",
+  "@tpdStitchingHint": {
+    "description": "Stitching hint text"
+  },
+  "tpdDecorativeStitchingLabel": "Do you require visible, reinforced, or decorative stitching?",
+  "@tpdDecorativeStitchingLabel": {
+    "description": "Decorative stitching question label"
+  },
+  "tpdDecorativeStitchingHint": "Contrast topstitching sleeves",
+  "@tpdDecorativeStitchingHint": {
+    "description": "Decorative stitching hint text"
+  },
+  "tpdLabelingBranding": "Labeling & Branding",
+  "@tpdLabelingBranding": {
+    "description": "Labeling section title"
+  },
+  "tpdLogoPlacementLabel": "Where should the logo or brand name appear?",
+  "@tpdLogoPlacementLabel": {
+    "description": "Logo placement question label"
+  },
+  "tpdLogoPlacementHint": "Logo Placement: Chest & neck",
+  "@tpdLogoPlacementHint": {
+    "description": "Logo placement hint text"
+  },
+  "tpdLabelsNeededLabel": "What types of labels are needed?",
+  "@tpdLabelsNeededLabel": {
+    "description": "Labels needed question label"
+  },
+  "tpdLabelsNeededHint": "Brand, care, size",
+  "@tpdLabelsNeededHint": {
+    "description": "Labels needed hint text"
+  },
+  "tpdUploadReferenceImage": "Upload reference image (optional)",
+  "@tpdUploadReferenceImage": {
+    "description": "Upload image instruction"
+  },
+  "tpdQrCodeLabel": "Should a QR code, barcode, or NFC chip be included?",
+  "@tpdQrCodeLabel": {
+    "description": "QR code question label"
+  },
+  "tpdQrCodeHint": "Add QR code",
+  "@tpdQrCodeHint": {
+    "description": "QR code hint text"
+  },
+  "tpdPackagingShipping": "Packaging & Shipping",
+  "@tpdPackagingShipping": {
+    "description": "Packaging section title"
+  },
+  "tpdPackagingTypeLabel": "What type of packaging is required?",
+  "@tpdPackagingTypeLabel": {
+    "description": "Packaging type question label"
+  },
+  "tpdPackagingTypeHint": "Kraft box + polybag",
+  "@tpdPackagingTypeHint": {
+    "description": "Packaging type hint text"
+  },
+  "tpdFoldingInstructionsLabel": "Any specific folding or packing instructions?",
+  "@tpdFoldingInstructionsLabel": {
+    "description": "Folding instructions question label"
+  },
+  "tpdFoldingInstructionsHint": "Fold across chest",
+  "@tpdFoldingInstructionsHint": {
+    "description": "Folding instructions hint text"
+  },
+  "tpdInsertsLabel": "Would you like to include a product sheet or flyer?",
+  "@tpdInsertsLabel": {
+    "description": "Inserts question label"
+  },
+  "tpdInsertsHint": "Inserts: Thank-you card, care sheet",
+  "@tpdInsertsHint": {
+    "description": "Inserts hint text"
+  },
+  "tpdProductionDetails": "Production Details",
+  "@tpdProductionDetails": {
+    "description": "Production details section title"
+  },
+  "tpdCostPerPieceLabel": "What is the target cost per piece?",
+  "@tpdCostPerPieceLabel": {
+    "description": "Cost per piece question label"
+  },
+  "tpdCostPerPieceHint": "Cost per Piece: €3.8",
+  "@tpdCostPerPieceHint": {
+    "description": "Cost per piece hint text"
+  },
+  "tpdQuantityLabel": "How many units do you plan to produce?",
+  "@tpdQuantityLabel": {
+    "description": "Quantity question label"
+  },
+  "tpdQuantityHint": "Quantity: 1,000 units",
+  "@tpdQuantityHint": {
+    "description": "Quantity hint text"
+  },
+  "tpdDeliveryDateLabel": "What is your desired delivery date?",
+  "@tpdDeliveryDateLabel": {
+    "description": "Delivery date question label"
+  },
+  "tpdDeliveryDateHint": "Delivery: 30 Sept 2025",
+  "@tpdDeliveryDateHint": {
+    "description": "Delivery date hint text"
+  },
+  "tpdManufacturers": "Manufacturers",
+  "@tpdManufacturers": {
+    "description": "Manufacturers section title"
+  },
+  "tpdSelectCountryForManufacturers": "Select a country for manufacturer suggestions",
+  "@tpdSelectCountryForManufacturers": {
+    "description": "Manufacturer country selection instruction"
+  },
+  "tpdSearchCountry": "Search",
+  "@tpdSearchCountry": {
+    "description": "Country search label"
+  },
+  "tpdSearchCountryHint": "Start typing to search",
+  "@tpdSearchCountryHint": {
+    "description": "Country search hint"
+  },
+  "tpdSelectACountry": "Select a country",
+  "@tpdSelectACountry": {
+    "description": "Country selection placeholder"
+  },
+  "tpdGenerateTechPack": "Generate Tech Pack",
+  "@tpdGenerateTechPack": {
+    "description": "Generate tech pack button"
   }
 }

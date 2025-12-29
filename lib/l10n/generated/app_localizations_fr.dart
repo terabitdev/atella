@@ -1746,4 +1746,373 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpDialogUpgradeInstead => 'Mettre à Niveau à la Place';
+
+  @override
+  String get mfManufacturerSuggestions => 'Suggestions de Fabricants';
+
+  @override
+  String get mfLoadingManufacturers => 'Chargement des fabricants...';
+
+  @override
+  String mfFoundManufacturers(int count) {
+    return 'Nous avons trouvé $count fabricants dans le monde entier.';
+  }
+
+  @override
+  String get mfNoManufacturersAvailable => 'Aucun fabricant disponible';
+
+  @override
+  String get mfAllManufacturersLoaded => 'Tous les fabricants chargés';
+
+  @override
+  String get mfFilterManufacturers => 'Filtrer les Fabricants';
+
+  @override
+  String get mfUseFiltersBelow =>
+      'Utilisez les filtres ci-dessous pour rechercher dans notre répertoire de fabricants :';
+
+  @override
+  String get mfCountryOrRegion => 'Pays ou Région';
+
+  @override
+  String get mfSearchCountry => 'Rechercher';
+
+  @override
+  String get mfSearchCountryHint => 'Commencez à taper pour rechercher';
+
+  @override
+  String get mfAllCountries => 'Tous les Pays';
+
+  @override
+  String get mfSearch => 'Rechercher';
+
+  @override
+  String get mfStartTypingToSearch => 'Commencez à taper pour rechercher';
+
+  @override
+  String get mfClearFilter => 'Effacer le Filtre';
+
+  @override
+  String get mfNoManufacturersFound => 'Aucun fabricant trouvé';
+
+  @override
+  String get mfTryAdjustingFilters => 'Essayez d\'ajuster vos filtres';
+
+  @override
+  String mfManufacturersFound(int count, String plural) {
+    return '$count fabricant$plural trouvé$plural';
+  }
+
+  @override
+  String get mfSendingEmail => 'Envoi de l\'Email...';
+
+  @override
+  String get mfPreparingTechPack =>
+      'Préparation de votre dossier technique\net envoi au fabricant';
+
+  @override
+  String get mfSendViaEmail => 'Envoyer par Email';
+
+  @override
+  String get mfContact => 'Contacter';
+
+  @override
+  String get mfHideDetails => 'Masquer les Détails';
+
+  @override
+  String get mfMoreDetails => 'Plus de Détails';
+
+  @override
+  String get mfMinimumOrderQuantity => 'Quantité Minimale de Commande';
+
+  @override
+  String get mfCertifications => 'Certifications';
+
+  @override
+  String get mfProductsCapabilities => 'Produits et Capacités';
+
+  @override
+  String mfContactManufacturer(String name) {
+    return 'Contacter $name';
+  }
+
+  @override
+  String get mfEmail => 'Email';
+
+  @override
+  String get mfWebsite => 'Site Web';
+
+  @override
+  String get mfInstagram => 'Instagram';
+
+  @override
+  String get mfNotAvailable => 'Non disponible';
+
+  @override
+  String get mfClose => 'Fermer';
+
+  @override
+  String get mfError => 'Erreur';
+
+  @override
+  String get mfEmailNotAvailable => 'Email non disponible';
+
+  @override
+  String get mfWebsiteNotAvailable => 'Site web non disponible';
+
+  @override
+  String get mfCouldNotOpenLink => 'Impossible d\'ouvrir le lien';
+
+  @override
+  String get mfNoEmailAvailable => 'Aucun Email Disponible';
+
+  @override
+  String get mfManufacturerNoEmail =>
+      'Ce fabricant n\'a pas d\'adresse email enregistrée.';
+
+  @override
+  String get mfEmailSentSuccessfully => 'Email Envoyé avec Succès !';
+
+  @override
+  String mfTechPackSentTo(String name, String email) {
+    return 'Votre dossier technique a été envoyé à $name à $email';
+  }
+
+  @override
+  String get mfEmailFailed => 'Échec de l\'Email';
+
+  @override
+  String mfFailedToSendEmail(String name) {
+    return 'Échec de l\'envoi de l\'email à $name. Veuillez réessayer.';
+  }
+
+  @override
+  String mfErrorSendingEmail(String error) {
+    return 'Une erreur s\'est produite lors de l\'envoi de l\'email : $error';
+  }
+
+  @override
+  String get mfPreviewEmail => 'Aperçu de l\'Email';
+
+  @override
+  String get mfCancel => 'Annuler';
+
+  @override
+  String get mfSendEmail => 'Envoyer l\'Email';
+
+  @override
+  String get mfTechPackSummary => 'Résumé du Dossier Technique';
+
+  @override
+  String get mfMaterial => 'Matériau';
+
+  @override
+  String get mfPrimaryColor => 'Couleur Principale';
+
+  @override
+  String get mfSizeRange => 'Gamme de Tailles';
+
+  @override
+  String get mfQuantity => 'Quantité';
+
+  @override
+  String get mfTargetCost => 'Coût Cible';
+
+  @override
+  String get mfDelivery => 'Livraison';
+
+  @override
+  String mfPDFAttachment(String name, String size) {
+    return 'Pièce jointe PDF : $name ($size KB)';
+  }
+
+  @override
+  String mfImagesAttached(int count) {
+    return 'Images jointes : $count';
+  }
+
+  @override
+  String get tpdFinalDesignValidated => 'Design Final Validé';
+
+  @override
+  String get tpdMaterialsFabrics => 'Matériaux et Tissus';
+
+  @override
+  String get tpdMainFabricLabel => 'Quel est le tissu principal utilisé ?';
+
+  @override
+  String get tpdMainFabricHint => 'Tissu Principal : Sergé de coton bio';
+
+  @override
+  String get tpdSecondaryMaterialsLabel =>
+      'Y a-t-il des matériaux secondaires ou des doublures ?';
+
+  @override
+  String get tpdSecondaryMaterialsHint => 'Doublure en mesh polyester';
+
+  @override
+  String get tpdFabricPropertiesLabel =>
+      'Le tissu a-t-il des propriétés techniques ? (ex : bio, extensible, imperméable)';
+
+  @override
+  String get tpdFabricPropertiesHint => 'Respirant, extensible, hydrofuge';
+
+  @override
+  String get tpdColors => 'Couleurs';
+
+  @override
+  String get tpdPrimaryColorLabel =>
+      'Quelle est la couleur principale du vêtement ?';
+
+  @override
+  String get tpdPrimaryColorHint => 'Bleu ciel';
+
+  @override
+  String get tpdAlternateColorwaysLabel =>
+      'Y a-t-il des coloris alternatifs à produire ?';
+
+  @override
+  String get tpdAlternateColorwaysHint => 'Vert sauge, blanc cassé';
+
+  @override
+  String get tpdPantoneLabel =>
+      'Avez-vous des références Pantone ou des codes HEX pour les couleurs ?';
+
+  @override
+  String get tpdPantoneHint => 'Pantone 290C, #C1DAD6';
+
+  @override
+  String get tpdSizesMeasurements => 'Tailles et Mesures';
+
+  @override
+  String get tpdSizeRangeLabel =>
+      'Voulez-vous utiliser des tableaux de tailles standard ou entrer des mesures personnalisées ? (ex : XS–XL)';
+
+  @override
+  String get tpdMeasurementChartLabel =>
+      'Fournirez-vous un tableau de mesures par taille ?';
+
+  @override
+  String get tpdOr => 'ou';
+
+  @override
+  String get tpdAutogeneratedLabel =>
+      'Ou l\'IA devrait-elle en générer un automatiquement à partir du modèle 3D ?';
+
+  @override
+  String get tpdTechnicalDetails => 'Détails Techniques';
+
+  @override
+  String get tpdAccessoriesLabel => 'Y a-t-il des accessoires ?';
+
+  @override
+  String get tpdAccessoriesHint => 'Fermeture éclair, boutons, cordon';
+
+  @override
+  String get tpdStitchingLabel => 'Quel type de point doit être utilisé ?';
+
+  @override
+  String get tpdStitchingHint => 'Simple, double, surjet, etc.';
+
+  @override
+  String get tpdDecorativeStitchingLabel =>
+      'Avez-vous besoin de coutures visibles, renforcées ou décoratives ?';
+
+  @override
+  String get tpdDecorativeStitchingHint =>
+      'Surpiqûre contrastée sur les manches';
+
+  @override
+  String get tpdLabelingBranding => 'Étiquetage et Image de Marque';
+
+  @override
+  String get tpdLogoPlacementLabel =>
+      'Où le logo ou le nom de la marque doit-il apparaître ?';
+
+  @override
+  String get tpdLogoPlacementHint => 'Placement du logo : Poitrine et cou';
+
+  @override
+  String get tpdLabelsNeededLabel =>
+      'Quels types d\'étiquettes sont nécessaires ?';
+
+  @override
+  String get tpdLabelsNeededHint => 'Marque, entretien, taille';
+
+  @override
+  String get tpdUploadReferenceImage =>
+      'Télécharger une image de référence (optionnel)';
+
+  @override
+  String get tpdQrCodeLabel =>
+      'Un code QR, un code-barres ou une puce NFC doivent-ils être inclus ?';
+
+  @override
+  String get tpdQrCodeHint => 'Ajouter un code QR';
+
+  @override
+  String get tpdPackagingShipping => 'Emballage et Expédition';
+
+  @override
+  String get tpdPackagingTypeLabel => 'Quel type d\'emballage est requis ?';
+
+  @override
+  String get tpdPackagingTypeHint => 'Boîte kraft + sachet plastique';
+
+  @override
+  String get tpdFoldingInstructionsLabel =>
+      'Des instructions spécifiques de pliage ou d\'emballage ?';
+
+  @override
+  String get tpdFoldingInstructionsHint => 'Plier sur la poitrine';
+
+  @override
+  String get tpdInsertsLabel =>
+      'Souhaitez-vous inclure une fiche produit ou un dépliant ?';
+
+  @override
+  String get tpdInsertsHint =>
+      'Encarts : Carte de remerciement, fiche d\'entretien';
+
+  @override
+  String get tpdProductionDetails => 'Détails de Production';
+
+  @override
+  String get tpdCostPerPieceLabel => 'Quel est le coût cible par pièce ?';
+
+  @override
+  String get tpdCostPerPieceHint => 'Coût par Pièce : 3,8 €';
+
+  @override
+  String get tpdQuantityLabel =>
+      'Combien d\'unités prévoyez-vous de produire ?';
+
+  @override
+  String get tpdQuantityHint => 'Quantité : 1 000 unités';
+
+  @override
+  String get tpdDeliveryDateLabel =>
+      'Quelle est votre date de livraison souhaitée ?';
+
+  @override
+  String get tpdDeliveryDateHint => 'Livraison : 30 septembre 2025';
+
+  @override
+  String get tpdManufacturers => 'Fabricants';
+
+  @override
+  String get tpdSelectCountryForManufacturers =>
+      'Sélectionnez un pays pour les suggestions de fabricants';
+
+  @override
+  String get tpdSearchCountry => 'Rechercher';
+
+  @override
+  String get tpdSearchCountryHint => 'Commencez à taper pour rechercher';
+
+  @override
+  String get tpdSelectACountry => 'Sélectionnez un pays';
+
+  @override
+  String get tpdGenerateTechPack => 'Générer le Dossier Technique';
 }

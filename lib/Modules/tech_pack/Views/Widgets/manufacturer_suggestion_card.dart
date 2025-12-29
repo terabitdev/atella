@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import 'package:atella/Data/Models/new_manufacturer_model.dart';
 import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ManufacturerSuggestionCard extends StatelessWidget {
   final NewManufacturer manufacturer;
@@ -24,6 +25,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<ManufacturerSuggestionController>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Container(
       margin: EdgeInsets.symmetric(vertical: 10.h),
@@ -113,9 +115,9 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                           side: const BorderSide(color: Colors.black, width: 1),
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                         ),
-                        child: const Text(
-                          'Send via Email',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.mfSendViaEmail,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                           ),
@@ -125,7 +127,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                     SizedBox(width: 12.w),
                     Expanded(
                       child: OutlinedButton(
-                        onPressed: () => _showContactDialog(context),
+                        onPressed: () => _showContactDialog(context, l10n),
                         style: OutlinedButton.styleFrom(
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(8.r),
@@ -133,9 +135,9 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                           side: const BorderSide(color: Colors.black, width: 1),
                           padding: EdgeInsets.symmetric(vertical: 12.h),
                         ),
-                        child: const Text(
-                          'Contact',
-                          style: TextStyle(
+                        child: Text(
+                          l10n.mfContact,
+                          style: const TextStyle(
                             color: Colors.black,
                             fontWeight: FontWeight.w600,
                           ),
@@ -175,7 +177,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: [
                         Text(
-                          isExpanded ? 'Hide Details' : 'More Details',
+                          isExpanded ? l10n.mfHideDetails : l10n.mfMoreDetails,
                           style: TextStyle(
                             fontSize: 13.sp,
                             fontWeight: FontWeight.w500,
@@ -213,7 +215,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                         // MOQ
                         _buildDetailRow(
                           icon: Icons.inventory_2_outlined,
-                          label: 'Minimum Order Quantity',
+                          label: l10n.mfMinimumOrderQuantity,
                           value: manufacturer.moq,
                         ),
 
@@ -222,7 +224,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                           SizedBox(height: 12.h),
                           _buildDetailRow(
                             icon: Icons.verified_outlined,
-                            label: 'Certifications',
+                            label: l10n.mfCertifications,
                             value: manufacturer.certificationsDisplay,
                           ),
                         ],
@@ -232,7 +234,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                           SizedBox(height: 12.h),
                           _buildDetailRow(
                             icon: Icons.checkroom_outlined,
-                            label: 'Products & Capabilities',
+                            label: l10n.mfProductsCapabilities,
                             value: manufacturer.productsDisplay,
                           ),
                         ],
@@ -309,7 +311,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
     return instagram;
   }
 
-  void _showContactDialog(BuildContext context) {
+  void _showContactDialog(BuildContext context, AppLocalizations l10n) {
     showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -318,7 +320,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
             borderRadius: BorderRadius.circular(16.r),
           ),
           title: Text(
-            'Contact ${manufacturer.companyName}',
+            l10n.mfContactManufacturer(manufacturer.companyName),
             style: TextStyle(fontWeight: FontWeight.w700, fontSize: 18.sp),
           ),
           content: Column(
@@ -328,13 +330,13 @@ class ManufacturerSuggestionCard extends StatelessWidget {
               // Email
               _buildContactItem(
                 icon: Icons.email,
-                label: 'Email',
-                value: manufacturer.email ?? 'Not available',
+                label: l10n.mfEmail,
+                value: manufacturer.email ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasEmail
                     ? () => _launchUrl(manufacturer.email!)
                     : () => Get.snackbar(
-                        'Error',
-                        'Email not available',
+                        l10n.mfError,
+                        l10n.mfEmailNotAvailable,
                         duration: const Duration(milliseconds: 1500),
                       ),
                 isAvailable: manufacturer.hasEmail,
@@ -344,13 +346,13 @@ class ManufacturerSuggestionCard extends StatelessWidget {
               // Website
               _buildContactItem(
                 icon: Icons.language,
-                label: 'Website',
-                value: manufacturer.website ?? 'Not available',
+                label: l10n.mfWebsite,
+                value: manufacturer.website ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasWebsite
                     ? () => _launchUrl(manufacturer.website!)
                     : () => Get.snackbar(
-                        'Error',
-                        'Website not available',
+                        l10n.mfError,
+                        l10n.mfWebsiteNotAvailable,
                         duration: const Duration(milliseconds: 1500),
                       ),
                 isAvailable: manufacturer.hasWebsite,
@@ -360,7 +362,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
               if (manufacturer.hasInstagram) ...[
                 SizedBox(height: 12.h),
                 _buildInstagramContactItem(
-                  label: 'Instagram',
+                  label: l10n.mfInstagram,
                   value: _formatInstagramHandle(manufacturer.instagram!),
                   onTap: () => _launchUrl(manufacturer.instagram!),
                 ),
@@ -371,7 +373,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
           actions: [
             TextButton(
               onPressed: () => Navigator.of(context).pop(),
-              child: Text('Close', style: cstTextTextStyle16500),
+              child: Text(l10n.mfClose, style: cstTextTextStyle16500),
             ),
           ],
         );
@@ -527,9 +529,10 @@ class ManufacturerSuggestionCard extends StatelessWidget {
     }
 
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
+      final l10n = AppLocalizations.of(Get.context!)!;
       Get.snackbar(
-        'Error',
-        'Could not open link',
+        l10n.mfError,
+        l10n.mfCouldNotOpenLink,
         duration: const Duration(milliseconds: 1500),
       );
     }

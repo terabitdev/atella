@@ -8,12 +8,14 @@ import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:country_picker/country_picker.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
   const RecommendedManufactureScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     final controller = Get.put(ManufacturerSuggestionController());
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
@@ -40,7 +42,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
                         ),
                         SizedBox(width: 8.w),
                         Text(
-                          'Manufacturer Suggestions',
+                          l10n.mfManufacturerSuggestions,
                           style: TextStyle(
                             fontSize: 20.sp,
                             fontWeight: FontWeight.w700,
@@ -53,8 +55,8 @@ class RecommendedManufactureScreen extends StatelessWidget {
                   SegmentedTabSwitcher(controller: controller),
                   Expanded(
                     child: controller.tabIndex.value == 0
-                        ? recommendedTab(controller)
-                        : customTab(controller),
+                        ? recommendedTab(controller, l10n)
+                        : customTab(controller, l10n),
                   ),
                 ],
               ),
@@ -82,7 +84,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 16.h),
                               Text(
-                                'Sending Email...',
+                                l10n.mfSendingEmail,
                                 style: TextStyle(
                                   fontSize: 18.sp,
                                   fontWeight: FontWeight.w600,
@@ -91,7 +93,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
                               ),
                               SizedBox(height: 8.h),
                               Text(
-                                'Preparing your tech pack\nand sending to manufacturer',
+                                l10n.mfPreparingTechPack,
                                 textAlign: TextAlign.center,
                                 style: TextStyle(
                                   fontSize: 14.sp,
@@ -112,7 +114,7 @@ class RecommendedManufactureScreen extends StatelessWidget {
   }
 }
 
-Widget recommendedTab(ManufacturerSuggestionController controller) {
+Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizations l10n) {
   return RefreshIndicator(
     onRefresh: controller.refreshManufacturers,
     child: SingleChildScrollView(
@@ -122,13 +124,13 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 8.h),
-          Text('Manufacturer Suggestions', style: mstTextTextStyle26700),
+          Text(l10n.mfManufacturerSuggestions, style: mstTextTextStyle26700),
           SizedBox(height: 8.h),
           Obx(
             () => Text(
               controller.isLoading.value
-                  ? 'Loading manufacturers...'
-                  : 'We found ${controller.allManufacturersCache.length} manufacturers from around the world.',
+                  ? l10n.mfLoadingManufacturers
+                  : l10n.mfFoundManufacturers(controller.allManufacturersCache.length),
               style: mstTextTextStyle184001,
             ),
           ),
@@ -150,7 +152,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Loading manufacturers...',
+                      l10n.mfLoadingManufacturers,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: const Color(0xFF666666),
@@ -185,7 +187,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'No manufacturers available',
+                      l10n.mfNoManufacturersAvailable,
                       style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                     ),
                   ],
@@ -219,7 +221,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
                       padding: EdgeInsets.symmetric(vertical: 20.h),
                       child: Center(
                         child: Text(
-                          'All manufacturers loaded',
+                          l10n.mfAllManufacturersLoaded,
                           style: TextStyle(fontSize: 14.sp, color: Colors.grey),
                         ),
                       ),
@@ -235,7 +237,7 @@ Widget recommendedTab(ManufacturerSuggestionController controller) {
   );
 }
 
-Widget customTab(ManufacturerSuggestionController controller) {
+Widget customTab(ManufacturerSuggestionController controller, AppLocalizations l10n) {
   return RefreshIndicator(
     onRefresh: controller.refreshManufacturers,
     child: SingleChildScrollView(
@@ -245,10 +247,10 @@ Widget customTab(ManufacturerSuggestionController controller) {
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           SizedBox(height: 8.h),
-          Text('Filter Manufacturers', style: mstTextTextStyle26700),
+          Text(l10n.mfFilterManufacturers, style: mstTextTextStyle26700),
           SizedBox(height: 8.h),
           Text(
-            'Use filters below to search our manufacturer directory:',
+            l10n.mfUseFiltersBelow,
             style: mstTextTextStyle184001,
           ),
           SizedBox(height: 18.h),
@@ -257,7 +259,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
           Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Country or Region', style: cstTextTextStyle16500),
+              Text(l10n.mfCountryOrRegion, style: cstTextTextStyle16500),
               SizedBox(height: 8.h),
               Builder(
                 builder: (ctx) => InkWell(
@@ -273,8 +275,8 @@ Widget customTab(ManufacturerSuggestionController controller) {
                         textStyle: TextStyle(fontSize: 16.sp),
                         searchTextStyle: TextStyle(fontSize: 16.sp),
                         inputDecoration: InputDecoration(
-                          labelText: 'Search',
-                          hintText: 'Start typing to search',
+                          labelText: l10n.mfSearchCountry,
+                          hintText: l10n.mfSearchCountryHint,
                           prefixIcon: const Icon(Icons.search),
                           border: OutlineInputBorder(
                             borderSide: BorderSide(
@@ -299,7 +301,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                           child: Obx(() => Text(
                             controller.selectedCountryName.value == 'All Countries' ||
                                     controller.selectedCountryName.value.isEmpty
-                                ? 'All Countries'
+                                ? l10n.mfAllCountries
                                 : controller.selectedCountryName.value,
                             style: TextStyle(fontSize: 16.sp),
                           )),
@@ -321,7 +323,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                 ? TextButton(
                     onPressed: controller.clearCountryFilter,
                     child: Text(
-                      'Clear Filter',
+                      l10n.mfClearFilter,
                       style: cstTextTextStyle16500.copyWith(color: Colors.red),
                     ),
                   )
@@ -347,7 +349,7 @@ Widget customTab(ManufacturerSuggestionController controller) {
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      'Loading manufacturers...',
+                      l10n.mfLoadingManufacturers,
                       style: TextStyle(
                         fontSize: 16.sp,
                         color: const Color(0xFF666666),
@@ -366,13 +368,13 @@ Widget customTab(ManufacturerSuggestionController controller) {
                       Icon(Icons.search_off, size: 64.sp, color: Colors.grey),
                       SizedBox(height: 16.h),
                       Text(
-                        'No manufacturers found',
+                        l10n.mfNoManufacturersFound,
                         style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                       ),
                       Padding(
                         padding: EdgeInsets.only(top: 8.h),
                         child: Text(
-                          'Try adjusting your filters',
+                          l10n.mfTryAdjustingFilters,
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey,
@@ -388,7 +390,10 @@ Widget customTab(ManufacturerSuggestionController controller) {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    '${filteredManufacturers.length} manufacturer${filteredManufacturers.length == 1 ? '' : 's'} found',
+                    l10n.mfManufacturersFound(
+                      filteredManufacturers.length,
+                      filteredManufacturers.length == 1 ? '' : 's',
+                    ),
                     style: TextStyle(
                       fontSize: 14.sp,
                       color: const Color(0xFF666666),

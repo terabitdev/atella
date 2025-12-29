@@ -3295,6 +3295,666 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upgrade Instead'**
   String get tpDialogUpgradeInstead;
+
+  /// Manufacturer suggestions screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer Suggestions'**
+  String get mfManufacturerSuggestions;
+
+  /// Loading message for manufacturers
+  ///
+  /// In en, this message translates to:
+  /// **'Loading manufacturers...'**
+  String get mfLoadingManufacturers;
+
+  /// Message showing manufacturer count
+  ///
+  /// In en, this message translates to:
+  /// **'We found {count} manufacturers from around the world.'**
+  String mfFoundManufacturers(int count);
+
+  /// Empty state when no manufacturers
+  ///
+  /// In en, this message translates to:
+  /// **'No manufacturers available'**
+  String get mfNoManufacturersAvailable;
+
+  /// Message when all manufacturers loaded
+  ///
+  /// In en, this message translates to:
+  /// **'All manufacturers loaded'**
+  String get mfAllManufacturersLoaded;
+
+  /// Filter manufacturers title
+  ///
+  /// In en, this message translates to:
+  /// **'Filter Manufacturers'**
+  String get mfFilterManufacturers;
+
+  /// Filter instructions
+  ///
+  /// In en, this message translates to:
+  /// **'Use filters below to search our manufacturer directory:'**
+  String get mfUseFiltersBelow;
+
+  /// Country filter label
+  ///
+  /// In en, this message translates to:
+  /// **'Country or Region'**
+  String get mfCountryOrRegion;
+
+  /// Country search label
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get mfSearchCountry;
+
+  /// Country search hint
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing to search'**
+  String get mfSearchCountryHint;
+
+  /// All countries option
+  ///
+  /// In en, this message translates to:
+  /// **'All Countries'**
+  String get mfAllCountries;
+
+  /// Search label
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get mfSearch;
+
+  /// Search placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing to search'**
+  String get mfStartTypingToSearch;
+
+  /// Clear filter button
+  ///
+  /// In en, this message translates to:
+  /// **'Clear Filter'**
+  String get mfClearFilter;
+
+  /// Empty search results
+  ///
+  /// In en, this message translates to:
+  /// **'No manufacturers found'**
+  String get mfNoManufacturersFound;
+
+  /// Empty search suggestion
+  ///
+  /// In en, this message translates to:
+  /// **'Try adjusting your filters'**
+  String get mfTryAdjustingFilters;
+
+  /// Filtered results count
+  ///
+  /// In en, this message translates to:
+  /// **'{count} manufacturer{plural} found'**
+  String mfManufacturersFound(int count, String plural);
+
+  /// Sending email loading title
+  ///
+  /// In en, this message translates to:
+  /// **'Sending Email...'**
+  String get mfSendingEmail;
+
+  /// Sending email loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Preparing your tech pack\nand sending to manufacturer'**
+  String get mfPreparingTechPack;
+
+  /// Send via email button
+  ///
+  /// In en, this message translates to:
+  /// **'Send via Email'**
+  String get mfSendViaEmail;
+
+  /// Contact button
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get mfContact;
+
+  /// Hide details button
+  ///
+  /// In en, this message translates to:
+  /// **'Hide Details'**
+  String get mfHideDetails;
+
+  /// More details button
+  ///
+  /// In en, this message translates to:
+  /// **'More Details'**
+  String get mfMoreDetails;
+
+  /// MOQ label
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Order Quantity'**
+  String get mfMinimumOrderQuantity;
+
+  /// Certifications label
+  ///
+  /// In en, this message translates to:
+  /// **'Certifications'**
+  String get mfCertifications;
+
+  /// Products label
+  ///
+  /// In en, this message translates to:
+  /// **'Products & Capabilities'**
+  String get mfProductsCapabilities;
+
+  /// Contact dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Contact {name}'**
+  String mfContactManufacturer(String name);
+
+  /// Email label
+  ///
+  /// In en, this message translates to:
+  /// **'Email'**
+  String get mfEmail;
+
+  /// Website label
+  ///
+  /// In en, this message translates to:
+  /// **'Website'**
+  String get mfWebsite;
+
+  /// Instagram label
+  ///
+  /// In en, this message translates to:
+  /// **'Instagram'**
+  String get mfInstagram;
+
+  /// Not available text
+  ///
+  /// In en, this message translates to:
+  /// **'Not available'**
+  String get mfNotAvailable;
+
+  /// Close button
+  ///
+  /// In en, this message translates to:
+  /// **'Close'**
+  String get mfClose;
+
+  /// Error title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get mfError;
+
+  /// Email not available error
+  ///
+  /// In en, this message translates to:
+  /// **'Email not available'**
+  String get mfEmailNotAvailable;
+
+  /// Website not available error
+  ///
+  /// In en, this message translates to:
+  /// **'Website not available'**
+  String get mfWebsiteNotAvailable;
+
+  /// Link open error
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link'**
+  String get mfCouldNotOpenLink;
+
+  /// No email available snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'No Email Available'**
+  String get mfNoEmailAvailable;
+
+  /// No email message
+  ///
+  /// In en, this message translates to:
+  /// **'This manufacturer does not have an email address on file.'**
+  String get mfManufacturerNoEmail;
+
+  /// Email sent success title
+  ///
+  /// In en, this message translates to:
+  /// **'Email Sent Successfully!'**
+  String get mfEmailSentSuccessfully;
+
+  /// Email sent success message
+  ///
+  /// In en, this message translates to:
+  /// **'Your tech pack has been sent to {name} at {email}'**
+  String mfTechPackSentTo(String name, String email);
+
+  /// Email failed title
+  ///
+  /// In en, this message translates to:
+  /// **'Email Failed'**
+  String get mfEmailFailed;
+
+  /// Email failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to send email to {name}. Please try again.'**
+  String mfFailedToSendEmail(String name);
+
+  /// Email error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred while sending email: {error}'**
+  String mfErrorSendingEmail(String error);
+
+  /// Preview email dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Preview Email'**
+  String get mfPreviewEmail;
+
+  /// Cancel button
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get mfCancel;
+
+  /// Send email button
+  ///
+  /// In en, this message translates to:
+  /// **'Send Email'**
+  String get mfSendEmail;
+
+  /// Tech pack summary label
+  ///
+  /// In en, this message translates to:
+  /// **'Tech Pack Summary'**
+  String get mfTechPackSummary;
+
+  /// Material label
+  ///
+  /// In en, this message translates to:
+  /// **'Material'**
+  String get mfMaterial;
+
+  /// Primary color label
+  ///
+  /// In en, this message translates to:
+  /// **'Primary Color'**
+  String get mfPrimaryColor;
+
+  /// Size range label
+  ///
+  /// In en, this message translates to:
+  /// **'Size Range'**
+  String get mfSizeRange;
+
+  /// Quantity label
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity'**
+  String get mfQuantity;
+
+  /// Target cost label
+  ///
+  /// In en, this message translates to:
+  /// **'Target Cost'**
+  String get mfTargetCost;
+
+  /// Delivery label
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery'**
+  String get mfDelivery;
+
+  /// PDF attachment info
+  ///
+  /// In en, this message translates to:
+  /// **'PDF attachment: {name} ({size} KB)'**
+  String mfPDFAttachment(String name, String size);
+
+  /// Images attached count
+  ///
+  /// In en, this message translates to:
+  /// **'Images attached: {count}'**
+  String mfImagesAttached(int count);
+
+  /// Tech Pack Details screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Final Design Validated'**
+  String get tpdFinalDesignValidated;
+
+  /// Materials section title
+  ///
+  /// In en, this message translates to:
+  /// **'Materials & Fabrics'**
+  String get tpdMaterialsFabrics;
+
+  /// Main fabric question label
+  ///
+  /// In en, this message translates to:
+  /// **'What is the main fabric used?'**
+  String get tpdMainFabricLabel;
+
+  /// Main fabric hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Main Fabric: Organic cotton twill'**
+  String get tpdMainFabricHint;
+
+  /// Secondary materials question label
+  ///
+  /// In en, this message translates to:
+  /// **'Are there any secondary materials or linings?'**
+  String get tpdSecondaryMaterialsLabel;
+
+  /// Secondary materials hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Polyester mesh lining'**
+  String get tpdSecondaryMaterialsHint;
+
+  /// Fabric properties question label
+  ///
+  /// In en, this message translates to:
+  /// **'Does the fabric have any technical properties? (e.g. organic, stretch, water-repellent)'**
+  String get tpdFabricPropertiesLabel;
+
+  /// Fabric properties hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Breathable, stretchable, water-repellent'**
+  String get tpdFabricPropertiesHint;
+
+  /// Colors section title
+  ///
+  /// In en, this message translates to:
+  /// **'Colors'**
+  String get tpdColors;
+
+  /// Primary color question label
+  ///
+  /// In en, this message translates to:
+  /// **'What is the primary color of the garment?'**
+  String get tpdPrimaryColorLabel;
+
+  /// Primary color hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Sky blue'**
+  String get tpdPrimaryColorHint;
+
+  /// Alternate colorways question label
+  ///
+  /// In en, this message translates to:
+  /// **'Are there any alternate colorways to produce?'**
+  String get tpdAlternateColorwaysLabel;
+
+  /// Alternate colorways hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Sage green, off-white'**
+  String get tpdAlternateColorwaysHint;
+
+  /// Pantone question label
+  ///
+  /// In en, this message translates to:
+  /// **'Do you have Pantone references or HEX codes for the colors?'**
+  String get tpdPantoneLabel;
+
+  /// Pantone hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Pantone 290C, #C1DAD6'**
+  String get tpdPantoneHint;
+
+  /// Sizes section title
+  ///
+  /// In en, this message translates to:
+  /// **'Sizes & Measurements'**
+  String get tpdSizesMeasurements;
+
+  /// Size range question label
+  ///
+  /// In en, this message translates to:
+  /// **'Do you want to use standard size charts or enter custom measurements? (e.g. XS–XL)'**
+  String get tpdSizeRangeLabel;
+
+  /// Measurement chart question label
+  ///
+  /// In en, this message translates to:
+  /// **'Will you provide a measurement chart by size?'**
+  String get tpdMeasurementChartLabel;
+
+  /// Or separator text
+  ///
+  /// In en, this message translates to:
+  /// **'or'**
+  String get tpdOr;
+
+  /// Auto-generated question label
+  ///
+  /// In en, this message translates to:
+  /// **'Or should the AI auto-generate one from the 3D model?'**
+  String get tpdAutogeneratedLabel;
+
+  /// Technical details section title
+  ///
+  /// In en, this message translates to:
+  /// **'Technical Details'**
+  String get tpdTechnicalDetails;
+
+  /// Accessories question label
+  ///
+  /// In en, this message translates to:
+  /// **'Are there any accessories?'**
+  String get tpdAccessoriesLabel;
+
+  /// Accessories hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Zipper, buttons, drawcord'**
+  String get tpdAccessoriesHint;
+
+  /// Stitching question label
+  ///
+  /// In en, this message translates to:
+  /// **'Which stitch type should be used?'**
+  String get tpdStitchingLabel;
+
+  /// Stitching hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Single, double, overlock etc'**
+  String get tpdStitchingHint;
+
+  /// Decorative stitching question label
+  ///
+  /// In en, this message translates to:
+  /// **'Do you require visible, reinforced, or decorative stitching?'**
+  String get tpdDecorativeStitchingLabel;
+
+  /// Decorative stitching hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Contrast topstitching sleeves'**
+  String get tpdDecorativeStitchingHint;
+
+  /// Labeling section title
+  ///
+  /// In en, this message translates to:
+  /// **'Labeling & Branding'**
+  String get tpdLabelingBranding;
+
+  /// Logo placement question label
+  ///
+  /// In en, this message translates to:
+  /// **'Where should the logo or brand name appear?'**
+  String get tpdLogoPlacementLabel;
+
+  /// Logo placement hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Logo Placement: Chest & neck'**
+  String get tpdLogoPlacementHint;
+
+  /// Labels needed question label
+  ///
+  /// In en, this message translates to:
+  /// **'What types of labels are needed?'**
+  String get tpdLabelsNeededLabel;
+
+  /// Labels needed hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Brand, care, size'**
+  String get tpdLabelsNeededHint;
+
+  /// Upload image instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Upload reference image (optional)'**
+  String get tpdUploadReferenceImage;
+
+  /// QR code question label
+  ///
+  /// In en, this message translates to:
+  /// **'Should a QR code, barcode, or NFC chip be included?'**
+  String get tpdQrCodeLabel;
+
+  /// QR code hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Add QR code'**
+  String get tpdQrCodeHint;
+
+  /// Packaging section title
+  ///
+  /// In en, this message translates to:
+  /// **'Packaging & Shipping'**
+  String get tpdPackagingShipping;
+
+  /// Packaging type question label
+  ///
+  /// In en, this message translates to:
+  /// **'What type of packaging is required?'**
+  String get tpdPackagingTypeLabel;
+
+  /// Packaging type hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Kraft box + polybag'**
+  String get tpdPackagingTypeHint;
+
+  /// Folding instructions question label
+  ///
+  /// In en, this message translates to:
+  /// **'Any specific folding or packing instructions?'**
+  String get tpdFoldingInstructionsLabel;
+
+  /// Folding instructions hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Fold across chest'**
+  String get tpdFoldingInstructionsHint;
+
+  /// Inserts question label
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to include a product sheet or flyer?'**
+  String get tpdInsertsLabel;
+
+  /// Inserts hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Inserts: Thank-you card, care sheet'**
+  String get tpdInsertsHint;
+
+  /// Production details section title
+  ///
+  /// In en, this message translates to:
+  /// **'Production Details'**
+  String get tpdProductionDetails;
+
+  /// Cost per piece question label
+  ///
+  /// In en, this message translates to:
+  /// **'What is the target cost per piece?'**
+  String get tpdCostPerPieceLabel;
+
+  /// Cost per piece hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Cost per Piece: €3.8'**
+  String get tpdCostPerPieceHint;
+
+  /// Quantity question label
+  ///
+  /// In en, this message translates to:
+  /// **'How many units do you plan to produce?'**
+  String get tpdQuantityLabel;
+
+  /// Quantity hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Quantity: 1,000 units'**
+  String get tpdQuantityHint;
+
+  /// Delivery date question label
+  ///
+  /// In en, this message translates to:
+  /// **'What is your desired delivery date?'**
+  String get tpdDeliveryDateLabel;
+
+  /// Delivery date hint text
+  ///
+  /// In en, this message translates to:
+  /// **'Delivery: 30 Sept 2025'**
+  String get tpdDeliveryDateHint;
+
+  /// Manufacturers section title
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturers'**
+  String get tpdManufacturers;
+
+  /// Manufacturer country selection instruction
+  ///
+  /// In en, this message translates to:
+  /// **'Select a country for manufacturer suggestions'**
+  String get tpdSelectCountryForManufacturers;
+
+  /// Country search label
+  ///
+  /// In en, this message translates to:
+  /// **'Search'**
+  String get tpdSearchCountry;
+
+  /// Country search hint
+  ///
+  /// In en, this message translates to:
+  /// **'Start typing to search'**
+  String get tpdSearchCountryHint;
+
+  /// Country selection placeholder
+  ///
+  /// In en, this message translates to:
+  /// **'Select a country'**
+  String get tpdSelectACountry;
+
+  /// Generate tech pack button
+  ///
+  /// In en, this message translates to:
+  /// **'Generate Tech Pack'**
+  String get tpdGenerateTechPack;
 }
 
 class _AppLocalizationsDelegate

@@ -10,6 +10,7 @@ import '../Widgets/tech_pack_question_field.dart';
 import '../Widgets/tech_pack_image_upload_container.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
   TechPackDetailsScreen({super.key});
@@ -19,6 +20,8 @@ class TechPackDetailsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
       body: SafeArea(
@@ -29,7 +32,7 @@ class TechPackDetailsScreen extends StatelessWidget {
             children: [
               SizedBox(height: 8.h),
               GlobalHeader(
-                title: 'Final Design Validated',
+                title: l10n.tpdFinalDesignValidated,
                 onBack: () => Get.back(),
               ),
               SizedBox(height: 18.h),
@@ -47,26 +50,25 @@ class TechPackDetailsScreen extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    RoundedTagContainer(text: 'Materials & Fabrics'),
+                    RoundedTagContainer(text: l10n.tpdMaterialsFabrics),
                     SizedBox(height: 10.h),
                     TechPackQuestionField(
-                      label: 'What is the main fabric used?',
-                      hint: 'Main Fabric: Organic cotton twill',
+                      label: l10n.tpdMainFabricLabel,
+                      hint: l10n.tpdMainFabricHint,
                       controller: controller.mainFabricController,
                       onChanged: (_) =>
                           controller.checkMaterialsBlockComplete(),
                     ),
                     TechPackQuestionField(
-                      label: 'Are there any secondary materials or linings?',
-                      hint: 'Polyester mesh lining',
+                      label: l10n.tpdSecondaryMaterialsLabel,
+                      hint: l10n.tpdSecondaryMaterialsHint,
                       controller: controller.secondaryMaterialsController,
                       onChanged: (_) =>
                           controller.checkMaterialsBlockComplete(),
                     ),
                     TechPackQuestionField(
-                      label:
-                          'Does the fabric have any technical properties? (e.g. organic, stretch, water-repellent)',
-                      hint: 'Breathable, stretchable, water-repellent',
+                      label: l10n.tpdFabricPropertiesLabel,
+                      hint: l10n.tpdFabricPropertiesHint,
                       controller: controller.fabricPropertiesController,
                       onChanged: (_) =>
                           controller.checkMaterialsBlockComplete(),
@@ -93,29 +95,26 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(text: 'Colors'),
+                                RoundedTagContainer(text: l10n.tpdColors),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label:
-                                      'What is the primary color of the garment?',
-                                  hint: 'Sky blue',
+                                  label: l10n.tpdPrimaryColorLabel,
+                                  hint: l10n.tpdPrimaryColorHint,
                                   controller: controller.primaryColorController,
                                   onChanged: (_) =>
                                       controller.checkColorsBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Are there any alternate colorways to produce?',
-                                  hint: 'Sage green, off-white',
+                                  label: l10n.tpdAlternateColorwaysLabel,
+                                  hint: l10n.tpdAlternateColorwaysHint,
                                   controller:
                                       controller.alternateColorwaysController,
                                   onChanged: (_) =>
                                       controller.checkColorsBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Do you have Pantone references or HEX codes for the colors?',
-                                  hint: 'Pantone 290C, #C1DAD6',
+                                  label: l10n.tpdPantoneLabel,
+                                  hint: l10n.tpdPantoneHint,
                                   controller: controller.pantoneController,
                                   onChanged: (_) =>
                                       controller.checkColorsBlockComplete(),
@@ -146,13 +145,12 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Sizes & Measurements',
+                                RoundedTagContainer(
+                                  text: l10n.tpdSizesMeasurements,
                                 ),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label:
-                                      'Do you want to use standard size charts or enter custom measurements? (e.g. XS–XL)',
+                                  label: l10n.tpdSizeRangeLabel,
                                   hint: '',
                                   controller: controller.sizeRangeController,
                                   onChanged: (_) =>
@@ -160,8 +158,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 ),
                                 Obx(() => controller.showMeasurementText.value
                                     ? TechPackQuestionField(
-                                        label:
-                                            'Will you provide a measurement chart by size?',
+                                        label: l10n.tpdMeasurementChartLabel,
                                         hint: '',
                                         controller:
                                             controller.measurementChartController,
@@ -176,7 +173,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                           SizedBox(height: 10.h),
                                           Center(
                                             child: Text(
-                                              'or',
+                                              l10n.tpdOr,
                                               style: TextStyle(
                                                 color: Colors.grey,
                                                 fontSize: 15.sp,
@@ -206,8 +203,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                     : const SizedBox.shrink()),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label:
-                                      'Or should the AI auto-generate one from the 3D model?',
+                                  label: l10n.tpdAutogeneratedLabel,
                                   hint: '',
                                   controller: controller.autogeneratedController,
 
@@ -238,29 +234,27 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Technical Details',
+                                RoundedTagContainer(
+                                  text: l10n.tpdTechnicalDetails,
                                 ),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label: 'Are there any accessories?',
-                                  hint: 'Zipper, buttons, drawcord',
+                                  label: l10n.tpdAccessoriesLabel,
+                                  hint: l10n.tpdAccessoriesHint,
                                   controller: controller.accessoriesController,
                                   onChanged: (_) =>
                                       controller.checkTechnicalBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Which stitch type should be used?',
-                                  hint: 'Single, double, overlock etc',
+                                  label: l10n.tpdStitchingLabel,
+                                  hint: l10n.tpdStitchingHint,
                                   controller: controller.stitchingController,
                                   onChanged: (_) =>
                                       controller.checkTechnicalBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Do you require visible, reinforced, or decorative stitching?',
-                                  hint: 'Contrast topstitching sleeves',
+                                  label: l10n.tpdDecorativeStitchingLabel,
+                                  hint: l10n.tpdDecorativeStitchingHint,
                                   controller:
                                       controller.decorativeStitchingController,
                                   onChanged: (_) =>
@@ -292,14 +286,13 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Labeling & Branding',
+                                RoundedTagContainer(
+                                  text: l10n.tpdLabelingBranding,
                                 ),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label:
-                                      'Where should the logo or brand name appear?',
-                                  hint: 'Logo Placement: Chest & neck',
+                                  label: l10n.tpdLogoPlacementLabel,
+                                  hint: l10n.tpdLogoPlacementHint,
                                   controller:
                                       controller.logoPlacementController,
                                   onChanged: (_) =>
@@ -307,8 +300,8 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 ),
                                 Obx(() => controller.showLabelText.value
                                     ? TechPackQuestionField(
-                                        label: 'What types of labels are needed?',
-                                        hint: 'Brand, care, size',
+                                        label: l10n.tpdLabelsNeededLabel,
+                                        hint: l10n.tpdLabelsNeededHint,
                                         controller: controller.labelsNeededController,
                                         onChanged: (_) =>
                                             controller.checkLabelingBlockComplete(),
@@ -317,7 +310,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 SizedBox(height: 10.h),
                                 Center(
                                   child: Text(
-                                    'Upload reference image (optional)',
+                                    l10n.tpdUploadReferenceImage,
                                     style: TextStyle(
                                       color: Colors.grey,
                                       fontSize: 13.sp,
@@ -339,9 +332,8 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 )),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label:
-                                      'Should a QR code, barcode, or NFC chip be included?',
-                                  hint: 'Add QR code',
+                                  label: l10n.tpdQrCodeLabel,
+                                  hint: l10n.tpdQrCodeHint,
                                   controller: controller.qrCodeController,
                                   onChanged: (_) =>
                                       controller.checkLabelingBlockComplete(),
@@ -372,31 +364,29 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Packaging & Shipping',
+                                RoundedTagContainer(
+                                  text: l10n.tpdPackagingShipping,
                                 ),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label: 'What type of packaging is required?',
-                                  hint: 'Kraft box + polybag',
+                                  label: l10n.tpdPackagingTypeLabel,
+                                  hint: l10n.tpdPackagingTypeHint,
                                   controller:
                                       controller.packagingTypeController,
                                   onChanged: (_) =>
                                       controller.checkPackagingBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Any specific folding or packing instructions?',
-                                  hint: 'Fold across chest',
+                                  label: l10n.tpdFoldingInstructionsLabel,
+                                  hint: l10n.tpdFoldingInstructionsHint,
                                   controller:
                                       controller.foldingInstructionsController,
                                   onChanged: (_) =>
                                       controller.checkPackagingBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'Would you like to include a product sheet or flyer?',
-                                  hint: 'Inserts: Thank-you card, care sheet',
+                                  label: l10n.tpdInsertsLabel,
+                                  hint: l10n.tpdInsertsHint,
                                   controller: controller.insertsController,
                                   onChanged: (_) =>
                                       controller.checkPackagingBlockComplete(),
@@ -427,28 +417,27 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Production Details',
+                                RoundedTagContainer(
+                                  text: l10n.tpdProductionDetails,
                                 ),
                                 SizedBox(height: 10.h),
                                 TechPackQuestionField(
-                                  label: 'What is the target cost per piece?',
-                                  hint: 'Cost per Piece: €3.8',
+                                  label: l10n.tpdCostPerPieceLabel,
+                                  hint: l10n.tpdCostPerPieceHint,
                                   controller: controller.costPerPieceController,
                                   onChanged: (_) =>
                                       controller.checkProductionBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label:
-                                      'How many units do you plan to produce?',
-                                  hint: 'Quantity: 1,000 units',
+                                  label: l10n.tpdQuantityLabel,
+                                  hint: l10n.tpdQuantityHint,
                                   controller: controller.quantityController,
                                   onChanged: (_) =>
                                       controller.checkProductionBlockComplete(),
                                 ),
                                 TechPackQuestionField(
-                                  label: 'What is your desired delivery date?',
-                                  hint: 'Delivery: 30 Sept 2025',
+                                  label: l10n.tpdDeliveryDateLabel,
+                                  hint: l10n.tpdDeliveryDateHint,
                                   controller: controller.deliveryDateController,
                                   onChanged: (_) =>
                                       controller.checkProductionBlockComplete(),
@@ -479,12 +468,12 @@ class TechPackDetailsScreen extends StatelessWidget {
                             child: Column(
                               crossAxisAlignment: CrossAxisAlignment.start,
                               children: [
-                                const RoundedTagContainer(
-                                  text: 'Manufacturers',
+                                RoundedTagContainer(
+                                  text: l10n.tpdManufacturers,
                                 ),
                                 SizedBox(height: 10.h),
                                 Text(
-                                  'Select a country for manufacturer suggestions',
+                                  l10n.tpdSelectCountryForManufacturers,
                                   style: TextStyle(
                                     fontSize: 14.sp,
                                     fontWeight: FontWeight.w500,
@@ -506,8 +495,8 @@ class TechPackDetailsScreen extends StatelessWidget {
                                           textStyle: TextStyle(fontSize: 16.sp),
                                           searchTextStyle: TextStyle(fontSize: 16.sp),
                                           inputDecoration: InputDecoration(
-                                            labelText: 'Search',
-                                            hintText: 'Start typing to search',
+                                            labelText: l10n.tpdSearchCountry,
+                                            hintText: l10n.tpdSearchCountryHint,
                                             prefixIcon: const Icon(Icons.search),
                                             border: OutlineInputBorder(
                                               borderSide: BorderSide(
@@ -531,7 +520,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                           Expanded(
                                             child: Obx(() => Text(
                                               controller.selectedManufacturerCountry.value.isEmpty
-                                                  ? 'Select a country'
+                                                  ? l10n.tpdSelectACountry
                                                   : controller.selectedManufacturerCountry.value,
                                               style: TextStyle(
                                                 fontSize: 16.sp,
@@ -549,7 +538,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 ),
                                 SizedBox(height: 20.h),
                                 OutlineGenerateRoundButton(
-                                  title: 'Generate Tech Pack',
+                                  title: l10n.tpdGenerateTechPack,
                                   onTap: () {
                                     controller.checkSubscriptionAndGenerate();
                                   },

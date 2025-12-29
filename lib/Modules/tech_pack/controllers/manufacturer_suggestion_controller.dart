@@ -6,6 +6,7 @@ import 'package:atella/Data/Models/new_manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/new_manufacturer_firebase_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
@@ -160,6 +161,9 @@ class ManufacturerSuggestionController extends GetxController {
   final NewManufacturerFirebaseService _manufacturerService =
       NewManufacturerFirebaseService();
   final AuthService _authService = AuthService();
+
+  // Helper to get localization
+  AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
 
   // Data - Using NewManufacturer model
   final RxList<NewManufacturer> recommendedManufacturers = <NewManufacturer>[].obs;
@@ -476,8 +480,8 @@ class ManufacturerSuggestionController extends GetxController {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
       Get.snackbar(
-        'No Email Available',
-        'This manufacturer does not have an email address on file.',
+        _l10n.mfNoEmailAvailable,
+        _l10n.mfManufacturerNoEmail,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -597,8 +601,8 @@ class ManufacturerSuggestionController extends GetxController {
       // Show result
       if (success) {
         Get.snackbar(
-          'Email Sent Successfully!',
-          'Your tech pack has been sent to ${manufacturer.companyName} at ${manufacturer.email}',
+          _l10n.mfEmailSentSuccessfully,
+          _l10n.mfTechPackSentTo(manufacturer.companyName, manufacturer.email!),
           backgroundColor: Colors.black,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -606,8 +610,8 @@ class ManufacturerSuggestionController extends GetxController {
         );
       } else {
         Get.snackbar(
-          'Email Failed',
-          'Failed to send email to ${manufacturer.companyName}. Please try again.',
+          _l10n.mfEmailFailed,
+          _l10n.mfFailedToSendEmail(manufacturer.companyName),
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
@@ -616,8 +620,8 @@ class ManufacturerSuggestionController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'An error occurred while sending email: $e',
+        _l10n.mfError,
+        _l10n.mfErrorSendingEmail(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -634,8 +638,8 @@ class ManufacturerSuggestionController extends GetxController {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
       Get.snackbar(
-        'No Email Available',
-        'This manufacturer does not have an email address on file.',
+        _l10n.mfNoEmailAvailable,
+        _l10n.mfManufacturerNoEmail,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
@@ -757,30 +761,28 @@ class ManufacturerSuggestionController extends GetxController {
         'From: ${userName ?? 'Atelia Fashion'} ${userEmail != null ? "<$userEmail>" : ""}',
       ),
       const Divider(height: 16),
-      const Text(
-        'Tech Pack Summary',
-        style: TextStyle(fontWeight: FontWeight.w600),
+      Text(
+        _l10n.mfTechPackSummary,
+        style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 6),
-      Text('Material: ${techPackData['mainFabric']}'),
-      Text('Primary Color: ${techPackData['primaryColor']}'),
-      Text('Size Range: ${techPackData['sizeRange']}'),
-      Text('Quantity: ${techPackData['quantity']}'),
-      Text('Target Cost: ${techPackData['costPerPiece']}'),
-      Text('Delivery: ${techPackData['deliveryDate']}'),
+      Text('${_l10n.mfMaterial}: ${techPackData['mainFabric']}'),
+      Text('${_l10n.mfPrimaryColor}: ${techPackData['primaryColor']}'),
+      Text('${_l10n.mfSizeRange}: ${techPackData['sizeRange']}'),
+      Text('${_l10n.mfQuantity}: ${techPackData['quantity']}'),
+      Text('${_l10n.mfTargetCost}: ${techPackData['costPerPiece']}'),
+      Text('${_l10n.mfDelivery}: ${techPackData['deliveryDate']}'),
       const SizedBox(height: 8),
       if (pdfName != null)
-        Text(
-          'PDF attachment: $pdfName${pdfSizeKB != null ? " ($pdfSizeKB KB)" : ""}',
-        )
+        Text(_l10n.mfPDFAttachment(pdfName, pdfSizeKB ?? '0'))
       else
-        Text('Images attached: ${imagePaths.length}'),
+        Text(_l10n.mfImagesAttached(imagePaths.length)),
     ];
 
     await Get.dialog(
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-        title: const Text('Preview Email'),
+        title: Text(_l10n.mfPreviewEmail),
         content: SingleChildScrollView(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -789,7 +791,7 @@ class ManufacturerSuggestionController extends GetxController {
           ),
         ),
         actions: [
-          TextButton(onPressed: () => Get.back(), child: const Text('Cancel')),
+          TextButton(onPressed: () => Get.back(), child: Text(_l10n.mfCancel)),
           ElevatedButton(
             onPressed: () {
               Get.back();
@@ -799,7 +801,7 @@ class ManufacturerSuggestionController extends GetxController {
               backgroundColor: Colors.black,
               foregroundColor: Colors.white,
             ),
-            child: const Text('Send Email'),
+            child: Text(_l10n.mfSendEmail),
           ),
         ],
       ),
