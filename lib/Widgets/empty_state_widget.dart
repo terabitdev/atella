@@ -23,7 +23,7 @@ class EmptyStateWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: EdgeInsets.symmetric(horizontal: 32.w, vertical: 40.h),
+      padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 20.h),
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
@@ -31,13 +31,13 @@ class EmptyStateWidget extends StatelessWidget {
           if (imagePath != null)
             Image.asset(
               imagePath!,
-              height: 229.h,
-              width: 203.w,
+              height: 200.h,
+              width: 180.w,
               fit: BoxFit.contain,
             ),
-          
+
           SizedBox(height: 24.h),
-          
+
           // Title text
           Text(
             title,
@@ -49,10 +49,10 @@ class EmptyStateWidget extends StatelessWidget {
               height: 1.4,
             ),
           ),
-          
+
           // Subtitle text (optional)
           if (subtitle != null) ...[
-            SizedBox(height: 8.h),
+            SizedBox(height: 12.h),
             Text(
               subtitle!,
               textAlign: TextAlign.center,
@@ -63,8 +63,8 @@ class EmptyStateWidget extends StatelessWidget {
               ),
             ),
           ],
-          
-          SizedBox(height: 32.h),
+
+          SizedBox(height: 40.h),
 
           RoundButton(
             title: buttonText,
