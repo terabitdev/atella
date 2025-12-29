@@ -1343,4 +1343,105 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get today => 'Today';
+
+  @override
+  String get rcSnackbarRefiningComplete => 'Refining Complete!';
+
+  @override
+  String get rcSnackbarRefiningCompleteMessage =>
+      'Your concept has been refined successfully.';
+
+  @override
+  String get rcSnackbarExtraDesignsAdded => 'Extra Designs Added!';
+
+  @override
+  String get rcSnackbarExtraDesignsAddedMessage =>
+      '20 extra designs have been added to your account.';
+
+  @override
+  String get rcSnackbarRegeneratingDesigns => 'Regenerating Designs!';
+
+  @override
+  String get rcSnackbarRegeneratingDesignsMessage =>
+      'Creating 3 new designs based on your updated preferences...';
+
+  @override
+  String get rcSnackbarGeneratingDesigns => 'Generating Designs!';
+
+  @override
+  String get rcSnackbarGeneratingDesignsMessage =>
+      'Creating 3 unique designs based on your preferences...';
+
+  @override
+  String get rcSnackbarInvalidInput => 'Invalid Input';
+
+  @override
+  String rcSnackbarInvalidInputCategoryMessage(String category) {
+    return 'Please enter a custom answer for $category';
+  }
+
+  @override
+  String get rcSnackbarInvalidInputMessage => 'Please enter a custom answer';
+
+  @override
+  String get rcSnackbarAnswerUpdated => 'Answer Updated';
+
+  @override
+  String get rcSnackbarAnswerUpdatedMessage =>
+      'Your answer has been updated successfully';
+
+  @override
+  String get rcDialogEditAnswer => 'Edit Answer';
+
+  @override
+  String get rcDialogSelectAnswer => 'Select your answer:';
+
+  @override
+  String get rcDialogEnterCustomAnswer => 'Enter custom answer:';
+
+  @override
+  String get rcDialogCustomAnswerHint => 'Type your custom answer...';
+
+  @override
+  String get rcDialogCancel => 'Cancel';
+
+  @override
+  String get rcDialogSaveChanges => 'Save Changes';
+
+  @override
+  String get cbDialogEditAnswer => 'Edit Answer';
+
+  @override
+  String get cbDialogSelectAnswer => 'Select your answer:';
+
+  @override
+  String get cbDialogEnterCustomAnswer => 'Enter custom answer:';
+
+  @override
+  String get cbDialogCustomAnswerHint => 'Type your custom answer...';
+
+  @override
+  String get cbDialogCancel => 'Cancel';
+
+  @override
+  String get cbDialogSaveChanges => 'Save Changes';
+
+  @override
+  String get cbDialogEditPrintsTechniques => 'Edit Prints & Techniques';
+
+  @override
+  String get cbDialogSelectPrintsTechniques =>
+      'Select your prints and techniques';
+
+  @override
+  String get cbDialogPrints => 'Prints';
+
+  @override
+  String get cbDialogTechniques => 'Techniques';
+
+  @override
+  String get cbDialogEnterCustomPrint => 'Enter custom print...';
+
+  @override
+  String get cbDialogEnterCustomTechnique => 'Enter custom technique...';
 }

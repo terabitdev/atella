@@ -1803,6 +1803,10 @@ class CreativeBriefController extends GetxController {
 
   // Show edit dialog for a question
   void _showEditDialog(String questionId) {
+    // Get localization at the start
+    final context = Get.context;
+    final l10n = context != null ? AppLocalizations.of(context) : null;
+
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
 
@@ -1890,7 +1894,7 @@ class CreativeBriefController extends GetxController {
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Edit Answer',
+          l10n?.cbDialogEditAnswer ?? 'Edit Answer',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         content: SizedBox(
@@ -1906,7 +1910,7 @@ class CreativeBriefController extends GetxController {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Select your answer:',
+                  l10n?.cbDialogSelectAnswer ?? 'Select your answer:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 12),
@@ -2163,7 +2167,7 @@ class CreativeBriefController extends GetxController {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Enter custom answer:',
+                              l10n?.cbDialogEnterCustomAnswer ?? 'Enter custom answer:',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -2173,7 +2177,7 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: tempCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Type your custom answer...',
+                                hintText: l10n?.cbDialogCustomAnswerHint ?? 'Type your custom answer...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2209,7 +2213,7 @@ class CreativeBriefController extends GetxController {
                 }
               });
             },
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(l10n?.cbDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
@@ -2325,7 +2329,7 @@ class CreativeBriefController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Save Changes'),
+            child: Text(l10n?.cbDialogSaveChanges ?? 'Save Changes'),
           ),
         ],
       ),
@@ -2334,6 +2338,10 @@ class CreativeBriefController extends GetxController {
 
   // Show edit dialog for multi-part color question
   void _showMultiPartColorEditDialog(String questionId) {
+    // Get localization at the start
+    final context = Get.context;
+    final l10n = context != null ? AppLocalizations.of(context) : null;
+
     final question = questions.firstWhere((q) => q.id == questionId);
 
     final existingAnswer = _answers['colors'];
@@ -2381,7 +2389,7 @@ class CreativeBriefController extends GetxController {
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Edit Prints & Techniques',
+          l10n?.cbDialogEditPrintsTechniques ?? 'Edit Prints & Techniques',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         content: SizedBox(
@@ -2392,12 +2400,12 @@ class CreativeBriefController extends GetxController {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  'Select your prints and techniques',
+                  l10n?.cbDialogSelectPrintsTechniques ?? 'Select your prints and techniques',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Prints',
+                  l10n?.cbDialogPrints ?? 'Prints',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -2458,7 +2466,7 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: printCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Enter custom print...',
+                                hintText: l10n?.cbDialogEnterCustomPrint ?? 'Enter custom print...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2475,7 +2483,7 @@ class CreativeBriefController extends GetxController {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Techniques',
+                  l10n?.cbDialogTechniques ?? 'Techniques',
                   style: TextStyle(
                     fontSize: 14,
                     fontWeight: FontWeight.w600,
@@ -2536,7 +2544,7 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: techniqueCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Enter custom technique...',
+                                hintText: l10n?.cbDialogEnterCustomTechnique ?? 'Enter custom technique...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2558,7 +2566,7 @@ class CreativeBriefController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(Get.overlayContext!).pop(),
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(l10n?.cbDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
@@ -2626,7 +2634,7 @@ class CreativeBriefController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Save Changes'),
+            child: Text(l10n?.cbDialogSaveChanges ?? 'Save Changes'),
           ),
         ],
       ),

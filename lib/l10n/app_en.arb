@@ -1441,5 +1441,134 @@
   "today": "Today",
   "@today": {
     "description": "Today text for time display"
+  },
+  "rcSnackbarRefiningComplete": "Refining Complete!",
+  "@rcSnackbarRefiningComplete": {
+    "description": "Snackbar title when refining is complete"
+  },
+  "rcSnackbarRefiningCompleteMessage": "Your concept has been refined successfully.",
+  "@rcSnackbarRefiningCompleteMessage": {
+    "description": "Snackbar message when refining is complete"
+  },
+  "rcSnackbarExtraDesignsAdded": "Extra Designs Added!",
+  "@rcSnackbarExtraDesignsAdded": {
+    "description": "Snackbar title when extra designs purchased"
+  },
+  "rcSnackbarExtraDesignsAddedMessage": "20 extra designs have been added to your account.",
+  "@rcSnackbarExtraDesignsAddedMessage": {
+    "description": "Snackbar message when extra designs purchased"
+  },
+  "rcSnackbarRegeneratingDesigns": "Regenerating Designs!",
+  "@rcSnackbarRegeneratingDesigns": {
+    "description": "Snackbar title when regenerating designs"
+  },
+  "rcSnackbarRegeneratingDesignsMessage": "Creating 3 new designs based on your updated preferences...",
+  "@rcSnackbarRegeneratingDesignsMessage": {
+    "description": "Snackbar message when regenerating designs"
+  },
+  "rcSnackbarGeneratingDesigns": "Generating Designs!",
+  "@rcSnackbarGeneratingDesigns": {
+    "description": "Snackbar title when generating designs"
+  },
+  "rcSnackbarGeneratingDesignsMessage": "Creating 3 unique designs based on your preferences...",
+  "@rcSnackbarGeneratingDesignsMessage": {
+    "description": "Snackbar message when generating designs"
+  },
+  "rcSnackbarInvalidInput": "Invalid Input",
+  "@rcSnackbarInvalidInput": {
+    "description": "Snackbar title for invalid input"
+  },
+  "rcSnackbarInvalidInputCategoryMessage": "Please enter a custom answer for {category}",
+  "@rcSnackbarInvalidInputCategoryMessage": {
+    "description": "Snackbar message for invalid input in category",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  },
+  "rcSnackbarInvalidInputMessage": "Please enter a custom answer",
+  "@rcSnackbarInvalidInputMessage": {
+    "description": "Snackbar message for invalid input"
+  },
+  "rcSnackbarAnswerUpdated": "Answer Updated",
+  "@rcSnackbarAnswerUpdated": {
+    "description": "Snackbar title when answer updated"
+  },
+  "rcSnackbarAnswerUpdatedMessage": "Your answer has been updated successfully",
+  "@rcSnackbarAnswerUpdatedMessage": {
+    "description": "Snackbar message when answer updated"
+  },
+  "rcDialogEditAnswer": "Edit Answer",
+  "@rcDialogEditAnswer": {
+    "description": "Edit answer dialog title"
+  },
+  "rcDialogSelectAnswer": "Select your answer:",
+  "@rcDialogSelectAnswer": {
+    "description": "Instruction text in edit dialog"
+  },
+  "rcDialogEnterCustomAnswer": "Enter custom answer:",
+  "@rcDialogEnterCustomAnswer": {
+    "description": "Custom answer prompt in edit dialog"
+  },
+  "rcDialogCustomAnswerHint": "Type your custom answer...",
+  "@rcDialogCustomAnswerHint": {
+    "description": "Placeholder for custom answer input in edit dialog"
+  },
+  "rcDialogCancel": "Cancel",
+  "@rcDialogCancel": {
+    "description": "Cancel button in edit dialog"
+  },
+  "rcDialogSaveChanges": "Save Changes",
+  "@rcDialogSaveChanges": {
+    "description": "Save button in edit dialog"
+  },
+  "cbDialogEditAnswer": "Edit Answer",
+  "@cbDialogEditAnswer": {
+    "description": "Edit answer dialog title - Creative Brief"
+  },
+  "cbDialogSelectAnswer": "Select your answer:",
+  "@cbDialogSelectAnswer": {
+    "description": "Instruction text in edit answer dialog - Creative Brief"
+  },
+  "cbDialogEnterCustomAnswer": "Enter custom answer:",
+  "@cbDialogEnterCustomAnswer": {
+    "description": "Custom answer prompt in edit dialog - Creative Brief"
+  },
+  "cbDialogCustomAnswerHint": "Type your custom answer...",
+  "@cbDialogCustomAnswerHint": {
+    "description": "Placeholder for custom answer input - Creative Brief"
+  },
+  "cbDialogCancel": "Cancel",
+  "@cbDialogCancel": {
+    "description": "Cancel button in dialogs - Creative Brief"
+  },
+  "cbDialogSaveChanges": "Save Changes",
+  "@cbDialogSaveChanges": {
+    "description": "Save button in dialogs - Creative Brief"
+  },
+  "cbDialogEditPrintsTechniques": "Edit Prints & Techniques",
+  "@cbDialogEditPrintsTechniques": {
+    "description": "Edit prints and techniques dialog title - Creative Brief"
+  },
+  "cbDialogSelectPrintsTechniques": "Select your prints and techniques",
+  "@cbDialogSelectPrintsTechniques": {
+    "description": "Description text in prints & techniques dialog - Creative Brief"
+  },
+  "cbDialogPrints": "Prints",
+  "@cbDialogPrints": {
+    "description": "Prints section header in dialog (presentation only, not for data keys) - Creative Brief"
+  },
+  "cbDialogTechniques": "Techniques",
+  "@cbDialogTechniques": {
+    "description": "Techniques section header in dialog (presentation only, not for data keys) - Creative Brief"
+  },
+  "cbDialogEnterCustomPrint": "Enter custom print...",
+  "@cbDialogEnterCustomPrint": {
+    "description": "Placeholder for custom print input - Creative Brief"
+  },
+  "cbDialogEnterCustomTechnique": "Enter custom technique...",
+  "@cbDialogEnterCustomTechnique": {
+    "description": "Placeholder for custom technique input - Creative Brief"
   }
 }

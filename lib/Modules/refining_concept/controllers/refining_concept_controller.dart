@@ -1256,9 +1256,11 @@ class RefiningConceptController extends GetxController {
   void _showCompletionScreen() {
     // Only show completion message if all questions are actually answered
     if (isAllQuestionsCompleted) {
+      final context = Get.context;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        'Refining Complete!',
-        'Your concept has been refined successfully.',
+        l10n?.rcSnackbarRefiningComplete ?? 'Refining Complete!',
+        l10n?.rcSnackbarRefiningCompleteMessage ?? 'Your concept has been refined successfully.',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1547,12 +1549,18 @@ class RefiningConceptController extends GetxController {
     Get.dialog(
       LimitExceededDialog(
         onGetExtraDesigns: () async {
+          // Get localized strings before async operation
+          final context = Get.context;
+          final l10n = context != null ? AppLocalizations.of(context) : null;
+          final titleText = l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '20 extra designs have been added to your account.';
+
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
           if (success) {
             Get.snackbar(
-              'Extra Designs Added!',
-              '20 extra designs have been added to your account.',
+              titleText,
+              messageText,
               snackPosition: SnackPosition.TOP,
               backgroundColor: Colors.black,
               colorText: Colors.white,
@@ -1601,9 +1609,11 @@ class RefiningConceptController extends GetxController {
         },
       );
 
+      final context = Get.context;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        'Regenerating Designs!',
-        'Creating 3 new designs based on your updated preferences...',
+        l10n?.rcSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
+        l10n?.rcSnackbarRegeneratingDesignsMessage ?? 'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1617,9 +1627,11 @@ class RefiningConceptController extends GetxController {
         },
       );
 
+      final context = Get.context;
+      final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        'Generating Designs!',
-        'Creating 3 unique designs based on your preferences...',
+        l10n?.rcSnackbarGeneratingDesigns ?? 'Generating Designs!',
+        l10n?.rcSnackbarGeneratingDesignsMessage ?? 'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1647,6 +1659,10 @@ class RefiningConceptController extends GetxController {
 
   // Edit answer method - allows editing a specific question's answer
   void editAnswer(String questionId) {
+    // Get localization at the start
+    final context = Get.context;
+    final l10n = context != null ? AppLocalizations.of(context) : null;
+
     final question = questions.firstWhere((q) => q.id == questionId);
     final currentAnswer = _answers[questionId];
     // Create a temporary list to track changes
@@ -1727,7 +1743,7 @@ class RefiningConceptController extends GetxController {
       AlertDialog(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
         title: Text(
-          'Edit Answer',
+          l10n?.rcDialogEditAnswer ?? 'Edit Answer',
           style: TextStyle(fontSize: 18, fontWeight: FontWeight.w600),
         ),
         content: SizedBox(
@@ -1743,7 +1759,7 @@ class RefiningConceptController extends GetxController {
                 ),
                 SizedBox(height: 16),
                 Text(
-                  'Select your answer:',
+                  l10n?.rcDialogSelectAnswer ?? 'Select your answer:',
                   style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
                 ),
                 SizedBox(height: 12),
@@ -1981,7 +1997,7 @@ class RefiningConceptController extends GetxController {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Enter custom answer:',
+                              l10n?.rcDialogEnterCustomAnswer ?? 'Enter custom answer:',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -1991,7 +2007,7 @@ class RefiningConceptController extends GetxController {
                             TextField(
                               controller: tempCustomController,
                               decoration: InputDecoration(
-                                hintText: 'Type your custom answer...',
+                                hintText: l10n?.rcDialogCustomAnswerHint ?? 'Type your custom answer...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2027,10 +2043,14 @@ class RefiningConceptController extends GetxController {
                 }
               });
             },
-            child: Text('Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(l10n?.rcDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
           ),
           ElevatedButton(
             onPressed: () {
+              // Get localization before any operations
+              final context = Get.context;
+              final l10n = context != null ? AppLocalizations.of(context) : null;
+
               final bool isCategorizedDialog =
                   question.type == 'chips_categorized' && categoriesMap != null;
 
@@ -2043,8 +2063,8 @@ class RefiningConceptController extends GetxController {
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
                     Get.snackbar(
-                      'Invalid Input',
-                      'Please enter a custom answer for ${category.key}',
+                      l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
+                      l10n?.rcSnackbarInvalidInputCategoryMessage(category.key) ?? 'Please enter a custom answer for ${category.key}',
                       backgroundColor: Colors.black,
                       colorText: Colors.white,
                       snackPosition: SnackPosition.TOP,
@@ -2084,8 +2104,8 @@ class RefiningConceptController extends GetxController {
                 if (tempSelectedOptions.contains('Custom') &&
                     tempCustomController.text.trim().isEmpty) {
                   Get.snackbar(
-                    'Invalid Input',
-                    'Please enter a custom answer',
+                    l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
+                    l10n?.rcSnackbarInvalidInputMessage ?? 'Please enter a custom answer',
                     backgroundColor: Colors.black,
                     colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
@@ -2111,8 +2131,8 @@ class RefiningConceptController extends GetxController {
               Navigator.of(Get.overlayContext!).pop();
               update();
               Get.snackbar(
-                'Answer Updated',
-                'Your answer has been updated successfully',
+                l10n?.rcSnackbarAnswerUpdated ?? 'Answer Updated',
+                l10n?.rcSnackbarAnswerUpdatedMessage ?? 'Your answer has been updated successfully',
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.TOP,
@@ -2137,7 +2157,7 @@ class RefiningConceptController extends GetxController {
                 borderRadius: BorderRadius.circular(8),
               ),
             ),
-            child: Text('Save Changes'),
+            child: Text(l10n?.rcDialogSaveChanges ?? 'Save Changes'),
           ),
         ],
       ),

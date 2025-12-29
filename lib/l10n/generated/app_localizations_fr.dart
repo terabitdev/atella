@@ -1365,4 +1365,107 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get today => 'Aujourd\'hui';
+
+  @override
+  String get rcSnackbarRefiningComplete => 'Affinage terminé !';
+
+  @override
+  String get rcSnackbarRefiningCompleteMessage =>
+      'Votre concept a été affiné avec succès.';
+
+  @override
+  String get rcSnackbarExtraDesignsAdded => 'Designs supplémentaires ajoutés !';
+
+  @override
+  String get rcSnackbarExtraDesignsAddedMessage =>
+      '20 designs supplémentaires ont été ajoutés à votre compte.';
+
+  @override
+  String get rcSnackbarRegeneratingDesigns => 'Régénération des designs !';
+
+  @override
+  String get rcSnackbarRegeneratingDesignsMessage =>
+      'Création de 3 nouveaux designs basés sur vos préférences mises à jour...';
+
+  @override
+  String get rcSnackbarGeneratingDesigns => 'Génération des designs !';
+
+  @override
+  String get rcSnackbarGeneratingDesignsMessage =>
+      'Création de 3 designs uniques basés sur vos préférences...';
+
+  @override
+  String get rcSnackbarInvalidInput => 'Entrée invalide';
+
+  @override
+  String rcSnackbarInvalidInputCategoryMessage(String category) {
+    return 'Veuillez entrer une réponse personnalisée pour $category';
+  }
+
+  @override
+  String get rcSnackbarInvalidInputMessage =>
+      'Veuillez entrer une réponse personnalisée';
+
+  @override
+  String get rcSnackbarAnswerUpdated => 'Réponse mise à jour';
+
+  @override
+  String get rcSnackbarAnswerUpdatedMessage =>
+      'Votre réponse a été mise à jour avec succès';
+
+  @override
+  String get rcDialogEditAnswer => 'Modifier la réponse';
+
+  @override
+  String get rcDialogSelectAnswer => 'Sélectionnez votre réponse :';
+
+  @override
+  String get rcDialogEnterCustomAnswer => 'Entrez une réponse personnalisée :';
+
+  @override
+  String get rcDialogCustomAnswerHint => 'Tapez votre réponse personnalisée...';
+
+  @override
+  String get rcDialogCancel => 'Annuler';
+
+  @override
+  String get rcDialogSaveChanges => 'Enregistrer les modifications';
+
+  @override
+  String get cbDialogEditAnswer => 'Modifier la réponse';
+
+  @override
+  String get cbDialogSelectAnswer => 'Sélectionnez votre réponse :';
+
+  @override
+  String get cbDialogEnterCustomAnswer => 'Entrez une réponse personnalisée :';
+
+  @override
+  String get cbDialogCustomAnswerHint => 'Tapez votre réponse personnalisée...';
+
+  @override
+  String get cbDialogCancel => 'Annuler';
+
+  @override
+  String get cbDialogSaveChanges => 'Enregistrer les modifications';
+
+  @override
+  String get cbDialogEditPrintsTechniques => 'Modifier Imprimés & Techniques';
+
+  @override
+  String get cbDialogSelectPrintsTechniques =>
+      'Sélectionnez vos imprimés et techniques';
+
+  @override
+  String get cbDialogPrints => 'Imprimés';
+
+  @override
+  String get cbDialogTechniques => 'Techniques';
+
+  @override
+  String get cbDialogEnterCustomPrint => 'Entrez un imprimé personnalisé...';
+
+  @override
+  String get cbDialogEnterCustomTechnique =>
+      'Entrez une technique personnalisée...';
 }

@@ -2605,6 +2605,192 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today'**
   String get today;
+
+  /// Snackbar title when refining is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Refining Complete!'**
+  String get rcSnackbarRefiningComplete;
+
+  /// Snackbar message when refining is complete
+  ///
+  /// In en, this message translates to:
+  /// **'Your concept has been refined successfully.'**
+  String get rcSnackbarRefiningCompleteMessage;
+
+  /// Snackbar title when extra designs purchased
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Designs Added!'**
+  String get rcSnackbarExtraDesignsAdded;
+
+  /// Snackbar message when extra designs purchased
+  ///
+  /// In en, this message translates to:
+  /// **'20 extra designs have been added to your account.'**
+  String get rcSnackbarExtraDesignsAddedMessage;
+
+  /// Snackbar title when regenerating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerating Designs!'**
+  String get rcSnackbarRegeneratingDesigns;
+
+  /// Snackbar message when regenerating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 new designs based on your updated preferences...'**
+  String get rcSnackbarRegeneratingDesignsMessage;
+
+  /// Snackbar title when generating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Generating Designs!'**
+  String get rcSnackbarGeneratingDesigns;
+
+  /// Snackbar message when generating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 unique designs based on your preferences...'**
+  String get rcSnackbarGeneratingDesignsMessage;
+
+  /// Snackbar title for invalid input
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid Input'**
+  String get rcSnackbarInvalidInput;
+
+  /// Snackbar message for invalid input in category
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom answer for {category}'**
+  String rcSnackbarInvalidInputCategoryMessage(String category);
+
+  /// Snackbar message for invalid input
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a custom answer'**
+  String get rcSnackbarInvalidInputMessage;
+
+  /// Snackbar title when answer updated
+  ///
+  /// In en, this message translates to:
+  /// **'Answer Updated'**
+  String get rcSnackbarAnswerUpdated;
+
+  /// Snackbar message when answer updated
+  ///
+  /// In en, this message translates to:
+  /// **'Your answer has been updated successfully'**
+  String get rcSnackbarAnswerUpdatedMessage;
+
+  /// Edit answer dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Answer'**
+  String get rcDialogEditAnswer;
+
+  /// Instruction text in edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Select your answer:'**
+  String get rcDialogSelectAnswer;
+
+  /// Custom answer prompt in edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom answer:'**
+  String get rcDialogEnterCustomAnswer;
+
+  /// Placeholder for custom answer input in edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Type your custom answer...'**
+  String get rcDialogCustomAnswerHint;
+
+  /// Cancel button in edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get rcDialogCancel;
+
+  /// Save button in edit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get rcDialogSaveChanges;
+
+  /// Edit answer dialog title - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Answer'**
+  String get cbDialogEditAnswer;
+
+  /// Instruction text in edit answer dialog - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Select your answer:'**
+  String get cbDialogSelectAnswer;
+
+  /// Custom answer prompt in edit dialog - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom answer:'**
+  String get cbDialogEnterCustomAnswer;
+
+  /// Placeholder for custom answer input - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Type your custom answer...'**
+  String get cbDialogCustomAnswerHint;
+
+  /// Cancel button in dialogs - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cbDialogCancel;
+
+  /// Save button in dialogs - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Save Changes'**
+  String get cbDialogSaveChanges;
+
+  /// Edit prints and techniques dialog title - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Prints & Techniques'**
+  String get cbDialogEditPrintsTechniques;
+
+  /// Description text in prints & techniques dialog - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Select your prints and techniques'**
+  String get cbDialogSelectPrintsTechniques;
+
+  /// Prints section header in dialog (presentation only, not for data keys) - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Prints'**
+  String get cbDialogPrints;
+
+  /// Techniques section header in dialog (presentation only, not for data keys) - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Techniques'**
+  String get cbDialogTechniques;
+
+  /// Placeholder for custom print input - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom print...'**
+  String get cbDialogEnterCustomPrint;
+
+  /// Placeholder for custom technique input - Creative Brief
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom technique...'**
+  String get cbDialogEnterCustomTechnique;
 }
 
 class _AppLocalizationsDelegate
