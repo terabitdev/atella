@@ -1588,4 +1588,162 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fdDialogMaybeLater => 'Peut-être Plus Tard';
+
+  @override
+  String get tpDesignAssistant => 'Assistant Design';
+
+  @override
+  String get tpChooseFavoriteDesign => 'Choisissez votre design préféré :';
+
+  @override
+  String get tpCreatingDesigns => 'Création de vos designs...';
+
+  @override
+  String get tpPleaseWaitGenerating =>
+      'Veuillez patienter pendant que nous générons 3 designs uniques basés sur vos préférences.';
+
+  @override
+  String get tpSomethingWentWrong => 'Une erreur s\'est produite';
+
+  @override
+  String get tpRetry => 'Réessayer';
+
+  @override
+  String get tpWouldYouLikeChanges =>
+      'Souhaitez-vous apporter des modifications avant que je crée le dossier technique final ?';
+
+  @override
+  String get tpYesChanges => 'Oui, je voudrais apporter des modifications';
+
+  @override
+  String get tpContinueWithSelected => 'Continuer avec le Design Sélectionné';
+
+  @override
+  String get tpUpgradeRequired => 'Mise à Niveau Requise';
+
+  @override
+  String get tpUpgradeToGenerate =>
+      'Passez à Starter ou Pro pour générer des dossiers techniques';
+
+  @override
+  String get tpGetExtraDesigns => 'Obtenir 20 Designs Supplémentaires';
+
+  @override
+  String get tpViewPlans => 'Voir les Forfaits';
+
+  @override
+  String get tpMaybeLater => 'Peut-être Plus Tard';
+
+  @override
+  String get tpFreePlanLimit => 'Limite du Forfait Gratuit';
+
+  @override
+  String get tpFreePlanMessage =>
+      'Les utilisateurs du forfait gratuit peuvent générer jusqu\'à 10 designs par mois. Passez à la version supérieure pour générer des dossiers techniques !';
+
+  @override
+  String get tpProLimitReached => 'Limite Pro Atteinte';
+
+  @override
+  String get tpProLimitMessage =>
+      'Vous avez atteint votre limite mensuelle. Obtenez 20 designs supplémentaires ou passez à un forfait supérieur !';
+
+  @override
+  String get tpSnackbarDesignUpdated => 'Design Mis à Jour';
+
+  @override
+  String get tpSnackbarDesignUpdatedMessage =>
+      'Votre design a été mis à jour avec de nouvelles préférences';
+
+  @override
+  String get tpSnackbarDesignSaved => 'Design Enregistré';
+
+  @override
+  String get tpSnackbarDesignSavedMessage =>
+      'Votre design sélectionné a été enregistré avec succès';
+
+  @override
+  String get tpSnackbarGenerationFailed => 'Échec de la Génération';
+
+  @override
+  String get tpSnackbarGenerationFailedMessage =>
+      'Échec de la génération des designs. Veuillez réessayer.';
+
+  @override
+  String get tpSnackbarNoDesignSelected => 'Aucun Design Sélectionné';
+
+  @override
+  String get tpSnackbarNoDesignSelectedMessage =>
+      'Veuillez sélectionner un design avant de continuer';
+
+  @override
+  String get tpSnackbarPurchaseSuccess => 'Achat Réussi !';
+
+  @override
+  String get tpSnackbarPurchaseSuccessMessage =>
+      '20 designs supplémentaires ajoutés à votre compte';
+
+  @override
+  String get tpSnackbarPurchaseFailed => 'Échec de l\'Achat';
+
+  @override
+  String get tpSnackbarPurchaseFailedMessage =>
+      'Échec du traitement de l\'achat. Veuillez réessayer.';
+
+  @override
+  String get tpPlanFree => 'Gratuit';
+
+  @override
+  String get tpPlanStarter => 'Starter';
+
+  @override
+  String get tpPlanPro => 'Pro';
+
+  @override
+  String get tpDialogChooseUpgrade => 'Choisissez Votre Mise à Niveau';
+
+  @override
+  String get tpDialogUpgradeDescription =>
+      'Débloquez la génération illimitée de dossiers techniques et plus de fonctionnalités !';
+
+  @override
+  String get tpDialogFeature3TechPacks => '3 dossiers techniques/mois';
+
+  @override
+  String get tpDialogFeatureBasicPDF => 'Export PDF basique';
+
+  @override
+  String get tpDialogFeatureManufacturers => 'Accès aux fabricants';
+
+  @override
+  String get tpDialogFeature10TechPacks => '10 dossiers techniques/mois';
+
+  @override
+  String get tpDialogFeatureCustomPDF => 'PDF personnalisé avec logo';
+
+  @override
+  String get tpDialogFeaturePriority => 'Support prioritaire';
+
+  @override
+  String get tpDialogExtraTechPacksTitle =>
+      'Besoin de Plus de Designs Ce Mois-ci ?';
+
+  @override
+  String get tpDialogExtraTechPacksDescription =>
+      'Obtenez 20 designs supplémentaires pour seulement 3,99€';
+
+  @override
+  String get tpDialogExtraTechPacksOneTime => 'Achat unique';
+
+  @override
+  String get tpDialogExtraTechPacksNoSubscription => 'Aucun abonnement requis';
+
+  @override
+  String get tpDialogExtraTechPacksExpires => 'Valable jusqu\'à la fin du mois';
+
+  @override
+  String get tpDialogPurchaseFor => 'Acheter pour 3,99€';
+
+  @override
+  String get tpDialogUpgradeInstead => 'Mettre à Niveau à la Place';
 }

@@ -11,6 +11,7 @@ import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
@@ -18,6 +19,9 @@ class TechPackController extends GetxController {
   final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _subscriptionService =
       StripeSubscriptionService();
+
+  // Helper to get localization
+  AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
 
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
@@ -346,8 +350,8 @@ class TechPackController extends GetxController {
         print('✅ Edit mode: Updated existing design and saved new options');
 
         Get.snackbar(
-          'Design Updated',
-          'Your design has been updated with new preferences',
+          _l10n.tpSnackbarDesignUpdated,
+          _l10n.tpSnackbarDesignUpdatedMessage,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
@@ -367,8 +371,8 @@ class TechPackController extends GetxController {
         print('✅ New design: Saved successfully');
 
         Get.snackbar(
-          'Design Saved',
-          'Your selected design has been saved successfully',
+          _l10n.tpSnackbarDesignSaved,
+          _l10n.tpSnackbarDesignSavedMessage,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
           backgroundColor: Colors.black,
@@ -386,8 +390,8 @@ class TechPackController extends GetxController {
 
       // Optional: Show error notification
       Get.snackbar(
-        'Save Failed',
-        'Failed to save design. It will be available during this session.',
+        _l10n.tpSnackbarGenerationFailed,
+        _l10n.tpSnackbarGenerationFailedMessage,
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
         backgroundColor: Colors.black,
@@ -438,7 +442,7 @@ class TechPackController extends GetxController {
         title: Row(
           children: [
             Text(
-              'Upgrade Required',
+              _l10n.tpUpgradeRequired,
               style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
             ),
           ],
@@ -552,7 +556,7 @@ class TechPackController extends GetxController {
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Maybe Later',
+              _l10n.tpMaybeLater,
               style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
             ),
           ),
@@ -582,7 +586,7 @@ class TechPackController extends GetxController {
               ),
             ),
             child: Text(
-              'Upgrade Now',
+              _l10n.tpViewPlans,
               style: ssTitleTextTextStyle14400.copyWith(color: Colors.white),
             ),
           ),
@@ -593,19 +597,20 @@ class TechPackController extends GetxController {
   }
 
   String _getPlanDisplayName(String plan) {
+    // CRITICAL: 'plan' parameter stays in English (FREE, STARTER, PRO) - only return value is localized
     switch (plan) {
       case 'FREE':
-        return 'Free';
+        return _l10n.tpPlanFree;
       case 'STARTER':
-        return 'Starter (€9.99/month)';
+        return '${_l10n.tpPlanStarter} (€9.99/month)';
       case 'STARTER_YEARLY':
-        return 'Starter (€99/year)';
+        return '${_l10n.tpPlanStarter} (€99/year)';
       case 'PRO':
-        return 'Pro (€24.99/month)';
+        return '${_l10n.tpPlanPro} (€24.99/month)';
       case 'PRO_YEARLY':
-        return 'Pro (€249/year)';
+        return '${_l10n.tpPlanPro} (€249/year)';
       default:
-        return 'Free';
+        return _l10n.tpPlanFree;
     }
   }
 

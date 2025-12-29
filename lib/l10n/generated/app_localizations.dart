@@ -3007,6 +3007,294 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maybe Later'**
   String get fdDialogMaybeLater;
+
+  /// Tech Pack screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Design Assistant'**
+  String get tpDesignAssistant;
+
+  /// Instruction to choose favorite design
+  ///
+  /// In en, this message translates to:
+  /// **'Choose your favorite design:'**
+  String get tpChooseFavoriteDesign;
+
+  /// Loading header when creating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating your designs...'**
+  String get tpCreatingDesigns;
+
+  /// Loading description
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait while we generate 3 unique designs based on your preferences.'**
+  String get tpPleaseWaitGenerating;
+
+  /// Error header
+  ///
+  /// In en, this message translates to:
+  /// **'Something went wrong'**
+  String get tpSomethingWentWrong;
+
+  /// Retry button text
+  ///
+  /// In en, this message translates to:
+  /// **'Retry'**
+  String get tpRetry;
+
+  /// Confirmation question before tech pack
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to make any changes before I create the final tech pack?'**
+  String get tpWouldYouLikeChanges;
+
+  /// Button to make changes
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I\'d like to make changes'**
+  String get tpYesChanges;
+
+  /// Button to continue with selected design
+  ///
+  /// In en, this message translates to:
+  /// **'Continue with Selected Design'**
+  String get tpContinueWithSelected;
+
+  /// Upgrade required dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Required'**
+  String get tpUpgradeRequired;
+
+  /// Upgrade required message
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Starter or Pro to generate tech packs'**
+  String get tpUpgradeToGenerate;
+
+  /// Get extra designs button text
+  ///
+  /// In en, this message translates to:
+  /// **'Get 20 Extra Designs'**
+  String get tpGetExtraDesigns;
+
+  /// View plans button text
+  ///
+  /// In en, this message translates to:
+  /// **'View Plans'**
+  String get tpViewPlans;
+
+  /// Maybe later button text
+  ///
+  /// In en, this message translates to:
+  /// **'Maybe Later'**
+  String get tpMaybeLater;
+
+  /// Free plan limit dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan Limit'**
+  String get tpFreePlanLimit;
+
+  /// Free plan limit message
+  ///
+  /// In en, this message translates to:
+  /// **'Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!'**
+  String get tpFreePlanMessage;
+
+  /// Pro limit dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Limit Reached'**
+  String get tpProLimitReached;
+
+  /// Pro limit message
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!'**
+  String get tpProLimitMessage;
+
+  /// Snackbar title when design updated
+  ///
+  /// In en, this message translates to:
+  /// **'Design Updated'**
+  String get tpSnackbarDesignUpdated;
+
+  /// Snackbar message when design updated
+  ///
+  /// In en, this message translates to:
+  /// **'Your design has been updated with new preferences'**
+  String get tpSnackbarDesignUpdatedMessage;
+
+  /// Snackbar title when design saved
+  ///
+  /// In en, this message translates to:
+  /// **'Design Saved'**
+  String get tpSnackbarDesignSaved;
+
+  /// Snackbar message when design saved
+  ///
+  /// In en, this message translates to:
+  /// **'Your selected design has been saved successfully'**
+  String get tpSnackbarDesignSavedMessage;
+
+  /// Snackbar title when generation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Generation Failed'**
+  String get tpSnackbarGenerationFailed;
+
+  /// Snackbar message when generation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate designs. Please try again.'**
+  String get tpSnackbarGenerationFailedMessage;
+
+  /// Snackbar title when no design selected
+  ///
+  /// In en, this message translates to:
+  /// **'No Design Selected'**
+  String get tpSnackbarNoDesignSelected;
+
+  /// Snackbar message when no design selected
+  ///
+  /// In en, this message translates to:
+  /// **'Please select a design before continuing'**
+  String get tpSnackbarNoDesignSelectedMessage;
+
+  /// Snackbar title when purchase successful
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Successful!'**
+  String get tpSnackbarPurchaseSuccess;
+
+  /// Snackbar message when purchase successful
+  ///
+  /// In en, this message translates to:
+  /// **'20 extra designs added to your account'**
+  String get tpSnackbarPurchaseSuccessMessage;
+
+  /// Snackbar title when purchase fails
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Failed'**
+  String get tpSnackbarPurchaseFailed;
+
+  /// Snackbar message when purchase fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to process purchase. Please try again.'**
+  String get tpSnackbarPurchaseFailedMessage;
+
+  /// Free plan name (display only)
+  ///
+  /// In en, this message translates to:
+  /// **'Free'**
+  String get tpPlanFree;
+
+  /// Starter plan name (display only)
+  ///
+  /// In en, this message translates to:
+  /// **'Starter'**
+  String get tpPlanStarter;
+
+  /// Pro plan name (display only)
+  ///
+  /// In en, this message translates to:
+  /// **'Pro'**
+  String get tpPlanPro;
+
+  /// Upgrade dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Choose Your Upgrade'**
+  String get tpDialogChooseUpgrade;
+
+  /// Upgrade dialog description
+  ///
+  /// In en, this message translates to:
+  /// **'Unlock unlimited tech pack generation and more features!'**
+  String get tpDialogUpgradeDescription;
+
+  /// Starter plan feature - 3 tech packs
+  ///
+  /// In en, this message translates to:
+  /// **'3 tech packs/month'**
+  String get tpDialogFeature3TechPacks;
+
+  /// Starter plan feature - Basic PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Basic PDF export'**
+  String get tpDialogFeatureBasicPDF;
+
+  /// Starter plan feature - Manufacturers
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer access'**
+  String get tpDialogFeatureManufacturers;
+
+  /// Pro plan feature - 10 tech packs
+  ///
+  /// In en, this message translates to:
+  /// **'10 tech packs/month'**
+  String get tpDialogFeature10TechPacks;
+
+  /// Pro plan feature - Custom PDF
+  ///
+  /// In en, this message translates to:
+  /// **'Custom PDF with logo'**
+  String get tpDialogFeatureCustomPDF;
+
+  /// Pro plan feature - Priority support
+  ///
+  /// In en, this message translates to:
+  /// **'Priority support'**
+  String get tpDialogFeaturePriority;
+
+  /// Extra tech packs dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Need More Designs This Month?'**
+  String get tpDialogExtraTechPacksTitle;
+
+  /// Extra tech packs dialog description
+  ///
+  /// In en, this message translates to:
+  /// **'Get 20 extra designs for just €3.99'**
+  String get tpDialogExtraTechPacksDescription;
+
+  /// Extra tech packs feature - one-time
+  ///
+  /// In en, this message translates to:
+  /// **'One-time purchase'**
+  String get tpDialogExtraTechPacksOneTime;
+
+  /// Extra tech packs feature - no subscription
+  ///
+  /// In en, this message translates to:
+  /// **'No subscription required'**
+  String get tpDialogExtraTechPacksNoSubscription;
+
+  /// Extra tech packs feature - expiration
+  ///
+  /// In en, this message translates to:
+  /// **'Valid until end of month'**
+  String get tpDialogExtraTechPacksExpires;
+
+  /// Purchase button text with price
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase for €3.99'**
+  String get tpDialogPurchaseFor;
+
+  /// Upgrade instead button text
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Instead'**
+  String get tpDialogUpgradeInstead;
 }
 
 class _AppLocalizationsDelegate

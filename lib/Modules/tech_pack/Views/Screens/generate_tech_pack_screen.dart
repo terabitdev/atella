@@ -10,6 +10,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
 import 'package:lottie/lottie.dart';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class GenerateTechPackScreen extends StatelessWidget {
   GenerateTechPackScreen({super.key});
@@ -62,6 +63,8 @@ class GenerateTechPackScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       body: TapTrackingWrapper(
         screenName: 'GenerateTechPackScreen',
@@ -72,21 +75,21 @@ class GenerateTechPackScreen extends StatelessWidget {
                 Padding(
                   padding: const EdgeInsets.all(24.0),
                   child: GlobalHeader(
-                    title: 'Design Assistant',
+                    title: l10n.tpDesignAssistant,
                     onBack: () => Get.back(),
                   ),
                 ),
                 const SizedBox(height: 12),
                 Obx(() {
                   if (controller.isLoading.value) {
-                    return _buildLoadingState();
+                    return _buildLoadingState(l10n);
                   } else if (controller.hasError.value) {
-                    return _buildErrorState();
+                    return _buildErrorState(l10n);
                   } else {
                     return Padding(
                       padding: const EdgeInsets.symmetric(horizontal: 24.0),
                       child: Text(
-                        'Choose your favorite design:',
+                        l10n.tpChooseFavoriteDesign,
                         style: GoogleFonts.inter(
                           fontSize: 18,
                           fontWeight: FontWeight.w600,
@@ -122,7 +125,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                           const SizedBox(height: 20),
                           if (!controller.isLoading.value &&
                               !controller.hasError.value)
-                            _buildActionButtons(),
+                            _buildActionButtons(l10n),
                         ],
                       );
                     }),
@@ -136,13 +139,13 @@ class GenerateTechPackScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: 24.0),
       child: Column(
         children: [
           Text(
-            'Creating your designs...',
+            l10n.tpCreatingDesigns,
             style: GoogleFonts.inter(
               fontSize: 18,
               fontWeight: FontWeight.w600,
@@ -151,7 +154,7 @@ class GenerateTechPackScreen extends StatelessWidget {
           ),
           const SizedBox(height: 8),
           Text(
-            'Please wait while we generate 3 unique designs based on your preferences.',
+            l10n.tpPleaseWaitGenerating,
             textAlign: TextAlign.center,
             style: GoogleFonts.inter(
               fontSize: 14,
@@ -163,7 +166,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorState() {
+  Widget _buildErrorState(AppLocalizations l10n) {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 24.w),
       child: Container(
@@ -178,7 +181,7 @@ class GenerateTechPackScreen extends StatelessWidget {
             Icon(Icons.error_outline, color: Colors.red.shade600, size: 32.w),
             SizedBox(height: 8.h),
             Text(
-              'Something went wrong',
+              l10n.tpSomethingWentWrong,
               style: GoogleFonts.inter(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
@@ -201,7 +204,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                 backgroundColor: Colors.red.shade600,
                 foregroundColor: Colors.white,
               ),
-              child: const Text('Retry'),
+              child: Text(l10n.tpRetry),
             ),
           ],
         ),
@@ -453,7 +456,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     });
   }
 
-  Widget _buildActionButtons() {
+  Widget _buildActionButtons(AppLocalizations l10n) {
     return Column(
       children: [
         Container(
@@ -464,7 +467,7 @@ class GenerateTechPackScreen extends StatelessWidget {
           ),
           child: Center(
             child: Text(
-              'Would you like to make any changes before I create the final tech pack?',
+              l10n.tpWouldYouLikeChanges,
               textAlign: TextAlign.center,
               style: tpcTextStyle16400.copyWith(color: Colors.black),
             ),
@@ -472,7 +475,7 @@ class GenerateTechPackScreen extends StatelessWidget {
         ),
         SizedBox(height: 44.h),
         RoundButton(
-          title: 'Yes, I\'d like to make changes',
+          title: l10n.tpYesChanges,
           onTap: () {
             // DON'T reset - keep the current answers for editing
             // Instead, navigate to creative_brief in "edit current session" mode
@@ -502,8 +505,8 @@ class GenerateTechPackScreen extends StatelessWidget {
 
           return OutlineGenerateRoundButton(
             title: isDesignSelected
-                ? 'Continue with Selected Design'
-                : 'Please select a design first',
+                ? l10n.tpContinueWithSelected
+                : l10n.tpSnackbarNoDesignSelectedMessage,
             onTap: isDesignSelected
                 ? controller.onContinueWithSelectedDesign
                 : () {},

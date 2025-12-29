@@ -1562,4 +1562,161 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fdDialogMaybeLater => 'Maybe Later';
+
+  @override
+  String get tpDesignAssistant => 'Design Assistant';
+
+  @override
+  String get tpChooseFavoriteDesign => 'Choose your favorite design:';
+
+  @override
+  String get tpCreatingDesigns => 'Creating your designs...';
+
+  @override
+  String get tpPleaseWaitGenerating =>
+      'Please wait while we generate 3 unique designs based on your preferences.';
+
+  @override
+  String get tpSomethingWentWrong => 'Something went wrong';
+
+  @override
+  String get tpRetry => 'Retry';
+
+  @override
+  String get tpWouldYouLikeChanges =>
+      'Would you like to make any changes before I create the final tech pack?';
+
+  @override
+  String get tpYesChanges => 'Yes, I\'d like to make changes';
+
+  @override
+  String get tpContinueWithSelected => 'Continue with Selected Design';
+
+  @override
+  String get tpUpgradeRequired => 'Upgrade Required';
+
+  @override
+  String get tpUpgradeToGenerate =>
+      'Upgrade to Starter or Pro to generate tech packs';
+
+  @override
+  String get tpGetExtraDesigns => 'Get 20 Extra Designs';
+
+  @override
+  String get tpViewPlans => 'View Plans';
+
+  @override
+  String get tpMaybeLater => 'Maybe Later';
+
+  @override
+  String get tpFreePlanLimit => 'Free Plan Limit';
+
+  @override
+  String get tpFreePlanMessage =>
+      'Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!';
+
+  @override
+  String get tpProLimitReached => 'Pro Limit Reached';
+
+  @override
+  String get tpProLimitMessage =>
+      'You\'ve reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!';
+
+  @override
+  String get tpSnackbarDesignUpdated => 'Design Updated';
+
+  @override
+  String get tpSnackbarDesignUpdatedMessage =>
+      'Your design has been updated with new preferences';
+
+  @override
+  String get tpSnackbarDesignSaved => 'Design Saved';
+
+  @override
+  String get tpSnackbarDesignSavedMessage =>
+      'Your selected design has been saved successfully';
+
+  @override
+  String get tpSnackbarGenerationFailed => 'Generation Failed';
+
+  @override
+  String get tpSnackbarGenerationFailedMessage =>
+      'Failed to generate designs. Please try again.';
+
+  @override
+  String get tpSnackbarNoDesignSelected => 'No Design Selected';
+
+  @override
+  String get tpSnackbarNoDesignSelectedMessage =>
+      'Please select a design before continuing';
+
+  @override
+  String get tpSnackbarPurchaseSuccess => 'Purchase Successful!';
+
+  @override
+  String get tpSnackbarPurchaseSuccessMessage =>
+      '20 extra designs added to your account';
+
+  @override
+  String get tpSnackbarPurchaseFailed => 'Purchase Failed';
+
+  @override
+  String get tpSnackbarPurchaseFailedMessage =>
+      'Failed to process purchase. Please try again.';
+
+  @override
+  String get tpPlanFree => 'Free';
+
+  @override
+  String get tpPlanStarter => 'Starter';
+
+  @override
+  String get tpPlanPro => 'Pro';
+
+  @override
+  String get tpDialogChooseUpgrade => 'Choose Your Upgrade';
+
+  @override
+  String get tpDialogUpgradeDescription =>
+      'Unlock unlimited tech pack generation and more features!';
+
+  @override
+  String get tpDialogFeature3TechPacks => '3 tech packs/month';
+
+  @override
+  String get tpDialogFeatureBasicPDF => 'Basic PDF export';
+
+  @override
+  String get tpDialogFeatureManufacturers => 'Manufacturer access';
+
+  @override
+  String get tpDialogFeature10TechPacks => '10 tech packs/month';
+
+  @override
+  String get tpDialogFeatureCustomPDF => 'Custom PDF with logo';
+
+  @override
+  String get tpDialogFeaturePriority => 'Priority support';
+
+  @override
+  String get tpDialogExtraTechPacksTitle => 'Need More Designs This Month?';
+
+  @override
+  String get tpDialogExtraTechPacksDescription =>
+      'Get 20 extra designs for just €3.99';
+
+  @override
+  String get tpDialogExtraTechPacksOneTime => 'One-time purchase';
+
+  @override
+  String get tpDialogExtraTechPacksNoSubscription => 'No subscription required';
+
+  @override
+  String get tpDialogExtraTechPacksExpires => 'Valid until end of month';
+
+  @override
+  String get tpDialogPurchaseFor => 'Purchase for €3.99';
+
+  @override
+  String get tpDialogUpgradeInstead => 'Upgrade Instead';
 }

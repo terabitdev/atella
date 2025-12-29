@@ -1714,5 +1714,197 @@
   "fdDialogMaybeLater": "Maybe Later",
   "@fdDialogMaybeLater": {
     "description": "Maybe later button text"
+  },
+  "tpDesignAssistant": "Design Assistant",
+  "@tpDesignAssistant": {
+    "description": "Tech Pack screen title"
+  },
+  "tpChooseFavoriteDesign": "Choose your favorite design:",
+  "@tpChooseFavoriteDesign": {
+    "description": "Instruction to choose favorite design"
+  },
+  "tpCreatingDesigns": "Creating your designs...",
+  "@tpCreatingDesigns": {
+    "description": "Loading header when creating designs"
+  },
+  "tpPleaseWaitGenerating": "Please wait while we generate 3 unique designs based on your preferences.",
+  "@tpPleaseWaitGenerating": {
+    "description": "Loading description"
+  },
+  "tpSomethingWentWrong": "Something went wrong",
+  "@tpSomethingWentWrong": {
+    "description": "Error header"
+  },
+  "tpRetry": "Retry",
+  "@tpRetry": {
+    "description": "Retry button text"
+  },
+  "tpWouldYouLikeChanges": "Would you like to make any changes before I create the final tech pack?",
+  "@tpWouldYouLikeChanges": {
+    "description": "Confirmation question before tech pack"
+  },
+  "tpYesChanges": "Yes, I'd like to make changes",
+  "@tpYesChanges": {
+    "description": "Button to make changes"
+  },
+  "tpContinueWithSelected": "Continue with Selected Design",
+  "@tpContinueWithSelected": {
+    "description": "Button to continue with selected design"
+  },
+  "tpUpgradeRequired": "Upgrade Required",
+  "@tpUpgradeRequired": {
+    "description": "Upgrade required dialog title"
+  },
+  "tpUpgradeToGenerate": "Upgrade to Starter or Pro to generate tech packs",
+  "@tpUpgradeToGenerate": {
+    "description": "Upgrade required message"
+  },
+  "tpGetExtraDesigns": "Get 20 Extra Designs",
+  "@tpGetExtraDesigns": {
+    "description": "Get extra designs button text"
+  },
+  "tpViewPlans": "View Plans",
+  "@tpViewPlans": {
+    "description": "View plans button text"
+  },
+  "tpMaybeLater": "Maybe Later",
+  "@tpMaybeLater": {
+    "description": "Maybe later button text"
+  },
+  "tpFreePlanLimit": "Free Plan Limit",
+  "@tpFreePlanLimit": {
+    "description": "Free plan limit dialog title"
+  },
+  "tpFreePlanMessage": "Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!",
+  "@tpFreePlanMessage": {
+    "description": "Free plan limit message"
+  },
+  "tpProLimitReached": "Pro Limit Reached",
+  "@tpProLimitReached": {
+    "description": "Pro limit dialog title"
+  },
+  "tpProLimitMessage": "You've reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!",
+  "@tpProLimitMessage": {
+    "description": "Pro limit message"
+  },
+  "tpSnackbarDesignUpdated": "Design Updated",
+  "@tpSnackbarDesignUpdated": {
+    "description": "Snackbar title when design updated"
+  },
+  "tpSnackbarDesignUpdatedMessage": "Your design has been updated with new preferences",
+  "@tpSnackbarDesignUpdatedMessage": {
+    "description": "Snackbar message when design updated"
+  },
+  "tpSnackbarDesignSaved": "Design Saved",
+  "@tpSnackbarDesignSaved": {
+    "description": "Snackbar title when design saved"
+  },
+  "tpSnackbarDesignSavedMessage": "Your selected design has been saved successfully",
+  "@tpSnackbarDesignSavedMessage": {
+    "description": "Snackbar message when design saved"
+  },
+  "tpSnackbarGenerationFailed": "Generation Failed",
+  "@tpSnackbarGenerationFailed": {
+    "description": "Snackbar title when generation fails"
+  },
+  "tpSnackbarGenerationFailedMessage": "Failed to generate designs. Please try again.",
+  "@tpSnackbarGenerationFailedMessage": {
+    "description": "Snackbar message when generation fails"
+  },
+  "tpSnackbarNoDesignSelected": "No Design Selected",
+  "@tpSnackbarNoDesignSelected": {
+    "description": "Snackbar title when no design selected"
+  },
+  "tpSnackbarNoDesignSelectedMessage": "Please select a design before continuing",
+  "@tpSnackbarNoDesignSelectedMessage": {
+    "description": "Snackbar message when no design selected"
+  },
+  "tpSnackbarPurchaseSuccess": "Purchase Successful!",
+  "@tpSnackbarPurchaseSuccess": {
+    "description": "Snackbar title when purchase successful"
+  },
+  "tpSnackbarPurchaseSuccessMessage": "20 extra designs added to your account",
+  "@tpSnackbarPurchaseSuccessMessage": {
+    "description": "Snackbar message when purchase successful"
+  },
+  "tpSnackbarPurchaseFailed": "Purchase Failed",
+  "@tpSnackbarPurchaseFailed": {
+    "description": "Snackbar title when purchase fails"
+  },
+  "tpSnackbarPurchaseFailedMessage": "Failed to process purchase. Please try again.",
+  "@tpSnackbarPurchaseFailedMessage": {
+    "description": "Snackbar message when purchase fails"
+  },
+  "tpPlanFree": "Free",
+  "@tpPlanFree": {
+    "description": "Free plan name (display only)"
+  },
+  "tpPlanStarter": "Starter",
+  "@tpPlanStarter": {
+    "description": "Starter plan name (display only)"
+  },
+  "tpPlanPro": "Pro",
+  "@tpPlanPro": {
+    "description": "Pro plan name (display only)"
+  },
+  "tpDialogChooseUpgrade": "Choose Your Upgrade",
+  "@tpDialogChooseUpgrade": {
+    "description": "Upgrade dialog title"
+  },
+  "tpDialogUpgradeDescription": "Unlock unlimited tech pack generation and more features!",
+  "@tpDialogUpgradeDescription": {
+    "description": "Upgrade dialog description"
+  },
+  "tpDialogFeature3TechPacks": "3 tech packs/month",
+  "@tpDialogFeature3TechPacks": {
+    "description": "Starter plan feature - 3 tech packs"
+  },
+  "tpDialogFeatureBasicPDF": "Basic PDF export",
+  "@tpDialogFeatureBasicPDF": {
+    "description": "Starter plan feature - Basic PDF"
+  },
+  "tpDialogFeatureManufacturers": "Manufacturer access",
+  "@tpDialogFeatureManufacturers": {
+    "description": "Starter plan feature - Manufacturers"
+  },
+  "tpDialogFeature10TechPacks": "10 tech packs/month",
+  "@tpDialogFeature10TechPacks": {
+    "description": "Pro plan feature - 10 tech packs"
+  },
+  "tpDialogFeatureCustomPDF": "Custom PDF with logo",
+  "@tpDialogFeatureCustomPDF": {
+    "description": "Pro plan feature - Custom PDF"
+  },
+  "tpDialogFeaturePriority": "Priority support",
+  "@tpDialogFeaturePriority": {
+    "description": "Pro plan feature - Priority support"
+  },
+  "tpDialogExtraTechPacksTitle": "Need More Designs This Month?",
+  "@tpDialogExtraTechPacksTitle": {
+    "description": "Extra tech packs dialog title"
+  },
+  "tpDialogExtraTechPacksDescription": "Get 20 extra designs for just €3.99",
+  "@tpDialogExtraTechPacksDescription": {
+    "description": "Extra tech packs dialog description"
+  },
+  "tpDialogExtraTechPacksOneTime": "One-time purchase",
+  "@tpDialogExtraTechPacksOneTime": {
+    "description": "Extra tech packs feature - one-time"
+  },
+  "tpDialogExtraTechPacksNoSubscription": "No subscription required",
+  "@tpDialogExtraTechPacksNoSubscription": {
+    "description": "Extra tech packs feature - no subscription"
+  },
+  "tpDialogExtraTechPacksExpires": "Valid until end of month",
+  "@tpDialogExtraTechPacksExpires": {
+    "description": "Extra tech packs feature - expiration"
+  },
+  "tpDialogPurchaseFor": "Purchase for €3.99",
+  "@tpDialogPurchaseFor": {
+    "description": "Purchase button text with price"
+  },
+  "tpDialogUpgradeInstead": "Upgrade Instead",
+  "@tpDialogUpgradeInstead": {
+    "description": "Upgrade instead button text"
   }
 }
