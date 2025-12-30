@@ -5,11 +5,15 @@ import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackReadyController extends GetxController {
   final TechPackDetailsController _detailsController = Get.find<TechPackDetailsController>();
   final CollectionsService _collectionsService = CollectionsService();
-  
+
+  // Helper to get localization
+  AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
+
   List<String> get generatedImages => _detailsController.generatedTechPackImages;
   
   String get selectedDesignImage => _detailsController.selectedDesignImagePath.value;
@@ -108,8 +112,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
       // Check if collection already exists
       if (collections.contains(upperCaseName)) {
         Get.snackbar(
-          'Collection Exists',
-          'This collection already exists',
+          _l10n.tprCollectionExists,
+          _l10n.tprCollectionAlreadyExists,
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -129,8 +133,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
     } catch (e) {
       print('Error adding collection: $e');
       Get.snackbar(
-        'Error',
-        'Failed to add collection',
+        _l10n.tprError,
+        _l10n.tprFailedToAddCollection,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -146,8 +150,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
   Future<void> saveTechPackWithDetails(String projectName, String collectionName) async {
     if (!hasGeneratedImages) {
       Get.snackbar(
-        'No Images',
-        'Please generate tech pack images first',
+        _l10n.tprNoImages,
+        _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
@@ -232,10 +236,10 @@ Delivery: ${_detailsController.deliveryDateController.text}
           techPackQuestionnaireData: techPackQuestionnaireData,
           designData: _detailsController.designData,
         );
-        
+
         Get.snackbar(
-          'Updated!',
-          'Tech pack updated successfully!',
+          _l10n.tprUpdated,
+          _l10n.tprTechPackUpdatedSuccessfully,
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -244,7 +248,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
       } else {
         // NEW TECH PACK MODE: Create new tech pack
         print('=== NEW TECH PACK MODE ===');
-        
+
         await TechPackService.saveTechPackImages(
           base64Images: generatedImages,
           techPackId: techPackId,
@@ -254,10 +258,10 @@ Delivery: ${_detailsController.deliveryDateController.text}
           techPackQuestionnaireData: techPackQuestionnaireData,
           designData: _detailsController.designData,
         );
-        
+
         Get.snackbar(
-          'Success',
-          'Tech pack saved successfully!',
+          _l10n.tprSuccess,
+          _l10n.tprTechPackSavedSuccessfully,
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -284,8 +288,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
       Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to save tech pack: ${e.toString()}',
+        _l10n.tprError,
+        _l10n.tprFailedToSaveTechPack(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -307,8 +311,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
   Future<void> exportTechPackPDF({bool withLogo = true}) async {
     if (!hasGeneratedImages) {
       Get.snackbar(
-        'No Images',
-        'Please generate tech pack images first',
+        _l10n.tprNoImages,
+        _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -337,8 +341,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
       await TechPackService.downloadPDF(pdfPath);
 
       Get.snackbar(
-        'Success',
-        'Tech pack PDF saved successfully!',
+        _l10n.tprSuccess,
+        _l10n.tprPdfSavedSuccessfully,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -350,8 +354,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
     } catch (e) {
       print('Error exporting PDF: ${e.toString()}');
       Get.snackbar(
-        'Error',
-        'Failed to export PDF: ${e.toString()}',
+        _l10n.tprError,
+        _l10n.tprFailedToExportPdf(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -366,8 +370,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
   Future<void> exportTechPackWord() async {
     if (!hasGeneratedImages) {
       Get.snackbar(
-        'No Images',
-        'Please generate tech pack images first',
+        _l10n.tprNoImages,
+        _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -388,12 +392,12 @@ Delivery: ${_detailsController.deliveryDateController.text}
 
       // Open share sheet instead of downloading
       await _shareFile(wordPath);
-      
+
     } catch (e) {
       print('Error exporting Word: ${e.toString()}');
       Get.snackbar(
-        'Error',
-        'Failed to export Word document: ${e.toString()}',
+        _l10n.tprError,
+        _l10n.tprFailedToExportWord(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -410,13 +414,13 @@ Delivery: ${_detailsController.deliveryDateController.text}
       final file = XFile(filePath);
       await Share.shareXFiles(
         [file],
-        text: 'Tech Pack Document',
+        text: _l10n.tprTechPackDocument,
       );
     } catch (e) {
       print('Error sharing file: ${e.toString()}');
       Get.snackbar(
-        'Error',
-        'Failed to share file: ${e.toString()}',
+        _l10n.tprError,
+        _l10n.tprFailedToShareFile(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

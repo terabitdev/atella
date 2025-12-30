@@ -36,18 +36,29 @@ class OutlineGenerateRoundButton extends StatelessWidget {
                   width: 24.h,
                   child: const CircularProgressIndicator(color: Colors.white),
                 )
-              : Row(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    if (imagePath != null)
-                      Row(
-                        children: [
-                          Image.asset(imagePath!, height: 20.h, width: 20.w),
-                          SizedBox(width: 10.w),
-                        ],
+              : Padding(
+                  padding: EdgeInsets.symmetric(horizontal: 16.w),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      if (imagePath != null)
+                        Row(
+                          children: [
+                            Image.asset(imagePath!, height: 20.h, width: 20.w),
+                            SizedBox(width: 10.w),
+                          ],
+                        ),
+                      Flexible(
+                        child: Text(
+                          title,
+                          style: gButtonTextStyle166001,
+                          textAlign: TextAlign.center,
+                          maxLines: 2,
+                          overflow: TextOverflow.ellipsis,
+                        ),
                       ),
-                    Text(title, style: gButtonTextStyle166001),
-                  ],
+                    ],
+                  ),
                 ),
         ),
       ),

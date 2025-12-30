@@ -27,7 +27,18 @@ class RoundButton extends StatelessWidget {
           color: color,
           borderRadius: BorderRadius.circular(10.r),
         ),
-        child: Center(child: Text(title, style: buttonTextStyle16600)),
+        child: Center(
+          child: Padding(
+            padding: EdgeInsets.symmetric(horizontal: 16.w),
+            child: Text(
+              title,
+              style: buttonTextStyle16600,
+              textAlign: TextAlign.center,
+              maxLines: 2,
+              overflow: TextOverflow.ellipsis,
+            ),
+          ),
+        ),
       ),
     );
   }

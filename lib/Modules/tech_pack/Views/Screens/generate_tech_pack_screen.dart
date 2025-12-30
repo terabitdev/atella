@@ -466,10 +466,15 @@ class GenerateTechPackScreen extends StatelessWidget {
             borderRadius: BorderRadius.circular(12.r),
           ),
           child: Center(
-            child: Text(
-              l10n.tpWouldYouLikeChanges,
-              textAlign: TextAlign.center,
-              style: tpcTextStyle16400.copyWith(color: Colors.black),
+            child: Padding(
+              padding: EdgeInsets.symmetric(horizontal: 16.w),
+              child: Text(
+                l10n.tpWouldYouLikeChanges,
+                textAlign: TextAlign.center,
+                style: tpcTextStyle16400.copyWith(color: Colors.black),
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+              ),
             ),
           ),
         ),

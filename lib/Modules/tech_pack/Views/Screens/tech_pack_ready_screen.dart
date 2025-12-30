@@ -15,6 +15,7 @@ import 'dart:io';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -92,7 +93,7 @@ class TechPackReadyScreen extends StatelessWidget {
                             if (logoPlacement != null && logoPlacement.isNotEmpty) ...[
                               SizedBox(height: 4.h),
                               Text(
-                                'Logo / $logoPlacement',
+                                AppLocalizations.of(Get.context!)!.tprLogoPlacement(logoPlacement),
                                 style: TextStyle(
                                   fontSize: 10.sp,
                                   color: Colors.black54,
@@ -178,11 +179,11 @@ class TechPackReadyScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildLoadingState() {
+  Widget _buildLoadingState(AppLocalizations l10n) {
     return Column(
       children: [
         Text(
-          'Creating your tech pack...',
+          l10n.tprCreatingTechPack,
           style: GoogleFonts.inter(
             fontSize: 18.sp,
             fontWeight: FontWeight.w600,
@@ -191,7 +192,7 @@ class TechPackReadyScreen extends StatelessWidget {
         ),
         SizedBox(height: 8.h),
         Text(
-          'Please wait while we generate your tech pack images with all specifications.',
+          l10n.tprPleaseWaitGenerating,
           textAlign: TextAlign.center,
           style: GoogleFonts.inter(
             fontSize: 14.sp,
@@ -199,9 +200,9 @@ class TechPackReadyScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 24.h),
-        _buildDynamicLoadingCard('Tech Pack Details'),
+        _buildDynamicLoadingCard(l10n.tprTechPackDetails),
         SizedBox(height: 16.h),
-        _buildDynamicLoadingCard('Technical Flat Drawing'),
+        _buildDynamicLoadingCard(l10n.tprTechnicalFlatDrawing),
       ],
     );
   }
@@ -246,7 +247,7 @@ class TechPackReadyScreen extends StatelessWidget {
 
             // Generating text
             Text(
-              'Generating',
+              AppLocalizations.of(Get.context!)!.tprGenerating,
               style: GoogleFonts.inter(
                 fontSize: 14.sp,
                 color: const Color(0xFF666666),
@@ -262,6 +263,7 @@ class TechPackReadyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(TechPackReadyController());
+    final l10n = AppLocalizations.of(context)!;
 
     return Scaffold(
       backgroundColor: const Color(0xFFFDFDFD),
@@ -276,10 +278,15 @@ class TechPackReadyScreen extends StatelessWidget {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text(
-                    'Your Tech Pack Is \nReady',
-                    style: tprtTextTextStyle28700,
+                  Expanded(
+                    child: Text(
+                      l10n.tprYourTechPackReady,
+                      style: tprtTextTextStyle28700,
+                      maxLines: 2,
+                      overflow: TextOverflow.ellipsis,
+                    ),
                   ),
+                  SizedBox(width: 12.w),
                   InkWell(
                     onTap: () => Get.toNamed('/tech_pack_details_screen'),
                     child: Image.asset(
@@ -294,14 +301,14 @@ class TechPackReadyScreen extends StatelessWidget {
               // Generated Tech Pack Images in Column
               Obx(() {
                 if (controller.isGenerating) {
-                  return _buildLoadingState();
+                  return _buildLoadingState(l10n);
                 } else if (controller.hasGeneratedImages &&
                     controller.generatedImages.length >= 2) {
                   return Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       Text(
-                        'Generated Tech Pack Images',
+                        l10n.tprGeneratedTechPackImages,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           fontSize: 18.sp,
@@ -313,7 +320,7 @@ class TechPackReadyScreen extends StatelessWidget {
                         onTap: () => _showImagePopup(
                           context,
                           controller.generatedImages[0],
-                          'Tech Pack Details',
+                          l10n.tprTechPackDetails,
                         ),
                         child: Container(
                           width: double.infinity,
@@ -335,7 +342,7 @@ class TechPackReadyScreen extends StatelessWidget {
                         onTap: () => _showImagePopup(
                           context,
                           controller.generatedImages[1],
-                          'Technical Flat Drawing',
+                          l10n.tprTechnicalFlatDrawing,
                           logoImagePath: controller.hasLabelImage ? controller.labelImagePath : null,
                           logoPlacement: controller.logoPlacement.isNotEmpty ? controller.logoPlacement : null,
                         ),
@@ -362,7 +369,7 @@ class TechPackReadyScreen extends StatelessWidget {
                                   child: Row(
                                     children: [
                                       Text(
-                                        'Logo / ${controller.logoPlacement}',
+                                        l10n.tprLogoPlacement(controller.logoPlacement),
                                         style: TextStyle(
                                           fontSize: 10.sp,
                                           color: Colors.black54,
@@ -409,7 +416,7 @@ class TechPackReadyScreen extends StatelessWidget {
                           ),
                           SizedBox(height: 8.h),
                           Text(
-                            'No tech pack images generated yet',
+                            l10n.tprNoTechPackImages,
                             style: TextStyle(
                               color: Colors.grey,
                               fontSize: 14.sp,
@@ -423,7 +430,7 @@ class TechPackReadyScreen extends StatelessWidget {
               }),
               SizedBox(height: 30.h),
               RoundButton(
-                title: 'Get Manufacturer Suggestions',
+                title: l10n.tprGetManufacturerSuggestions,
                 onTap: ()  {
                   Get.to(
                     () => RecommendedManufactureScreen(),
