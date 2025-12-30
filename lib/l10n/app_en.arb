@@ -2536,5 +2536,242 @@
   "tprTechPackDocument": "Tech Pack Document",
   "@tprTechPackDocument": {
     "description": "Tech pack document share text"
+  },
+  "vpManufacturerProfile": "Manufacturer Profile",
+  "@vpManufacturerProfile": {
+    "description": "Manufacturer profile title"
+  },
+  "vpCompany": "Company",
+  "@vpCompany": {
+    "description": "Company label"
+  },
+  "vpLocation": "Location",
+  "@vpLocation": {
+    "description": "Location label"
+  },
+  "vpMinimumOrderQuantity": "Minimum Order Quantity",
+  "@vpMinimumOrderQuantity": {
+    "description": "Minimum order quantity label"
+  },
+  "vpLeadTime": "Lead Time",
+  "@vpLeadTime": {
+    "description": "Lead time label"
+  },
+  "vpAbout": "About",
+  "@vpAbout": {
+    "description": "About section label"
+  },
+  "vpContact": "Contact",
+  "@vpContact": {
+    "description": "Contact button text"
+  },
+  "tpwSaveTechPack": "Save Tech Pack",
+  "@tpwSaveTechPack": {
+    "description": "Save tech pack dialog title"
+  },
+  "tpwProjectName": "Project Name",
+  "@tpwProjectName": {
+    "description": "Project name field label"
+  },
+  "tpwEnterProjectName": "Enter project name",
+  "@tpwEnterProjectName": {
+    "description": "Project name field hint"
+  },
+  "tpwCollectionName": "Collection Name",
+  "@tpwCollectionName": {
+    "description": "Collection name field label"
+  },
+  "tpwAdd": "ADD",
+  "@tpwAdd": {
+    "description": "Add collection button text"
+  },
+  "tpwSave": "SAVE",
+  "@tpwSave": {
+    "description": "Save button text"
+  },
+  "tpwError": "Error",
+  "@tpwError": {
+    "description": "Error snackbar title"
+  },
+  "tpwPleaseEnterProjectName": "Please enter a project name",
+  "@tpwPleaseEnterProjectName": {
+    "description": "Project name validation error message"
+  },
+  "tpwAddCollection": "ADD COLLECTION",
+  "@tpwAddCollection": {
+    "description": "Add collection dialog title"
+  },
+  "tpwEnterCollectionName": "Enter collection name",
+  "@tpwEnterCollectionName": {
+    "description": "Collection name field hint"
+  },
+  "tpwPleaseEnterCollectionName": "Please enter a collection name",
+  "@tpwPleaseEnterCollectionName": {
+    "description": "Collection name validation error message"
+  },
+  "tpwExportOptions": "Export Options",
+  "@tpwExportOptions": {
+    "description": "Export options dialog title"
+  },
+  "tpwSelectExportFormat": "Select your preferred export format",
+  "@tpwSelectExportFormat": {
+    "description": "Export options dialog subtitle"
+  },
+  "tpwPdfWithLogo": "PDF with logo/branding",
+  "@tpwPdfWithLogo": {
+    "description": "PDF with logo export option label"
+  },
+  "tpwIncludesAtellaBranding": "Includes ATELIA branding and logo",
+  "@tpwIncludesAtellaBranding": {
+    "description": "PDF with logo export option description"
+  },
+  "tpwNeutralPdf": "Neutral PDF",
+  "@tpwNeutralPdf": {
+    "description": "Neutral PDF export option label"
+  },
+  "tpwCleanPdfWithoutBranding": "Clean PDF without branding",
+  "@tpwCleanPdfWithoutBranding": {
+    "description": "Neutral PDF export option description"
+  },
+  "tpwEditableFormatWord": "Editable Format (Word)",
+  "@tpwEditableFormatWord": {
+    "description": "Word export option label"
+  },
+  "tpwEditableWordDocument": "Editable Word document with cover page and images",
+  "@tpwEditableWordDocument": {
+    "description": "Word export option description"
+  },
+  "tpwCancel": "Cancel",
+  "@tpwCancel": {
+    "description": "Cancel button text"
+  },
+  "tpwOk": "OK",
+  "@tpwOk": {
+    "description": "OK button text"
+  },
+  "tpwSaveButton": "Save",
+  "@tpwSaveButton": {
+    "description": "Save button label"
+  },
+  "tpwExportButton": "Export",
+  "@tpwExportButton": {
+    "description": "Export button label"
+  },
+  "tpwGenerating": "Generating..",
+  "@tpwGenerating": {
+    "description": "Generating status text"
+  },
+  "tpdEditMode": "Edit Mode",
+  "@tpdEditMode": {
+    "description": "Edit mode snackbar title"
+  },
+  "tpdLoadingExistingTechPack": "Loading existing tech pack data...",
+  "@tpdLoadingExistingTechPack": {
+    "description": "Loading existing tech pack message"
+  },
+  "tpdNotice": "Notice",
+  "@tpdNotice": {
+    "description": "Notice snackbar title"
+  },
+  "tpdStartingWithEmptyForm": "Starting with empty tech pack form",
+  "@tpdStartingWithEmptyForm": {
+    "description": "Starting with empty form message"
+  },
+  "tpdSuccess": "Success",
+  "@tpdSuccess": {
+    "description": "Success snackbar title"
+  },
+  "tpdTechPackImagesGenerated": "Detailed tech pack images generated with professional labeling!",
+  "@tpdTechPackImagesGenerated": {
+    "description": "Tech pack images generated success message"
+  },
+  "tpdPartialSuccess": "Partial Success",
+  "@tpdPartialSuccess": {
+    "description": "Partial success snackbar title"
+  },
+  "tpdSomeTechPackImagesGenerated": "Some tech pack images generated. Check results.",
+  "@tpdSomeTechPackImagesGenerated": {
+    "description": "Partial tech pack generation message"
+  },
+  "tpdError": "Error",
+  "@tpdError": {
+    "description": "Error snackbar title"
+  },
+  "tpdFailedToGenerateTechPack": "Failed to generate detailed tech pack images: {error}",
+  "@tpdFailedToGenerateTechPack": {
+    "description": "Failed to generate tech pack error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tpdFailedToPickImage": "Failed to pick image: {error}",
+  "@tpdFailedToPickImage": {
+    "description": "Failed to pick image error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tpdProcessing": "Processing",
+  "@tpdProcessing": {
+    "description": "Processing snackbar title"
+  },
+  "tpdProcessingYourPurchase": "Processing your purchase...",
+  "@tpdProcessingYourPurchase": {
+    "description": "Processing purchase message"
+  },
+  "tpdSuccessExclamation": "Success!",
+  "@tpdSuccessExclamation": {
+    "description": "Success with exclamation snackbar title"
+  },
+  "tpdAdditionalTechPacksAdded": "You now have {count} additional techpacks for this month!",
+  "@tpdAdditionalTechPacksAdded": {
+    "description": "Additional tech packs added success message",
+    "placeholders": {
+      "count": {
+        "type": "String"
+      }
+    }
+  },
+  "tpdPurchaseFailed": "Purchase Failed",
+  "@tpdPurchaseFailed": {
+    "description": "Purchase failed snackbar title"
+  },
+  "tpdUnableToProcessPurchase": "Unable to process your purchase. Please try again.",
+  "@tpdUnableToProcessPurchase": {
+    "description": "Unable to process purchase message"
+  },
+  "tpdPurchaseError": "An error occurred during purchase: {error}",
+  "@tpdPurchaseError": {
+    "description": "Purchase error message",
+    "placeholders": {
+      "error": {
+        "type": "String"
+      }
+    }
+  },
+  "tpgDesignNumber": "Design {number}",
+  "@tpgDesignNumber": {
+    "description": "Design number label",
+    "placeholders": {
+      "number": {
+        "type": "String"
+      }
+    }
+  },
+  "tpgGenerating": "Generating",
+  "@tpgGenerating": {
+    "description": "Generating status text"
+  },
+  "tpgFailedToGenerate": "Failed to generate",
+  "@tpgFailedToGenerate": {
+    "description": "Failed to generate error message"
+  },
+  "tpgFailedToLoadImage": "Failed to load image",
+  "@tpgFailedToLoadImage": {
+    "description": "Failed to load image error message"
   }
 }

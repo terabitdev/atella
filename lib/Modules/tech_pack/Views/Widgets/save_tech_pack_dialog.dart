@@ -2,6 +2,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
 
 class SaveTechPackDialog extends StatelessWidget {
@@ -41,6 +42,7 @@ class SaveTechPackDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<TechPackReadyController>();
+    final l10n = AppLocalizations.of(context)!;
 
     return Material(
       type: MaterialType.transparency,
@@ -57,16 +59,16 @@ class SaveTechPackDialog extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text('Save Tech Pack', style: dbTitleTextTextStyle18700),
+              Text(l10n.tpwSaveTechPack, style: dbTitleTextTextStyle18700),
               SizedBox(height: 20.h),
 
               // Project Name Field
-              Text('Project Name', style: dbTitleTextTextStyle12400),
+              Text(l10n.tpwProjectName, style: dbTitleTextTextStyle12400),
               SizedBox(height: 8.h),
               TextField(
                 controller: controller.projectNameController,
                 decoration: InputDecoration(
-                  hintText: 'Enter project name',
+                  hintText: l10n.tpwEnterProjectName,
                   hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
                   border: OutlineInputBorder(
                     borderRadius: BorderRadius.circular(12.r),
@@ -89,7 +91,7 @@ class SaveTechPackDialog extends StatelessWidget {
               SizedBox(height: 20.h),
 
               // Collection Name Field
-              Text('Collection Name', style: dbTitleTextTextStyle12400),
+              Text(l10n.tpwCollectionName, style: dbTitleTextTextStyle12400),
               SizedBox(height: 8.h),
               Obx(
                 () => Container(
@@ -144,7 +146,7 @@ class SaveTechPackDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'ADD',
+                        l10n.tpwAdd,
                         style: dbTitleTextTextStyle12500,
                         textAlign: TextAlign.center,
                       ),
@@ -158,8 +160,8 @@ class SaveTechPackDialog extends StatelessWidget {
                             .trim()
                             .isEmpty) {
                           Get.snackbar(
-                            'Error',
-                            'Please enter a project name',
+                            l10n.tpwError,
+                            l10n.tpwPleaseEnterProjectName,
                             backgroundColor: Colors.red,
                             colorText: Colors.white,
                           );
@@ -185,7 +187,7 @@ class SaveTechPackDialog extends StatelessWidget {
                         padding: EdgeInsets.symmetric(vertical: 12.h),
                       ),
                       child: Text(
-                        'SAVE',
+                        l10n.tpwSave,
                         style: dbTitleTextTextStyle12500.copyWith(
                           color: Colors.white,
                         ),
@@ -222,6 +224,8 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16.r)),
       insetPadding: EdgeInsets.symmetric(horizontal: 24.w),
@@ -232,7 +236,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'ADD COLLECTION',
+              l10n.tpwAddCollection,
               style: TextStyle(
                 fontSize: 18.sp,
                 fontWeight: FontWeight.bold,
@@ -244,7 +248,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
             TextField(
               controller: _collectionController,
               decoration: InputDecoration(
-                hintText: 'Enter collection name',
+                hintText: l10n.tpwEnterCollectionName,
                 hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
                 border: OutlineInputBorder(
                   borderRadius: BorderRadius.circular(12.r),
@@ -272,8 +276,8 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
                 onPressed: () {
                   if (_collectionController.text.trim().isEmpty) {
                     Get.snackbar(
-                      'Error',
-                      'Please enter a collection name',
+                      l10n.tpwError,
+                      l10n.tpwPleaseEnterCollectionName,
                       backgroundColor: Colors.red,
                       colorText: Colors.white,
                     );
@@ -290,7 +294,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
                   padding: EdgeInsets.symmetric(vertical: 12.h),
                 ),
                 child: Text(
-                  'SAVE',
+                  l10n.tpwSave,
                   style: TextStyle(
                     fontSize: 14.sp,
                     fontWeight: FontWeight.w600,

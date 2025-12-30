@@ -108,18 +108,19 @@ class GenerateTechPackScreen extends StatelessWidget {
                         children: [
                           ...List.generate(3, (index) {
                             if (controller.isLoading.value) {
-                              return _buildDynamicLoadingCard(index);
+                              return _buildDynamicLoadingCard(index, l10n);
                             } else if (controller.hasError.value) {
-                              return _buildErrorCard(index);
+                              return _buildErrorCard(index, l10n);
                             } else if (controller.generatedImages.isNotEmpty &&
                                 index < controller.generatedImages.length) {
                               return _buildDesignImageCard(
                                 controller.generatedImages[index],
                                 index,
                                 context,
+                                l10n,
                               );
                             } else {
-                              return _buildEmptyCard(index);
+                              return _buildEmptyCard(index, l10n);
                             }
                           }),
                           const SizedBox(height: 20),
@@ -212,7 +213,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildDynamicLoadingCard(int index) {
+  Widget _buildDynamicLoadingCard(int index, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       height: 280.h,
@@ -226,7 +227,7 @@ class GenerateTechPackScreen extends StatelessWidget {
           children: [
             // Design number
             Text(
-              'Design ${index + 1}',
+              l10n.tpgDesignNumber((index + 1).toString()),
               style: GoogleFonts.inter(
                 fontSize: 16.sp,
                 fontWeight: FontWeight.w600,
@@ -252,7 +253,7 @@ class GenerateTechPackScreen extends StatelessWidget {
 
             // Simple "Generating" text
             Text(
-              'Generating',
+              l10n.tpgGenerating,
               style: GoogleFonts.inter(
                 fontSize: 14.sp,
                 color: const Color(0xFF666666),
@@ -265,7 +266,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildErrorCard(int index) {
+  Widget _buildErrorCard(int index, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       height: 280,
@@ -285,14 +286,14 @@ class GenerateTechPackScreen extends StatelessWidget {
             ),
             const SizedBox(height: 8),
             Text(
-              'Design ${index + 1}',
+              l10n.tpgDesignNumber((index + 1).toString()),
               style: GoogleFonts.inter(
                 fontSize: 16,
                 color: Colors.grey.shade600,
               ),
             ),
             Text(
-              'Failed to generate',
+              l10n.tpgFailedToGenerate,
               style: GoogleFonts.inter(
                 fontSize: 12,
                 color: Colors.grey.shade500,
@@ -304,7 +305,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     );
   }
 
-  Widget _buildEmptyCard(int index) {
+  Widget _buildEmptyCard(int index, AppLocalizations l10n) {
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       height: 280,
@@ -320,7 +321,7 @@ class GenerateTechPackScreen extends StatelessWidget {
             Icon(Icons.image_outlined, size: 48, color: Colors.grey.shade300),
             const SizedBox(height: 8),
             Text(
-              'Design ${index + 1}',
+              l10n.tpgDesignNumber((index + 1).toString()),
               style: GoogleFonts.inter(
                 fontSize: 16,
                 color: Colors.grey.shade400,
@@ -336,6 +337,7 @@ class GenerateTechPackScreen extends StatelessWidget {
     String base64Image,
     int index,
     BuildContext context,
+    AppLocalizations l10n,
   ) {
     return Obx(() {
       final isSelected = controller.selectedDesignIndex.value == index;
@@ -386,7 +388,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                             ),
                             const SizedBox(height: 8),
                             Text(
-                              'Failed to load image',
+                              l10n.tpgFailedToLoadImage,
                               style: GoogleFonts.inter(
                                 fontSize: 12,
                                 color: Colors.grey.shade500,
@@ -439,7 +441,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                       borderRadius: BorderRadius.circular(12),
                     ),
                     child: Text(
-                      'Design ${index + 1}',
+                      l10n.tpgDesignNumber((index + 1).toString()),
                       style: GoogleFonts.inter(
                         fontSize: 12,
                         color: Colors.white,

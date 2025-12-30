@@ -4129,6 +4129,324 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Tech Pack Document'**
   String get tprTechPackDocument;
+
+  /// Manufacturer profile title
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer Profile'**
+  String get vpManufacturerProfile;
+
+  /// Company label
+  ///
+  /// In en, this message translates to:
+  /// **'Company'**
+  String get vpCompany;
+
+  /// Location label
+  ///
+  /// In en, this message translates to:
+  /// **'Location'**
+  String get vpLocation;
+
+  /// Minimum order quantity label
+  ///
+  /// In en, this message translates to:
+  /// **'Minimum Order Quantity'**
+  String get vpMinimumOrderQuantity;
+
+  /// Lead time label
+  ///
+  /// In en, this message translates to:
+  /// **'Lead Time'**
+  String get vpLeadTime;
+
+  /// About section label
+  ///
+  /// In en, this message translates to:
+  /// **'About'**
+  String get vpAbout;
+
+  /// Contact button text
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get vpContact;
+
+  /// Save tech pack dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Save Tech Pack'**
+  String get tpwSaveTechPack;
+
+  /// Project name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Project Name'**
+  String get tpwProjectName;
+
+  /// Project name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter project name'**
+  String get tpwEnterProjectName;
+
+  /// Collection name field label
+  ///
+  /// In en, this message translates to:
+  /// **'Collection Name'**
+  String get tpwCollectionName;
+
+  /// Add collection button text
+  ///
+  /// In en, this message translates to:
+  /// **'ADD'**
+  String get tpwAdd;
+
+  /// Save button text
+  ///
+  /// In en, this message translates to:
+  /// **'SAVE'**
+  String get tpwSave;
+
+  /// Error snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get tpwError;
+
+  /// Project name validation error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a project name'**
+  String get tpwPleaseEnterProjectName;
+
+  /// Add collection dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'ADD COLLECTION'**
+  String get tpwAddCollection;
+
+  /// Collection name field hint
+  ///
+  /// In en, this message translates to:
+  /// **'Enter collection name'**
+  String get tpwEnterCollectionName;
+
+  /// Collection name validation error message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter a collection name'**
+  String get tpwPleaseEnterCollectionName;
+
+  /// Export options dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Export Options'**
+  String get tpwExportOptions;
+
+  /// Export options dialog subtitle
+  ///
+  /// In en, this message translates to:
+  /// **'Select your preferred export format'**
+  String get tpwSelectExportFormat;
+
+  /// PDF with logo export option label
+  ///
+  /// In en, this message translates to:
+  /// **'PDF with logo/branding'**
+  String get tpwPdfWithLogo;
+
+  /// PDF with logo export option description
+  ///
+  /// In en, this message translates to:
+  /// **'Includes ATELIA branding and logo'**
+  String get tpwIncludesAtellaBranding;
+
+  /// Neutral PDF export option label
+  ///
+  /// In en, this message translates to:
+  /// **'Neutral PDF'**
+  String get tpwNeutralPdf;
+
+  /// Neutral PDF export option description
+  ///
+  /// In en, this message translates to:
+  /// **'Clean PDF without branding'**
+  String get tpwCleanPdfWithoutBranding;
+
+  /// Word export option label
+  ///
+  /// In en, this message translates to:
+  /// **'Editable Format (Word)'**
+  String get tpwEditableFormatWord;
+
+  /// Word export option description
+  ///
+  /// In en, this message translates to:
+  /// **'Editable Word document with cover page and images'**
+  String get tpwEditableWordDocument;
+
+  /// Cancel button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get tpwCancel;
+
+  /// OK button text
+  ///
+  /// In en, this message translates to:
+  /// **'OK'**
+  String get tpwOk;
+
+  /// Save button label
+  ///
+  /// In en, this message translates to:
+  /// **'Save'**
+  String get tpwSaveButton;
+
+  /// Export button label
+  ///
+  /// In en, this message translates to:
+  /// **'Export'**
+  String get tpwExportButton;
+
+  /// Generating status text
+  ///
+  /// In en, this message translates to:
+  /// **'Generating..'**
+  String get tpwGenerating;
+
+  /// Edit mode snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Edit Mode'**
+  String get tpdEditMode;
+
+  /// Loading existing tech pack message
+  ///
+  /// In en, this message translates to:
+  /// **'Loading existing tech pack data...'**
+  String get tpdLoadingExistingTechPack;
+
+  /// Notice snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Notice'**
+  String get tpdNotice;
+
+  /// Starting with empty form message
+  ///
+  /// In en, this message translates to:
+  /// **'Starting with empty tech pack form'**
+  String get tpdStartingWithEmptyForm;
+
+  /// Success snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Success'**
+  String get tpdSuccess;
+
+  /// Tech pack images generated success message
+  ///
+  /// In en, this message translates to:
+  /// **'Detailed tech pack images generated with professional labeling!'**
+  String get tpdTechPackImagesGenerated;
+
+  /// Partial success snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Partial Success'**
+  String get tpdPartialSuccess;
+
+  /// Partial tech pack generation message
+  ///
+  /// In en, this message translates to:
+  /// **'Some tech pack images generated. Check results.'**
+  String get tpdSomeTechPackImagesGenerated;
+
+  /// Error snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Error'**
+  String get tpdError;
+
+  /// Failed to generate tech pack error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate detailed tech pack images: {error}'**
+  String tpdFailedToGenerateTechPack(String error);
+
+  /// Failed to pick image error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to pick image: {error}'**
+  String tpdFailedToPickImage(String error);
+
+  /// Processing snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Processing'**
+  String get tpdProcessing;
+
+  /// Processing purchase message
+  ///
+  /// In en, this message translates to:
+  /// **'Processing your purchase...'**
+  String get tpdProcessingYourPurchase;
+
+  /// Success with exclamation snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Success!'**
+  String get tpdSuccessExclamation;
+
+  /// Additional tech packs added success message
+  ///
+  /// In en, this message translates to:
+  /// **'You now have {count} additional techpacks for this month!'**
+  String tpdAdditionalTechPacksAdded(String count);
+
+  /// Purchase failed snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase Failed'**
+  String get tpdPurchaseFailed;
+
+  /// Unable to process purchase message
+  ///
+  /// In en, this message translates to:
+  /// **'Unable to process your purchase. Please try again.'**
+  String get tpdUnableToProcessPurchase;
+
+  /// Purchase error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during purchase: {error}'**
+  String tpdPurchaseError(String error);
+
+  /// Design number label
+  ///
+  /// In en, this message translates to:
+  /// **'Design {number}'**
+  String tpgDesignNumber(String number);
+
+  /// Generating status text
+  ///
+  /// In en, this message translates to:
+  /// **'Generating'**
+  String get tpgGenerating;
+
+  /// Failed to generate error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to generate'**
+  String get tpgFailedToGenerate;
+
+  /// Failed to load image error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to load image'**
+  String get tpgFailedToLoadImage;
 }
 
 class _AppLocalizationsDelegate

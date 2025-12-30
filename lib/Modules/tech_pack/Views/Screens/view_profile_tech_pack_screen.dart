@@ -3,12 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class ViewProfileTechPackScreen extends StatelessWidget {
   const ViewProfileTechPackScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Scaffold(
       backgroundColor: const Color(0xFFF5F5F5),
       body: SafeArea(
@@ -56,32 +59,32 @@ class ViewProfileTechPackScreen extends StatelessWidget {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              'Manufacturer Profile',
+                              l10n.vpManufacturerProfile,
                               style: mstTextTextStyle26700,
                             ),
                             SizedBox(height: 24.h),
                             _ProfileSection(
-                              title: 'Company',
+                              title: l10n.vpCompany,
                               value: 'ABC Garments',
                             ),
                             SizedBox(height: 16.h),
                             _ProfileSection(
-                              title: 'Location',
+                              title: l10n.vpLocation,
                               value: 'Los Angeles, CA',
                             ),
                             SizedBox(height: 16.h),
                             _ProfileSection(
-                              title: 'Minimum Order Quantity',
+                              title: l10n.vpMinimumOrderQuantity,
                               value: 'MO 100 units',
                             ),
                             SizedBox(height: 16.h),
                             _ProfileSection(
-                              title: 'Lead Time',
+                              title: l10n.vpLeadTime,
                               value: '60 days',
                             ),
                             SizedBox(height: 16.h),
                             Text(
-                              'About',
+                              l10n.vpAbout,
                               style: TextStyle(
                                 fontWeight: FontWeight.w700,
                                 fontSize: 20.sp,
@@ -105,7 +108,7 @@ class ViewProfileTechPackScreen extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: RoundButton(
-                    title: 'Contact',
+                    title: l10n.vpContact,
                     onTap: () {},
                     color: Colors.black,
                     isloading: false,

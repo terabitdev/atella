@@ -2,6 +2,7 @@ import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackImageCard extends StatelessWidget {
   final bool isLoading;
@@ -16,6 +17,8 @@ class TechPackImageCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     Widget card = Container(
       margin: EdgeInsets.symmetric(vertical: 12.h),
       decoration: BoxDecoration(
@@ -30,7 +33,7 @@ class TechPackImageCard extends StatelessWidget {
               children: [
                 Image.asset(generateIcon, height: 50.h, width: 50.w),
                 SizedBox(height: 12.h),
-                Text('Generating..', style: gsTextStyle17400),
+                Text(l10n.tpwGenerating, style: gsTextStyle17400),
               ],
             )
           : imagePath != null

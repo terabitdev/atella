@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class SaveExportButtonRow extends StatelessWidget {
   final VoidCallback? onSave;
@@ -17,6 +18,8 @@ class SaveExportButtonRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Row(
       children: [
         Expanded(
@@ -39,7 +42,7 @@ class SaveExportButtonRow extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Save',
+                  l10n.tpwSaveButton,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF222222),
@@ -69,7 +72,7 @@ class SaveExportButtonRow extends StatelessWidget {
                   ),
                 )
               : Text(
-                  'Export',
+                  l10n.tpwExportButton,
                   style: TextStyle(
                     fontWeight: FontWeight.w600,
                     color: Color(0xFF222222),

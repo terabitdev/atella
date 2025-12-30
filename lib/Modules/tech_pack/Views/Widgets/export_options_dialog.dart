@@ -2,6 +2,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'export_options_controller.dart';
 
 class ExportOptionsDialog extends StatelessWidget {
@@ -15,6 +16,8 @@ class ExportOptionsDialog extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(ExportOptionsController());
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
       backgroundColor: Colors.white,
       shape: RoundedRectangleBorder(
@@ -27,7 +30,7 @@ class ExportOptionsDialog extends StatelessWidget {
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Text(
-              'Export Options',
+              l10n.tpwExportOptions,
               style: sfpsTitleTextTextStyle18600.copyWith(
                 color: Colors.black,
                 fontSize: 20.sp,
@@ -35,7 +38,7 @@ class ExportOptionsDialog extends StatelessWidget {
             ),
             SizedBox(height: 8.h),
             Text(
-              'Select your preferred export format',
+              l10n.tpwSelectExportFormat,
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.grey[600],
                 fontSize: 14.sp,
@@ -74,7 +77,7 @@ class ExportOptionsDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'PDF with logo/branding',
+                            l10n.tpwPdfWithLogo,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.black,
                               fontSize: 16.sp,
@@ -83,7 +86,7 @@ class ExportOptionsDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Includes ATELIA branding and logo',
+                            l10n.tpwIncludesAtellaBranding,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.grey[600],
                               fontSize: 12.sp,
@@ -130,7 +133,7 @@ class ExportOptionsDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Neutral PDF',
+                            l10n.tpwNeutralPdf,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.black,
                               fontSize: 16.sp,
@@ -139,7 +142,7 @@ class ExportOptionsDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Clean PDF without branding',
+                            l10n.tpwCleanPdfWithoutBranding,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.grey[600],
                               fontSize: 12.sp,
@@ -186,7 +189,7 @@ class ExportOptionsDialog extends StatelessWidget {
                         crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           Text(
-                            'Editable Format (Word)',
+                            l10n.tpwEditableFormatWord,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.black,
                               fontSize: 16.sp,
@@ -195,7 +198,7 @@ class ExportOptionsDialog extends StatelessWidget {
                           ),
                           SizedBox(height: 4.h),
                           Text(
-                            'Editable Word document with cover page and images',
+                            l10n.tpwEditableWordDocument,
                             style: ssTitleTextTextStyle14400.copyWith(
                               color: Colors.grey[600],
                               fontSize: 12.sp,
@@ -218,7 +221,7 @@ class ExportOptionsDialog extends StatelessWidget {
                 TextButton(
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(
-                    'Cancel',
+                    l10n.tpwCancel,
                     style: ssTitleTextTextStyle14400.copyWith(
                       color: Colors.grey[600],
                       fontSize: 16.sp,
@@ -244,7 +247,7 @@ class ExportOptionsDialog extends StatelessWidget {
                     ),
                   ),
                   child: Text(
-                    'OK',
+                    l10n.tpwOk,
                     style: ssTitleTextTextStyle14400.copyWith(
                       color: Colors.white,
                       fontSize: 16.sp,

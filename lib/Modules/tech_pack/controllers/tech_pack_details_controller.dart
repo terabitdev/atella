@@ -2,6 +2,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../Data/api/openai_service.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 import '../../../Data/Models/user_subscription.dart';
@@ -13,6 +14,9 @@ class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _subscriptionService =
       StripeSubscriptionService();
+
+  // Helper to get localization
+  AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
 
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
@@ -192,8 +196,8 @@ class TechPackDetailsController extends GetxController {
           _showAllBlocks();
 
           Get.snackbar(
-            'Edit Mode',
-            'Loading existing tech pack data...',
+            _l10n.tpdEditMode,
+            _l10n.tpdLoadingExistingTechPack,
             backgroundColor: Colors.black,
             colorText: Colors.white,
             snackPosition: SnackPosition.TOP,
@@ -204,8 +208,8 @@ class TechPackDetailsController extends GetxController {
     } catch (e) {
       print('Error loading tech pack data: $e');
       Get.snackbar(
-        'Notice',
-        'Starting with empty tech pack form',
+        _l10n.tpdNotice,
+        _l10n.tpdStartingWithEmptyForm,
         backgroundColor: Colors.black,
         snackPosition: SnackPosition.TOP,
         colorText: Colors.white,
@@ -543,8 +547,8 @@ class TechPackDetailsController extends GetxController {
           '✅ Both manufacturing and detailed technical images generated successfully',
         );
         Get.snackbar(
-          'Success',
-          'Detailed tech pack images generated with professional labeling!',
+          _l10n.tpdSuccess,
+          _l10n.tpdTechPackImagesGenerated,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.black,
           colorText: Colors.white,
@@ -555,8 +559,8 @@ class TechPackDetailsController extends GetxController {
           '⚠️ Warning: Only ${generatedTechPackImages.length} images generated',
         );
         Get.snackbar(
-          'Partial Success',
-          'Some tech pack images generated. Check results.',
+          _l10n.tpdPartialSuccess,
+          _l10n.tpdSomeTechPackImagesGenerated,
           snackPosition: SnackPosition.TOP,
           backgroundColor: Colors.black,
           colorText: Colors.white,
@@ -567,8 +571,8 @@ class TechPackDetailsController extends GetxController {
       print('Error: $e');
 
       Get.snackbar(
-        'Error',
-        'Failed to generate detailed tech pack images: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdFailedToGenerateTechPack(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -621,8 +625,8 @@ class TechPackDetailsController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -644,8 +648,8 @@ class TechPackDetailsController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -667,8 +671,8 @@ class TechPackDetailsController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'Failed to pick image: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -1260,8 +1264,8 @@ class TechPackDetailsController extends GetxController {
   Future<void> _purchaseExtraTechpacks(int count, double price) async {
     try {
       Get.snackbar(
-        'Processing',
-        'Processing your purchase...',
+        _l10n.tpdProcessing,
+        _l10n.tpdProcessingYourPurchase,
         backgroundColor: Colors.blue,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -1271,8 +1275,8 @@ class TechPackDetailsController extends GetxController {
       
       if (success) {
         Get.snackbar(
-          'Success!',
-          'You now have $count additional techpacks for this month!',
+          _l10n.tpdSuccessExclamation,
+          _l10n.tpdAdditionalTechPacksAdded(count.toString()),
           backgroundColor: Colors.green,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -1284,8 +1288,8 @@ class TechPackDetailsController extends GetxController {
         Get.toNamed('/tech_pack_ready_screen');
       } else {
         Get.snackbar(
-          'Purchase Failed',
-          'Unable to process your purchase. Please try again.',
+          _l10n.tpdPurchaseFailed,
+          _l10n.tpdUnableToProcessPurchase,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -1293,8 +1297,8 @@ class TechPackDetailsController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'An error occurred during purchase: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdPurchaseError(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

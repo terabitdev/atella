@@ -2182,4 +2182,177 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tprTechPackDocument => 'Tech Pack Document';
+
+  @override
+  String get vpManufacturerProfile => 'Manufacturer Profile';
+
+  @override
+  String get vpCompany => 'Company';
+
+  @override
+  String get vpLocation => 'Location';
+
+  @override
+  String get vpMinimumOrderQuantity => 'Minimum Order Quantity';
+
+  @override
+  String get vpLeadTime => 'Lead Time';
+
+  @override
+  String get vpAbout => 'About';
+
+  @override
+  String get vpContact => 'Contact';
+
+  @override
+  String get tpwSaveTechPack => 'Save Tech Pack';
+
+  @override
+  String get tpwProjectName => 'Project Name';
+
+  @override
+  String get tpwEnterProjectName => 'Enter project name';
+
+  @override
+  String get tpwCollectionName => 'Collection Name';
+
+  @override
+  String get tpwAdd => 'ADD';
+
+  @override
+  String get tpwSave => 'SAVE';
+
+  @override
+  String get tpwError => 'Error';
+
+  @override
+  String get tpwPleaseEnterProjectName => 'Please enter a project name';
+
+  @override
+  String get tpwAddCollection => 'ADD COLLECTION';
+
+  @override
+  String get tpwEnterCollectionName => 'Enter collection name';
+
+  @override
+  String get tpwPleaseEnterCollectionName => 'Please enter a collection name';
+
+  @override
+  String get tpwExportOptions => 'Export Options';
+
+  @override
+  String get tpwSelectExportFormat => 'Select your preferred export format';
+
+  @override
+  String get tpwPdfWithLogo => 'PDF with logo/branding';
+
+  @override
+  String get tpwIncludesAtellaBranding => 'Includes ATELIA branding and logo';
+
+  @override
+  String get tpwNeutralPdf => 'Neutral PDF';
+
+  @override
+  String get tpwCleanPdfWithoutBranding => 'Clean PDF without branding';
+
+  @override
+  String get tpwEditableFormatWord => 'Editable Format (Word)';
+
+  @override
+  String get tpwEditableWordDocument =>
+      'Editable Word document with cover page and images';
+
+  @override
+  String get tpwCancel => 'Cancel';
+
+  @override
+  String get tpwOk => 'OK';
+
+  @override
+  String get tpwSaveButton => 'Save';
+
+  @override
+  String get tpwExportButton => 'Export';
+
+  @override
+  String get tpwGenerating => 'Generating..';
+
+  @override
+  String get tpdEditMode => 'Edit Mode';
+
+  @override
+  String get tpdLoadingExistingTechPack => 'Loading existing tech pack data...';
+
+  @override
+  String get tpdNotice => 'Notice';
+
+  @override
+  String get tpdStartingWithEmptyForm => 'Starting with empty tech pack form';
+
+  @override
+  String get tpdSuccess => 'Success';
+
+  @override
+  String get tpdTechPackImagesGenerated =>
+      'Detailed tech pack images generated with professional labeling!';
+
+  @override
+  String get tpdPartialSuccess => 'Partial Success';
+
+  @override
+  String get tpdSomeTechPackImagesGenerated =>
+      'Some tech pack images generated. Check results.';
+
+  @override
+  String get tpdError => 'Error';
+
+  @override
+  String tpdFailedToGenerateTechPack(String error) {
+    return 'Failed to generate detailed tech pack images: $error';
+  }
+
+  @override
+  String tpdFailedToPickImage(String error) {
+    return 'Failed to pick image: $error';
+  }
+
+  @override
+  String get tpdProcessing => 'Processing';
+
+  @override
+  String get tpdProcessingYourPurchase => 'Processing your purchase...';
+
+  @override
+  String get tpdSuccessExclamation => 'Success!';
+
+  @override
+  String tpdAdditionalTechPacksAdded(String count) {
+    return 'You now have $count additional techpacks for this month!';
+  }
+
+  @override
+  String get tpdPurchaseFailed => 'Purchase Failed';
+
+  @override
+  String get tpdUnableToProcessPurchase =>
+      'Unable to process your purchase. Please try again.';
+
+  @override
+  String tpdPurchaseError(String error) {
+    return 'An error occurred during purchase: $error';
+  }
+
+  @override
+  String tpgDesignNumber(String number) {
+    return 'Design $number';
+  }
+
+  @override
+  String get tpgGenerating => 'Generating';
+
+  @override
+  String get tpgFailedToGenerate => 'Failed to generate';
+
+  @override
+  String get tpgFailedToLoadImage => 'Failed to load image';
 }

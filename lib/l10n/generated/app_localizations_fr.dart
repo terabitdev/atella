@@ -2220,4 +2220,182 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tprTechPackDocument => 'Document de Dossier Technique';
+
+  @override
+  String get vpManufacturerProfile => 'Profil du Fabricant';
+
+  @override
+  String get vpCompany => 'Entreprise';
+
+  @override
+  String get vpLocation => 'Localisation';
+
+  @override
+  String get vpMinimumOrderQuantity => 'Quantité Minimale de Commande';
+
+  @override
+  String get vpLeadTime => 'Délai de Production';
+
+  @override
+  String get vpAbout => 'À Propos';
+
+  @override
+  String get vpContact => 'Contact';
+
+  @override
+  String get tpwSaveTechPack => 'Enregistrer le Tech Pack';
+
+  @override
+  String get tpwProjectName => 'Nom du Projet';
+
+  @override
+  String get tpwEnterProjectName => 'Entrez le nom du projet';
+
+  @override
+  String get tpwCollectionName => 'Nom de la Collection';
+
+  @override
+  String get tpwAdd => 'AJOUTER';
+
+  @override
+  String get tpwSave => 'ENREGISTRER';
+
+  @override
+  String get tpwError => 'Erreur';
+
+  @override
+  String get tpwPleaseEnterProjectName => 'Veuillez entrer un nom de projet';
+
+  @override
+  String get tpwAddCollection => 'AJOUTER UNE COLLECTION';
+
+  @override
+  String get tpwEnterCollectionName => 'Entrez le nom de la collection';
+
+  @override
+  String get tpwPleaseEnterCollectionName =>
+      'Veuillez entrer un nom de collection';
+
+  @override
+  String get tpwExportOptions => 'Options d\'Exportation';
+
+  @override
+  String get tpwSelectExportFormat =>
+      'Sélectionnez votre format d\'exportation préféré';
+
+  @override
+  String get tpwPdfWithLogo => 'PDF avec logo/branding';
+
+  @override
+  String get tpwIncludesAtellaBranding =>
+      'Inclut le branding et le logo ATELIA';
+
+  @override
+  String get tpwNeutralPdf => 'PDF Neutre';
+
+  @override
+  String get tpwCleanPdfWithoutBranding => 'PDF propre sans branding';
+
+  @override
+  String get tpwEditableFormatWord => 'Format Éditable (Word)';
+
+  @override
+  String get tpwEditableWordDocument =>
+      'Document Word éditable avec page de couverture et images';
+
+  @override
+  String get tpwCancel => 'Annuler';
+
+  @override
+  String get tpwOk => 'OK';
+
+  @override
+  String get tpwSaveButton => 'Enregistrer';
+
+  @override
+  String get tpwExportButton => 'Exporter';
+
+  @override
+  String get tpwGenerating => 'Génération..';
+
+  @override
+  String get tpdEditMode => 'Mode Édition';
+
+  @override
+  String get tpdLoadingExistingTechPack =>
+      'Chargement des données du tech pack existant...';
+
+  @override
+  String get tpdNotice => 'Avis';
+
+  @override
+  String get tpdStartingWithEmptyForm =>
+      'Démarrage avec un formulaire de tech pack vide';
+
+  @override
+  String get tpdSuccess => 'Succès';
+
+  @override
+  String get tpdTechPackImagesGenerated =>
+      'Images de dossier technique détaillées générées avec étiquetage professionnel !';
+
+  @override
+  String get tpdPartialSuccess => 'Succès Partiel';
+
+  @override
+  String get tpdSomeTechPackImagesGenerated =>
+      'Certaines images de tech pack générées. Vérifiez les résultats.';
+
+  @override
+  String get tpdError => 'Erreur';
+
+  @override
+  String tpdFailedToGenerateTechPack(String error) {
+    return 'Échec de la génération des images de tech pack détaillées : $error';
+  }
+
+  @override
+  String tpdFailedToPickImage(String error) {
+    return 'Échec de la sélection de l\'image : $error';
+  }
+
+  @override
+  String get tpdProcessing => 'Traitement';
+
+  @override
+  String get tpdProcessingYourPurchase => 'Traitement de votre achat...';
+
+  @override
+  String get tpdSuccessExclamation => 'Succès !';
+
+  @override
+  String tpdAdditionalTechPacksAdded(String count) {
+    return 'Vous avez maintenant $count tech packs supplémentaires pour ce mois !';
+  }
+
+  @override
+  String get tpdPurchaseFailed => 'Achat Échoué';
+
+  @override
+  String get tpdUnableToProcessPurchase =>
+      'Impossible de traiter votre achat. Veuillez réessayer.';
+
+  @override
+  String tpdPurchaseError(String error) {
+    return 'Une erreur s\'est produite lors de l\'achat : $error';
+  }
+
+  @override
+  String tpgDesignNumber(String number) {
+    return 'Design $number';
+  }
+
+  @override
+  String get tpgGenerating => 'Génération en cours';
+
+  @override
+  String get tpgFailedToGenerate => 'Échec de la génération';
+
+  @override
+  String get tpgFailedToLoadImage => 'Échec du chargement de l\'image';
 }
