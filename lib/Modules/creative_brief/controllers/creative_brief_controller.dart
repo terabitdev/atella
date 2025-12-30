@@ -26,6 +26,10 @@ class CreativeBriefController extends GetxController {
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
 
+  // Maximum question index reached (to keep questions visible once shown)
+  final RxInt _maxQuestionIndexReached = 0.obs;
+  int get maxQuestionIndexReached => _maxQuestionIndexReached.value;
+
   // Show last two questions together flag
   final RxBool _showLastTwoQuestions = false.obs;
   bool get showLastTwoQuestions => _showLastTwoQuestions.value;
@@ -290,6 +294,7 @@ class CreativeBriefController extends GetxController {
         // Answers are already in memory from previous screens, just show them
         _showLastTwoQuestions.value = true;
         _currentQuestionIndex.value = questions.length - 1;
+        _maxQuestionIndexReached.value = questions.length - 1; // Show all questions
       } else if (isEditMode) {
         print('🟢 ENTERING EDIT MODE (from saved tech pack)');
         _isEditMode.value = true;
@@ -620,6 +625,7 @@ class CreativeBriefController extends GetxController {
     // In edit mode, show all questions
     _showLastTwoQuestions.value = true;
     _currentQuestionIndex.value = questions.length - 1;
+    _maxQuestionIndexReached.value = questions.length - 1; // Show all questions
 
     // Force reactive update
     _answers.refresh();
@@ -1729,6 +1735,12 @@ class CreativeBriefController extends GetxController {
     if (currentQuestionIndex < questions.length - 1) {
       print('Moving to next question');
       _currentQuestionIndex.value++;
+
+      // Update max question index reached to keep questions visible
+      if (_currentQuestionIndex.value > _maxQuestionIndexReached.value) {
+        _maxQuestionIndexReached.value = _currentQuestionIndex.value;
+      }
+
       update();
     } else {
       print('At last question or beyond');
@@ -1774,6 +1786,12 @@ class CreativeBriefController extends GetxController {
   void jumpToQuestion(int index) {
     if (index >= 0 && index < questions.length) {
       _currentQuestionIndex.value = index;
+
+      // Update max question index reached to keep questions visible
+      if (index > _maxQuestionIndexReached.value) {
+        _maxQuestionIndexReached.value = index;
+      }
+
       update();
     }
   }
@@ -1796,6 +1814,7 @@ class CreativeBriefController extends GetxController {
     _tempSelections.clear();
     _customSelectedForQuestion.value = '';
     _currentQuestionIndex.value = 0;
+    _maxQuestionIndexReached.value = 0; // Reset max index
     _showLastTwoQuestions.value = false;
     _editingQuestions.clear();
     colorController.clear();
@@ -2673,9 +2692,9 @@ class CreativeBriefController extends GetxController {
 
   // Method to get number of questions to show in the list
   int get questionsToShow {
-    // Always show all answered questions + current unanswered question
-    // This allows users to edit any previous answer
-    return currentQuestionIndex + 1; // Show up to current question
+    // Always show up to the maximum question index that has ever been reached
+    // This ensures questions never disappear once they've been shown
+    return _maxQuestionIndexReached.value + 1;
   }
 
   // Check if we should show the bottom input area
