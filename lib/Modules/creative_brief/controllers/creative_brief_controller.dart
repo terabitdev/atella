@@ -586,8 +586,13 @@ class CreativeBriefController extends GetxController {
       // Create the answer with whatever parts are available
       // Don't require all three parts - load partial data too
       List<String> selectedOptions = [];
-      if (print.isNotEmpty) selectedOptions.add(print);
-      if (technique.isNotEmpty) selectedOptions.add(technique);
+      // Add prefix to distinguish prints from techniques
+      if (print.isNotEmpty) {
+        selectedOptions.add('Prints:$print');
+      }
+      if (technique.isNotEmpty) {
+        selectedOptions.add('Techniques:$technique');
+      }
 
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
@@ -653,7 +658,7 @@ class CreativeBriefController extends GetxController {
       colorController.text = _selectedColors.join(', ');
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
-        selectedOptions: ['Stripes', 'Color blocking'],
+        selectedOptions: ['Prints:Stripes', 'Techniques:Color blocking'],
         textInput: _selectedColors.join('|||'),
       );
     } else {
@@ -664,7 +669,7 @@ class CreativeBriefController extends GetxController {
       colorController.text = _selectedColors.join(', ');
       _answers['colors'] = BriefAnswer(
         questionId: 'colors',
-        selectedOptions: ['Floral', 'Embroidery'],
+        selectedOptions: ['Prints:Floral', 'Techniques:Embroidery'],
         textInput: _selectedColors.join('|||'),
       );
     }
@@ -1288,15 +1293,17 @@ class CreativeBriefController extends GetxController {
 
     // Update the custom part for the selected category
     if (categoryName == 'Prints') {
+      // Remove any existing print options (both prefixed and non-prefixed)
       selectedOptions.removeWhere(
-        (opt) => opt == _selectedPrint.value || opt == 'Prints:Custom',
+        (opt) => opt.startsWith('Prints:') || opt == _selectedPrint.value,
       );
       _selectedPrint.value = 'Custom';
       customParts[0] = controller.text.trim();
       selectedOptions.add('Prints:Custom');
     } else if (categoryName == 'Techniques') {
+      // Remove any existing technique options (both prefixed and non-prefixed)
       selectedOptions.removeWhere(
-        (opt) => opt == _selectedTechnique.value || opt == 'Techniques:Custom',
+        (opt) => opt.startsWith('Techniques:') || opt == _selectedTechnique.value,
       );
       _selectedTechnique.value = 'Custom';
       customParts[1] = controller.text.trim();
@@ -1486,7 +1493,8 @@ class CreativeBriefController extends GetxController {
     if (_selectedPrint.value == print) {
       // Deselect print
       _selectedPrint.value = '';
-      // May need to remove the answer if it's the only part selected
+      // Update the answer to reflect deselection
+      _checkAndSaveColorsAnswer(trigger: 'print_deselect');
       update();
       return;
     }
@@ -1524,7 +1532,8 @@ class CreativeBriefController extends GetxController {
     if (_selectedTechnique.value == technique) {
       // Deselect technique
       _selectedTechnique.value = '';
-      // May need to remove the answer if it's the only part selected
+      // Update the answer to reflect deselection
+      _checkAndSaveColorsAnswer(trigger: 'technique_deselect');
       update();
       return;
     }
@@ -1560,7 +1569,8 @@ class CreativeBriefController extends GetxController {
         selectedOptions.add('Prints:Custom');
         finalPrintValue = 'Custom';
       } else {
-        selectedOptions.add(printSelection);
+        // Add prefix to distinguish prints from techniques
+        selectedOptions.add('Prints:$printSelection');
         finalPrintValue = printSelection;
         customPrintValue = '';
       }
@@ -1573,7 +1583,8 @@ class CreativeBriefController extends GetxController {
         selectedOptions.add('Techniques:Custom');
         finalTechniqueValue = 'Custom';
       } else {
-        selectedOptions.add(techniqueSelection);
+        // Add prefix to distinguish techniques from prints
+        selectedOptions.add('Techniques:$techniqueSelection');
         finalTechniqueValue = techniqueSelection;
         customTechniqueValue = '';
       }
@@ -1640,7 +1651,8 @@ class CreativeBriefController extends GetxController {
       if (_selectedPrint.value == 'Custom') {
         selectedOptions.add('Prints:Custom');
       } else {
-        selectedOptions.add(_selectedPrint.value);
+        // Add prefix to distinguish prints from techniques
+        selectedOptions.add('Prints:${_selectedPrint.value}');
       }
     } else if (existingAnswer?.selectedOptions.contains('Prints:Custom') ??
         false) {
@@ -1652,7 +1664,8 @@ class CreativeBriefController extends GetxController {
       if (_selectedTechnique.value == 'Custom') {
         selectedOptions.add('Techniques:Custom');
       } else {
-        selectedOptions.add(_selectedTechnique.value);
+        // Add prefix to distinguish techniques from prints
+        selectedOptions.add('Techniques:${_selectedTechnique.value}');
       }
     } else if (existingAnswer?.selectedOptions.contains('Techniques:Custom') ??
         false) {
