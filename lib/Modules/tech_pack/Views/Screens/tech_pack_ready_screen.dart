@@ -429,31 +429,39 @@ class TechPackReadyScreen extends StatelessWidget {
                 }
               }),
               SizedBox(height: 30.h),
-              RoundButton(
-                title: l10n.tprGetManufacturerSuggestions,
-                onTap: ()  {
-                  Get.to(
-                    () => RecommendedManufactureScreen(),
-                    arguments: {
-                      'manufacturerCountry': controller.manufacturerCountry,
-                    },
-                  );
-                },
-                color: AppColors.buttonColor,
-                isloading: false,
-              ),
-              SizedBox(height: 16.h),
-              Obx(
-                () => SaveExportButtonRow(
-                  onSave: () => _showSaveDialog(context, controller),
-                  onExport: () => _showExportDialog(context, controller),
-                  isSaving: controller
-                      .isSaving
-                      .value, // Show loading on screen save button
-                  isExporting: controller.isExporting.value,
-                ),
-              ),
-              SizedBox(height: 30.h),
+              // Only show buttons after tech pack generation is complete
+              Obx(() {
+                if (controller.isGenerating) {
+                  return const SizedBox.shrink(); // Hide buttons during generation
+                }
+                return Column(
+                  children: [
+                    RoundButton(
+                      title: l10n.tprGetManufacturerSuggestions,
+                      onTap: ()  {
+                        Get.to(
+                          () => RecommendedManufactureScreen(),
+                          arguments: {
+                            'manufacturerCountry': controller.manufacturerCountry,
+                          },
+                        );
+                      },
+                      color: AppColors.buttonColor,
+                      isloading: false,
+                    ),
+                    SizedBox(height: 16.h),
+                    SaveExportButtonRow(
+                      onSave: () => _showSaveDialog(context, controller),
+                      onExport: () => _showExportDialog(context, controller),
+                      isSaving: controller
+                          .isSaving
+                          .value, // Show loading on screen save button
+                      isExporting: controller.isExporting.value,
+                    ),
+                    SizedBox(height: 30.h),
+                  ],
+                );
+              }),
             ],
           ),
         ),
