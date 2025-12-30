@@ -610,6 +610,24 @@ class RefiningConceptController extends GetxController {
         _tempMultiSelections.remove(option);
       } else {
         _tempMultiSelections.add(option);
+        // When a regular option is selected, remove "Custom" from selections and clear custom text
+        if (_tempMultiSelections.contains('Custom')) {
+          _tempMultiSelections.remove('Custom');
+          // Also clear custom selection state and controller
+          if (_customSelectedForQuestion.value == questionId) {
+            _customSelectedForQuestion.value = '';
+            customController.clear();
+          }
+          // Remove custom text from the answer if it exists
+          final existingAnswer = _answers[questionId];
+          if (existingAnswer != null && existingAnswer.textInput != null) {
+            _answers[questionId] = BriefAnswer(
+              questionId: questionId,
+              selectedOptions: existingAnswer.selectedOptions.where((opt) => opt != 'Custom').toList(),
+              textInput: null, // Clear custom text
+            );
+          }
+        }
       }
 
       // Collapse the section immediately after selection (like creative brief)
@@ -693,10 +711,19 @@ class RefiningConceptController extends GetxController {
 
     final confirmedQuestionId = forQuestionId ?? currentQuestion.id;
 
+    // Get existing answer to check for custom text
+    final existingAnswer = _answers[confirmedQuestionId];
+
+    // Determine if we should keep custom text
+    // Only keep if "Custom" is in the selections
+    final shouldKeepCustomText = _tempMultiSelections.contains('Custom');
+    final customText = shouldKeepCustomText ? existingAnswer?.textInput : null;
+
     // Save all selected options
     _answers[confirmedQuestionId] = BriefAnswer(
       questionId: confirmedQuestionId,
       selectedOptions: _tempMultiSelections.toList(),
+      textInput: customText, // Only include custom text if "Custom" is selected
     );
     _tempMultiSelections.clear();
     _answers.refresh();

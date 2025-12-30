@@ -377,20 +377,23 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: question.categories!.entries.map((category) {
-          return _buildExpandableCategorizedSection(
-            context: context,
-            questionId: question.id,
-            categoryName: category.key,
-            options: category.value,
-            answer: answer,
-            onTap: (option) => controller.selectOption(
-              option,
-              forQuestionId: question.id,
+        children: [
+          // Render all category sections with custom text shown under each category
+          ...question.categories!.entries.map((category) {
+            return _buildExpandableCategorizedSection(
+              context: context,
+              questionId: question.id,
               categoryName: category.key,
-            ),
-          );
-        }).toList(),
+              options: category.value,
+              answer: answer,
+              onTap: (option) => controller.selectOption(
+                option,
+                forQuestionId: question.id,
+                categoryName: category.key,
+              ),
+            );
+          }),
+        ],
       );
     });
   }
@@ -432,12 +435,6 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
 
       final hasSelection = selectedValue != null;
 
-      // Get custom text if this category has custom selection
-      String? customText;
-      if (selectedValue == 'Custom' && answer?.textInput != null) {
-        customText = answer!.textInput!;
-      }
-
       return Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
@@ -454,64 +451,8 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
               ),
             ),
           ),
-          // Show custom text if selected
-          if (hasSelection && selectedValue == 'Custom' && customText != null)
-            Padding(
-              padding: EdgeInsets.only(bottom: 8.h, left: 8.w),
-              child: GestureDetector(
-                onTap: () {
-                  // Determine the correct controller based on question ID
-                  TextEditingController? textController;
-                  if (questionId == 'garment_type') {
-                    textController = controller.garmentTypeCustomController;
-                  } else if (questionId == 'fabrics') {
-                    textController = controller.fabricCustomController;
-                  }
-
-                  if (textController != null && customText != null) {
-                    controller.editCategorizedCustomAnswer(
-                      questionId,
-                      categoryName,
-                      customText,
-                      textController,
-                    );
-                  }
-                },
-                child: Container(
-                  padding: EdgeInsets.symmetric(
-                    horizontal: 14.w,
-                    vertical: 8.h,
-                  ),
-                  decoration: BoxDecoration(
-                    color: AppColors.buttonColor,
-                    borderRadius: BorderRadius.circular(20.r),
-                  ),
-                  child: Row(
-                    mainAxisSize: MainAxisSize.min,
-                    children: [
-                      Flexible(
-                        child: Text(
-                          customText,
-                          style: TextStyle(
-                            fontSize: 13.sp,
-                            fontWeight: FontWeight.w500,
-                            color: Colors.white,
-                          ),
-                        ),
-                      ),
-                      SizedBox(width: 8.w),
-                      Icon(
-                        Icons.edit,
-                        size: 16.sp,
-                        color: Colors.white.withValues(alpha: 0.8),
-                      ),
-                    ],
-                  ),
-                ),
-              ),
-            )
-          // Show selected + 2 more options when collapsed (only if NOT custom with text)
-          else if (hasSelection && !isExpanded)
+          // Show selected + 2 more options when collapsed
+          if (hasSelection && !isExpanded)
             Wrap(
               spacing: 6.w,
               runSpacing: 6.h,
@@ -662,6 +603,64 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
                   ),
               ],
             ),
+
+          // Show custom text under this category if it has a custom selection
+          if (selectedValue == 'Custom' && answer?.textInput != null && answer!.textInput!.isNotEmpty)
+            Padding(
+              padding: EdgeInsets.only(top: 8.h, left: 8.w),
+              child: GestureDetector(
+                onTap: () {
+                  // Determine the correct controller based on question ID
+                  TextEditingController? textController;
+                  if (questionId == 'garment_type') {
+                    textController = controller.garmentTypeCustomController;
+                  } else if (questionId == 'fabrics') {
+                    textController = controller.fabricCustomController;
+                  }
+
+                  if (textController != null && answer.textInput!.isNotEmpty) {
+                    controller.editCategorizedCustomAnswer(
+                      questionId,
+                      categoryName,
+                      answer.textInput!,
+                      textController,
+                    );
+                  }
+                },
+                child: Container(
+                  padding: EdgeInsets.symmetric(
+                    horizontal: 14.w,
+                    vertical: 8.h,
+                  ),
+                  decoration: BoxDecoration(
+                    color: AppColors.buttonColor,
+                    borderRadius: BorderRadius.circular(20.r),
+                  ),
+                  child: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Flexible(
+                        child: Text(
+                          answer.textInput!,
+                          style: TextStyle(
+                            fontSize: 13.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      SizedBox(width: 8.w),
+                      Icon(
+                        Icons.edit,
+                        size: 16.sp,
+                        color: Colors.white.withValues(alpha: 0.8),
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+
           SizedBox(height: 16.h),
         ],
       );
