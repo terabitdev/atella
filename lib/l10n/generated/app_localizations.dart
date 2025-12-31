@@ -701,7 +701,7 @@ abstract class AppLocalizations {
   /// Free plan designs limit
   ///
   /// In en, this message translates to:
-  /// **'Up to 10 3D designs / month'**
+  /// **'3 AI design generations / month'**
   String get upTo10Designs;
 
   /// 3D visualization included feature
@@ -893,8 +893,20 @@ abstract class AppLocalizations {
   /// Designs counter display
   ///
   /// In en, this message translates to:
-  /// **'Designs: {display}'**
+  /// **'{display}'**
   String designs(String display);
+
+  /// Designs usage counter
+  ///
+  /// In en, this message translates to:
+  /// **'Designs used: {used} / {total} this month'**
+  String designsUsed(String used, String total);
+
+  /// Techpacks usage counter
+  ///
+  /// In en, this message translates to:
+  /// **'Techpacks used: {used} / {total}'**
+  String techpacksUsed(String used, String total);
 
   /// Other option in cancellation reasons
   ///

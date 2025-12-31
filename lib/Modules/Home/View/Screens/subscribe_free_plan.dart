@@ -85,7 +85,10 @@ class SubscribeFreePlan extends StatelessWidget {
                                           final subscription = controller.currentSubscription.value;
                                           if (subscription != null && subscription.subscriptionPlan == 'FREE') {
                                             return Text(
-                                              l10n.designs(subscription.designCounterDisplay),
+                                              l10n.designsUsed(
+                                                subscription.designsUsedCount,
+                                                subscription.designsTotalCount,
+                                              ),
                                               style: TextStyle(
                                                 fontSize: 14.sp,
                                                 color: subscription.remainingDesigns > 0

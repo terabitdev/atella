@@ -320,7 +320,10 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Text(
-                      'Designs: ${subscription.designCounterDisplay}',
+                      l10n.designsUsed(
+                        subscription.designsUsedCount,
+                        subscription.designsTotalCount,
+                      ),
                       style: TextStyle(
                         fontSize: 12.sp,
                         color: subscription.remainingDesigns > 0

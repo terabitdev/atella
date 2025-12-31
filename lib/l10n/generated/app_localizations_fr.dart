@@ -335,7 +335,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get accessToManufacturers => 'Accès à la liste des fabricants';
 
   @override
-  String get upTo10Designs => 'Jusqu\'à 10 designs 3D / mois';
+  String get upTo10Designs => '3 générations de designs IA / mois';
 
   @override
   String get visualization3DIncluded => 'Visualisation 3D incluse';
@@ -444,7 +444,17 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String designs(String display) {
-    return 'Designs : $display';
+    return '$display';
+  }
+
+  @override
+  String designsUsed(String used, String total) {
+    return 'Designs utilisés : $used / $total ce mois';
+  }
+
+  @override
+  String techpacksUsed(String used, String total) {
+    return 'Dossiers techniques utilisés : $used / $total';
   }
 
   @override

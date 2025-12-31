@@ -142,8 +142,8 @@ class UserSubscription {
       return -1; // -1 indicates unlimited
     }
 
-    // FREE plan: 10 base + extras purchased
-    int baseDesigns = 10;
+    // FREE plan: 3 base designs per month + extras purchased
+    int baseDesigns = 3;
     return baseDesigns + (extraDesignsPurchased * 20);
   }
 
@@ -155,11 +155,47 @@ class UserSubscription {
     return getTotalAllowedDesigns() - designsGeneratedThisMonth;
   }
 
+  // Get design count for display (used/total)
+  String get designsUsedCount => '$designsGeneratedThisMonth';
+
+  String get designsTotalCount {
+    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
+      return '∞';
+    }
+    return '${getTotalAllowedDesigns()}';
+  }
+
+  // Get techpack count for display (used/total)
+  String get techpacksUsedCount {
+    if (subscriptionPlan == 'FREE') {
+      return '0';
+    }
+    return '$techpacksUsedThisMonth';
+  }
+
+  String get techpacksTotalCount {
+    if (subscriptionPlan == 'FREE') {
+      return '0';
+    }
+    return '$totalAllowedTechpacks';
+  }
+
+  // Backward compatibility - non-localized display strings
   String get designCounterDisplay {
     // For paid plans, show unlimited
     if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return '$designsGeneratedThisMonth/∞';
+      return 'Designs used: $designsGeneratedThisMonth/∞ this month';
     }
-    return '$designsGeneratedThisMonth/${getTotalAllowedDesigns()}';
+    // For FREE plan, show limited count
+    return 'Designs used: $designsGeneratedThisMonth/${getTotalAllowedDesigns()} this month';
+  }
+
+  String get techpackCounterDisplay {
+    // For FREE plan, techpack is disabled
+    if (subscriptionPlan == 'FREE') {
+      return 'Techpacks used: 0 / 0';
+    }
+    // For paid plans, show monthly usage
+    return 'Techpacks used: $techpacksUsedThisMonth / $totalAllowedTechpacks';
   }
 }

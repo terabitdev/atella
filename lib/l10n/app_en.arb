@@ -444,7 +444,7 @@
   "@accessToManufacturers": {
     "description": "Access to manufacturers feature"
   },
-  "upTo10Designs": "Up to 10 3D designs / month",
+  "upTo10Designs": "3 AI design generations / month",
   "@upTo10Designs": {
     "description": "Free plan designs limit"
   },
@@ -594,13 +594,37 @@
       }
     }
   },
-  "designs": "Designs: {display}",
+  "designs": "{display}",
   "@designs": {
     "description": "Designs counter display",
     "placeholders": {
       "display": {
         "type": "String",
         "example": "5/10"
+      }
+    }
+  },
+  "designsUsed": "Designs used: {used} / {total} this month",
+  "@designsUsed": {
+    "description": "Designs usage counter",
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
+      }
+    }
+  },
+  "techpacksUsed": "Techpacks used: {used} / {total}",
+  "@techpacksUsed": {
+    "description": "Techpacks usage counter",
+    "placeholders": {
+      "used": {
+        "type": "String"
+      },
+      "total": {
+        "type": "String"
       }
     }
   },
