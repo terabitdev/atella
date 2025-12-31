@@ -193,6 +193,50 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                           l10n.featuresInclude,
                                           style: sfpsTitleTextTextStyle14400,
                                         ),
+                                        SizedBox(height: 15.h),
+                                        // Display current usage counters for Pro plan
+                                        Obx(() {
+                                          final subscription = controller.currentSubscription.value;
+                                          if (subscription != null &&
+                                              (subscription.subscriptionPlan == 'PRO' ||
+                                               subscription.subscriptionPlan == 'PRO_YEARLY')) {
+                                            return Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Design usage counter
+                                                Text(
+                                                  l10n.designsUsed(
+                                                    subscription.designsUsedCount,
+                                                    subscription.designsTotalCount,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color: subscription.remainingDesigns > 0
+                                                        ? Colors.white
+                                                        : Colors.red[300],
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8.h),
+                                                // Techpack usage counter
+                                                Text(
+                                                  l10n.techpacksUsed(
+                                                    subscription.techpacksUsedCount,
+                                                    subscription.techpacksTotalCount,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color: subscription.remainingTechpacks > 0
+                                                        ? Colors.white
+                                                        : Colors.red[300],
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }
+                                          return SizedBox.shrink();
+                                        }),
                                       ],
                                     ),
                                   ),
@@ -222,14 +266,12 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                             Obx(
                               () => Column(
                                 children: [
-                                  _buildFeatureItem(
-                                    controller.isYearlyBilling.value
-                                        ? l10n.techpacksPerMonthYearly(20, 240)
-                                        : l10n.techpacksPerMonth(20),
-                                  ),
+                                  _buildFeatureItem(l10n.proDesignLimit),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(
-                                    l10n.unlimited3DVisualization,
+                                    controller.isYearlyBilling.value
+                                        ? l10n.techpacksPerMonthYearly(8, 96)
+                                        : l10n.techpacksPerMonth(8),
                                   ),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(

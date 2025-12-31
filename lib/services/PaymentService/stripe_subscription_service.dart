@@ -560,8 +560,8 @@ class StripeSubscriptionService {
       'plan': subscription.subscriptionPlan,
       'displayName': _getPlanDisplayName(subscription.subscriptionPlan),
       'remainingTechpacks': subscription.remainingTechpacks,
-      'maxTechpacks': subscription.subscriptionPlan == 'PRO' ? -1 : 
-                      subscription.subscriptionPlan == 'STARTER' ? 3 : 0,
+      'maxTechpacks': subscription.subscriptionPlan.startsWith('PRO') ? -1 :
+                      subscription.subscriptionPlan.startsWith('STARTER') ? 2 : 0,
       'isActive': subscription.subscriptionStatus == 'active',
       'periodEnd': subscription.currentPeriodEnd,
     };
@@ -572,13 +572,13 @@ class StripeSubscriptionService {
       case 'FREE':
         return 'Free';
       case 'STARTER':
-        return 'Starter (€9.99/month)';
+        return 'Starter (€14.99/month)';
       case 'STARTER_YEARLY':
-        return 'Starter (€99/year)';
+        return 'Starter (€149/year)';
       case 'PRO':
-        return 'Pro (€24.99/month)';
+        return 'Pro (€34.99/month)';
       case 'PRO_YEARLY':
-        return 'Pro (€249/year)';
+        return 'Pro (€349/year)';
       default:
         return 'Free';
     }

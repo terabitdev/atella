@@ -448,6 +448,38 @@
   "@upTo10Designs": {
     "description": "Free plan designs limit"
   },
+  "starterDesignLimit": "5 AI design generations per month",
+  "@starterDesignLimit": {
+    "description": "Starter plan design limit"
+  },
+  "starterMonthlyPrice": "Starter €14.99/Month",
+  "@starterMonthlyPrice": {
+    "description": "Starter plan monthly price"
+  },
+  "starterYearlyPrice": "Starter €149/Year",
+  "@starterYearlyPrice": {
+    "description": "Starter plan yearly price"
+  },
+  "proMonthlyPrice": "Pro €34.99/Month",
+  "@proMonthlyPrice": {
+    "description": "Pro plan monthly price"
+  },
+  "proYearlyPrice": "Pro €349/Year",
+  "@proYearlyPrice": {
+    "description": "Pro plan yearly price"
+  },
+  "proDesignLimit": "15 AI design generations per month",
+  "@proDesignLimit": {
+    "description": "Pro plan design limit"
+  },
+  "perMonth": "/Month",
+  "@perMonth": {
+    "description": "Per month suffix for pricing"
+  },
+  "perYear": "/Year",
+  "@perYear": {
+    "description": "Per year suffix for pricing"
+  },
   "visualization3DIncluded": "3D Visualization included",
   "@visualization3DIncluded": {
     "description": "3D visualization included feature"
@@ -616,9 +648,9 @@
       }
     }
   },
-  "techpacksUsed": "Techpacks used: {used} / {total}",
+  "techpacksUsed": "Techpacks used: {used} / {total} this month",
   "@techpacksUsed": {
-    "description": "Techpacks usage counter",
+    "description": "Techpacks usage counter with monthly period",
     "placeholders": {
       "used": {
         "type": "String"

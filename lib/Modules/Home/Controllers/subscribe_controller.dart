@@ -319,14 +319,14 @@ class SubscribeController extends GetxController {
   }
 
   String getStarterPriceText() {
-    return isYearlyBilling.value 
-        ? 'Starter €99/Year' 
-        : 'Starter €9.99/Month';
+    return isYearlyBilling.value
+        ? 'Starter €149/Year'
+        : 'Starter €14.99/Month';
   }
 
   String getProPriceText() {
-    return isYearlyBilling.value 
-        ? 'Pro €249/Year' 
-        : 'Pro €24.99/Month';
+    return isYearlyBilling.value
+        ? 'Pro €349/Year'
+        : 'Pro €34.99/Month';
   }
 }

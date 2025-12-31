@@ -331,6 +331,30 @@ class AppLocalizationsEn extends AppLocalizations {
   String get upTo10Designs => '3 AI design generations / month';
 
   @override
+  String get starterDesignLimit => '5 AI design generations per month';
+
+  @override
+  String get starterMonthlyPrice => 'Starter €14.99/Month';
+
+  @override
+  String get starterYearlyPrice => 'Starter €149/Year';
+
+  @override
+  String get proMonthlyPrice => 'Pro €34.99/Month';
+
+  @override
+  String get proYearlyPrice => 'Pro €349/Year';
+
+  @override
+  String get proDesignLimit => '15 AI design generations per month';
+
+  @override
+  String get perMonth => '/Month';
+
+  @override
+  String get perYear => '/Year';
+
+  @override
   String get visualization3DIncluded => '3D Visualization included';
 
   @override
@@ -445,7 +469,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String techpacksUsed(String used, String total) {
-    return 'Techpacks used: $used / $total';
+    return 'Techpacks used: $used / $total this month';
   }
 
   @override

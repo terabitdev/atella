@@ -148,7 +148,9 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
                                         Obx(() => Text(
-                                          controller.getStarterPriceText(),
+                                          controller.isYearlyBilling.value
+                                              ? l10n.starterYearlyPrice
+                                              : l10n.starterMonthlyPrice,
                                           style: sfpsTitleTextTextStyle18600,
                                         )),
                                         SizedBox(height: 4.h),
@@ -156,6 +158,50 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                           l10n.featuresInclude,
                                           style: sfpsTitleTextTextStyle14400,
                                         ),
+                                        SizedBox(height: 15.h),
+                                        // Display current usage counters for Starter plan
+                                        Obx(() {
+                                          final subscription = controller.currentSubscription.value;
+                                          if (subscription != null &&
+                                              (subscription.subscriptionPlan == 'STARTER' ||
+                                               subscription.subscriptionPlan == 'STARTER_YEARLY')) {
+                                            return Column(
+                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              children: [
+                                                // Design usage counter
+                                                Text(
+                                                  l10n.designsUsed(
+                                                    subscription.designsUsedCount,
+                                                    subscription.designsTotalCount,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color: subscription.remainingDesigns > 0
+                                                        ? Colors.white
+                                                        : Colors.red[300],
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                                SizedBox(height: 8.h),
+                                                // Techpack usage counter
+                                                Text(
+                                                  l10n.techpacksUsed(
+                                                    subscription.techpacksUsedCount,
+                                                    subscription.techpacksTotalCount,
+                                                  ),
+                                                  style: TextStyle(
+                                                    fontSize: 14.sp,
+                                                    color: subscription.remainingTechpacks > 0
+                                                        ? Colors.white
+                                                        : Colors.red[300],
+                                                    fontWeight: FontWeight.w600,
+                                                  ),
+                                                ),
+                                              ],
+                                            );
+                                          }
+                                          return SizedBox.shrink();
+                                        }),
                                       ],
                                     ),
                                   ),
@@ -184,11 +230,11 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                             // Features List
                             Obx(() => Column(
                               children: [
-                                _buildFeatureItem(controller.isYearlyBilling.value
-                                  ? l10n.techpacksPerMonthYearly(3, 36)
-                                  : l10n.techpacksPerMonth(3)),
+                                _buildFeatureItem(l10n.starterDesignLimit),
                                 SizedBox(height: 16.h),
-                                _buildFeatureItem(l10n.unlimited3DVisualization),
+                                _buildFeatureItem(controller.isYearlyBilling.value
+                                  ? l10n.techpacksPerMonthYearly(2, 24)
+                                  : l10n.techpacksPerMonth(2)),
                                 SizedBox(height: 16.h),
                                 _buildFeatureItem(l10n.customPdfExport),
                                 SizedBox(height: 16.h),

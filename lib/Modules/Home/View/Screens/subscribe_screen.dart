@@ -203,7 +203,7 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     Row(
                       children: [
                         Text(
-                          '€${plan.price}/Month',
+                          '€${plan.price}${l10n.perMonth}',
                           style: TextStyle(
                             fontSize: 14.sp,
                             color: Colors.grey[600],
@@ -225,9 +225,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                     Row(
                       children: [
                         Text(
-                          plan.type == SubscriptionPlanType.STARTER 
-                              ? '€99/Year'
-                              : '€249/Year',
+                          plan.type == SubscriptionPlanType.STARTER
+                              ? '€149${l10n.perYear}'
+                              : '€349${l10n.perYear}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Colors.grey[600],
@@ -247,31 +247,42 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                   ],
                 );
               }),
-            // Show remaining techpacks for Starter plan users (monthly and yearly)
+            // Show design and techpack usage for Starter plan users (monthly and yearly)
             if (plan.type == SubscriptionPlanType.STARTER && isSelected)
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && (subscription.subscriptionPlan == 'STARTER' || subscription.subscriptionPlan == 'STARTER_YEARLY')) {
-                  final totalAvailable = subscription.totalAllowedTechpacks;
-                  
-                  // Always use monthly counter for display
-                  final isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
-                  final techpacksUsed = subscription.techpacksUsedThisMonth;
-                  
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Design usage counter
                         Text(
-                          isYearly 
-                            ? 'Techpacks: $techpacksUsed/$totalAvailable per month (${subscription.techpacksUsedThisYear}/36 per year)'
-                            : 'Techpacks: $techpacksUsed/$totalAvailable per month',
+                          l10n.designsUsed(
+                            subscription.designsUsedCount,
+                            subscription.designsTotalCount,
+                          ),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingDesigns > 0
+                                ? Colors.grey[700]
+                                : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        // Techpack usage counter
+                        Text(
+                          l10n.techpacksUsed(
+                            subscription.techpacksUsedCount,
+                            subscription.techpacksTotalCount,
+                          ),
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0
                                 ? Colors.grey[700]
-                                : Colors.red[600],  
+                                : Colors.red[600],
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -281,27 +292,41 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                 }
                 return SizedBox.shrink();
               }),
-            // Show techpacks info for Pro plan users (monthly and yearly)
+            // Show design and techpack usage for Pro plan users (monthly and yearly)
             if (plan.type == SubscriptionPlanType.PRO && isSelected)
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && (subscription.subscriptionPlan == 'PRO' || subscription.subscriptionPlan == 'PRO_YEARLY')) {
-                  final totalAvailable = subscription.totalAllowedTechpacks;
-                  
-                  // Always use monthly counter for Pro plans
-                  final techpacksUsed = subscription.techpacksUsedThisMonth;
-                  
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
+                        // Design usage counter
                         Text(
-                          'Techpacks: $techpacksUsed/$totalAvailable per month',
+                          l10n.designsUsed(
+                            subscription.designsUsedCount,
+                            subscription.designsTotalCount,
+                          ),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingDesigns > 0
+                                ? Colors.grey[700]
+                                : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        // Techpack usage counter
+                        Text(
+                          l10n.techpacksUsed(
+                            subscription.techpacksUsedCount,
+                            subscription.techpacksTotalCount,
+                          ),
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: subscription.remainingTechpacks > 0
-                                ? Colors.black
+                                ? Colors.grey[700]
                                 : Colors.red[600],
                             fontWeight: FontWeight.w500,
                           ),

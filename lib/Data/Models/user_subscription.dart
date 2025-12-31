@@ -78,27 +78,27 @@ class UserSubscription {
 
   bool get canGenerateTechpack {
     if (subscriptionPlan == 'FREE') return false;
-    
+
     bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
-    
+
     if (subscriptionPlan.startsWith('PRO')) {
-      int baseLimit = 20;
+      int baseLimit = 8;
       int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
       return techpacksUsedThisMonth < totalAllowed;
     }
     if (subscriptionPlan.startsWith('STARTER')) {
-      // For Starter plans, always check monthly limit (3 per month)
-      int monthlyLimit = 3;
+      // For Starter plans, always check monthly limit (2 per month)
+      int monthlyLimit = 2;
       int totalAllowed = monthlyLimit + (extraTechpacksPurchased * 5);
-      
-      // For yearly plans, also check yearly limit (36 per year)
+
+      // For yearly plans, also check yearly limit (24 per year = 2 per month * 12)
       if (isYearly) {
-        int yearlyLimit = 36;
+        int yearlyLimit = 24;
         int yearlyAllowed = yearlyLimit + (extraTechpacksPurchased * 5);
         // Must satisfy both monthly AND yearly limits
         return techpacksUsedThisMonth < totalAllowed && techpacksUsedThisYear < yearlyAllowed;
       }
-      
+
       // For monthly plans, just check monthly limit
       return techpacksUsedThisMonth < totalAllowed;
     }
@@ -108,10 +108,10 @@ class UserSubscription {
   int get totalAllowedTechpacks {
     // Always return the monthly limit for display purposes
     if (subscriptionPlan.startsWith('PRO')) {
-      return 20 + (extraTechpacksPurchased * 5);
+      return 8 + (extraTechpacksPurchased * 5);
     }
     if (subscriptionPlan.startsWith('STARTER')) {
-      return 3 + (extraTechpacksPurchased * 5);
+      return 2 + (extraTechpacksPurchased * 5);
     }
     return 0;
   }
@@ -126,20 +126,22 @@ class UserSubscription {
   }
 
   bool get canGenerateDesign {
-    // Starter and Pro plans have UNLIMITED design generation
-    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return true; // Always allowed for paid plans
-    }
-
-    // FREE plan has limited designs
+    // All plans have limited designs now
     int totalAllowedDesigns = getTotalAllowedDesigns();
     return designsGeneratedThisMonth < totalAllowedDesigns;
   }
 
   int getTotalAllowedDesigns() {
-    // Starter and Pro plans have unlimited designs
-    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return -1; // -1 indicates unlimited
+    // Pro plan: 15 designs per month + extras purchased
+    if (subscriptionPlan.startsWith('PRO')) {
+      int baseDesigns = 15;
+      return baseDesigns + (extraDesignsPurchased * 20);
+    }
+
+    // Starter plan: 5 designs per month + extras purchased
+    if (subscriptionPlan.startsWith('STARTER')) {
+      int baseDesigns = 5;
+      return baseDesigns + (extraDesignsPurchased * 20);
     }
 
     // FREE plan: 3 base designs per month + extras purchased
@@ -148,10 +150,7 @@ class UserSubscription {
   }
 
   int get remainingDesigns {
-    // Unlimited for paid plans
-    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return -1; // -1 indicates unlimited
-    }
+    // All plans have limited designs
     return getTotalAllowedDesigns() - designsGeneratedThisMonth;
   }
 
@@ -159,9 +158,6 @@ class UserSubscription {
   String get designsUsedCount => '$designsGeneratedThisMonth';
 
   String get designsTotalCount {
-    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return '∞';
-    }
     return '${getTotalAllowedDesigns()}';
   }
 
@@ -180,13 +176,34 @@ class UserSubscription {
     return '$totalAllowedTechpacks';
   }
 
+  // Check if user is at 80% usage threshold (for warning modals)
+  bool get isDesignUsageAt80Percent {
+    int total = getTotalAllowedDesigns();
+    if (total == 0) return false; // No quota
+    double usagePercent = (designsGeneratedThisMonth / total) * 100;
+    return usagePercent >= 80 && usagePercent < 100;
+  }
+
+  bool get isTechpackUsageAt80Percent {
+    if (subscriptionPlan == 'FREE') return false;
+    int total = totalAllowedTechpacks;
+    if (total == 0) return false;
+    double usagePercent = (techpacksUsedThisMonth / total) * 100;
+    return usagePercent >= 80 && usagePercent < 100;
+  }
+
+  bool get hasReachedDesignLimit {
+    int total = getTotalAllowedDesigns();
+    return designsGeneratedThisMonth >= total;
+  }
+
+  bool get hasReachedTechpackLimit {
+    return !canGenerateTechpack;
+  }
+
   // Backward compatibility - non-localized display strings
   String get designCounterDisplay {
-    // For paid plans, show unlimited
-    if (subscriptionPlan.startsWith('STARTER') || subscriptionPlan.startsWith('PRO')) {
-      return 'Designs used: $designsGeneratedThisMonth/∞ this month';
-    }
-    // For FREE plan, show limited count
+    // All plans show limited count
     return 'Designs used: $designsGeneratedThisMonth/${getTotalAllowedDesigns()} this month';
   }
 

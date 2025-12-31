@@ -787,8 +787,8 @@ class TechPackDetailsController extends GetxController {
                     ),
                   ),
                   SizedBox(height: 8),
-                  _buildFeatureItem('Starter: 3 techpacks/month (€9.99/mo or €99/yr)'),
-                  _buildFeatureItem('Pro: 20 techpacks/month (€24.99/mo or €249/yr)'),
+                  _buildFeatureItem('Starter: 2 techpacks/month (€14.99/mo or €149/yr)'),
+                  _buildFeatureItem('Pro: 8 techpacks/month (€34.99/mo or €349/yr)'),
                   _buildFeatureItem('Professional PDF techpack exports'),
                   _buildFeatureItem('Access to manufacturer database'),
                   _buildFeatureItem('Unlimited 3D visualization'),
@@ -1311,13 +1311,13 @@ class TechPackDetailsController extends GetxController {
       case 'FREE':
         return 'Free';
       case 'STARTER':
-        return 'Starter (€9.99/month)';
+        return 'Starter (€14.99/month)';
       case 'STARTER_YEARLY':
-        return 'Starter (€99/year)';
+        return 'Starter (€149/year)';
       case 'PRO':
-        return 'Pro (€24.99/month)';
+        return 'Pro (€34.99/month)';
       case 'PRO_YEARLY':
-        return 'Pro (€249/year)';
+        return 'Pro (€349/year)';
       default:
         return 'Free';
     }

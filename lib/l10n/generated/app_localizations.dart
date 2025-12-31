@@ -704,6 +704,54 @@ abstract class AppLocalizations {
   /// **'3 AI design generations / month'**
   String get upTo10Designs;
 
+  /// Starter plan design limit
+  ///
+  /// In en, this message translates to:
+  /// **'5 AI design generations per month'**
+  String get starterDesignLimit;
+
+  /// Starter plan monthly price
+  ///
+  /// In en, this message translates to:
+  /// **'Starter €14.99/Month'**
+  String get starterMonthlyPrice;
+
+  /// Starter plan yearly price
+  ///
+  /// In en, this message translates to:
+  /// **'Starter €149/Year'**
+  String get starterYearlyPrice;
+
+  /// Pro plan monthly price
+  ///
+  /// In en, this message translates to:
+  /// **'Pro €34.99/Month'**
+  String get proMonthlyPrice;
+
+  /// Pro plan yearly price
+  ///
+  /// In en, this message translates to:
+  /// **'Pro €349/Year'**
+  String get proYearlyPrice;
+
+  /// Pro plan design limit
+  ///
+  /// In en, this message translates to:
+  /// **'15 AI design generations per month'**
+  String get proDesignLimit;
+
+  /// Per month suffix for pricing
+  ///
+  /// In en, this message translates to:
+  /// **'/Month'**
+  String get perMonth;
+
+  /// Per year suffix for pricing
+  ///
+  /// In en, this message translates to:
+  /// **'/Year'**
+  String get perYear;
+
   /// 3D visualization included feature
   ///
   /// In en, this message translates to:
@@ -902,10 +950,10 @@ abstract class AppLocalizations {
   /// **'Designs used: {used} / {total} this month'**
   String designsUsed(String used, String total);
 
-  /// Techpacks usage counter
+  /// Techpacks usage counter with monthly period
   ///
   /// In en, this message translates to:
-  /// **'Techpacks used: {used} / {total}'**
+  /// **'Techpacks used: {used} / {total} this month'**
   String techpacksUsed(String used, String total);
 
   /// Other option in cancellation reasons

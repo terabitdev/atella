@@ -531,13 +531,13 @@ class TechPackController extends GetxController {
                   SizedBox(height: 8),
                   if (currentPlan == 'FREE') ...[
                     _buildFeatureItem(
-                      'Starter: 3 techpacks/month (€9.99/mo or €99/yr)',
+                      'Starter: 2 techpacks/month (€14.99/mo or €149/yr)',
                     ),
                     _buildFeatureItem(
-                      'Pro: 20 techpacks/month (€24.99/mo or €249/yr)',
+                      'Pro: 8 techpacks/month (€34.99/mo or €349/yr)',
                     ),
                   ] else if (currentPlan.startsWith('STARTER')) ...[
-                    _buildFeatureItem('Pro: 20 techpacks/month'),
+                    _buildFeatureItem('Pro: 8 techpacks/month'),
                   ] else if (currentPlan.startsWith('PRO')) ...[
                     _buildFeatureItem('Purchase extra techpacks: +5 for €4.99'),
                     _buildFeatureItem(
@@ -602,13 +602,13 @@ class TechPackController extends GetxController {
       case 'FREE':
         return _l10n.tpPlanFree;
       case 'STARTER':
-        return '${_l10n.tpPlanStarter} (€9.99/month)';
+        return '${_l10n.tpPlanStarter} (€14.99/month)';
       case 'STARTER_YEARLY':
-        return '${_l10n.tpPlanStarter} (€99/year)';
+        return '${_l10n.tpPlanStarter} (€149/year)';
       case 'PRO':
-        return '${_l10n.tpPlanPro} (€24.99/month)';
+        return '${_l10n.tpPlanPro} (€34.99/month)';
       case 'PRO_YEARLY':
-        return '${_l10n.tpPlanPro} (€249/year)';
+        return '${_l10n.tpPlanPro} (€349/year)';
       default:
         return _l10n.tpPlanFree;
     }
