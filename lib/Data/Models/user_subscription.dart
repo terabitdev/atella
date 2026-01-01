@@ -10,6 +10,8 @@ class UserSubscription {
   final int designsGeneratedThisMonth;
   final int extraDesignsPurchased;
   final int extraTechpacksPurchased;
+  final int extraDesignsUsed; // Track how many add-on designs have been used
+  final int extraTechpacksUsed; // Track how many add-on techpacks have been used
   final DateTime? currentPeriodStart;
   final DateTime? currentPeriodEnd;
   final String billingPeriod; // 'MONTHLY' or 'YEARLY'
@@ -25,6 +27,8 @@ class UserSubscription {
     this.designsGeneratedThisMonth = 0,
     this.extraDesignsPurchased = 0,
     this.extraTechpacksPurchased = 0,
+    this.extraDesignsUsed = 0,
+    this.extraTechpacksUsed = 0,
     this.currentPeriodStart,
     this.currentPeriodEnd,
     this.billingPeriod = 'MONTHLY',
@@ -43,6 +47,8 @@ class UserSubscription {
       designsGeneratedThisMonth: data['designsGeneratedThisMonth'] ?? 0,
       extraDesignsPurchased: data['extraDesignsPurchased'] ?? 0,
       extraTechpacksPurchased: data['extraTechpacksPurchased'] ?? 0,
+      extraDesignsUsed: data['extraDesignsUsed'] ?? 0,
+      extraTechpacksUsed: data['extraTechpacksUsed'] ?? 0,
       currentPeriodStart: data['currentPeriodStart'] != null
           ? (data['currentPeriodStart'] as Timestamp).toDate()
           : null,
@@ -65,6 +71,8 @@ class UserSubscription {
       'designsGeneratedThisMonth': designsGeneratedThisMonth,
       'extraDesignsPurchased': extraDesignsPurchased,
       'extraTechpacksPurchased': extraTechpacksPurchased,
+      'extraDesignsUsed': extraDesignsUsed,
+      'extraTechpacksUsed': extraTechpacksUsed,
       'currentPeriodStart': currentPeriodStart != null
           ? Timestamp.fromDate(currentPeriodStart!)
           : null,
@@ -83,37 +91,45 @@ class UserSubscription {
 
     if (subscriptionPlan.startsWith('PRO')) {
       int baseLimit = 8;
-      int totalAllowed = baseLimit + (extraTechpacksPurchased * 5);
-      return techpacksUsedThisMonth < totalAllowed;
+      // Check if user has consumed all monthly quota
+      if (techpacksUsedThisMonth < baseLimit) {
+        return true; // Still have monthly quota
+      }
+      // Monthly quota exhausted, check add-ons
+      int totalAddonsPurchased = extraTechpacksPurchased * 1; // Each add-on = +1 techpack
+      int addonsAvailable = totalAddonsPurchased - extraTechpacksUsed;
+      return addonsAvailable > 0;
     }
     if (subscriptionPlan.startsWith('STARTER')) {
-      // For Starter plans, always check monthly limit (2 per month)
       int monthlyLimit = 2;
-      int totalAllowed = monthlyLimit + (extraTechpacksPurchased * 5);
-
-      // For yearly plans, also check yearly limit (24 per year = 2 per month * 12)
-      if (isYearly) {
-        int yearlyLimit = 24;
-        int yearlyAllowed = yearlyLimit + (extraTechpacksPurchased * 5);
-        // Must satisfy both monthly AND yearly limits
-        return techpacksUsedThisMonth < totalAllowed && techpacksUsedThisYear < yearlyAllowed;
+      // Check if user has consumed all monthly quota
+      if (techpacksUsedThisMonth < monthlyLimit) {
+        // For yearly plans, also check yearly limit
+        if (isYearly) {
+          int yearlyLimit = 24;
+          return techpacksUsedThisYear < yearlyLimit;
+        }
+        return true; // Still have monthly quota
       }
-
-      // For monthly plans, just check monthly limit
-      return techpacksUsedThisMonth < totalAllowed;
+      // Monthly quota exhausted, check add-ons
+      int totalAddonsPurchased = extraTechpacksPurchased * 1; // Each add-on = +1 techpack
+      int addonsAvailable = totalAddonsPurchased - extraTechpacksUsed;
+      return addonsAvailable > 0;
     }
     return false;
   }
 
   int get totalAllowedTechpacks {
-    // Always return the monthly limit for display purposes
+    // Return base limit + remaining add-ons
+    int baseLimit = 0;
     if (subscriptionPlan.startsWith('PRO')) {
-      return 8 + (extraTechpacksPurchased * 5);
+      baseLimit = 8;
+    } else if (subscriptionPlan.startsWith('STARTER')) {
+      baseLimit = 2;
     }
-    if (subscriptionPlan.startsWith('STARTER')) {
-      return 2 + (extraTechpacksPurchased * 5);
-    }
-    return 0;
+    int totalAddonsPurchased = extraTechpacksPurchased * 1; // Each add-on = +1 techpack
+    int addonsRemaining = totalAddonsPurchased - extraTechpacksUsed;
+    return baseLimit + addonsRemaining;
   }
 
   int get remainingTechpacks {
@@ -126,27 +142,29 @@ class UserSubscription {
   }
 
   bool get canGenerateDesign {
-    // All plans have limited designs now
-    int totalAllowedDesigns = getTotalAllowedDesigns();
-    return designsGeneratedThisMonth < totalAllowedDesigns;
+    int baseLimit = _getBaseDesignLimit();
+    // Check if user has consumed all monthly quota
+    if (designsGeneratedThisMonth < baseLimit) {
+      return true; // Still have monthly quota
+    }
+    // Monthly quota exhausted, check add-ons
+    int totalAddonsPurchased = extraDesignsPurchased * 5; // Each add-on = +5 designs
+    int addonsAvailable = totalAddonsPurchased - extraDesignsUsed;
+    return addonsAvailable > 0;
+  }
+
+  int _getBaseDesignLimit() {
+    if (subscriptionPlan.startsWith('PRO')) return 15;
+    if (subscriptionPlan.startsWith('STARTER')) return 5;
+    return 3; // FREE
   }
 
   int getTotalAllowedDesigns() {
-    // Pro plan: 15 designs per month + extras purchased
-    if (subscriptionPlan.startsWith('PRO')) {
-      int baseDesigns = 15;
-      return baseDesigns + (extraDesignsPurchased * 20);
-    }
-
-    // Starter plan: 5 designs per month + extras purchased
-    if (subscriptionPlan.startsWith('STARTER')) {
-      int baseDesigns = 5;
-      return baseDesigns + (extraDesignsPurchased * 20);
-    }
-
-    // FREE plan: 3 base designs per month + extras purchased
-    int baseDesigns = 3;
-    return baseDesigns + (extraDesignsPurchased * 20);
+    // Return base limit + remaining add-ons
+    int baseDesigns = _getBaseDesignLimit();
+    int totalAddonsPurchased = extraDesignsPurchased * 5; // Each add-on = +5 designs
+    int addonsRemaining = totalAddonsPurchased - extraDesignsUsed;
+    return baseDesigns + addonsRemaining;
   }
 
   int get remainingDesigns {

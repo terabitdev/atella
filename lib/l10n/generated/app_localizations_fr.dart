@@ -1412,7 +1412,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get rcSnackbarExtraDesignsAddedMessage =>
-      '20 designs supplémentaires ont été ajoutés à votre compte.';
+      '5 designs supplémentaires ont été ajoutés à votre compte.';
 
   @override
   String get rcSnackbarRegeneratingDesigns => 'Régénération des designs !';
@@ -1604,18 +1604,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fdSnackbarExtraDesignsMessage =>
-      '20 designs supplémentaires ont été ajoutés à votre compte.';
+      '5 designs supplémentaires ont été ajoutés à votre compte.';
 
   @override
   String get fdDialogLimitExceeded => 'Limite Dépassée';
 
   @override
   String get fdDialogLimitMessage =>
-      'Vous avez dépassé votre limite pour ce mois. Vous pouvez payer 3,99€ pour 20 designs supplémentaires ou mettre à niveau votre forfait vers Starter ou Pro.';
+      'Vous avez dépassé votre limite pour ce mois. Vous pouvez payer 9,99€ pour 5 designs supplémentaires ou mettre à niveau votre forfait.';
 
   @override
   String get fdDialogGetExtraDesigns =>
-      'Obtenir des Designs Supplémentaires (3,99€)';
+      'Obtenir des Designs Supplémentaires (9,99€)';
 
   @override
   String get fdDialogUpgradePlan => 'Mettre à Niveau le Forfait';
@@ -1660,7 +1660,7 @@ class AppLocalizationsFr extends AppLocalizations {
       'Passez à Starter ou Pro pour générer des dossiers techniques';
 
   @override
-  String get tpGetExtraDesigns => 'Obtenir 20 Designs Supplémentaires';
+  String get tpGetExtraDesigns => 'Obtenir 5 Designs Supplémentaires';
 
   @override
   String get tpViewPlans => 'Voir les Forfaits';
@@ -1673,14 +1673,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpFreePlanMessage =>
-      'Les utilisateurs du forfait gratuit peuvent générer jusqu\'à 10 designs par mois. Passez à la version supérieure pour générer des dossiers techniques !';
+      'Les utilisateurs du forfait gratuit peuvent générer jusqu\'à 3 designs par mois. Passez à la version supérieure pour plus de designs et des dossiers techniques !';
 
   @override
   String get tpProLimitReached => 'Limite Pro Atteinte';
 
   @override
   String get tpProLimitMessage =>
-      'Vous avez atteint votre limite mensuelle. Obtenez 20 designs supplémentaires ou passez à un forfait supérieur !';
+      'Vous avez atteint votre limite mensuelle. Obtenez 5 designs supplémentaires pour 9,99€ !';
 
   @override
   String get tpSnackbarDesignUpdated => 'Design Mis à Jour';
@@ -1715,7 +1715,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpSnackbarPurchaseSuccessMessage =>
-      '20 designs supplémentaires ajoutés à votre compte';
+      '5 designs supplémentaires ajoutés à votre compte';
 
   @override
   String get tpSnackbarPurchaseFailed => 'Échec de l\'Achat';
@@ -1764,7 +1764,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpDialogExtraTechPacksDescription =>
-      'Obtenez 20 designs supplémentaires pour seulement 3,99€';
+      'Obtenez 5 designs supplémentaires pour seulement 9,99€';
 
   @override
   String get tpDialogExtraTechPacksOneTime => 'Achat unique';
@@ -1773,13 +1773,117 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tpDialogExtraTechPacksNoSubscription => 'Aucun abonnement requis';
 
   @override
-  String get tpDialogExtraTechPacksExpires => 'Valable jusqu\'à la fin du mois';
+  String get tpDialogExtraTechPacksExpires =>
+      'Ne expire pas jusqu\'à ce qu\'il soit utilisé';
 
   @override
-  String get tpDialogPurchaseFor => 'Acheter pour 3,99€';
+  String get tpDialogPurchaseFor => 'Acheter pour 9,99€';
 
   @override
   String get tpDialogUpgradeInstead => 'Mettre à Niveau à la Place';
+
+  @override
+  String get tpTechpackFeaturePremium =>
+      'La génération de dossiers techniques est une fonctionnalité premium.';
+
+  @override
+  String get tpProMonthlyLimitReached =>
+      'Vous avez atteint votre limite mensuelle de 8 dossiers techniques du plan Pro.';
+
+  @override
+  String get tpStarterYearlyLimitReached =>
+      'Vous avez atteint votre limite mensuelle de 2 dossiers techniques (24/an au total).';
+
+  @override
+  String get tpStarterMonthlyLimitReached =>
+      'Vous avez atteint votre limite mensuelle de 2 dossiers techniques.';
+
+  @override
+  String get tpDialogChoosePlan => 'Choisissez un forfait :';
+
+  @override
+  String get tpDialogUpgradeToPro => 'Passer au forfait Pro :';
+
+  @override
+  String tpDialogCurrentPlan(String plan) {
+    return 'Forfait actuel : $plan';
+  }
+
+  @override
+  String tpDialogRemainingTechpacksPro(int remaining) {
+    return 'Restant : $remaining/8 dossiers techniques ce mois-ci';
+  }
+
+  @override
+  String tpDialogRemainingTechpacksStarter(int remaining) {
+    return 'Restant : $remaining/2 ce mois-ci';
+  }
+
+  @override
+  String get tpDialogStarterPlanOption =>
+      'Starter : 2 dossiers techniques/mois (14,99€/mois ou 149€/an)';
+
+  @override
+  String get tpDialogProPlanOption =>
+      'Pro : 8 dossiers techniques/mois (34,99€/mois ou 349€/an)';
+
+  @override
+  String get tpDialogProUpgradeOption => 'Pro : 8 dossiers techniques/mois';
+
+  @override
+  String get tpDialogExtraTechpackOption =>
+      'Acheter des dossiers techniques supplémentaires : +1 pour 5,99€';
+
+  @override
+  String get tpDialogFeatureCustomPDFExport =>
+      'Export PDF personnalisé avec votre logo';
+
+  @override
+  String get tpDialogFeatureManufacturerAccess =>
+      'Accès à la liste des fabricants';
+
+  @override
+  String get tpDialogFeatureUnlimited3D => 'Visualisation 3D illimitée';
+
+  @override
+  String get tpDialogFeatureProfessionalPDF =>
+      'Exports PDF professionnels de dossiers techniques';
+
+  @override
+  String get tpDialogFeatureManufacturerDB =>
+      'Accès à la base de données des fabricants';
+
+  @override
+  String get tpDialogUpgradeNow => 'Mettre à Niveau Maintenant';
+
+  @override
+  String get tpDialogTechpackPremiumRequired =>
+      'La génération finale du dossier technique nécessite un forfait premium.';
+
+  @override
+  String get tpProLimitDialogTitle => 'Limite Mensuelle Atteinte';
+
+  @override
+  String get tpProLimitDialogProPlan => 'Forfait Pro : ';
+
+  @override
+  String tpProLimitDialogMonthlyUsed(int used) {
+    return 'Limite mensuelle atteinte : $used/8 dossiers techniques utilisés';
+  }
+
+  @override
+  String get tpProLimitDialogMessage =>
+      'Vous avez atteint votre limite mensuelle de 8 dossiers techniques du forfait Pro. Achetez des dossiers techniques supplémentaires pour continuer :';
+
+  @override
+  String get tpProLimitDialogTechpackPrice => '+1 Dossier Technique : 5,99€';
+
+  @override
+  String get tpProLimitDialogTechpackDescription =>
+      'Obtenez 1 dossier technique supplémentaire (achat unique, ne se renouvelle pas automatiquement)';
+
+  @override
+  String get tpProLimitDialogPurchaseButton => 'Acheter +1 Dossier Technique';
 
   @override
   String get mfManufacturerSuggestions => 'Suggestions de Fabricants';

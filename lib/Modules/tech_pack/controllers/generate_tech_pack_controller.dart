@@ -447,12 +447,13 @@ class TechPackController extends GetxController {
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Current plan info
-            Container(
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Current plan info
+              Container(
               width: double.infinity,
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -465,12 +466,15 @@ class TechPackController extends GetxController {
                 children: [
                   Row(
                     children: [
-                      Text(
-                        'Current Plan: ${_getPlanDisplayName(currentPlan)}',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+                      Expanded(
+                        child: Text(
+                          _l10n.tpDialogCurrentPlan(_getPlanDisplayName(currentPlan)),
+                          style: ssTitleTextTextStyle14400.copyWith(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                          textAlign: TextAlign.center,
                         ),
                       ),
                     ],
@@ -480,15 +484,14 @@ class TechPackController extends GetxController {
                       padding: EdgeInsets.only(top: 4),
                       child: Text(
                         currentPlan.startsWith('PRO')
-                            ? 'Remaining: $remainingTechpacks/20 techpacks this month'
-                            : currentPlan == 'STARTER_YEARLY'
-                            ? 'Remaining: $remainingTechpacks/3 this month'
-                            : 'Remaining techpacks: $remainingTechpacks/3 this month',
+                            ? _l10n.tpDialogRemainingTechpacksPro(remainingTechpacks)
+                            : _l10n.tpDialogRemainingTechpacksStarter(remainingTechpacks),
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 12,
                           color: Colors.black,
                           fontWeight: FontWeight.bold,
                         ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
                 ],
@@ -497,16 +500,17 @@ class TechPackController extends GetxController {
             SizedBox(height: 16),
             Text(
               currentPlan == 'FREE'
-                  ? 'Techpack generation is a premium feature.'
+                  ? _l10n.tpTechpackFeaturePremium
                   : currentPlan.startsWith('PRO')
-                  ? 'You\'ve reached your Pro plan monthly limit of 20 techpacks.'
+                  ? _l10n.tpProMonthlyLimitReached
                   : currentPlan == 'STARTER_YEARLY'
-                  ? 'You\'ve reached your monthly limit of 3 techpacks (36/year total).'
-                  : 'You\'ve reached your monthly limit of 3 techpacks.',
+                  ? _l10n.tpStarterYearlyLimitReached
+                  : _l10n.tpStarterMonthlyLimitReached,
               style: ssTitleTextTextStyle14400.copyWith(
                 fontSize: 12,
                 color: Colors.black,
               ),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 12),
             Container(
@@ -521,8 +525,8 @@ class TechPackController extends GetxController {
                 children: [
                   Text(
                     currentPlan == 'FREE'
-                        ? 'Choose a plan:'
-                        : 'Upgrade to Pro:',
+                        ? _l10n.tpDialogChoosePlan
+                        : _l10n.tpDialogUpgradeToPro,
                     style: ssTitleTextTextStyle14400.copyWith(
                       color: Colors.black,
                       fontWeight: FontWeight.bold,
@@ -531,26 +535,24 @@ class TechPackController extends GetxController {
                   SizedBox(height: 8),
                   if (currentPlan == 'FREE') ...[
                     _buildFeatureItem(
-                      'Starter: 2 techpacks/month (€14.99/mo or €149/yr)',
+                      _l10n.tpDialogStarterPlanOption,
                     ),
                     _buildFeatureItem(
-                      'Pro: 8 techpacks/month (€34.99/mo or €349/yr)',
+                      _l10n.tpDialogProPlanOption,
                     ),
                   ] else if (currentPlan.startsWith('STARTER')) ...[
-                    _buildFeatureItem('Pro: 8 techpacks/month'),
+                    _buildFeatureItem(_l10n.tpDialogProUpgradeOption),
                   ] else if (currentPlan.startsWith('PRO')) ...[
-                    _buildFeatureItem('Purchase extra techpacks: +5 for €4.99'),
-                    _buildFeatureItem(
-                      'Purchase extra techpacks: +10 for €8.99',
-                    ),
+                    _buildFeatureItem(_l10n.tpDialogExtraTechpackOption),
                   ],
-                  _buildFeatureItem('Custom PDF export with your logo'),
-                  _buildFeatureItem('Access to manufacturers list'),
-                  _buildFeatureItem('Unlimited 3D visualization'),
+                  _buildFeatureItem(_l10n.tpDialogFeatureCustomPDFExport),
+                  _buildFeatureItem(_l10n.tpDialogFeatureManufacturerAccess),
+                  _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
                 ],
               ),
             ),
           ],
+          ),
         ),
         actions: [
           TextButton(
@@ -581,6 +583,7 @@ class TechPackController extends GetxController {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
@@ -588,6 +591,7 @@ class TechPackController extends GetxController {
             child: Text(
               _l10n.tpViewPlans,
               style: ssTitleTextTextStyle14400.copyWith(color: Colors.white),
+              textAlign: TextAlign.center,
             ),
           ),
         ],
@@ -635,148 +639,123 @@ class TechPackController extends GetxController {
           children: [
             Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
             SizedBox(width: 8),
-            Text(
-              'Monthly Limit Reached',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+            Expanded(
+              child: Text(
+                _l10n.tpProLimitDialogTitle,
+                style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+              ),
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.purple.shade200),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.purple.shade50,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.purple.shade200),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Icon(Icons.star, color: Colors.black, size: 16),
+                        SizedBox(width: 4),
+                        Text(
+                          _l10n.tpProLimitDialogProPlan,
+                          style: ssTitleTextTextStyle14400.copyWith(
+                            fontSize: 12,
+                            color: Colors.black,
+                            fontWeight: FontWeight.bold,
+                          ),
+                        ),
+                        Expanded(
+                          child: Text(
+                            _getPlanDisplayName(
+                              subscription?.subscriptionPlan ?? 'PRO',
+                            ),
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              fontSize: 12,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                    Padding(
+                      padding: EdgeInsets.only(top: 4),
+                      child: Text(
+                        _l10n.tpProLimitDialogMonthlyUsed(subscription?.techpacksUsedThisMonth ?? 0),
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: Colors.red.shade600,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
               ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.black, size: 16),
-                      SizedBox(width: 4),
-                      Text(
-                        'Pro Plan: ',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+              SizedBox(height: 16),
+              Text(
+                _l10n.tpProLimitDialogMessage,
+                style: ssTitleTextTextStyle14400.copyWith(
+                  fontSize: 14,
+                  color: Colors.black,
+                ),
+                textAlign: TextAlign.center,
+              ),
+              SizedBox(height: 16),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _l10n.tpProLimitDialogTechpackPrice,
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              fontSize: 14,
+                              fontWeight: FontWeight.bold,
+                              color: Colors.black,
+                            ),
+                          ),
                         ),
-                      ),
-                      Text(
-                        _getPlanDisplayName(
-                          subscription?.subscriptionPlan ?? 'PRO',
-                        ),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text(
-                      'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/20 techpacks used',
+                      ],
+                    ),
+                    SizedBox(height: 4),
+                    Text(
+                      _l10n.tpProLimitDialogTechpackDescription,
                       style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 12,
-                        color: Colors.red.shade600,
-                        fontWeight: FontWeight.w500,
+                        color: Colors.black,
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'You\'ve reached your Pro plan monthly limit of 20 techpacks. Purchase additional techpacks to continue:',
-              style: ssTitleTextTextStyle14400.copyWith(
-                fontSize: 14,
-                color: Colors.black,
-              ),
-            ),
-            SizedBox(height: 16),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '+5 Techpacks: €4.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 5 additional techpacks for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '+10 Techpacks: €8.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 10 additional techpacks for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
+            ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Maybe Later',
+              _l10n.tpMaybeLater,
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.grey,
                 fontWeight: FontWeight.bold,
@@ -786,23 +765,10 @@ class TechPackController extends GetxController {
           TextButton(
             onPressed: () {
               Get.back();
-              _purchaseExtraTechpacks(5, 4.99);
+              _purchaseExtraTechpacks(1, 5.99);
             },
             child: Text(
-              '+5 Techpacks',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.w600,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(10, 8.99);
-            },
-            child: Text(
-              '+10 Techpacks',
+              _l10n.tpProLimitDialogPurchaseButton,
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,

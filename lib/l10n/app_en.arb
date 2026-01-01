@@ -1510,7 +1510,7 @@
   "@rcSnackbarExtraDesignsAdded": {
     "description": "Snackbar title when extra designs purchased"
   },
-  "rcSnackbarExtraDesignsAddedMessage": "20 extra designs have been added to your account.",
+  "rcSnackbarExtraDesignsAddedMessage": "5 extra designs have been added to your account.",
   "@rcSnackbarExtraDesignsAddedMessage": {
     "description": "Snackbar message when extra designs purchased"
   },
@@ -1747,7 +1747,7 @@
   "@fdSnackbarExtraDesigns": {
     "description": "Snackbar title when extra designs added"
   },
-  "fdSnackbarExtraDesignsMessage": "20 extra designs have been added to your account.",
+  "fdSnackbarExtraDesignsMessage": "5 extra designs have been added to your account.",
   "@fdSnackbarExtraDesignsMessage": {
     "description": "Snackbar message when extra designs added"
   },
@@ -1755,11 +1755,11 @@
   "@fdDialogLimitExceeded": {
     "description": "Limit exceeded dialog title"
   },
-  "fdDialogLimitMessage": "You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.",
+  "fdDialogLimitMessage": "You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.",
   "@fdDialogLimitMessage": {
     "description": "Limit exceeded dialog message"
   },
-  "fdDialogGetExtraDesigns": "Get Extra Designs (€3.99)",
+  "fdDialogGetExtraDesigns": "Get Extra Designs (€9.99)",
   "@fdDialogGetExtraDesigns": {
     "description": "Get extra designs button text"
   },
@@ -1815,7 +1815,7 @@
   "@tpUpgradeToGenerate": {
     "description": "Upgrade required message"
   },
-  "tpGetExtraDesigns": "Get 20 Extra Designs",
+  "tpGetExtraDesigns": "Get 5 Extra Designs",
   "@tpGetExtraDesigns": {
     "description": "Get extra designs button text"
   },
@@ -1831,7 +1831,7 @@
   "@tpFreePlanLimit": {
     "description": "Free plan limit dialog title"
   },
-  "tpFreePlanMessage": "Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!",
+  "tpFreePlanMessage": "Free plan users can generate up to 3 designs per month. Upgrade for more designs and tech packs!",
   "@tpFreePlanMessage": {
     "description": "Free plan limit message"
   },
@@ -1839,7 +1839,7 @@
   "@tpProLimitReached": {
     "description": "Pro limit dialog title"
   },
-  "tpProLimitMessage": "You've reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!",
+  "tpProLimitMessage": "You've reached your monthly limit. Get 5 extra designs for €9.99!",
   "@tpProLimitMessage": {
     "description": "Pro limit message"
   },
@@ -1879,7 +1879,7 @@
   "@tpSnackbarPurchaseSuccess": {
     "description": "Snackbar title when purchase successful"
   },
-  "tpSnackbarPurchaseSuccessMessage": "20 extra designs added to your account",
+  "tpSnackbarPurchaseSuccessMessage": "5 extra designs added to your account",
   "@tpSnackbarPurchaseSuccessMessage": {
     "description": "Snackbar message when purchase successful"
   },
@@ -1939,7 +1939,7 @@
   "@tpDialogExtraTechPacksTitle": {
     "description": "Extra tech packs dialog title"
   },
-  "tpDialogExtraTechPacksDescription": "Get 20 extra designs for just €3.99",
+  "tpDialogExtraTechPacksDescription": "Get 5 extra designs for just €9.99",
   "@tpDialogExtraTechPacksDescription": {
     "description": "Extra tech packs dialog description"
   },
@@ -1951,17 +1951,145 @@
   "@tpDialogExtraTechPacksNoSubscription": {
     "description": "Extra tech packs feature - no subscription"
   },
-  "tpDialogExtraTechPacksExpires": "Valid until end of month",
+  "tpDialogExtraTechPacksExpires": "Does not expire until fully used",
   "@tpDialogExtraTechPacksExpires": {
     "description": "Extra tech packs feature - expiration"
   },
-  "tpDialogPurchaseFor": "Purchase for €3.99",
+  "tpDialogPurchaseFor": "Purchase for €9.99",
   "@tpDialogPurchaseFor": {
     "description": "Purchase button text with price"
   },
   "tpDialogUpgradeInstead": "Upgrade Instead",
   "@tpDialogUpgradeInstead": {
     "description": "Upgrade instead button text"
+  },
+  "tpTechpackFeaturePremium": "Techpack generation is a premium feature.",
+  "@tpTechpackFeaturePremium": {
+    "description": "Message shown to free users about techpack being premium"
+  },
+  "tpProMonthlyLimitReached": "You've reached your Pro plan monthly limit of 8 techpacks.",
+  "@tpProMonthlyLimitReached": {
+    "description": "Message shown to Pro users when monthly techpack limit reached"
+  },
+  "tpStarterYearlyLimitReached": "You've reached your monthly limit of 2 techpacks (24/year total).",
+  "@tpStarterYearlyLimitReached": {
+    "description": "Message shown to Starter yearly users when monthly techpack limit reached"
+  },
+  "tpStarterMonthlyLimitReached": "You've reached your monthly limit of 2 techpacks.",
+  "@tpStarterMonthlyLimitReached": {
+    "description": "Message shown to Starter monthly users when monthly techpack limit reached"
+  },
+  "tpDialogChoosePlan": "Choose a plan:",
+  "@tpDialogChoosePlan": {
+    "description": "Header text when showing plan options to free users"
+  },
+  "tpDialogUpgradeToPro": "Upgrade to Pro:",
+  "@tpDialogUpgradeToPro": {
+    "description": "Header text when showing Pro upgrade option"
+  },
+  "tpDialogCurrentPlan": "Current Plan: {plan}",
+  "@tpDialogCurrentPlan": {
+    "description": "Shows user's current plan",
+    "placeholders": {
+      "plan": {
+        "type": "String"
+      }
+    }
+  },
+  "tpDialogRemainingTechpacksPro": "Remaining: {remaining}/8 techpacks this month",
+  "@tpDialogRemainingTechpacksPro": {
+    "description": "Shows remaining techpacks for Pro users",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "tpDialogRemainingTechpacksStarter": "Remaining: {remaining}/2 this month",
+  "@tpDialogRemainingTechpacksStarter": {
+    "description": "Shows remaining techpacks for Starter users",
+    "placeholders": {
+      "remaining": {
+        "type": "int"
+      }
+    }
+  },
+  "tpDialogStarterPlanOption": "Starter: 2 techpacks/month (€14.99/mo or €149/yr)",
+  "@tpDialogStarterPlanOption": {
+    "description": "Starter plan option in upgrade dialog"
+  },
+  "tpDialogProPlanOption": "Pro: 8 techpacks/month (€34.99/mo or €349/yr)",
+  "@tpDialogProPlanOption": {
+    "description": "Pro plan option in upgrade dialog"
+  },
+  "tpDialogProUpgradeOption": "Pro: 8 techpacks/month",
+  "@tpDialogProUpgradeOption": {
+    "description": "Pro upgrade option for Starter users"
+  },
+  "tpDialogExtraTechpackOption": "Purchase extra techpacks: +1 for €5.99",
+  "@tpDialogExtraTechpackOption": {
+    "description": "Extra techpack purchase option for Pro users"
+  },
+  "tpDialogFeatureCustomPDFExport": "Custom PDF export with your logo",
+  "@tpDialogFeatureCustomPDFExport": {
+    "description": "Feature description for custom PDF export"
+  },
+  "tpDialogFeatureManufacturerAccess": "Access to manufacturers list",
+  "@tpDialogFeatureManufacturerAccess": {
+    "description": "Feature description for manufacturer access"
+  },
+  "tpDialogFeatureUnlimited3D": "Unlimited 3D visualization",
+  "@tpDialogFeatureUnlimited3D": {
+    "description": "Feature description for unlimited 3D visualization"
+  },
+  "tpDialogFeatureProfessionalPDF": "Professional PDF techpack exports",
+  "@tpDialogFeatureProfessionalPDF": {
+    "description": "Feature description for professional PDF exports"
+  },
+  "tpDialogFeatureManufacturerDB": "Access to manufacturer database",
+  "@tpDialogFeatureManufacturerDB": {
+    "description": "Feature description for manufacturer database access"
+  },
+  "tpDialogUpgradeNow": "Upgrade Now",
+  "@tpDialogUpgradeNow": {
+    "description": "Button text to upgrade plan"
+  },
+  "tpDialogTechpackPremiumRequired": "Final techpack generation requires a premium plan.",
+  "@tpDialogTechpackPremiumRequired": {
+    "description": "Message shown when techpack generation requires premium"
+  },
+  "tpProLimitDialogTitle": "Monthly Limit Reached",
+  "@tpProLimitDialogTitle": {
+    "description": "Title for PRO plan limit dialog"
+  },
+  "tpProLimitDialogProPlan": "Pro Plan: ",
+  "@tpProLimitDialogProPlan": {
+    "description": "Pro plan label in limit dialog"
+  },
+  "tpProLimitDialogMonthlyUsed": "Monthly limit reached: {used}/8 techpacks used",
+  "@tpProLimitDialogMonthlyUsed": {
+    "description": "Shows techpacks used this month for Pro users",
+    "placeholders": {
+      "used": {
+        "type": "int"
+      }
+    }
+  },
+  "tpProLimitDialogMessage": "You've reached your Pro plan monthly limit of 8 techpacks. Purchase additional techpacks to continue:",
+  "@tpProLimitDialogMessage": {
+    "description": "Message explaining Pro limit and purchase option"
+  },
+  "tpProLimitDialogTechpackPrice": "+1 Techpack: €5.99",
+  "@tpProLimitDialogTechpackPrice": {
+    "description": "Price display for single techpack add-on"
+  },
+  "tpProLimitDialogTechpackDescription": "Get 1 additional techpack (one-time purchase, does not auto-renew)",
+  "@tpProLimitDialogTechpackDescription": {
+    "description": "Description of techpack add-on purchase"
+  },
+  "tpProLimitDialogPurchaseButton": "Purchase +1 Techpack",
+  "@tpProLimitDialogPurchaseButton": {
+    "description": "Button text to purchase single techpack"
   },
   "mfManufacturerSuggestions": "Manufacturer Suggestions",
   "@mfManufacturerSuggestions": {

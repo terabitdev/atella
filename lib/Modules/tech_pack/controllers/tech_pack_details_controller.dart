@@ -717,56 +717,55 @@ class TechPackDetailsController extends GetxController {
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
         title: Row(
           children: [
-            Text(
-              'Upgrade Required',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+            Expanded(
+              child: Text(
+                _l10n.tpUpgradeRequired,
+                style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
+              ),
             ),
           ],
         ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Current plan info
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Current Plan: ',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Current plan info
+              Container(
+                width: double.infinity,
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(8),
+                  border: Border.all(color: Colors.grey.shade300),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Row(
+                      children: [
+                        Expanded(
+                          child: Text(
+                            _l10n.tpDialogCurrentPlan(_getPlanDisplayName(currentPlan)),
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              fontSize: 12,
+                              color: Colors.black,
+                              fontWeight: FontWeight.bold,
+                            ),
+                            textAlign: TextAlign.center,
+                          ),
                         ),
-                      ),
-                      Text(
-                        _getPlanDisplayName(currentPlan),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                ],
+                      ],
+                    ),
+                  ],
+                ),
               ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'Final techpack generation requires a premium plan.',
-              style: ssTitleTextTextStyle124003,
-            ),
+              SizedBox(height: 16),
+              Text(
+                _l10n.tpDialogTechpackPremiumRequired,
+                style: ssTitleTextTextStyle124003,
+                textAlign: TextAlign.center,
+              ),
             SizedBox(height: 12),
             Container(
               padding: EdgeInsets.all(12),
@@ -779,7 +778,7 @@ class TechPackDetailsController extends GetxController {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(
-                    'Choose a plan:',
+                    _l10n.tpDialogChoosePlan,
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 16,
                       fontWeight: FontWeight.bold,
@@ -787,21 +786,22 @@ class TechPackDetailsController extends GetxController {
                     ),
                   ),
                   SizedBox(height: 8),
-                  _buildFeatureItem('Starter: 2 techpacks/month (€14.99/mo or €149/yr)'),
-                  _buildFeatureItem('Pro: 8 techpacks/month (€34.99/mo or €349/yr)'),
-                  _buildFeatureItem('Professional PDF techpack exports'),
-                  _buildFeatureItem('Access to manufacturer database'),
-                  _buildFeatureItem('Unlimited 3D visualization'),
+                  _buildFeatureItem(_l10n.tpDialogStarterPlanOption),
+                  _buildFeatureItem(_l10n.tpDialogProPlanOption),
+                  _buildFeatureItem(_l10n.tpDialogFeatureProfessionalPDF),
+                  _buildFeatureItem(_l10n.tpDialogFeatureManufacturerDB),
+                  _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
                 ],
               ),
             ),
           ],
+          ),
         ),
         actions: [
           TextButton(
             onPressed: () => Get.back(),
             child: Text(
-              'Maybe Later',
+              _l10n.tpMaybeLater,
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.black,
                 fontWeight: FontWeight.bold,
@@ -811,7 +811,7 @@ class TechPackDetailsController extends GetxController {
           ElevatedButton(
             onPressed: () {
               Get.back();
-              
+
               // Set callback to refresh the UI state after subscription
               SubscriptionCallbackService().setOnSubscriptionSuccess(() {
                 print('Subscription upgraded, TechPack UI refreshed');
@@ -828,16 +828,18 @@ class TechPackDetailsController extends GetxController {
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.black,
+              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
               shape: RoundedRectangleBorder(
                 borderRadius: BorderRadius.circular(24),
               ),
             ),
             child: Text(
-              'Upgrade Now',
+              _l10n.tpDialogUpgradeNow,
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.white,
                 fontWeight: FontWeight.bold,
               ),
+              textAlign: TextAlign.center,
             ),
           ),
         ],

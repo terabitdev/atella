@@ -2687,7 +2687,7 @@ abstract class AppLocalizations {
   /// Snackbar message when extra designs purchased
   ///
   /// In en, this message translates to:
-  /// **'20 extra designs have been added to your account.'**
+  /// **'5 extra designs have been added to your account.'**
   String get rcSnackbarExtraDesignsAddedMessage;
 
   /// Snackbar title when regenerating designs
@@ -3035,7 +3035,7 @@ abstract class AppLocalizations {
   /// Snackbar message when extra designs added
   ///
   /// In en, this message translates to:
-  /// **'20 extra designs have been added to your account.'**
+  /// **'5 extra designs have been added to your account.'**
   String get fdSnackbarExtraDesignsMessage;
 
   /// Limit exceeded dialog title
@@ -3047,13 +3047,13 @@ abstract class AppLocalizations {
   /// Limit exceeded dialog message
   ///
   /// In en, this message translates to:
-  /// **'You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.'**
+  /// **'You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.'**
   String get fdDialogLimitMessage;
 
   /// Get extra designs button text
   ///
   /// In en, this message translates to:
-  /// **'Get Extra Designs (€3.99)'**
+  /// **'Get Extra Designs (€9.99)'**
   String get fdDialogGetExtraDesigns;
 
   /// Upgrade plan button text
@@ -3137,7 +3137,7 @@ abstract class AppLocalizations {
   /// Get extra designs button text
   ///
   /// In en, this message translates to:
-  /// **'Get 20 Extra Designs'**
+  /// **'Get 5 Extra Designs'**
   String get tpGetExtraDesigns;
 
   /// View plans button text
@@ -3161,7 +3161,7 @@ abstract class AppLocalizations {
   /// Free plan limit message
   ///
   /// In en, this message translates to:
-  /// **'Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!'**
+  /// **'Free plan users can generate up to 3 designs per month. Upgrade for more designs and tech packs!'**
   String get tpFreePlanMessage;
 
   /// Pro limit dialog title
@@ -3173,7 +3173,7 @@ abstract class AppLocalizations {
   /// Pro limit message
   ///
   /// In en, this message translates to:
-  /// **'You\'ve reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!'**
+  /// **'You\'ve reached your monthly limit. Get 5 extra designs for €9.99!'**
   String get tpProLimitMessage;
 
   /// Snackbar title when design updated
@@ -3233,7 +3233,7 @@ abstract class AppLocalizations {
   /// Snackbar message when purchase successful
   ///
   /// In en, this message translates to:
-  /// **'20 extra designs added to your account'**
+  /// **'5 extra designs added to your account'**
   String get tpSnackbarPurchaseSuccessMessage;
 
   /// Snackbar title when purchase fails
@@ -3323,7 +3323,7 @@ abstract class AppLocalizations {
   /// Extra tech packs dialog description
   ///
   /// In en, this message translates to:
-  /// **'Get 20 extra designs for just €3.99'**
+  /// **'Get 5 extra designs for just €9.99'**
   String get tpDialogExtraTechPacksDescription;
 
   /// Extra tech packs feature - one-time
@@ -3341,13 +3341,13 @@ abstract class AppLocalizations {
   /// Extra tech packs feature - expiration
   ///
   /// In en, this message translates to:
-  /// **'Valid until end of month'**
+  /// **'Does not expire until fully used'**
   String get tpDialogExtraTechPacksExpires;
 
   /// Purchase button text with price
   ///
   /// In en, this message translates to:
-  /// **'Purchase for €3.99'**
+  /// **'Purchase for €9.99'**
   String get tpDialogPurchaseFor;
 
   /// Upgrade instead button text
@@ -3355,6 +3355,168 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Upgrade Instead'**
   String get tpDialogUpgradeInstead;
+
+  /// Message shown to free users about techpack being premium
+  ///
+  /// In en, this message translates to:
+  /// **'Techpack generation is a premium feature.'**
+  String get tpTechpackFeaturePremium;
+
+  /// Message shown to Pro users when monthly techpack limit reached
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your Pro plan monthly limit of 8 techpacks.'**
+  String get tpProMonthlyLimitReached;
+
+  /// Message shown to Starter yearly users when monthly techpack limit reached
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your monthly limit of 2 techpacks (24/year total).'**
+  String get tpStarterYearlyLimitReached;
+
+  /// Message shown to Starter monthly users when monthly techpack limit reached
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your monthly limit of 2 techpacks.'**
+  String get tpStarterMonthlyLimitReached;
+
+  /// Header text when showing plan options to free users
+  ///
+  /// In en, this message translates to:
+  /// **'Choose a plan:'**
+  String get tpDialogChoosePlan;
+
+  /// Header text when showing Pro upgrade option
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade to Pro:'**
+  String get tpDialogUpgradeToPro;
+
+  /// Shows user's current plan
+  ///
+  /// In en, this message translates to:
+  /// **'Current Plan: {plan}'**
+  String tpDialogCurrentPlan(String plan);
+
+  /// Shows remaining techpacks for Pro users
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining: {remaining}/8 techpacks this month'**
+  String tpDialogRemainingTechpacksPro(int remaining);
+
+  /// Shows remaining techpacks for Starter users
+  ///
+  /// In en, this message translates to:
+  /// **'Remaining: {remaining}/2 this month'**
+  String tpDialogRemainingTechpacksStarter(int remaining);
+
+  /// Starter plan option in upgrade dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Starter: 2 techpacks/month (€14.99/mo or €149/yr)'**
+  String get tpDialogStarterPlanOption;
+
+  /// Pro plan option in upgrade dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Pro: 8 techpacks/month (€34.99/mo or €349/yr)'**
+  String get tpDialogProPlanOption;
+
+  /// Pro upgrade option for Starter users
+  ///
+  /// In en, this message translates to:
+  /// **'Pro: 8 techpacks/month'**
+  String get tpDialogProUpgradeOption;
+
+  /// Extra techpack purchase option for Pro users
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase extra techpacks: +1 for €5.99'**
+  String get tpDialogExtraTechpackOption;
+
+  /// Feature description for custom PDF export
+  ///
+  /// In en, this message translates to:
+  /// **'Custom PDF export with your logo'**
+  String get tpDialogFeatureCustomPDFExport;
+
+  /// Feature description for manufacturer access
+  ///
+  /// In en, this message translates to:
+  /// **'Access to manufacturers list'**
+  String get tpDialogFeatureManufacturerAccess;
+
+  /// Feature description for unlimited 3D visualization
+  ///
+  /// In en, this message translates to:
+  /// **'Unlimited 3D visualization'**
+  String get tpDialogFeatureUnlimited3D;
+
+  /// Feature description for professional PDF exports
+  ///
+  /// In en, this message translates to:
+  /// **'Professional PDF techpack exports'**
+  String get tpDialogFeatureProfessionalPDF;
+
+  /// Feature description for manufacturer database access
+  ///
+  /// In en, this message translates to:
+  /// **'Access to manufacturer database'**
+  String get tpDialogFeatureManufacturerDB;
+
+  /// Button text to upgrade plan
+  ///
+  /// In en, this message translates to:
+  /// **'Upgrade Now'**
+  String get tpDialogUpgradeNow;
+
+  /// Message shown when techpack generation requires premium
+  ///
+  /// In en, this message translates to:
+  /// **'Final techpack generation requires a premium plan.'**
+  String get tpDialogTechpackPremiumRequired;
+
+  /// Title for PRO plan limit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Limit Reached'**
+  String get tpProLimitDialogTitle;
+
+  /// Pro plan label in limit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Plan: '**
+  String get tpProLimitDialogProPlan;
+
+  /// Shows techpacks used this month for Pro users
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly limit reached: {used}/8 techpacks used'**
+  String tpProLimitDialogMonthlyUsed(int used);
+
+  /// Message explaining Pro limit and purchase option
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve reached your Pro plan monthly limit of 8 techpacks. Purchase additional techpacks to continue:'**
+  String get tpProLimitDialogMessage;
+
+  /// Price display for single techpack add-on
+  ///
+  /// In en, this message translates to:
+  /// **'+1 Techpack: €5.99'**
+  String get tpProLimitDialogTechpackPrice;
+
+  /// Description of techpack add-on purchase
+  ///
+  /// In en, this message translates to:
+  /// **'Get 1 additional techpack (one-time purchase, does not auto-renew)'**
+  String get tpProLimitDialogTechpackDescription;
+
+  /// Button text to purchase single techpack
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase +1 Techpack'**
+  String get tpProLimitDialogPurchaseButton;
 
   /// Manufacturer suggestions screen title
   ///

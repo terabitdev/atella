@@ -272,22 +272,37 @@ class StripeSubscriptionService {
     try {
       UserSubscription? subscription = await getCurrentUserSubscription();
       if (subscription == null) return;
-      
+
       bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
-      
+
+      // Determine base limit
+      int baseLimit = 0;
+      if (subscription.subscriptionPlan.startsWith('PRO')) {
+        baseLimit = 8;
+      } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
+        baseLimit = 2;
+      }
+
       Map<String, dynamic> updates = {
         // Always increment monthly counter
         'techpacksUsedThisMonth': FieldValue.increment(1),
       };
-      
+
+      // Check if this increment will exceed base quota (meaning we're using add-on)
+      if (subscription.techpacksUsedThisMonth >= baseLimit) {
+        // User is consuming from add-on pool
+        updates['extraTechpacksUsed'] = FieldValue.increment(1);
+        print('📦 Consuming add-on techpack (${subscription.extraTechpacksUsed + 1}/${subscription.extraTechpacksPurchased})');
+      }
+
       // For yearly plans, also increment yearly counter
       if (isYearly) {
         updates['techpacksUsedThisYear'] = FieldValue.increment(1);
       }
-      
+
       await _firestore.collection('users').doc(user.uid).update(updates);
       print('✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly + monthly' : 'monthly'})');
-      
+
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
@@ -296,6 +311,9 @@ class StripeSubscriptionService {
         if (isYearly) {
           print('📊 Yearly usage: ${updatedSubscription.techpacksUsedThisYear}/36 per year');
         }
+
+        // Check if all add-ons are fully consumed and reset if needed
+        await _checkAndResetFullyConsumedAddons(user.uid, updatedSubscription);
       }
     } catch (e) {
       print('❌ Error incrementing techpack usage: $e');
@@ -311,18 +329,66 @@ class StripeSubscriptionService {
     }
 
     try {
-      await _firestore.collection('users').doc(user.uid).update({
+      UserSubscription? subscription = await getCurrentUserSubscription();
+      if (subscription == null) return;
+
+      // Determine base limit
+      int baseLimit = 3; // FREE
+      if (subscription.subscriptionPlan.startsWith('PRO')) {
+        baseLimit = 15;
+      } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
+        baseLimit = 5;
+      }
+
+      Map<String, dynamic> updates = {
         'designsGeneratedThisMonth': FieldValue.increment(1),
-      });
+      };
+
+      // Check if this increment will exceed base quota (meaning we're using add-on)
+      if (subscription.designsGeneratedThisMonth >= baseLimit) {
+        // User is consuming from add-on pool
+        updates['extraDesignsUsed'] = FieldValue.increment(1);
+        print('📦 Consuming add-on design (${subscription.extraDesignsUsed + 1}/${subscription.extraDesignsPurchased * 5})');
+      }
+
+      await _firestore.collection('users').doc(user.uid).update(updates);
       print('✅ Incremented design usage for user: ${user.uid}');
-      
+
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
         print('📊 Current design usage: ${updatedSubscription.designCounterDisplay} (${updatedSubscription.subscriptionPlan} plan)');
+
+        // Check if all add-ons are fully consumed and reset if needed
+        await _checkAndResetFullyConsumedAddons(user.uid, updatedSubscription);
       }
     } catch (e) {
       print('❌ Error incrementing design usage: $e');
+    }
+  }
+
+  // Check if add-ons are fully consumed and reset them
+  Future<void> _checkAndResetFullyConsumedAddons(String userId, UserSubscription subscription) async {
+    Map<String, dynamic> updates = {};
+
+    // Check design add-ons
+    int totalDesignAddons = subscription.extraDesignsPurchased * 5;
+    if (subscription.extraDesignsUsed >= totalDesignAddons && totalDesignAddons > 0) {
+      updates['extraDesignsPurchased'] = 0;
+      updates['extraDesignsUsed'] = 0;
+      print('♻️ All design add-ons fully consumed, resetting to 0');
+    }
+
+    // Check techpack add-ons
+    int totalTechpackAddons = subscription.extraTechpacksPurchased * 1;
+    if (subscription.extraTechpacksUsed >= totalTechpackAddons && totalTechpackAddons > 0) {
+      updates['extraTechpacksPurchased'] = 0;
+      updates['extraTechpacksUsed'] = 0;
+      print('♻️ All techpack add-ons fully consumed, resetting to 0');
+    }
+
+    if (updates.isNotEmpty) {
+      await _firestore.collection('users').doc(userId).update(updates);
     }
   }
 
@@ -385,9 +451,9 @@ class StripeSubscriptionService {
         await Stripe.instance.presentPaymentSheet();
         
         // Payment completed successfully - update user's extra techpacks
-        int packagesToAdd = count == 5 ? 1 : 2; // 5 techpacks = 1 package, 10 techpacks = 2 packages
+        // Each add-on = +1 techpack (€5.99)
         await _firestore.collection('users').doc(user.uid).update({
-          'extraTechpacksPurchased': FieldValue.increment(packagesToAdd),
+          'extraTechpacksPurchased': FieldValue.increment(count),
         });
         
         print('✅ Extra techpacks purchased successfully: $count techpacks for €$price');
@@ -421,12 +487,12 @@ class StripeSubscriptionService {
           'Content-Type': 'application/x-www-form-urlencoded',
         },
         body: {
-          'amount': '399', // €3.99 in cents
+          'amount': '999', // €9.99 in cents
           'currency': 'eur',
           'customer': customerId,
-          'description': 'Extra 20 designs for this month',
+          'description': 'Extra 5 AI designs (one-time purchase)',
           'metadata[firebase_uid]': user.uid,
-          'metadata[extra_designs]': '20',
+          'metadata[extra_designs]': '5',
         },
       );
 
@@ -473,11 +539,11 @@ class StripeSubscriptionService {
     
     
     Map<String, dynamic> updates = {
-      // Always reset monthly counters
+      // Reset monthly usage counters only
       'techpacksUsedThisMonth': 0,
       'designsGeneratedThisMonth': 0,
-      'extraDesignsPurchased': 0,
-      'extraTechpacksPurchased': 0,
+      // NOTE: Add-ons (extraDesignsPurchased, extraTechpacksPurchased) are NOT reset monthly
+      // They persist until fully consumed, then reset to 0
       'currentPeriodStart': FieldValue.serverTimestamp(),
       'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: 30))), // Always 30 days for monthly reset
     };

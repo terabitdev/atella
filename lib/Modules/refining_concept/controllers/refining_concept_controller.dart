@@ -1580,7 +1580,7 @@ class RefiningConceptController extends GetxController {
           final context = Get.context;
           final l10n = context != null ? AppLocalizations.of(context) : null;
           final titleText = l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
-          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '20 extra designs have been added to your account.';
+          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();

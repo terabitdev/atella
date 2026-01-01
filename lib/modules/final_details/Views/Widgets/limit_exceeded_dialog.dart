@@ -59,7 +59,7 @@ class LimitExceededDialog extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -71,6 +71,7 @@ class LimitExceededDialog extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -83,7 +84,7 @@ class LimitExceededDialog extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12.h),
+                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
@@ -95,6 +96,7 @@ class LimitExceededDialog extends StatelessWidget {
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
                       ),
+                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),

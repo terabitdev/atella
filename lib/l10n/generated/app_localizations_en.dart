@@ -1390,7 +1390,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rcSnackbarExtraDesignsAddedMessage =>
-      '20 extra designs have been added to your account.';
+      '5 extra designs have been added to your account.';
 
   @override
   String get rcSnackbarRegeneratingDesigns => 'Regenerating Designs!';
@@ -1579,17 +1579,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fdSnackbarExtraDesignsMessage =>
-      '20 extra designs have been added to your account.';
+      '5 extra designs have been added to your account.';
 
   @override
   String get fdDialogLimitExceeded => 'Limit Exceeded';
 
   @override
   String get fdDialogLimitMessage =>
-      'You have exceeded your limit for this month. You can pay €3.99 for 20 extra designs or upgrade your plan to Starter or Pro.';
+      'You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.';
 
   @override
-  String get fdDialogGetExtraDesigns => 'Get Extra Designs (€3.99)';
+  String get fdDialogGetExtraDesigns => 'Get Extra Designs (€9.99)';
 
   @override
   String get fdDialogUpgradePlan => 'Upgrade Plan';
@@ -1634,7 +1634,7 @@ class AppLocalizationsEn extends AppLocalizations {
       'Upgrade to Starter or Pro to generate tech packs';
 
   @override
-  String get tpGetExtraDesigns => 'Get 20 Extra Designs';
+  String get tpGetExtraDesigns => 'Get 5 Extra Designs';
 
   @override
   String get tpViewPlans => 'View Plans';
@@ -1647,14 +1647,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpFreePlanMessage =>
-      'Free plan users can generate up to 10 designs per month. Upgrade to generate tech packs!';
+      'Free plan users can generate up to 3 designs per month. Upgrade for more designs and tech packs!';
 
   @override
   String get tpProLimitReached => 'Pro Limit Reached';
 
   @override
   String get tpProLimitMessage =>
-      'You\'ve reached your monthly limit. Get 20 extra designs or upgrade to a higher tier!';
+      'You\'ve reached your monthly limit. Get 5 extra designs for €9.99!';
 
   @override
   String get tpSnackbarDesignUpdated => 'Design Updated';
@@ -1689,7 +1689,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpSnackbarPurchaseSuccessMessage =>
-      '20 extra designs added to your account';
+      '5 extra designs added to your account';
 
   @override
   String get tpSnackbarPurchaseFailed => 'Purchase Failed';
@@ -1737,7 +1737,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpDialogExtraTechPacksDescription =>
-      'Get 20 extra designs for just €3.99';
+      'Get 5 extra designs for just €9.99';
 
   @override
   String get tpDialogExtraTechPacksOneTime => 'One-time purchase';
@@ -1746,13 +1746,116 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tpDialogExtraTechPacksNoSubscription => 'No subscription required';
 
   @override
-  String get tpDialogExtraTechPacksExpires => 'Valid until end of month';
+  String get tpDialogExtraTechPacksExpires =>
+      'Does not expire until fully used';
 
   @override
-  String get tpDialogPurchaseFor => 'Purchase for €3.99';
+  String get tpDialogPurchaseFor => 'Purchase for €9.99';
 
   @override
   String get tpDialogUpgradeInstead => 'Upgrade Instead';
+
+  @override
+  String get tpTechpackFeaturePremium =>
+      'Techpack generation is a premium feature.';
+
+  @override
+  String get tpProMonthlyLimitReached =>
+      'You\'ve reached your Pro plan monthly limit of 8 techpacks.';
+
+  @override
+  String get tpStarterYearlyLimitReached =>
+      'You\'ve reached your monthly limit of 2 techpacks (24/year total).';
+
+  @override
+  String get tpStarterMonthlyLimitReached =>
+      'You\'ve reached your monthly limit of 2 techpacks.';
+
+  @override
+  String get tpDialogChoosePlan => 'Choose a plan:';
+
+  @override
+  String get tpDialogUpgradeToPro => 'Upgrade to Pro:';
+
+  @override
+  String tpDialogCurrentPlan(String plan) {
+    return 'Current Plan: $plan';
+  }
+
+  @override
+  String tpDialogRemainingTechpacksPro(int remaining) {
+    return 'Remaining: $remaining/8 techpacks this month';
+  }
+
+  @override
+  String tpDialogRemainingTechpacksStarter(int remaining) {
+    return 'Remaining: $remaining/2 this month';
+  }
+
+  @override
+  String get tpDialogStarterPlanOption =>
+      'Starter: 2 techpacks/month (€14.99/mo or €149/yr)';
+
+  @override
+  String get tpDialogProPlanOption =>
+      'Pro: 8 techpacks/month (€34.99/mo or €349/yr)';
+
+  @override
+  String get tpDialogProUpgradeOption => 'Pro: 8 techpacks/month';
+
+  @override
+  String get tpDialogExtraTechpackOption =>
+      'Purchase extra techpacks: +1 for €5.99';
+
+  @override
+  String get tpDialogFeatureCustomPDFExport =>
+      'Custom PDF export with your logo';
+
+  @override
+  String get tpDialogFeatureManufacturerAccess =>
+      'Access to manufacturers list';
+
+  @override
+  String get tpDialogFeatureUnlimited3D => 'Unlimited 3D visualization';
+
+  @override
+  String get tpDialogFeatureProfessionalPDF =>
+      'Professional PDF techpack exports';
+
+  @override
+  String get tpDialogFeatureManufacturerDB => 'Access to manufacturer database';
+
+  @override
+  String get tpDialogUpgradeNow => 'Upgrade Now';
+
+  @override
+  String get tpDialogTechpackPremiumRequired =>
+      'Final techpack generation requires a premium plan.';
+
+  @override
+  String get tpProLimitDialogTitle => 'Monthly Limit Reached';
+
+  @override
+  String get tpProLimitDialogProPlan => 'Pro Plan: ';
+
+  @override
+  String tpProLimitDialogMonthlyUsed(int used) {
+    return 'Monthly limit reached: $used/8 techpacks used';
+  }
+
+  @override
+  String get tpProLimitDialogMessage =>
+      'You\'ve reached your Pro plan monthly limit of 8 techpacks. Purchase additional techpacks to continue:';
+
+  @override
+  String get tpProLimitDialogTechpackPrice => '+1 Techpack: €5.99';
+
+  @override
+  String get tpProLimitDialogTechpackDescription =>
+      'Get 1 additional techpack (one-time purchase, does not auto-renew)';
+
+  @override
+  String get tpProLimitDialogPurchaseButton => 'Purchase +1 Techpack';
 
   @override
   String get mfManufacturerSuggestions => 'Manufacturer Suggestions';
