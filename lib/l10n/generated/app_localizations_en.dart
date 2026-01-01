@@ -337,13 +337,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get starterMonthlyPrice => 'Starter €14.99/Month';
 
   @override
-  String get starterYearlyPrice => 'Starter €149/Year';
+  String get starterYearlyPrice => 'Starter €149.99/Year';
 
   @override
   String get proMonthlyPrice => 'Pro €34.99/Month';
 
   @override
-  String get proYearlyPrice => 'Pro €349/Year';
+  String get proYearlyPrice => 'Pro €349.99/Year';
 
   @override
   String get proDesignLimit => '15 AI design generations per month';
@@ -1825,11 +1825,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpDialogStarterPlanOption =>
-      'Starter: 2 techpacks/month (€14.99/mo or €149/yr)';
+      'Starter: 2 techpacks/month (€14.99/mo or €149.99/yr)';
 
   @override
   String get tpDialogProPlanOption =>
-      'Pro: 8 techpacks/month (€34.99/mo or €349/yr)';
+      'Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)';
 
   @override
   String get tpDialogProUpgradeOption => 'Pro: 8 techpacks/month';

@@ -456,7 +456,7 @@
   "@starterMonthlyPrice": {
     "description": "Starter plan monthly price"
   },
-  "starterYearlyPrice": "Starter €149/Year",
+  "starterYearlyPrice": "Starter €149.99/Year",
   "@starterYearlyPrice": {
     "description": "Starter plan yearly price"
   },
@@ -464,7 +464,7 @@
   "@proMonthlyPrice": {
     "description": "Pro plan monthly price"
   },
-  "proYearlyPrice": "Pro €349/Year",
+  "proYearlyPrice": "Pro €349.99/Year",
   "@proYearlyPrice": {
     "description": "Pro plan yearly price"
   },
@@ -2070,11 +2070,11 @@
       }
     }
   },
-  "tpDialogStarterPlanOption": "Starter: 2 techpacks/month (€14.99/mo or €149/yr)",
+  "tpDialogStarterPlanOption": "Starter: 2 techpacks/month (€14.99/mo or €149.99/yr)",
   "@tpDialogStarterPlanOption": {
     "description": "Starter plan option in upgrade dialog"
   },
-  "tpDialogProPlanOption": "Pro: 8 techpacks/month (€34.99/mo or €349/yr)",
+  "tpDialogProPlanOption": "Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)",
   "@tpDialogProPlanOption": {
     "description": "Pro plan option in upgrade dialog"
   },

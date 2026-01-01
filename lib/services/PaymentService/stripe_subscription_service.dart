@@ -800,11 +800,11 @@ class StripeSubscriptionService {
       case 'STARTER':
         return 'Starter (€14.99/month)';
       case 'STARTER_YEARLY':
-        return 'Starter (€149/year)';
+        return 'Starter (€149.99/year)';
       case 'PRO':
         return 'Pro (€34.99/month)';
       case 'PRO_YEARLY':
-        return 'Pro (€349/year)';
+        return 'Pro (€349.99/year)';
       default:
         return 'Free';
     }

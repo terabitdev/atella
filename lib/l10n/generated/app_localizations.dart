@@ -719,7 +719,7 @@ abstract class AppLocalizations {
   /// Starter plan yearly price
   ///
   /// In en, this message translates to:
-  /// **'Starter €149/Year'**
+  /// **'Starter €149.99/Year'**
   String get starterYearlyPrice;
 
   /// Pro plan monthly price
@@ -731,7 +731,7 @@ abstract class AppLocalizations {
   /// Pro plan yearly price
   ///
   /// In en, this message translates to:
-  /// **'Pro €349/Year'**
+  /// **'Pro €349.99/Year'**
   String get proYearlyPrice;
 
   /// Pro plan design limit
@@ -3461,13 +3461,13 @@ abstract class AppLocalizations {
   /// Starter plan option in upgrade dialog
   ///
   /// In en, this message translates to:
-  /// **'Starter: 2 techpacks/month (€14.99/mo or €149/yr)'**
+  /// **'Starter: 2 techpacks/month (€14.99/mo or €149.99/yr)'**
   String get tpDialogStarterPlanOption;
 
   /// Pro plan option in upgrade dialog
   ///
   /// In en, this message translates to:
-  /// **'Pro: 8 techpacks/month (€34.99/mo or €349/yr)'**
+  /// **'Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)'**
   String get tpDialogProPlanOption;
 
   /// Pro upgrade option for Starter users

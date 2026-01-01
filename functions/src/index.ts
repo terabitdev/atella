@@ -272,11 +272,11 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 // Helper function to map price IDs to plan names
 function getPlanNameFromPriceId(priceId: string): string {
   switch (priceId) {
-    case 'price_1RxPj0B0j1hBhcav6vIJlc1C': // STARTER monthly
+    case 'price_1SkpjzB0j1hBhcavgG4UB87r': // STARTER monthly
       return 'STARTER';
-    case 'price_1RyT4WB0j1hBhcavwtIZ1kOU': // STARTER yearly
+    case 'price_1Skpl7B0j1hBhcav7os5P9pw': // STARTER yearly
       return 'STARTER_YEARLY';
-    case 'price_1RxPlDB0j1hBhcavA9lDOp9F': // PRO monthly
+    case 'price_1SkpjMB0j1hBhcavs7UzslCL': // PRO monthly
       return 'PRO';
     case 'price_1SklhgB0j1hBhcavEji0sk0o': // PRO yearly
       return 'PRO_YEARLY';

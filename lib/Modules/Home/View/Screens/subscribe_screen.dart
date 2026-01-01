@@ -226,8 +226,8 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                       children: [
                         Text(
                           plan.type == SubscriptionPlanType.STARTER
-                              ? '€149${l10n.perYear}'
-                              : '€349${l10n.perYear}',
+                              ? '€149.99${l10n.perYear}'
+                              : '€349.99${l10n.perYear}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Colors.grey[600],

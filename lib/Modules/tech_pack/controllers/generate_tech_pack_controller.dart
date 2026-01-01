@@ -623,11 +623,11 @@ class TechPackController extends GetxController {
       case 'STARTER':
         return '${_l10n.tpPlanStarter} (€14.99/month)';
       case 'STARTER_YEARLY':
-        return '${_l10n.tpPlanStarter} (€149/year)';
+        return '${_l10n.tpPlanStarter} (€149.99/year)';
       case 'PRO':
         return '${_l10n.tpPlanPro} (€34.99/month)';
       case 'PRO_YEARLY':
-        return '${_l10n.tpPlanPro} (€349/year)';
+        return '${_l10n.tpPlanPro} (€349.99/year)';
       default:
         return _l10n.tpPlanFree;
     }
