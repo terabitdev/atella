@@ -319,9 +319,15 @@ class SubscribeController extends GetxController {
   }
 
   SubscriptionPlan getProPlan() {
-    return isYearlyBilling.value 
-        ? SubscriptionPlan.proYearlyPlan 
+    return isYearlyBilling.value
+        ? SubscriptionPlan.proYearlyPlan
         : SubscriptionPlan.proPlan;
+  }
+
+  SubscriptionPlan getStudioPlan() {
+    return isYearlyBilling.value
+        ? SubscriptionPlan.studioYearlyPlan
+        : SubscriptionPlan.studioPlan;
   }
 
   String getStarterPriceText() {
@@ -334,5 +340,11 @@ class SubscribeController extends GetxController {
     return isYearlyBilling.value
         ? 'Pro €349.99/Year'
         : 'Pro €34.99/Month';
+  }
+
+  String getStudioPriceText() {
+    return isYearlyBilling.value
+        ? 'Studio €799.99/Year'
+        : 'Studio €79.99/Month';
   }
 }

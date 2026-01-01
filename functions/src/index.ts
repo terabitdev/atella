@@ -280,6 +280,10 @@ function getPlanNameFromPriceId(priceId: string): string {
       return 'PRO';
     case 'price_1SklhgB0j1hBhcavEji0sk0o': // PRO yearly
       return 'PRO_YEARLY';
+    case 'price_1SkqNeB0j1hBhcavJhDuJAbm': // STUDIO monthly
+      return 'STUDIO';
+    case 'price_1SkqO3B0j1hBhcavvZewFYVF': // STUDIO yearly
+      return 'STUDIO_YEARLY';
     default:
       return 'FREE';
   }

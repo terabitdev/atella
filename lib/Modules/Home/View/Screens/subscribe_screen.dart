@@ -118,6 +118,15 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                             },
                             l10n: l10n,
                           ),
+                          SizedBox(height: 16.h),
+                          _buildPlanCard(
+                            plan: SubscriptionPlan.studioPlan,
+                            isSelected: controller.selectedPlan.value == 'STUDIO' || controller.selectedPlan.value == 'STUDIO_YEARLY',
+                            onTap: () {
+                              Get.toNamed("/subscribe_studio");
+                            },
+                            l10n: l10n,
+                          ),
                         ],
                       )),
                     ],
@@ -227,7 +236,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                         Text(
                           plan.type == SubscriptionPlanType.STARTER
                               ? '€149.99${l10n.perYear}'
-                              : '€349.99${l10n.perYear}',
+                              : plan.type == SubscriptionPlanType.PRO
+                                  ? '€349.99${l10n.perYear}'
+                                  : '€799.99${l10n.perYear}',
                           style: TextStyle(
                             fontSize: 12.sp,
                             color: Colors.grey[600],
@@ -297,6 +308,51 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
               Obx(() {
                 final subscription = controller.currentSubscription.value;
                 if (subscription != null && (subscription.subscriptionPlan == 'PRO' || subscription.subscriptionPlan == 'PRO_YEARLY')) {
+                  return Padding(
+                    padding: EdgeInsets.only(top: 6.h),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        // Design usage counter
+                        Text(
+                          l10n.designsUsed(
+                            subscription.designsUsedCount,
+                            subscription.designsTotalCount,
+                          ),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingDesigns > 0
+                                ? Colors.grey[700]
+                                : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 4.h),
+                        // Techpack usage counter
+                        Text(
+                          l10n.techpacksUsed(
+                            subscription.techpacksUsedCount,
+                            subscription.techpacksTotalCount,
+                          ),
+                          style: TextStyle(
+                            fontSize: 12.sp,
+                            color: subscription.remainingTechpacks > 0
+                                ? Colors.grey[700]
+                                : Colors.red[600],
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+                return SizedBox.shrink();
+              }),
+            // Show design and techpack usage for Studio plan users (monthly and yearly)
+            if (plan.type == SubscriptionPlanType.STUDIO && isSelected)
+              Obx(() {
+                final subscription = controller.currentSubscription.value;
+                if (subscription != null && (subscription.subscriptionPlan == 'STUDIO' || subscription.subscriptionPlan == 'STUDIO_YEARLY')) {
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Column(

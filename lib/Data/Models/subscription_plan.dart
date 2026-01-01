@@ -2,6 +2,7 @@ enum SubscriptionPlanType {
   FREE,
   STARTER,
   PRO,
+  STUDIO,
 }
 
 enum BillingPeriod {
@@ -145,12 +146,59 @@ class SubscriptionPlan {
     billingPeriod: BillingPeriod.YEARLY,
   );
 
+  static const SubscriptionPlan studioPlan = SubscriptionPlan(
+    type: SubscriptionPlanType.STUDIO,
+    name: 'STUDIO',
+    displayName: 'Studio',
+    price: 79.99,
+    yearlyPrice: 799.99,
+    currency: 'EUR',
+    stripePriceId: 'price_1SkqNeB0j1hBhcavJhDuJAbm', // Monthly Stripe price ID
+    stripeYearlyPriceId: 'price_1SkqO3B0j1hBhcavvZewFYVF', // Yearly Stripe price ID
+    features: [
+      '35 AI design generations per month',
+      '16 techpacks per month',
+      'Priority access',
+      'Full branding',
+      'Full exports',
+      'Factory access',
+    ],
+    techpackLimit: 16,
+    hasCustomPDFExport: true,
+    hasManufacturerAccess: true,
+    billingPeriod: BillingPeriod.MONTHLY,
+  );
+
+  static const SubscriptionPlan studioYearlyPlan = SubscriptionPlan(
+    type: SubscriptionPlanType.STUDIO,
+    name: 'STUDIO_YEARLY',
+    displayName: 'Studio (Yearly)',
+    price: 799.99,
+    yearlyPrice: 799.99,
+    currency: 'EUR',
+    stripePriceId: 'price_1SkqO3B0j1hBhcavvZewFYVF', // Yearly Stripe price ID
+    features: [
+      '35 AI design generations per month',
+      '16 techpacks per month',
+      'Priority access',
+      'Full branding',
+      'Full exports',
+      'Factory access',
+    ],
+    techpackLimit: 16,
+    hasCustomPDFExport: true,
+    hasManufacturerAccess: true,
+    billingPeriod: BillingPeriod.YEARLY,
+  );
+
   static List<SubscriptionPlan> get allPlans => [
         freePlan,
         starterPlan,
         starterYearlyPlan,
         proPlan,
         proYearlyPlan,
+        studioPlan,
+        studioYearlyPlan,
       ];
 
   static SubscriptionPlan getPlanByType(SubscriptionPlanType type) {
@@ -161,6 +209,8 @@ class SubscriptionPlan {
         return starterPlan;
       case SubscriptionPlanType.PRO:
         return proPlan;
+      case SubscriptionPlanType.STUDIO:
+        return studioPlan;
     }
   }
 
@@ -174,6 +224,10 @@ class SubscriptionPlan {
         return proPlan;
       case 'PRO_YEARLY':
         return proYearlyPlan;
+      case 'STUDIO':
+        return studioPlan;
+      case 'STUDIO_YEARLY':
+        return studioYearlyPlan;
       default:
         return freePlan;
     }
@@ -181,15 +235,19 @@ class SubscriptionPlan {
 
   static SubscriptionPlan getPlanByTypeAndPeriod(SubscriptionPlanType type, BillingPeriod period) {
     if (type == SubscriptionPlanType.FREE) return freePlan;
-    
+
     if (type == SubscriptionPlanType.STARTER) {
       return period == BillingPeriod.YEARLY ? starterYearlyPlan : starterPlan;
     }
-    
+
     if (type == SubscriptionPlanType.PRO) {
       return period == BillingPeriod.YEARLY ? proYearlyPlan : proPlan;
     }
-    
+
+    if (type == SubscriptionPlanType.STUDIO) {
+      return period == BillingPeriod.YEARLY ? studioYearlyPlan : studioPlan;
+    }
+
     return freePlan;
   }
 }

@@ -92,6 +92,17 @@ class UserSubscription {
 
     bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
 
+    if (subscriptionPlan.startsWith('STUDIO')) {
+      int baseLimit = 16;
+      // Check if user has consumed all monthly quota
+      if (techpacksUsedThisMonth < baseLimit) {
+        return true; // Still have monthly quota
+      }
+      // Monthly quota exhausted, check add-ons
+      int totalAddonsPurchased = extraTechpacksPurchased * 1; // Each add-on = +1 techpack
+      int addonsAvailable = totalAddonsPurchased - extraTechpacksUsed;
+      return addonsAvailable > 0;
+    }
     if (subscriptionPlan.startsWith('PRO')) {
       int baseLimit = 8;
       // Check if user has consumed all monthly quota
@@ -125,7 +136,9 @@ class UserSubscription {
   int get totalAllowedTechpacks {
     // Return base limit + total add-ons purchased (not remaining)
     int baseLimit = 0;
-    if (subscriptionPlan.startsWith('PRO')) {
+    if (subscriptionPlan.startsWith('STUDIO')) {
+      baseLimit = 16;
+    } else if (subscriptionPlan.startsWith('PRO')) {
       baseLimit = 8;
     } else if (subscriptionPlan.startsWith('STARTER')) {
       baseLimit = 2;
@@ -135,7 +148,7 @@ class UserSubscription {
   }
 
   int get remainingTechpacks {
-    if (subscriptionPlan.startsWith('PRO') || subscriptionPlan.startsWith('STARTER')) {
+    if (subscriptionPlan.startsWith('STUDIO') || subscriptionPlan.startsWith('PRO') || subscriptionPlan.startsWith('STARTER')) {
       // Always use monthly count for remaining techpacks
       int totalAllowed = totalAllowedTechpacks;
       return totalAllowed - techpacksUsedThisMonth;
@@ -165,6 +178,7 @@ class UserSubscription {
   }
 
   int _getBaseDesignLimit() {
+    if (subscriptionPlan.startsWith('STUDIO')) return 35;
     if (subscriptionPlan.startsWith('PRO')) return 15;
     if (subscriptionPlan.startsWith('STARTER')) return 5;
     return 3; // FREE
@@ -225,7 +239,9 @@ class UserSubscription {
 
     // Get base limit only (without add-ons)
     int baseLimit = 0;
-    if (subscriptionPlan.startsWith('PRO')) {
+    if (subscriptionPlan.startsWith('STUDIO')) {
+      baseLimit = 16;
+    } else if (subscriptionPlan.startsWith('PRO')) {
       baseLimit = 8;
     } else if (subscriptionPlan.startsWith('STARTER')) {
       baseLimit = 2;

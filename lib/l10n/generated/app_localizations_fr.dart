@@ -356,6 +356,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get proDesignLimit => '15 générations de designs IA par mois';
 
   @override
+  String get studioMonthlyPrice => 'Studio €79,99/Mois';
+
+  @override
+  String get studioYearlyPrice => 'Studio €799,99/An';
+
+  @override
+  String get studioDesignLimit => '35 générations de designs IA par mois';
+
+  @override
   String get perMonth => '/Mois';
 
   @override
@@ -1858,6 +1867,15 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tpDialogProPlanOption =>
       'Pro : 8 dossiers techniques/mois (34,99€/mois ou 349,99€/an)';
+
+  @override
+  String get tpDialogStudioPlanOption =>
+      'Studio : 16 dossiers techniques/mois (79,99€/mois ou 799,99€/an)';
+
+  @override
+  String tpDialogRemainingTechpacksStudio(int remaining) {
+    return 'Restant : $remaining/16 ce mois-ci';
+  }
 
   @override
   String get tpDialogProUpgradeOption => 'Pro : 8 dossiers techniques/mois';

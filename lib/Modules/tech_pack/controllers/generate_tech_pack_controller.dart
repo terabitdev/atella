@@ -616,7 +616,7 @@ class TechPackController extends GetxController {
   }
 
   String _getPlanDisplayName(String plan) {
-    // CRITICAL: 'plan' parameter stays in English (FREE, STARTER, PRO) - only return value is localized
+    // CRITICAL: 'plan' parameter stays in English (FREE, STARTER, PRO, STUDIO) - only return value is localized
     switch (plan) {
       case 'FREE':
         return _l10n.tpPlanFree;
@@ -628,6 +628,10 @@ class TechPackController extends GetxController {
         return '${_l10n.tpPlanPro} (€34.99/month)';
       case 'PRO_YEARLY':
         return '${_l10n.tpPlanPro} (€349.99/year)';
+      case 'STUDIO':
+        return 'Studio (€79.99/month)';
+      case 'STUDIO_YEARLY':
+        return 'Studio (€799.99/year)';
       default:
         return _l10n.tpPlanFree;
     }

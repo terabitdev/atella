@@ -349,6 +349,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get proDesignLimit => '15 AI design generations per month';
 
   @override
+  String get studioMonthlyPrice => 'Studio €79.99/Month';
+
+  @override
+  String get studioYearlyPrice => 'Studio €799.99/Year';
+
+  @override
+  String get studioDesignLimit => '35 AI design generations per month';
+
+  @override
   String get perMonth => '/Month';
 
   @override
@@ -1830,6 +1839,15 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tpDialogProPlanOption =>
       'Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)';
+
+  @override
+  String get tpDialogStudioPlanOption =>
+      'Studio: 16 techpacks/month (€79.99/mo or €799.99/yr)';
+
+  @override
+  String tpDialogRemainingTechpacksStudio(int remaining) {
+    return 'Remaining: $remaining/16 this month';
+  }
 
   @override
   String get tpDialogProUpgradeOption => 'Pro: 8 techpacks/month';

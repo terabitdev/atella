@@ -1320,6 +1320,10 @@ class TechPackDetailsController extends GetxController {
         return 'Pro (€34.99/month)';
       case 'PRO_YEARLY':
         return 'Pro (€349.99/year)';
+      case 'STUDIO':
+        return 'Studio (€79.99/month)';
+      case 'STUDIO_YEARLY':
+        return 'Studio (€799.99/year)';
       default:
         return 'Free';
     }

@@ -21,6 +21,7 @@ import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
+import 'package:atella/Modules/Home/View/Screens/subscribe_studio_plan.dart';
 import 'package:atella/Modules/Home/bindings/subscribe_binding.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refining_brief_screen.dart';
@@ -128,6 +129,7 @@ class AppPages {
       page: () => const SubscribeStarterPlan(),
     ),
     GetPage(name: AppRoutes.subscribePro, page: () => const SubscribeProPlan()),
+    GetPage(name: AppRoutes.subscribeStudio, page: () => const SubscribeStudioPlan()),
     // Add more routes here
   ];
 }
