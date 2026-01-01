@@ -6,13 +6,28 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import '../../Controllers/subscribe_controller.dart';
 
-class SubscribeFreePlan extends StatelessWidget {
+class SubscribeFreePlan extends StatefulWidget {
   const SubscribeFreePlan({super.key});
+
+  @override
+  State<SubscribeFreePlan> createState() => _SubscribeFreePlanState();
+}
+
+class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
+  final SubscribeController controller = Get.find<SubscribeController>();
+
+  @override
+  void initState() {
+    super.initState();
+    // Refresh subscription data when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadCurrentSubscription();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
-    final SubscribeController controller = Get.find<SubscribeController>();
     return Scaffold(
       backgroundColor: Colors.black,
       body: SafeArea(

@@ -293,6 +293,12 @@ class SubscribeController extends GetxController {
     }
   }
 
+  // One-time fix: Reset add-on counters for current user
+  Future<void> resetAddOnCounters() async {
+    await _stripeService.resetAddOnCounters();
+    await loadCurrentSubscription();
+  }
+
   bool get canGenerateTechpack {
     return currentSubscription.value?.canGenerateTechpack ?? false;
   }

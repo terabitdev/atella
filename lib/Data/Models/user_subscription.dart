@@ -85,6 +85,9 @@ class UserSubscription {
   }
 
   bool get canGenerateTechpack {
+    // CRITICAL: Only allow if subscription is actually active or in trial
+    if (subscriptionStatus != 'active' && subscriptionStatus != 'trialing') return false;
+
     if (subscriptionPlan == 'FREE') return false;
 
     bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
@@ -120,7 +123,7 @@ class UserSubscription {
   }
 
   int get totalAllowedTechpacks {
-    // Return base limit + remaining add-ons
+    // Return base limit + total add-ons purchased (not remaining)
     int baseLimit = 0;
     if (subscriptionPlan.startsWith('PRO')) {
       baseLimit = 8;
@@ -128,8 +131,7 @@ class UserSubscription {
       baseLimit = 2;
     }
     int totalAddonsPurchased = extraTechpacksPurchased * 1; // Each add-on = +1 techpack
-    int addonsRemaining = totalAddonsPurchased - extraTechpacksUsed;
-    return baseLimit + addonsRemaining;
+    return baseLimit + totalAddonsPurchased;
   }
 
   int get remainingTechpacks {
@@ -142,6 +144,15 @@ class UserSubscription {
   }
 
   bool get canGenerateDesign {
+    // For FREE users, only check quotas (no subscription status check needed)
+    if (subscriptionPlan == 'FREE') {
+      int baseLimit = _getBaseDesignLimit();
+      return designsGeneratedThisMonth < baseLimit;
+    }
+
+    // CRITICAL: For paid plans, validate subscription is active
+    if (subscriptionStatus != 'active' && subscriptionStatus != 'trialing') return false;
+
     int baseLimit = _getBaseDesignLimit();
     // Check if user has consumed all monthly quota
     if (designsGeneratedThisMonth < baseLimit) {
@@ -160,11 +171,10 @@ class UserSubscription {
   }
 
   int getTotalAllowedDesigns() {
-    // Return base limit + remaining add-ons
+    // Return base limit + total add-ons purchased (not remaining)
     int baseDesigns = _getBaseDesignLimit();
     int totalAddonsPurchased = extraDesignsPurchased * 5; // Each add-on = +5 designs
-    int addonsRemaining = totalAddonsPurchased - extraDesignsUsed;
-    return baseDesigns + addonsRemaining;
+    return baseDesigns + totalAddonsPurchased;
   }
 
   int get remainingDesigns {
@@ -195,18 +205,33 @@ class UserSubscription {
   }
 
   // Check if user is at 80% usage threshold (for warning modals)
+  // NOTE: This checks ONLY against base plan limit, NOT including add-ons
+  // If user has purchased add-ons, don't show warning for rest of the month
   bool get isDesignUsageAt80Percent {
-    int total = getTotalAllowedDesigns();
-    if (total == 0) return false; // No quota
-    double usagePercent = (designsGeneratedThisMonth / total) * 100;
+    // Don't show warning if user has purchased add-ons this month
+    if (extraDesignsPurchased > 0) return false;
+
+    int baseLimit = _getBaseDesignLimit(); // Base plan limit only
+    if (baseLimit == 0) return false; // No quota
+    double usagePercent = (designsGeneratedThisMonth / baseLimit) * 100;
     return usagePercent >= 80 && usagePercent < 100;
   }
 
   bool get isTechpackUsageAt80Percent {
     if (subscriptionPlan == 'FREE') return false;
-    int total = totalAllowedTechpacks;
-    if (total == 0) return false;
-    double usagePercent = (techpacksUsedThisMonth / total) * 100;
+
+    // Don't show warning if user has purchased add-ons this month
+    if (extraTechpacksPurchased > 0) return false;
+
+    // Get base limit only (without add-ons)
+    int baseLimit = 0;
+    if (subscriptionPlan.startsWith('PRO')) {
+      baseLimit = 8;
+    } else if (subscriptionPlan.startsWith('STARTER')) {
+      baseLimit = 2;
+    }
+    if (baseLimit == 0) return false;
+    double usagePercent = (techpacksUsedThisMonth / baseLimit) * 100;
     return usagePercent >= 80 && usagePercent < 100;
   }
 

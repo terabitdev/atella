@@ -395,7 +395,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get cancelSubscriptionMessage =>
-      'We\'re sorry to see you go. Please let us know why:';
+      'We\'re sorry to see you go. Please let us know why:\n\n⚠️ Warning: Upon canceling, any purchased extra designs and techpacks will be lost.';
 
   @override
   String get pleaseSpecify => 'Please specify...';
@@ -1589,6 +1589,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.';
 
   @override
+  String get fdDialogLimitMessageFree =>
+      'You have exceeded your free plan limit for this month. Upgrade to Starter or Pro to continue creating designs.';
+
+  @override
   String get fdDialogGetExtraDesigns => 'Get Extra Designs (€9.99)';
 
   @override
@@ -1596,6 +1600,33 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fdDialogMaybeLater => 'Maybe Later';
+
+  @override
+  String get fdDialog80PercentTitle => 'Almost at Your Limit!';
+
+  @override
+  String fdDialog80PercentMessage(int used, int total) {
+    return 'You\'ve used $used of $total designs this month. Consider upgrading or purchasing extra designs to continue creating.';
+  }
+
+  @override
+  String fdDialog80PercentMessageFree(int used, int total) {
+    return 'You\'ve used $used of $total designs this month. Upgrade to Starter or Pro for more designs.';
+  }
+
+  @override
+  String get fdDialog80PercentContinue => 'Continue Anyway';
+
+  @override
+  String get tpDialog80PercentTitle => 'Almost at Your Techpack Limit!';
+
+  @override
+  String tpDialog80PercentMessage(int used, int total) {
+    return 'You\'ve used $used of $total techpacks this month. Consider upgrading to continue generating techpacks.';
+  }
+
+  @override
+  String get tpDialog80PercentContinue => 'Continue Anyway';
 
   @override
   String get tpDesignAssistant => 'Design Assistant';

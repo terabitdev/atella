@@ -20,9 +20,9 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
   @override
   void initState() {
     super.initState();
-    // Reset to current plan when screen loads
+    // Refresh subscription data and reset to current plan when screen loads
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      controller.resetToCurrentPlan();
+      controller.loadCurrentSubscription();
     });
   }
 

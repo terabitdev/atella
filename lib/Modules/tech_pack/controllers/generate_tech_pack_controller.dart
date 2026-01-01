@@ -11,6 +11,7 @@ import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackController extends GetxController {
@@ -237,6 +238,13 @@ class TechPackController extends GetxController {
   }
 
   void onContinueWithDesign(int selectedIndex) async {
+    // Check for 80% usage warning first
+    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    if (subscription != null && subscription.isTechpackUsageAt80Percent) {
+      _show80PercentTechpackWarningDialog(subscription, selectedIndex);
+      return;
+    }
+
     // Check subscription before allowing techpack generation (with monthly reset check)
     bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
       'techpack',
@@ -288,6 +296,13 @@ class TechPackController extends GetxController {
       return;
     }
 
+    // Check for 80% usage warning first
+    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    if (subscription != null && subscription.isTechpackUsageAt80Percent) {
+      _show80PercentTechpackWarningDialog(subscription, selectedDesignIndex.value);
+      return;
+    }
+
     // Check subscription before allowing techpack generation (with monthly reset check)
     bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
       'techpack',
@@ -301,7 +316,7 @@ class TechPackController extends GetxController {
 
     if (selectedDesignIndex.value >= 0 &&
         selectedDesignIndex.value < generatedImages.length) {
-    
+
     if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
       // Track tech pack creation started
       PostHogAnalyticsService().trackTechPackStarted();
@@ -778,6 +793,61 @@ class TechPackController extends GetxController {
         ],
       ),
       barrierDismissible: true,
+    );
+  }
+
+  // Show 80% techpack usage warning dialog
+  void _show80PercentTechpackWarningDialog(subscription, int selectedIndex) async {
+    final int usedCount = subscription.techpacksUsedThisMonth;
+    final int totalCount = subscription.totalAllowedTechpacks;
+    // Check if user is on a paid plan (STARTER or PRO)
+    final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
+                           subscription.subscriptionPlan.startsWith('PRO');
+
+    Get.dialog(
+      UsageWarningDialog(
+        usedCount: usedCount,
+        totalCount: totalCount,
+        isDesign: false, // This is for techpacks
+        isPaidUser: isPaidUser,
+        onGetExtraDesigns: () {
+          // Not used for techpacks, but required by widget
+          Get.back();
+        },
+        onUpgradePlan: () {
+          Get.back(); // Close dialog
+          // Navigate to subscription screen
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/generate_tech_pack',
+              'showSuccessMessage': true,
+            },
+          );
+        },
+        onContinue: () {
+          Get.back(); // Close dialog and continue with techpack generation
+          // Continue with the selected design based on which method called this
+          if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
+            // Prepare arguments for tech pack details
+            Map<String, dynamic> arguments = {
+              'selectedDesignUrl': generatedImages[selectedIndex],
+              'designPrompt': currentPrompt.value,
+              'designData': _dataService.getAllDesignData(),
+            };
+
+            // Add edit mode data if applicable
+            if (_isEditMode.value && _editingTechPack != null) {
+              arguments['editMode'] = true;
+              arguments['techPackModel'] = _editingTechPack;
+            }
+
+            // Navigate to tech pack details with arguments
+            Get.toNamed('/tech_pack_details_screen', arguments: arguments);
+          }
+        },
+      ),
+      barrierDismissible: false,
     );
   }
 

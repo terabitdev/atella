@@ -3,17 +3,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
-class LimitExceededDialog extends StatelessWidget {
+class UsageWarningDialog extends StatelessWidget {
+  final int usedCount;
+  final int totalCount;
   final VoidCallback onGetExtraDesigns;
   final VoidCallback onUpgradePlan;
-  final VoidCallback onMaybeLater;
+  final VoidCallback onContinue;
+  final bool isDesign; // true for designs, false for techpacks
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
 
-  const LimitExceededDialog({
+  const UsageWarningDialog({
     Key? key,
+    required this.usedCount,
+    required this.totalCount,
     required this.onGetExtraDesigns,
     required this.onUpgradePlan,
-    required this.onMaybeLater,
+    required this.onContinue,
+    this.isDesign = true,
     this.isPaidUser = false, // Default to false (FREE user)
   }) : super(key: key);
 
@@ -30,22 +36,27 @@ class LimitExceededDialog extends StatelessWidget {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Alert Icon
+            // Warning Icon
             Icon(
-              Icons.warning_amber_rounded,
+              Icons.info_outline_rounded,
               size: 60.h,
-              color: Colors.red,
+              color: Colors.orange,
             ),
             SizedBox(height: 16.h),
             // Title
             Text(
-              l10n.fdDialogLimitExceeded,
-              style: ssTitleTextTextStyle186004,
+              isDesign ? l10n.fdDialog80PercentTitle : l10n.tpDialog80PercentTitle,
+              style: ssTitleTextTextStyle186004.copyWith(color: Colors.orange[800]),
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
             // Message (conditional based on user type)
             Text(
-              isPaidUser ? l10n.fdDialogLimitMessage : l10n.fdDialogLimitMessageFree,
+              isDesign
+                ? (isPaidUser
+                    ? l10n.fdDialog80PercentMessage(usedCount, totalCount)
+                    : l10n.fdDialog80PercentMessageFree(usedCount, totalCount))
+                : l10n.tpDialog80PercentMessage(usedCount, totalCount),
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
@@ -53,8 +64,8 @@ class LimitExceededDialog extends StatelessWidget {
             // Buttons
             Column(
               children: [
-                // Get Extra Designs Button (only show for paid users)
-                if (isPaidUser) ...[
+                // Get Extra Designs Button (only for paid users with designs)
+                if (isDesign && isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -105,11 +116,11 @@ class LimitExceededDialog extends StatelessWidget {
                   ),
                 ),
                 SizedBox(height: 12.h),
-                // Maybe Later Button
+                // Continue Anyway Button
                 TextButton(
-                  onPressed: onMaybeLater,
+                  onPressed: onContinue,
                   child: Text(
-                    l10n.fdDialogMaybeLater,
+                    isDesign ? l10n.fdDialog80PercentContinue : l10n.tpDialog80PercentContinue,
                     style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,

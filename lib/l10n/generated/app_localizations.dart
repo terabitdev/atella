@@ -833,7 +833,7 @@ abstract class AppLocalizations {
   /// Cancel subscription dialog message
   ///
   /// In en, this message translates to:
-  /// **'We\'re sorry to see you go. Please let us know why:'**
+  /// **'We\'re sorry to see you go. Please let us know why:\n\n⚠️ Warning: Upon canceling, any purchased extra designs and techpacks will be lost.'**
   String get cancelSubscriptionMessage;
 
   /// Please specify placeholder
@@ -3044,11 +3044,17 @@ abstract class AppLocalizations {
   /// **'Limit Exceeded'**
   String get fdDialogLimitExceeded;
 
-  /// Limit exceeded dialog message
+  /// Limit exceeded dialog message for paid users
   ///
   /// In en, this message translates to:
   /// **'You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.'**
   String get fdDialogLimitMessage;
+
+  /// Limit exceeded dialog message for FREE users
+  ///
+  /// In en, this message translates to:
+  /// **'You have exceeded your free plan limit for this month. Upgrade to Starter or Pro to continue creating designs.'**
+  String get fdDialogLimitMessageFree;
 
   /// Get extra designs button text
   ///
@@ -3067,6 +3073,48 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Maybe Later'**
   String get fdDialogMaybeLater;
+
+  /// Title for 80% usage warning dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Almost at Your Limit!'**
+  String get fdDialog80PercentTitle;
+
+  /// Message for 80% design usage warning for paid users
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {used} of {total} designs this month. Consider upgrading or purchasing extra designs to continue creating.'**
+  String fdDialog80PercentMessage(int used, int total);
+
+  /// Message for 80% design usage warning for FREE users
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {used} of {total} designs this month. Upgrade to Starter or Pro for more designs.'**
+  String fdDialog80PercentMessageFree(int used, int total);
+
+  /// Button to dismiss 80% warning and continue
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Anyway'**
+  String get fdDialog80PercentContinue;
+
+  /// Title for 80% techpack usage warning dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Almost at Your Techpack Limit!'**
+  String get tpDialog80PercentTitle;
+
+  /// Message for 80% techpack usage warning
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used {used} of {total} techpacks this month. Consider upgrading to continue generating techpacks.'**
+  String tpDialog80PercentMessage(int used, int total);
+
+  /// Button to dismiss 80% techpack warning and continue
+  ///
+  /// In en, this message translates to:
+  /// **'Continue Anyway'**
+  String get tpDialog80PercentContinue;
 
   /// Tech Pack screen title
   ///

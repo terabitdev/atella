@@ -200,6 +200,8 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
       designsGeneratedThisMonth: 0,  // Reset design counter for FREE plan limit
       extraDesignsPurchased: 0,
       extraTechpacksPurchased: 0,
+      extraDesignsUsed: 0,  // Reset add-on usage counters
+      extraTechpacksUsed: 0,  // Reset add-on usage counters
       lastUpdated: admin.firestore.FieldValue.serverTimestamp(),
       updatedBy: 'WEBHOOK' // Debug field to identify source
     });
@@ -276,7 +278,7 @@ function getPlanNameFromPriceId(priceId: string): string {
       return 'STARTER_YEARLY';
     case 'price_1RxPlDB0j1hBhcavA9lDOp9F': // PRO monthly
       return 'PRO';
-    case 'price_1RyT5pB0j1hBhcav7uph680L': // PRO yearly
+    case 'price_1SklhgB0j1hBhcavEji0sk0o': // PRO yearly
       return 'PRO_YEARLY';
     default:
       return 'FREE';

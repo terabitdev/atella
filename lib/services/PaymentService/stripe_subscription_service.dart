@@ -114,7 +114,10 @@ class StripeSubscriptionService {
       if (response.statusCode == 200) {
         final subscriptionData = json.decode(response.body);
         final clientSecret = subscriptionData['latest_invoice']['payment_intent']['client_secret'];
-        
+        final subscriptionId = subscriptionData['id'];
+
+        print('🔍 DEBUG: Created subscription with ID: $subscriptionId');
+
         // Initialize payment sheet
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -123,23 +126,69 @@ class StripeSubscriptionService {
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,
-            
+
           ),
         );
 
         // Present payment sheet
         print('🔥 DEBUG: About to present payment sheet');
-        await Stripe.instance.presentPaymentSheet();
-        print('🔥 DEBUG: Payment sheet completed successfully');
+        try {
+          await Stripe.instance.presentPaymentSheet();
+          print('🔥 DEBUG: Payment sheet completed successfully');
 
-        // NOTE: Firebase updates are now handled by webhooks only
-        // No client-side updates to prevent dual updates
-        print('✅ Payment completed successfully. Webhook will update Firebase automatically.');
-        print('🔍 DEBUG: Plan being sent to webhook: ${plan.name}');
-        print('🔍 DEBUG: Billing period: ${plan.billingPeriod}');
-        print('🔍 DEBUG: Stripe Price ID used: $priceId');
-        
-        return true;
+          // NOTE: Firebase updates are now handled by webhooks only
+          // No client-side updates to prevent dual updates
+          print('✅ Payment completed successfully. Webhook will update Firebase automatically.');
+          print('🔍 DEBUG: Plan being sent to webhook: ${plan.name}');
+          print('🔍 DEBUG: Billing period: ${plan.billingPeriod}');
+          print('🔍 DEBUG: Stripe Price ID used: $priceId');
+
+          return true;
+        } catch (paymentSheetError) {
+          // User dismissed payment sheet or payment failed
+          print('⚠️ Payment sheet dismissed or failed: $paymentSheetError');
+
+          // Cancel the incomplete subscription in Stripe
+          print('🔄 Cancelling incomplete subscription: $subscriptionId');
+          try {
+            final cancelResponse = await http.delete(
+              Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
+              headers: {
+                'Authorization': 'Bearer $_stripeSecretKey',
+              },
+            );
+
+            if (cancelResponse.statusCode == 200) {
+              print('✅ Incomplete subscription cancelled successfully');
+            } else {
+              print('⚠️ Failed to cancel incomplete subscription: ${cancelResponse.statusCode}');
+            }
+          } catch (cancelError) {
+            print('❌ Error cancelling incomplete subscription: $cancelError');
+          }
+
+          // CRITICAL: Clean up any Firestore data that might have been created
+          print('🧹 Cleaning up any incomplete subscription data from Firestore');
+          try {
+            DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+            Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+            // If this subscription ID matches what's in Firestore, revert to FREE
+            if (userData != null && userData['currentSubscriptionId'] == subscriptionId) {
+              await _firestore.collection('users').doc(user.uid).update({
+                'subscriptionPlan': 'FREE',
+                'subscriptionStatus': 'cancelled',
+                'currentSubscriptionId': null,
+              });
+              print('✅ Reverted user to FREE plan due to cancelled payment');
+            }
+          } catch (cleanupError) {
+            print('❌ Error cleaning up Firestore data: $cleanupError');
+          }
+
+          // Rethrow the original error
+          rethrow;
+        }
       }
     } catch (e) {
       if (e is StripeException) {
@@ -209,7 +258,23 @@ class StripeSubscriptionService {
       print('📤 Stripe API response body: ${response.body}');
 
       if (response.statusCode == 200) {
-        print('✅ Subscription cancelled successfully. Webhook will update Firebase automatically.');
+        print('✅ Subscription cancelled successfully in Stripe.');
+
+        // Proactively update Firebase immediately (don't wait for webhook)
+        print('🔄 Updating Firebase immediately to reset all counters...');
+        await _firestore.collection('users').doc(user.uid).update({
+          'subscriptionPlan': 'FREE',
+          'subscriptionStatus': 'canceled',
+          'currentSubscriptionId': null,
+          'techpacksUsedThisMonth': 0,
+          'techpacksUsedThisYear': 0,
+          'designsGeneratedThisMonth': 0,
+          'extraDesignsPurchased': 0,
+          'extraTechpacksPurchased': 0,
+          'extraDesignsUsed': 0,
+          'extraTechpacksUsed': 0,
+        });
+        print('✅ Firebase updated immediately. Webhook will also run as backup.');
         return true;
       } else if (response.statusCode == 404) {
         print('⚠️ Subscription not found in Stripe - cleaning up user data');
@@ -219,6 +284,13 @@ class StripeSubscriptionService {
           'subscriptionPlan': 'FREE',
           'subscriptionStatus': 'cancelled',
           'planEndDate': null,
+          'techpacksUsedThisMonth': 0,
+          'techpacksUsedThisYear': 0,
+          'designsGeneratedThisMonth': 0,
+          'extraDesignsPurchased': 0,
+          'extraTechpacksPurchased': 0,
+          'extraDesignsUsed': 0,
+          'extraTechpacksUsed': 0,
         });
         print('✅ User subscription data cleaned up - user is now on FREE plan');
         return true;
@@ -229,6 +301,89 @@ class StripeSubscriptionService {
       print('❌ Error canceling subscription: $e');
     }
     return false;
+  }
+
+  // One-time reset function for cleaning up add-on counters
+  Future<void> resetAddOnCounters() async {
+    User? user = _auth.currentUser;
+    if (user == null) {
+      print('❌ Reset failed: No authenticated user');
+      return;
+    }
+
+    try {
+      print('🔄 Resetting add-on counters for user: ${user.uid}');
+
+      final docRef = _firestore.collection('users').doc(user.uid);
+
+      // Read current values before reset
+      DocumentSnapshot userDoc = await docRef.get();
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+      print('📊 Current values before reset:');
+      print('  extraDesignsPurchased: ${userData?['extraDesignsPurchased']}');
+      print('  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}');
+      print('  extraDesignsUsed: ${userData?['extraDesignsUsed']}');
+      print('  extraTechpacksUsed: ${userData?['extraTechpacksUsed']}');
+
+      // Use Firestore transaction to ensure atomic update
+      print('📝 Using Firestore transaction for guaranteed update...');
+
+      await _firestore.runTransaction((transaction) async {
+        // Get the document
+        DocumentSnapshot snapshot = await transaction.get(docRef);
+
+        if (!snapshot.exists) {
+          throw Exception('Document does not exist!');
+        }
+
+        // Update all fields in a single transaction
+        transaction.update(docRef, {
+          'extraDesignsPurchased': 0,
+          'extraTechpacksPurchased': 0,
+          'extraDesignsUsed': 0,
+          'extraTechpacksUsed': 0,
+        });
+
+        print('   ✓ Transaction prepared - will update all 4 fields atomically');
+      });
+
+      print('✅ Transaction completed successfully');
+
+      // Wait for Firestore to propagate
+      await Future.delayed(Duration(seconds: 1));
+
+      // Read values after reset to confirm - force fresh read
+      userDoc = await docRef.get(GetOptions(source: Source.server));
+      userData = userDoc.data() as Map<String, dynamic>?;
+
+      print('📊 Values after reset (fresh from server):');
+      print('  extraDesignsPurchased: ${userData?['extraDesignsPurchased']}');
+      print('  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}');
+      print('  extraDesignsUsed: ${userData?['extraDesignsUsed']}');
+      print('  extraTechpacksUsed: ${userData?['extraTechpacksUsed']}');
+
+      // Print ALL fields to debug
+      print('📋 All extra/design related fields:');
+      userData?.forEach((key, value) {
+        if (key.toLowerCase().contains('extra') || key.toLowerCase().contains('design')) {
+          print('     $key: $value');
+        }
+      });
+
+      // If extraDesignsUsed is STILL not 0, there's something very wrong
+      if (userData?['extraDesignsUsed'] != 0) {
+        print('🚨 CRITICAL: extraDesignsUsed did NOT reset! Current value: ${userData?['extraDesignsUsed']}');
+        print('🚨 This suggests either:');
+        print('   1. Firestore security rules are blocking the write');
+        print('   2. A Cloud Function is reverting the value');
+        print('   3. There\'s a listener overwriting the value');
+        print('   4. You\'re looking at a different document in Firebase Console');
+      }
+    } catch (e) {
+      print('❌ Error resetting add-on counters: $e');
+      print('❌ Stack trace: ${StackTrace.current}');
+    }
   }
 
   // Check if user can use premium feature
@@ -371,21 +526,25 @@ class StripeSubscriptionService {
   Future<void> _checkAndResetFullyConsumedAddons(String userId, UserSubscription subscription) async {
     Map<String, dynamic> updates = {};
 
-    // Check design add-ons
-    int totalDesignAddons = subscription.extraDesignsPurchased * 5;
-    if (subscription.extraDesignsUsed >= totalDesignAddons && totalDesignAddons > 0) {
-      updates['extraDesignsPurchased'] = 0;
-      updates['extraDesignsUsed'] = 0;
-      print('♻️ All design add-ons fully consumed, resetting to 0');
-    }
+    // NOTE: Add-ons now accumulate - we don't reset them when fully consumed
+    // Users can purchase multiple add-on packs and the total will accumulate
+    // Example: Buy 1 pack (5 designs) + use all 5 + buy another pack = 2 packs total (10 designs)
 
-    // Check techpack add-ons
-    int totalTechpackAddons = subscription.extraTechpacksPurchased * 1;
-    if (subscription.extraTechpacksUsed >= totalTechpackAddons && totalTechpackAddons > 0) {
-      updates['extraTechpacksPurchased'] = 0;
-      updates['extraTechpacksUsed'] = 0;
-      print('♻️ All techpack add-ons fully consumed, resetting to 0');
-    }
+    // Check design add-ons - REMOVED AUTO-RESET
+    // int totalDesignAddons = subscription.extraDesignsPurchased * 5;
+    // if (subscription.extraDesignsUsed >= totalDesignAddons && totalDesignAddons > 0) {
+    //   updates['extraDesignsPurchased'] = 0;
+    //   updates['extraDesignsUsed'] = 0;
+    //   print('♻️ All design add-ons fully consumed, resetting to 0');
+    // }
+
+    // Check techpack add-ons - REMOVED AUTO-RESET
+    // int totalTechpackAddons = subscription.extraTechpacksPurchased * 1;
+    // if (subscription.extraTechpacksUsed >= totalTechpackAddons && totalTechpackAddons > 0) {
+    //   updates['extraTechpacksPurchased'] = 0;
+    //   updates['extraTechpacksUsed'] = 0;
+    //   print('♻️ All techpack add-ons fully consumed, resetting to 0');
+    // }
 
     if (updates.isNotEmpty) {
       await _firestore.collection('users').doc(userId).update(updates);
@@ -542,8 +701,9 @@ class StripeSubscriptionService {
       // Reset monthly usage counters only
       'techpacksUsedThisMonth': 0,
       'designsGeneratedThisMonth': 0,
-      // NOTE: Add-ons (extraDesignsPurchased, extraTechpacksPurchased) are NOT reset monthly
-      // They persist until fully consumed, then reset to 0
+      // NOTE: Add-ons (extraDesignsPurchased, extraTechpacksPurchased, extraDesignsUsed, extraTechpacksUsed) are NOT reset monthly
+      // They accumulate across months - users can purchase multiple add-on packs
+      // Example: Buy pack in Jan + buy pack in Feb = 2 packs total available
       'currentPeriodStart': FieldValue.serverTimestamp(),
       'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: 30))), // Always 30 days for monthly reset
     };

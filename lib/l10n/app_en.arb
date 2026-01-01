@@ -532,7 +532,7 @@
   "@cancelSubscriptionTitle": {
     "description": "Cancel subscription dialog title"
   },
-  "cancelSubscriptionMessage": "We're sorry to see you go. Please let us know why:",
+  "cancelSubscriptionMessage": "We're sorry to see you go. Please let us know why:\n\n⚠️ Warning: Upon canceling, any purchased extra designs and techpacks will be lost.",
   "@cancelSubscriptionMessage": {
     "description": "Cancel subscription dialog message"
   },
@@ -1757,7 +1757,11 @@
   },
   "fdDialogLimitMessage": "You have exceeded your limit for this month. You can pay €9.99 for 5 extra designs or upgrade your plan.",
   "@fdDialogLimitMessage": {
-    "description": "Limit exceeded dialog message"
+    "description": "Limit exceeded dialog message for paid users"
+  },
+  "fdDialogLimitMessageFree": "You have exceeded your free plan limit for this month. Upgrade to Starter or Pro to continue creating designs.",
+  "@fdDialogLimitMessageFree": {
+    "description": "Limit exceeded dialog message for FREE users"
   },
   "fdDialogGetExtraDesigns": "Get Extra Designs (€9.99)",
   "@fdDialogGetExtraDesigns": {
@@ -1770,6 +1774,58 @@
   "fdDialogMaybeLater": "Maybe Later",
   "@fdDialogMaybeLater": {
     "description": "Maybe later button text"
+  },
+  "fdDialog80PercentTitle": "Almost at Your Limit!",
+  "@fdDialog80PercentTitle": {
+    "description": "Title for 80% usage warning dialog"
+  },
+  "fdDialog80PercentMessage": "You've used {used} of {total} designs this month. Consider upgrading or purchasing extra designs to continue creating.",
+  "@fdDialog80PercentMessage": {
+    "description": "Message for 80% design usage warning for paid users",
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "fdDialog80PercentMessageFree": "You've used {used} of {total} designs this month. Upgrade to Starter or Pro for more designs.",
+  "@fdDialog80PercentMessageFree": {
+    "description": "Message for 80% design usage warning for FREE users",
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "fdDialog80PercentContinue": "Continue Anyway",
+  "@fdDialog80PercentContinue": {
+    "description": "Button to dismiss 80% warning and continue"
+  },
+  "tpDialog80PercentTitle": "Almost at Your Techpack Limit!",
+  "@tpDialog80PercentTitle": {
+    "description": "Title for 80% techpack usage warning dialog"
+  },
+  "tpDialog80PercentMessage": "You've used {used} of {total} techpacks this month. Consider upgrading to continue generating techpacks.",
+  "@tpDialog80PercentMessage": {
+    "description": "Message for 80% techpack usage warning",
+    "placeholders": {
+      "used": {
+        "type": "int"
+      },
+      "total": {
+        "type": "int"
+      }
+    }
+  },
+  "tpDialog80PercentContinue": "Continue Anyway",
+  "@tpDialog80PercentContinue": {
+    "description": "Button to dismiss 80% techpack warning and continue"
   },
   "tpDesignAssistant": "Design Assistant",
   "@tpDesignAssistant": {

@@ -16,6 +16,15 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
   final SubscribeController controller = Get.find<SubscribeController>();
 
   @override
+  void initState() {
+    super.initState();
+    // Refresh subscription data when screen loads
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      controller.loadCurrentSubscription();
+    });
+  }
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(

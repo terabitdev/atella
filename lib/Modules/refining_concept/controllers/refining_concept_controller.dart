@@ -6,6 +6,7 @@ import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controll
 import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/services/localization/refining_concept_localization_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -1558,6 +1559,13 @@ class RefiningConceptController extends GetxController {
 
     // Check if user can generate designs (only for non-edit mode)
     if (!_isEditMode.value) {
+      // Check for 80% usage warning first
+      final subscription = await _stripeService.getCurrentUserSubscription();
+      if (subscription != null && subscription.isDesignUsageAt80Percent) {
+        _show80PercentWarningDialog(subscription);
+        return;
+      }
+
       bool canGenerate = await _stripeService.canGenerateDesign();
       if (!canGenerate) {
         _showLimitExceededDialog();
@@ -1571,10 +1579,70 @@ class RefiningConceptController extends GetxController {
     _proceedWithGeneration();
   }
 
+  // Show 80% usage warning dialog
+  void _show80PercentWarningDialog(subscription) async {
+    final int usedCount = subscription.designsGeneratedThisMonth;
+    final int totalCount = subscription.getTotalAllowedDesigns();
+    // Check if user is on a paid plan (STARTER or PRO)
+    final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
+                           subscription.subscriptionPlan.startsWith('PRO');
+
+    Get.dialog(
+      UsageWarningDialog(
+        usedCount: usedCount,
+        totalCount: totalCount,
+        isDesign: true,
+        isPaidUser: isPaidUser,
+        onGetExtraDesigns: () async {
+          // Get localized strings before async operation
+          final context = Get.context;
+          final l10n = context != null ? AppLocalizations.of(context) : null;
+          final titleText = l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
+
+          Get.back(); // Close dialog
+          bool success = await _stripeService.purchaseExtraDesigns();
+          if (success) {
+            Get.snackbar(
+              titleText,
+              messageText,
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.black,
+              colorText: Colors.white,
+              duration: const Duration(milliseconds: 1500),
+            );
+            await Future.delayed(Duration(seconds: 2));
+            // Increment usage and proceed with generation
+            await _stripeService.incrementDesignUsage();
+            _proceedWithGeneration();
+          }
+        },
+        onUpgradePlan: () {
+          Get.back(); // Close dialog
+          Get.toNamed('/subscribe');
+        },
+        onContinue: () async {
+          Get.back(); // Close dialog
+          // Increment usage and proceed with generation
+          await _stripeService.incrementDesignUsage();
+          _proceedWithGeneration();
+        },
+      ),
+      barrierDismissible: false,
+    );
+  }
+
   // Show limit exceeded dialog
-  void _showLimitExceededDialog() {
+  void _showLimitExceededDialog() async {
+    // Get current subscription to check if user is paid
+    final subscription = await _stripeService.getCurrentUserSubscription();
+    final bool isPaidUser = subscription != null &&
+                           (subscription.subscriptionPlan.startsWith('STARTER') ||
+                            subscription.subscriptionPlan.startsWith('PRO'));
+
     Get.dialog(
       LimitExceededDialog(
+        isPaidUser: isPaidUser,
         onGetExtraDesigns: () async {
           // Get localized strings before async operation
           final context = Get.context;

@@ -402,7 +402,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get cancelSubscriptionMessage =>
-      'Nous sommes désolés de vous voir partir. Veuillez nous dire pourquoi :';
+      'Nous sommes désolés de vous voir partir. Veuillez nous dire pourquoi :\n\n⚠️ Attention : En annulant, tous les designs et techpacks supplémentaires achetés seront perdus.';
 
   @override
   String get pleaseSpecify => 'Veuillez préciser...';
@@ -1614,6 +1614,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'Vous avez dépassé votre limite pour ce mois. Vous pouvez payer 9,99€ pour 5 designs supplémentaires ou mettre à niveau votre forfait.';
 
   @override
+  String get fdDialogLimitMessageFree =>
+      'Vous avez dépassé votre limite de forfait gratuit pour ce mois. Passez à Starter ou Pro pour continuer à créer des designs.';
+
+  @override
   String get fdDialogGetExtraDesigns =>
       'Obtenir des Designs Supplémentaires (9,99€)';
 
@@ -1622,6 +1626,34 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get fdDialogMaybeLater => 'Peut-être Plus Tard';
+
+  @override
+  String get fdDialog80PercentTitle => 'Presque à Votre Limite !';
+
+  @override
+  String fdDialog80PercentMessage(int used, int total) {
+    return 'Vous avez utilisé $used designs sur $total ce mois-ci. Pensez à mettre à niveau ou à acheter des designs supplémentaires pour continuer à créer.';
+  }
+
+  @override
+  String fdDialog80PercentMessageFree(int used, int total) {
+    return 'Vous avez utilisé $used designs sur $total ce mois-ci. Passez à Starter ou Pro pour plus de designs.';
+  }
+
+  @override
+  String get fdDialog80PercentContinue => 'Continuer Quand Même';
+
+  @override
+  String get tpDialog80PercentTitle =>
+      'Presque à Votre Limite de Dossiers Techniques !';
+
+  @override
+  String tpDialog80PercentMessage(int used, int total) {
+    return 'Vous avez utilisé $used dossiers techniques sur $total ce mois-ci. Pensez à mettre à niveau pour continuer à générer des dossiers techniques.';
+  }
+
+  @override
+  String get tpDialog80PercentContinue => 'Continuer Quand Même';
 
   @override
   String get tpDesignAssistant => 'Assistant Design';
