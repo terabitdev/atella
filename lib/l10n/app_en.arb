@@ -3038,5 +3038,102 @@
   "tpgFailedToLoadImage": "Failed to load image",
   "@tpgFailedToLoadImage": {
     "description": "Failed to load image error message"
+  },
+  "cancellationReasonTooExpensive": "Too expensive",
+  "@cancellationReasonTooExpensive": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonNotUsing": "Not using it enough",
+  "@cancellationReasonNotUsing": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonMissingFeatures": "Missing features I need",
+  "@cancellationReasonMissingFeatures": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonBetterAlternative": "Found a better alternative",
+  "@cancellationReasonBetterAlternative": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonTechnicalIssues": "Technical issues",
+  "@cancellationReasonTechnicalIssues": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonOther": "Other",
+  "@cancellationReasonOther": {
+    "description": "Cancellation reason option"
+  },
+  "studioDescription": "For studios, agencies, and power users",
+  "@studioDescription": {
+    "description": "Studio plan description"
+  },
+  "studioFeatureAiDesignLimit": "35 AI design generations per month",
+  "@studioFeatureAiDesignLimit": {
+    "description": "Studio plan feature - design limit"
+  },
+  "studioFeatureTechpackMonthly": "16 techpacks per month",
+  "@studioFeatureTechpackMonthly": {
+    "description": "Studio plan feature - monthly techpack limit"
+  },
+  "studioFeatureTechpackYearly": "16 techpacks per month (192 per year)",
+  "@studioFeatureTechpackYearly": {
+    "description": "Studio plan feature - yearly techpack limit"
+  },
+  "studio": "Studio",
+  "@studio": {
+    "description": "Studio plan name"
+  },
+  "cbDialogEditAnswer": "Edit Answer",
+  "@cbDialogEditAnswer": {
+    "description": "Dialog title for editing an answer"
+  },
+  "cbDialogSelectAnswer": "Select your answer:",
+  "@cbDialogSelectAnswer": {
+    "description": "Dialog instruction to select answer"
+  },
+  "cbDialogEnterCustomAnswer": "Enter custom answer:",
+  "@cbDialogEnterCustomAnswer": {
+    "description": "Label for custom answer input"
+  },
+  "cbDialogCancel": "Cancel",
+  "@cbDialogCancel": {
+    "description": "Cancel button in dialog"
+  },
+  "cbDialogSaveChanges": "Save Changes",
+  "@cbDialogSaveChanges": {
+    "description": "Save changes button in dialog"
+  },
+  "cbDialogEditPrintsTechniques": "Edit Prints & Techniques",
+  "@cbDialogEditPrintsTechniques": {
+    "description": "Dialog title for editing prints and techniques"
+  },
+  "cbDialogSelectPrintsTechniques": "Select your prints and techniques",
+  "@cbDialogSelectPrintsTechniques": {
+    "description": "Dialog instruction for prints and techniques"
+  },
+  "cbDialogPrints": "Prints",
+  "@cbDialogPrints": {
+    "description": "Prints category title in dialog"
+  },
+  "cbDialogTechniques": "Techniques",
+  "@cbDialogTechniques": {
+    "description": "Techniques category title in dialog"
+  },
+  "cbDialogEnterCustomPrint": "Enter custom print...",
+  "@cbDialogEnterCustomPrint": {
+    "description": "Placeholder for custom print input"
+  },
+  "cbDialogEnterCustomTechnique": "Enter custom technique...",
+  "@cbDialogEnterCustomTechnique": {
+    "description": "Placeholder for custom technique input"
+  },
+  "cbEnterCustom": "Enter custom {category}...",
+  "@cbEnterCustom": {
+    "description": "Dynamic placeholder for custom category input",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
   }
 }

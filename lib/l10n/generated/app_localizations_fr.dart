@@ -1475,13 +1475,13 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rcDialogSaveChanges => 'Enregistrer les modifications';
 
   @override
-  String get cbDialogEditAnswer => 'Modifier la réponse';
+  String get cbDialogEditAnswer => 'Modifier la Réponse';
 
   @override
-  String get cbDialogSelectAnswer => 'Sélectionnez votre réponse :';
+  String get cbDialogSelectAnswer => 'Sélectionnez votre réponse:';
 
   @override
-  String get cbDialogEnterCustomAnswer => 'Entrez une réponse personnalisée :';
+  String get cbDialogEnterCustomAnswer => 'Entrez une réponse personnalisée:';
 
   @override
   String get cbDialogCustomAnswerHint => 'Tapez votre réponse personnalisée...';
@@ -1490,7 +1490,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cbDialogCancel => 'Annuler';
 
   @override
-  String get cbDialogSaveChanges => 'Enregistrer les modifications';
+  String get cbDialogSaveChanges => 'Enregistrer les Modifications';
 
   @override
   String get cbDialogEditPrintsTechniques => 'Modifier Imprimés & Techniques';
@@ -2586,4 +2586,47 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpgFailedToLoadImage => 'Échec du chargement de l\'image';
+
+  @override
+  String get cancellationReasonTooExpensive => 'Trop cher';
+
+  @override
+  String get cancellationReasonNotUsing => 'Pas assez utilisé';
+
+  @override
+  String get cancellationReasonMissingFeatures =>
+      'Fonctionnalités manquantes dont j\'ai besoin';
+
+  @override
+  String get cancellationReasonBetterAlternative =>
+      'Trouvé une meilleure alternative';
+
+  @override
+  String get cancellationReasonTechnicalIssues => 'Problèmes techniques';
+
+  @override
+  String get cancellationReasonOther => 'Autre';
+
+  @override
+  String get studioDescription =>
+      'Pour les studios, agences et utilisateurs intensifs';
+
+  @override
+  String get studioFeatureAiDesignLimit =>
+      '35 générations de designs IA par mois';
+
+  @override
+  String get studioFeatureTechpackMonthly => '16 techpacks par mois';
+
+  @override
+  String get studioFeatureTechpackYearly =>
+      '16 techpacks par mois (192 par an)';
+
+  @override
+  String get studio => 'Studio';
+
+  @override
+  String cbEnterCustom(String category) {
+    return 'Entrez $category personnalisé...';
+  }
 }

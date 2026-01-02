@@ -2541,4 +2541,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpgFailedToLoadImage => 'Failed to load image';
+
+  @override
+  String get cancellationReasonTooExpensive => 'Too expensive';
+
+  @override
+  String get cancellationReasonNotUsing => 'Not using it enough';
+
+  @override
+  String get cancellationReasonMissingFeatures => 'Missing features I need';
+
+  @override
+  String get cancellationReasonBetterAlternative =>
+      'Found a better alternative';
+
+  @override
+  String get cancellationReasonTechnicalIssues => 'Technical issues';
+
+  @override
+  String get cancellationReasonOther => 'Other';
+
+  @override
+  String get studioDescription => 'For studios, agencies, and power users';
+
+  @override
+  String get studioFeatureAiDesignLimit => '35 AI design generations per month';
+
+  @override
+  String get studioFeatureTechpackMonthly => '16 techpacks per month';
+
+  @override
+  String get studioFeatureTechpackYearly =>
+      '16 techpacks per month (192 per year)';
+
+  @override
+  String get studio => 'Studio';
+
+  @override
+  String cbEnterCustom(String category) {
+    return 'Enter custom $category...';
+  }
 }

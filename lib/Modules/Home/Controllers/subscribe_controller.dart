@@ -17,14 +17,22 @@ class SubscribeController extends GetxController {
   RxBool isYearlyBilling = false.obs; // Toggle for monthly/yearly billing
 
   // Cancellation reasons for analytics
-  final List<String> cancellationReasons = [
-    'Too expensive',
-    'Not using it enough',
-    'Missing features I need',
-    'Found a better alternative',
-    'Technical issues',
-    'Other',
-  ];
+  // Cancellation reasons - will be populated with localized strings
+  List<String> get cancellationReasons {
+    final context = Get.context;
+    if (context == null) return [];
+    final l10n = AppLocalizations.of(context);
+    if (l10n == null) return [];
+
+    return [
+      l10n.cancellationReasonTooExpensive,
+      l10n.cancellationReasonNotUsing,
+      l10n.cancellationReasonMissingFeatures,
+      l10n.cancellationReasonBetterAlternative,
+      l10n.cancellationReasonTechnicalIssues,
+      l10n.cancellationReasonOther,
+    ];
+  }
 
   // Navigation handling
   String? returnRoute;

@@ -794,5 +794,102 @@
   "tpgDesignNumber": "Design {number}",
   "tpgGenerating": "Génération en cours",
   "tpgFailedToGenerate": "Échec de la génération",
-  "tpgFailedToLoadImage": "Échec du chargement de l'image"
+  "tpgFailedToLoadImage": "Échec du chargement de l'image",
+  "cancellationReasonTooExpensive": "Trop cher",
+  "@cancellationReasonTooExpensive": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonNotUsing": "Pas assez utilisé",
+  "@cancellationReasonNotUsing": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonMissingFeatures": "Fonctionnalités manquantes dont j'ai besoin",
+  "@cancellationReasonMissingFeatures": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonBetterAlternative": "Trouvé une meilleure alternative",
+  "@cancellationReasonBetterAlternative": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonTechnicalIssues": "Problèmes techniques",
+  "@cancellationReasonTechnicalIssues": {
+    "description": "Cancellation reason option"
+  },
+  "cancellationReasonOther": "Autre",
+  "@cancellationReasonOther": {
+    "description": "Cancellation reason option"
+  },
+  "studioDescription": "Pour les studios, agences et utilisateurs intensifs",
+  "@studioDescription": {
+    "description": "Studio plan description"
+  },
+  "studioFeatureAiDesignLimit": "35 générations de designs IA par mois",
+  "@studioFeatureAiDesignLimit": {
+    "description": "Studio plan feature - design limit"
+  },
+  "studioFeatureTechpackMonthly": "16 techpacks par mois",
+  "@studioFeatureTechpackMonthly": {
+    "description": "Studio plan feature - monthly techpack limit"
+  },
+  "studioFeatureTechpackYearly": "16 techpacks par mois (192 par an)",
+  "@studioFeatureTechpackYearly": {
+    "description": "Studio plan feature - yearly techpack limit"
+  },
+  "studio": "Studio",
+  "@studio": {
+    "description": "Studio plan name"
+  },
+  "cbDialogEditAnswer": "Modifier la Réponse",
+  "@cbDialogEditAnswer": {
+    "description": "Dialog title for editing an answer"
+  },
+  "cbDialogSelectAnswer": "Sélectionnez votre réponse:",
+  "@cbDialogSelectAnswer": {
+    "description": "Dialog instruction to select answer"
+  },
+  "cbDialogEnterCustomAnswer": "Entrez une réponse personnalisée:",
+  "@cbDialogEnterCustomAnswer": {
+    "description": "Label for custom answer input"
+  },
+  "cbDialogCancel": "Annuler",
+  "@cbDialogCancel": {
+    "description": "Cancel button in dialog"
+  },
+  "cbDialogSaveChanges": "Enregistrer les Modifications",
+  "@cbDialogSaveChanges": {
+    "description": "Save changes button in dialog"
+  },
+  "cbDialogEditPrintsTechniques": "Modifier Imprimés & Techniques",
+  "@cbDialogEditPrintsTechniques": {
+    "description": "Dialog title for editing prints and techniques"
+  },
+  "cbDialogSelectPrintsTechniques": "Sélectionnez vos imprimés et techniques",
+  "@cbDialogSelectPrintsTechniques": {
+    "description": "Dialog instruction for prints and techniques"
+  },
+  "cbDialogPrints": "Imprimés",
+  "@cbDialogPrints": {
+    "description": "Prints category title in dialog"
+  },
+  "cbDialogTechniques": "Techniques",
+  "@cbDialogTechniques": {
+    "description": "Techniques category title in dialog"
+  },
+  "cbDialogEnterCustomPrint": "Entrez un imprimé personnalisé...",
+  "@cbDialogEnterCustomPrint": {
+    "description": "Placeholder for custom print input"
+  },
+  "cbDialogEnterCustomTechnique": "Entrez une technique personnalisée...",
+  "@cbDialogEnterCustomTechnique": {
+    "description": "Placeholder for custom technique input"
+  },
+  "cbEnterCustom": "Entrez {category} personnalisé...",
+  "@cbEnterCustom": {
+    "description": "Dynamic placeholder for custom category input",
+    "placeholders": {
+      "category": {
+        "type": "String"
+      }
+    }
+  }
 }

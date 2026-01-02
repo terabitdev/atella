@@ -45,7 +45,7 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                     ),
                   ),
                   SizedBox(width: 8.w),
-                  Text('Studio', style: ssTitleTextTextStyle208001),
+                  Text(l10n.studio, style: ssTitleTextTextStyle208001),
                 ],
               ),
             ),
@@ -264,7 +264,7 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                                 borderRadius: BorderRadius.circular(12.r),
                               ),
                               child: Text(
-                                'For studios, agencies, and power users',
+                                l10n.studioDescription,
                                 style: sfpsTitleTextTextStyle14500,
                                 textAlign: TextAlign.center,
                               ),
@@ -275,12 +275,12 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                             Obx(
                               () => Column(
                                 children: [
-                                  _buildFeatureItem('35 AI design generations per month'),
+                                  _buildFeatureItem(l10n.studioFeatureAiDesignLimit),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(
                                     controller.isYearlyBilling.value
-                                        ? '16 techpacks per month (192 per year)'
-                                        : '16 techpacks per month',
+                                        ? l10n.studioFeatureTechpackYearly
+                                        : l10n.studioFeatureTechpackMonthly,
                                   ),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(

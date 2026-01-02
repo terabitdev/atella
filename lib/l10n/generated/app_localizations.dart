@@ -2798,19 +2798,19 @@ abstract class AppLocalizations {
   /// **'Save Changes'**
   String get rcDialogSaveChanges;
 
-  /// Edit answer dialog title - Creative Brief
+  /// Dialog title for editing an answer
   ///
   /// In en, this message translates to:
   /// **'Edit Answer'**
   String get cbDialogEditAnswer;
 
-  /// Instruction text in edit answer dialog - Creative Brief
+  /// Dialog instruction to select answer
   ///
   /// In en, this message translates to:
   /// **'Select your answer:'**
   String get cbDialogSelectAnswer;
 
-  /// Custom answer prompt in edit dialog - Creative Brief
+  /// Label for custom answer input
   ///
   /// In en, this message translates to:
   /// **'Enter custom answer:'**
@@ -2822,49 +2822,49 @@ abstract class AppLocalizations {
   /// **'Type your custom answer...'**
   String get cbDialogCustomAnswerHint;
 
-  /// Cancel button in dialogs - Creative Brief
+  /// Cancel button in dialog
   ///
   /// In en, this message translates to:
   /// **'Cancel'**
   String get cbDialogCancel;
 
-  /// Save button in dialogs - Creative Brief
+  /// Save changes button in dialog
   ///
   /// In en, this message translates to:
   /// **'Save Changes'**
   String get cbDialogSaveChanges;
 
-  /// Edit prints and techniques dialog title - Creative Brief
+  /// Dialog title for editing prints and techniques
   ///
   /// In en, this message translates to:
   /// **'Edit Prints & Techniques'**
   String get cbDialogEditPrintsTechniques;
 
-  /// Description text in prints & techniques dialog - Creative Brief
+  /// Dialog instruction for prints and techniques
   ///
   /// In en, this message translates to:
   /// **'Select your prints and techniques'**
   String get cbDialogSelectPrintsTechniques;
 
-  /// Prints section header in dialog (presentation only, not for data keys) - Creative Brief
+  /// Prints category title in dialog
   ///
   /// In en, this message translates to:
   /// **'Prints'**
   String get cbDialogPrints;
 
-  /// Techniques section header in dialog (presentation only, not for data keys) - Creative Brief
+  /// Techniques category title in dialog
   ///
   /// In en, this message translates to:
   /// **'Techniques'**
   String get cbDialogTechniques;
 
-  /// Placeholder for custom print input - Creative Brief
+  /// Placeholder for custom print input
   ///
   /// In en, this message translates to:
   /// **'Enter custom print...'**
   String get cbDialogEnterCustomPrint;
 
-  /// Placeholder for custom technique input - Creative Brief
+  /// Placeholder for custom technique input
   ///
   /// In en, this message translates to:
   /// **'Enter custom technique...'**
@@ -4747,6 +4747,78 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Failed to load image'**
   String get tpgFailedToLoadImage;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Too expensive'**
+  String get cancellationReasonTooExpensive;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Not using it enough'**
+  String get cancellationReasonNotUsing;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Missing features I need'**
+  String get cancellationReasonMissingFeatures;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Found a better alternative'**
+  String get cancellationReasonBetterAlternative;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Technical issues'**
+  String get cancellationReasonTechnicalIssues;
+
+  /// Cancellation reason option
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get cancellationReasonOther;
+
+  /// Studio plan description
+  ///
+  /// In en, this message translates to:
+  /// **'For studios, agencies, and power users'**
+  String get studioDescription;
+
+  /// Studio plan feature - design limit
+  ///
+  /// In en, this message translates to:
+  /// **'35 AI design generations per month'**
+  String get studioFeatureAiDesignLimit;
+
+  /// Studio plan feature - monthly techpack limit
+  ///
+  /// In en, this message translates to:
+  /// **'16 techpacks per month'**
+  String get studioFeatureTechpackMonthly;
+
+  /// Studio plan feature - yearly techpack limit
+  ///
+  /// In en, this message translates to:
+  /// **'16 techpacks per month (192 per year)'**
+  String get studioFeatureTechpackYearly;
+
+  /// Studio plan name
+  ///
+  /// In en, this message translates to:
+  /// **'Studio'**
+  String get studio;
+
+  /// Dynamic placeholder for custom category input
+  ///
+  /// In en, this message translates to:
+  /// **'Enter custom {category}...'**
+  String cbEnterCustom(String category);
 }
 
 class _AppLocalizationsDelegate
