@@ -1475,6 +1475,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rcDialogSaveChanges => 'Enregistrer les modifications';
 
   @override
+  String get rcToday => 'Aujourd\'hui';
+
+  @override
   String get cbDialogEditAnswer => 'Modifier la Réponse';
 
   @override
@@ -2628,5 +2631,88 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String cbEnterCustom(String category) {
     return 'Entrez $category personnalisé...';
+  }
+
+  @override
+  String get fdQuestionTargetSeason =>
+      'Parfait! Assurons-nous que votre pièce s\'adapte parfaitement à la saison. Pour quel type de météo sera-t-elle conçue?';
+
+  @override
+  String get fdSeasonSummer => 'Été (Léger, Manches Courtes Ou Retroussables)';
+
+  @override
+  String get fdSeasonMid => 'Mi-Saison';
+
+  @override
+  String get fdSeasonAll => 'Toutes Saisons (Adapté aux Couches)';
+
+  @override
+  String get fdQuestionTargetBudget =>
+      'Compris. Et quel type de budget envisagez-vous pour ce design? Je peux adapter les tissus et les caractéristiques en conséquence.';
+
+  @override
+  String get fdBudgetEntry =>
+      'Entrée de Gamme (€15-30 Production / €35-60 Vente)';
+
+  @override
+  String get fdBudgetMid =>
+      'Milieu de Gamme (€30-50 Production / €60-120 Vente)';
+
+  @override
+  String get fdBudgetPremium => 'Premium (€60+ Production / €120+ Vente)';
+
+  @override
+  String get fdQuestionDesiredFeatures =>
+      'Souhaitez-vous inclure des valeurs ou des caractéristiques spéciales qui comptent pour vous ou votre marque? Je peux m\'assurer qu\'elles font partie du concept final';
+
+  @override
+  String get fdFeatureOrganic => 'Tissu Biologique';
+
+  @override
+  String get fdFeatureUpcycled => 'Matériaux Recyclés';
+
+  @override
+  String get fdFeatureLocallyMade => 'Fabriqué Localement (Europe)';
+
+  @override
+  String get fdFeatureUvProtection => 'Protection UV';
+
+  @override
+  String get fdFeatureQuickDry => 'Séchage Rapide';
+
+  @override
+  String get fdFeatureWrinkleFree => 'Sans Plis';
+
+  @override
+  String get fdFeatureOther => 'Autre: ?';
+
+  @override
+  String get fdQuestionAdditionalDetails =>
+      'Cool — n\'hésitez pas à taper tout ce que vous avez en tête!';
+
+  @override
+  String get fdRegeneratingDesigns => 'Régénération des Designs!';
+
+  @override
+  String get fdRegeneratingDesignsMessage =>
+      'Création de 3 nouveaux designs basés sur vos préférences mises à jour...';
+
+  @override
+  String get fdGeneratingDesigns => 'Génération des Designs!';
+
+  @override
+  String get fdGeneratingDesignsMessage =>
+      'Création de 3 designs uniques basés sur vos préférences...';
+
+  @override
+  String get fdExtraDesignsAdded => 'Designs Supplémentaires Ajoutés!';
+
+  @override
+  String get fdExtraDesignsAddedMessage =>
+      '5 designs supplémentaires ont été ajoutés à votre compte.';
+
+  @override
+  String fdToday(String time) {
+    return 'Aujourd\'hui, $time';
   }
 }

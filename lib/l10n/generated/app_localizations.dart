@@ -2798,6 +2798,12 @@ abstract class AppLocalizations {
   /// **'Save Changes'**
   String get rcDialogSaveChanges;
 
+  /// Today text for timestamp
+  ///
+  /// In en, this message translates to:
+  /// **'Today'**
+  String get rcToday;
+
   /// Dialog title for editing an answer
   ///
   /// In en, this message translates to:
@@ -4819,6 +4825,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Enter custom {category}...'**
   String cbEnterCustom(String category);
+
+  /// Question about target season for the design
+  ///
+  /// In en, this message translates to:
+  /// **'Great! Let\'s make sure your piece fits perfectly with the season. What kind of weather will it be designed for?'**
+  String get fdQuestionTargetSeason;
+
+  /// Summer season option
+  ///
+  /// In en, this message translates to:
+  /// **'Summer (Lightweight, Short Or Roll-Up Sleeves)'**
+  String get fdSeasonSummer;
+
+  /// Mid-season option
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Season'**
+  String get fdSeasonMid;
+
+  /// All-season option
+  ///
+  /// In en, this message translates to:
+  /// **'All-Season (Layer-Friendly)'**
+  String get fdSeasonAll;
+
+  /// Question about target budget for the design
+  ///
+  /// In en, this message translates to:
+  /// **'Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.'**
+  String get fdQuestionTargetBudget;
+
+  /// Entry-level budget option
+  ///
+  /// In en, this message translates to:
+  /// **'Entry-Level (€15-30 Production / €35-60 Retail)'**
+  String get fdBudgetEntry;
+
+  /// Mid-range budget option
+  ///
+  /// In en, this message translates to:
+  /// **'Mid-Range (€30-50 Production / €60-120 Retail)'**
+  String get fdBudgetMid;
+
+  /// Premium budget option
+  ///
+  /// In en, this message translates to:
+  /// **'Premium (€60+ Production / €120+ Retail)'**
+  String get fdBudgetPremium;
+
+  /// Question about desired features for the design
+  ///
+  /// In en, this message translates to:
+  /// **'Would you like to include any special values or features that matter to you or your brand? I can make sure they\'re part of the final concept'**
+  String get fdQuestionDesiredFeatures;
+
+  /// Organic fabric feature option
+  ///
+  /// In en, this message translates to:
+  /// **'Organic Fabric'**
+  String get fdFeatureOrganic;
+
+  /// Upcycled materials feature option
+  ///
+  /// In en, this message translates to:
+  /// **'Upcycled Materials'**
+  String get fdFeatureUpcycled;
+
+  /// Locally made feature option
+  ///
+  /// In en, this message translates to:
+  /// **'Locally Made (Europe)'**
+  String get fdFeatureLocallyMade;
+
+  /// UV protection feature option
+  ///
+  /// In en, this message translates to:
+  /// **'UV Protection'**
+  String get fdFeatureUvProtection;
+
+  /// Quick-dry feature option
+  ///
+  /// In en, this message translates to:
+  /// **'Quick-Dry'**
+  String get fdFeatureQuickDry;
+
+  /// Wrinkle-free feature option
+  ///
+  /// In en, this message translates to:
+  /// **'Wrinkle-Free'**
+  String get fdFeatureWrinkleFree;
+
+  /// Other feature option with custom input
+  ///
+  /// In en, this message translates to:
+  /// **'Other: ?'**
+  String get fdFeatureOther;
+
+  /// Question for additional details/custom input
+  ///
+  /// In en, this message translates to:
+  /// **'Cool — feel free to type in anything else you have in mind!'**
+  String get fdQuestionAdditionalDetails;
+
+  /// Snackbar title when regenerating designs in edit mode
+  ///
+  /// In en, this message translates to:
+  /// **'Regenerating Designs!'**
+  String get fdRegeneratingDesigns;
+
+  /// Snackbar message when regenerating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 new designs based on your updated preferences...'**
+  String get fdRegeneratingDesignsMessage;
+
+  /// Snackbar title when generating new designs
+  ///
+  /// In en, this message translates to:
+  /// **'Generating Designs!'**
+  String get fdGeneratingDesigns;
+
+  /// Snackbar message when generating designs
+  ///
+  /// In en, this message translates to:
+  /// **'Creating 3 unique designs based on your preferences...'**
+  String get fdGeneratingDesignsMessage;
+
+  /// Snackbar title when extra designs are purchased
+  ///
+  /// In en, this message translates to:
+  /// **'Extra Designs Added!'**
+  String get fdExtraDesignsAdded;
+
+  /// Snackbar message when extra designs are added
+  ///
+  /// In en, this message translates to:
+  /// **'5 extra designs have been added to your account.'**
+  String get fdExtraDesignsAddedMessage;
+
+  /// Today timestamp format
+  ///
+  /// In en, this message translates to:
+  /// **'Today, {time}'**
+  String fdToday(String time);
 }
 
 class _AppLocalizationsDelegate

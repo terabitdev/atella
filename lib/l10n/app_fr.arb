@@ -470,6 +470,7 @@
   "rcDialogCustomAnswerHint": "Tapez votre réponse personnalisée...",
   "rcDialogCancel": "Annuler",
   "rcDialogSaveChanges": "Enregistrer les modifications",
+  "rcToday": "Aujourd'hui",
   "cbDialogEditAnswer": "Modifier la réponse",
   "cbDialogSelectAnswer": "Sélectionnez votre réponse :",
   "cbDialogEnterCustomAnswer": "Entrez une réponse personnalisée :",
@@ -888,6 +889,107 @@
     "description": "Dynamic placeholder for custom category input",
     "placeholders": {
       "category": {
+        "type": "String"
+      }
+    }
+  },
+  "fdQuestionTargetSeason": "Parfait! Assurons-nous que votre pièce s'adapte parfaitement à la saison. Pour quel type de météo sera-t-elle conçue?",
+  "@fdQuestionTargetSeason": {
+    "description": "Question about target season for the design"
+  },
+  "fdSeasonSummer": "Été (Léger, Manches Courtes Ou Retroussables)",
+  "@fdSeasonSummer": {
+    "description": "Summer season option"
+  },
+  "fdSeasonMid": "Mi-Saison",
+  "@fdSeasonMid": {
+    "description": "Mid-season option"
+  },
+  "fdSeasonAll": "Toutes Saisons (Adapté aux Couches)",
+  "@fdSeasonAll": {
+    "description": "All-season option"
+  },
+  "fdQuestionTargetBudget": "Compris. Et quel type de budget envisagez-vous pour ce design? Je peux adapter les tissus et les caractéristiques en conséquence.",
+  "@fdQuestionTargetBudget": {
+    "description": "Question about target budget for the design"
+  },
+  "fdBudgetEntry": "Entrée de Gamme (€15-30 Production / €35-60 Vente)",
+  "@fdBudgetEntry": {
+    "description": "Entry-level budget option"
+  },
+  "fdBudgetMid": "Milieu de Gamme (€30-50 Production / €60-120 Vente)",
+  "@fdBudgetMid": {
+    "description": "Mid-range budget option"
+  },
+  "fdBudgetPremium": "Premium (€60+ Production / €120+ Vente)",
+  "@fdBudgetPremium": {
+    "description": "Premium budget option"
+  },
+  "fdQuestionDesiredFeatures": "Souhaitez-vous inclure des valeurs ou des caractéristiques spéciales qui comptent pour vous ou votre marque? Je peux m'assurer qu'elles font partie du concept final",
+  "@fdQuestionDesiredFeatures": {
+    "description": "Question about desired features for the design"
+  },
+  "fdFeatureOrganic": "Tissu Biologique",
+  "@fdFeatureOrganic": {
+    "description": "Organic fabric feature option"
+  },
+  "fdFeatureUpcycled": "Matériaux Recyclés",
+  "@fdFeatureUpcycled": {
+    "description": "Upcycled materials feature option"
+  },
+  "fdFeatureLocallyMade": "Fabriqué Localement (Europe)",
+  "@fdFeatureLocallyMade": {
+    "description": "Locally made feature option"
+  },
+  "fdFeatureUvProtection": "Protection UV",
+  "@fdFeatureUvProtection": {
+    "description": "UV protection feature option"
+  },
+  "fdFeatureQuickDry": "Séchage Rapide",
+  "@fdFeatureQuickDry": {
+    "description": "Quick-dry feature option"
+  },
+  "fdFeatureWrinkleFree": "Sans Plis",
+  "@fdFeatureWrinkleFree": {
+    "description": "Wrinkle-free feature option"
+  },
+  "fdFeatureOther": "Autre: ?",
+  "@fdFeatureOther": {
+    "description": "Other feature option with custom input"
+  },
+  "fdQuestionAdditionalDetails": "Cool — n'hésitez pas à taper tout ce que vous avez en tête!",
+  "@fdQuestionAdditionalDetails": {
+    "description": "Question for additional details/custom input"
+  },
+  "fdRegeneratingDesigns": "Régénération des Designs!",
+  "@fdRegeneratingDesigns": {
+    "description": "Snackbar title when regenerating designs in edit mode"
+  },
+  "fdRegeneratingDesignsMessage": "Création de 3 nouveaux designs basés sur vos préférences mises à jour...",
+  "@fdRegeneratingDesignsMessage": {
+    "description": "Snackbar message when regenerating designs"
+  },
+  "fdGeneratingDesigns": "Génération des Designs!",
+  "@fdGeneratingDesigns": {
+    "description": "Snackbar title when generating new designs"
+  },
+  "fdGeneratingDesignsMessage": "Création de 3 designs uniques basés sur vos préférences...",
+  "@fdGeneratingDesignsMessage": {
+    "description": "Snackbar message when generating designs"
+  },
+  "fdExtraDesignsAdded": "Designs Supplémentaires Ajoutés!",
+  "@fdExtraDesignsAdded": {
+    "description": "Snackbar title when extra designs are purchased"
+  },
+  "fdExtraDesignsAddedMessage": "5 designs supplémentaires ont été ajoutés à votre compte.",
+  "@fdExtraDesignsAddedMessage": {
+    "description": "Snackbar message when extra designs are added"
+  },
+  "fdToday": "Aujourd'hui, {time}",
+  "@fdToday": {
+    "description": "Today timestamp format",
+    "placeholders": {
+      "time": {
         "type": "String"
       }
     }

@@ -1591,6 +1591,10 @@
   "@rcDialogSaveChanges": {
     "description": "Save button in edit dialog"
   },
+  "rcToday": "Today",
+  "@rcToday": {
+    "description": "Today text for timestamp"
+  },
   "cbDialogEditAnswer": "Edit Answer",
   "@cbDialogEditAnswer": {
     "description": "Edit answer dialog title - Creative Brief"
@@ -3132,6 +3136,107 @@
     "description": "Dynamic placeholder for custom category input",
     "placeholders": {
       "category": {
+        "type": "String"
+      }
+    }
+  },
+  "fdQuestionTargetSeason": "Great! Let's make sure your piece fits perfectly with the season. What kind of weather will it be designed for?",
+  "@fdQuestionTargetSeason": {
+    "description": "Question about target season for the design"
+  },
+  "fdSeasonSummer": "Summer (Lightweight, Short Or Roll-Up Sleeves)",
+  "@fdSeasonSummer": {
+    "description": "Summer season option"
+  },
+  "fdSeasonMid": "Mid-Season",
+  "@fdSeasonMid": {
+    "description": "Mid-season option"
+  },
+  "fdSeasonAll": "All-Season (Layer-Friendly)",
+  "@fdSeasonAll": {
+    "description": "All-season option"
+  },
+  "fdQuestionTargetBudget": "Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.",
+  "@fdQuestionTargetBudget": {
+    "description": "Question about target budget for the design"
+  },
+  "fdBudgetEntry": "Entry-Level (€15-30 Production / €35-60 Retail)",
+  "@fdBudgetEntry": {
+    "description": "Entry-level budget option"
+  },
+  "fdBudgetMid": "Mid-Range (€30-50 Production / €60-120 Retail)",
+  "@fdBudgetMid": {
+    "description": "Mid-range budget option"
+  },
+  "fdBudgetPremium": "Premium (€60+ Production / €120+ Retail)",
+  "@fdBudgetPremium": {
+    "description": "Premium budget option"
+  },
+  "fdQuestionDesiredFeatures": "Would you like to include any special values or features that matter to you or your brand? I can make sure they're part of the final concept",
+  "@fdQuestionDesiredFeatures": {
+    "description": "Question about desired features for the design"
+  },
+  "fdFeatureOrganic": "Organic Fabric",
+  "@fdFeatureOrganic": {
+    "description": "Organic fabric feature option"
+  },
+  "fdFeatureUpcycled": "Upcycled Materials",
+  "@fdFeatureUpcycled": {
+    "description": "Upcycled materials feature option"
+  },
+  "fdFeatureLocallyMade": "Locally Made (Europe)",
+  "@fdFeatureLocallyMade": {
+    "description": "Locally made feature option"
+  },
+  "fdFeatureUvProtection": "UV Protection",
+  "@fdFeatureUvProtection": {
+    "description": "UV protection feature option"
+  },
+  "fdFeatureQuickDry": "Quick-Dry",
+  "@fdFeatureQuickDry": {
+    "description": "Quick-dry feature option"
+  },
+  "fdFeatureWrinkleFree": "Wrinkle-Free",
+  "@fdFeatureWrinkleFree": {
+    "description": "Wrinkle-free feature option"
+  },
+  "fdFeatureOther": "Other: ?",
+  "@fdFeatureOther": {
+    "description": "Other feature option with custom input"
+  },
+  "fdQuestionAdditionalDetails": "Cool — feel free to type in anything else you have in mind!",
+  "@fdQuestionAdditionalDetails": {
+    "description": "Question for additional details/custom input"
+  },
+  "fdRegeneratingDesigns": "Regenerating Designs!",
+  "@fdRegeneratingDesigns": {
+    "description": "Snackbar title when regenerating designs in edit mode"
+  },
+  "fdRegeneratingDesignsMessage": "Creating 3 new designs based on your updated preferences...",
+  "@fdRegeneratingDesignsMessage": {
+    "description": "Snackbar message when regenerating designs"
+  },
+  "fdGeneratingDesigns": "Generating Designs!",
+  "@fdGeneratingDesigns": {
+    "description": "Snackbar title when generating new designs"
+  },
+  "fdGeneratingDesignsMessage": "Creating 3 unique designs based on your preferences...",
+  "@fdGeneratingDesignsMessage": {
+    "description": "Snackbar message when generating designs"
+  },
+  "fdExtraDesignsAdded": "Extra Designs Added!",
+  "@fdExtraDesignsAdded": {
+    "description": "Snackbar title when extra designs are purchased"
+  },
+  "fdExtraDesignsAddedMessage": "5 extra designs have been added to your account.",
+  "@fdExtraDesignsAddedMessage": {
+    "description": "Snackbar message when extra designs are added"
+  },
+  "fdToday": "Today, {time}",
+  "@fdToday": {
+    "description": "Today timestamp format",
+    "placeholders": {
+      "time": {
         "type": "String"
       }
     }

@@ -444,7 +444,7 @@ class RefiningConceptController extends GetxController {
     // Get localized "Today" text
     final context = Get.context;
     final todayText = context != null
-        ? AppLocalizations.of(context)?.today ?? 'Today'
+        ? AppLocalizations.of(context)?.rcToday ?? 'Today'
         : 'Today';
     _currentTime.value = '$todayText, $timeString';
   }
@@ -1739,10 +1739,11 @@ class RefiningConceptController extends GetxController {
 
   // Save default/empty final details data when skipping Final Details screen
   void _saveDefaultFinalDetailsData() {
+    // IMPORTANT: These values MUST remain in English for API compatibility
+    // The API expects English values, not localized ones
     Map<String, dynamic> finalDetailsData = {
       'season': 'All-Season (Layer-Friendly)', // Default to all-season
-      'budget':
-          'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
+      'budget': 'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
       'features': '', // No special features by default
       'customFeatures': '',
       'additionalDetails': '', // No additional details

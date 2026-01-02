@@ -1452,6 +1452,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rcDialogSaveChanges => 'Save Changes';
 
   @override
+  String get rcToday => 'Today';
+
+  @override
   String get cbDialogEditAnswer => 'Edit Answer';
 
   @override
@@ -2580,5 +2583,86 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String cbEnterCustom(String category) {
     return 'Enter custom $category...';
+  }
+
+  @override
+  String get fdQuestionTargetSeason =>
+      'Great! Let\'s make sure your piece fits perfectly with the season. What kind of weather will it be designed for?';
+
+  @override
+  String get fdSeasonSummer => 'Summer (Lightweight, Short Or Roll-Up Sleeves)';
+
+  @override
+  String get fdSeasonMid => 'Mid-Season';
+
+  @override
+  String get fdSeasonAll => 'All-Season (Layer-Friendly)';
+
+  @override
+  String get fdQuestionTargetBudget =>
+      'Got it. And what kind of budget are you working with for this design? I can tailor the fabrics and features accordingly.';
+
+  @override
+  String get fdBudgetEntry => 'Entry-Level (€15-30 Production / €35-60 Retail)';
+
+  @override
+  String get fdBudgetMid => 'Mid-Range (€30-50 Production / €60-120 Retail)';
+
+  @override
+  String get fdBudgetPremium => 'Premium (€60+ Production / €120+ Retail)';
+
+  @override
+  String get fdQuestionDesiredFeatures =>
+      'Would you like to include any special values or features that matter to you or your brand? I can make sure they\'re part of the final concept';
+
+  @override
+  String get fdFeatureOrganic => 'Organic Fabric';
+
+  @override
+  String get fdFeatureUpcycled => 'Upcycled Materials';
+
+  @override
+  String get fdFeatureLocallyMade => 'Locally Made (Europe)';
+
+  @override
+  String get fdFeatureUvProtection => 'UV Protection';
+
+  @override
+  String get fdFeatureQuickDry => 'Quick-Dry';
+
+  @override
+  String get fdFeatureWrinkleFree => 'Wrinkle-Free';
+
+  @override
+  String get fdFeatureOther => 'Other: ?';
+
+  @override
+  String get fdQuestionAdditionalDetails =>
+      'Cool — feel free to type in anything else you have in mind!';
+
+  @override
+  String get fdRegeneratingDesigns => 'Regenerating Designs!';
+
+  @override
+  String get fdRegeneratingDesignsMessage =>
+      'Creating 3 new designs based on your updated preferences...';
+
+  @override
+  String get fdGeneratingDesigns => 'Generating Designs!';
+
+  @override
+  String get fdGeneratingDesignsMessage =>
+      'Creating 3 unique designs based on your preferences...';
+
+  @override
+  String get fdExtraDesignsAdded => 'Extra Designs Added!';
+
+  @override
+  String get fdExtraDesignsAddedMessage =>
+      '5 extra designs have been added to your account.';
+
+  @override
+  String fdToday(String time) {
+    return 'Today, $time';
   }
 }

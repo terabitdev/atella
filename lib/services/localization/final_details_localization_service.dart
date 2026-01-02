@@ -13,13 +13,13 @@ class FinalDetailsLocalizationService {
   String getLocalizedQuestion(String questionId) {
     switch (questionId) {
       case 'target_season':
-        return l10n.fdQuestionSeason;
+        return l10n.fdQuestionTargetSeason;
       case 'target_budget':
-        return l10n.fdQuestionBudget;
+        return l10n.fdQuestionTargetBudget;
       case 'desired_features':
-        return l10n.fdQuestionFeatures;
+        return l10n.fdQuestionDesiredFeatures;
       case 'additional_details':
-        return l10n.fdQuestionAdditional;
+        return l10n.fdQuestionAdditionalDetails;
       default:
         return questionId;
     }
@@ -30,35 +30,35 @@ class FinalDetailsLocalizationService {
     switch (englishOption) {
       // Season options
       case 'Summer (Lightweight, Short Or Roll-Up Sleeves)':
-        return l10n.fdOptionSummer;
+        return l10n.fdSeasonSummer;
       case 'Mid-Season':
-        return l10n.fdOptionMidSeason;
+        return l10n.fdSeasonMid;
       case 'All-Season (Layer-Friendly)':
-        return l10n.fdOptionAllSeason;
+        return l10n.fdSeasonAll;
 
       // Budget options
       case 'Entry-Level (€15-30 Production / €35-60 Retail)':
-        return l10n.fdOptionEntryLevel;
+        return l10n.fdBudgetEntry;
       case 'Mid-Range (€30-50 Production / €60-120 Retail)':
-        return l10n.fdOptionMidRange;
+        return l10n.fdBudgetMid;
       case 'Premium (€60+ Production / €120+ Retail)':
-        return l10n.fdOptionPremium;
+        return l10n.fdBudgetPremium;
 
       // Feature options
       case 'Organic Fabric':
-        return l10n.fdOptionOrganicFabric;
+        return l10n.fdFeatureOrganic;
       case 'Upcycled Materials':
-        return l10n.fdOptionUpcycled;
+        return l10n.fdFeatureUpcycled;
       case 'Locally Made (Europe)':
-        return l10n.fdOptionLocallyMade;
+        return l10n.fdFeatureLocallyMade;
       case 'UV Protection':
-        return l10n.fdOptionUVProtection;
+        return l10n.fdFeatureUvProtection;
       case 'Quick-Dry':
-        return l10n.fdOptionQuickDry;
+        return l10n.fdFeatureQuickDry;
       case 'Wrinkle-Free':
-        return l10n.fdOptionWrinkleFree;
+        return l10n.fdFeatureWrinkleFree;
       case 'Other: ?':
-        return l10n.fdOptionOther;
+        return l10n.fdFeatureOther;
 
       default:
         return englishOption; // Fallback
@@ -69,23 +69,23 @@ class FinalDetailsLocalizationService {
   // This is CRITICAL - ensures API always receives English values
   String getEnglishOption(String localizedOption) {
     // Season options
-    if (localizedOption == l10n.fdOptionSummer) return 'Summer (Lightweight, Short Or Roll-Up Sleeves)';
-    if (localizedOption == l10n.fdOptionMidSeason) return 'Mid-Season';
-    if (localizedOption == l10n.fdOptionAllSeason) return 'All-Season (Layer-Friendly)';
+    if (localizedOption == l10n.fdSeasonSummer) return 'Summer (Lightweight, Short Or Roll-Up Sleeves)';
+    if (localizedOption == l10n.fdSeasonMid) return 'Mid-Season';
+    if (localizedOption == l10n.fdSeasonAll) return 'All-Season (Layer-Friendly)';
 
     // Budget options
-    if (localizedOption == l10n.fdOptionEntryLevel) return 'Entry-Level (€15-30 Production / €35-60 Retail)';
-    if (localizedOption == l10n.fdOptionMidRange) return 'Mid-Range (€30-50 Production / €60-120 Retail)';
-    if (localizedOption == l10n.fdOptionPremium) return 'Premium (€60+ Production / €120+ Retail)';
+    if (localizedOption == l10n.fdBudgetEntry) return 'Entry-Level (€15-30 Production / €35-60 Retail)';
+    if (localizedOption == l10n.fdBudgetMid) return 'Mid-Range (€30-50 Production / €60-120 Retail)';
+    if (localizedOption == l10n.fdBudgetPremium) return 'Premium (€60+ Production / €120+ Retail)';
 
     // Feature options
-    if (localizedOption == l10n.fdOptionOrganicFabric) return 'Organic Fabric';
-    if (localizedOption == l10n.fdOptionUpcycled) return 'Upcycled Materials';
-    if (localizedOption == l10n.fdOptionLocallyMade) return 'Locally Made (Europe)';
-    if (localizedOption == l10n.fdOptionUVProtection) return 'UV Protection';
-    if (localizedOption == l10n.fdOptionQuickDry) return 'Quick-Dry';
-    if (localizedOption == l10n.fdOptionWrinkleFree) return 'Wrinkle-Free';
-    if (localizedOption == l10n.fdOptionOther) return 'Other: ?';
+    if (localizedOption == l10n.fdFeatureOrganic) return 'Organic Fabric';
+    if (localizedOption == l10n.fdFeatureUpcycled) return 'Upcycled Materials';
+    if (localizedOption == l10n.fdFeatureLocallyMade) return 'Locally Made (Europe)';
+    if (localizedOption == l10n.fdFeatureUvProtection) return 'UV Protection';
+    if (localizedOption == l10n.fdFeatureQuickDry) return 'Quick-Dry';
+    if (localizedOption == l10n.fdFeatureWrinkleFree) return 'Wrinkle-Free';
+    if (localizedOption == l10n.fdFeatureOther) return 'Other: ?';
 
     return localizedOption; // Fallback
   }

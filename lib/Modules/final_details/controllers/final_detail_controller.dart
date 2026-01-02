@@ -204,7 +204,9 @@ class FinalDetailsController extends GetxController {
     final now = DateTime.now();
     final timeString =
         '${now.hour.toString().padLeft(2, '0')}:${now.minute.toString().padLeft(2, '0')}';
-    _currentTime.value = 'Today, $timeString';
+    final context = Get.context;
+    final l10n = context != null ? AppLocalizations.of(context) : null;
+    _currentTime.value = l10n?.fdToday(timeString) ?? 'Today, $timeString';
   }
 
   BriefQuestion get currentQuestion => questions[currentQuestionIndex];
@@ -481,8 +483,8 @@ class FinalDetailsController extends GetxController {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        l10n?.fdSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
-        l10n?.fdSnackbarRegeneratingMessage ?? 'Creating 3 new designs based on your updated preferences...',
+        l10n?.fdRegeneratingDesigns ?? 'Regenerating Designs!',
+        l10n?.fdRegeneratingDesignsMessage ?? 'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor:Colors.black,
         colorText: Colors.white,
@@ -496,8 +498,8 @@ class FinalDetailsController extends GetxController {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
-        l10n?.fdSnackbarGeneratingDesigns ?? 'Generating Designs!',
-        l10n?.fdSnackbarGeneratingMessage ?? 'Creating 3 unique designs based on your preferences...',
+        l10n?.fdGeneratingDesigns ?? 'Generating Designs!',
+        l10n?.fdGeneratingDesignsMessage ?? 'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -525,8 +527,8 @@ class FinalDetailsController extends GetxController {
           // Get localized strings before async operation
           final context = Get.context;
           final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.fdSnackbarExtraDesigns ?? 'Extra Designs Added!';
-          final messageText = l10n?.fdSnackbarExtraDesignsMessage ?? '5 extra designs have been added to your account.';
+          final titleText = l10n?.fdExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
@@ -576,8 +578,8 @@ class FinalDetailsController extends GetxController {
           // Get localized strings before async operation
           final context = Get.context;
           final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.fdSnackbarExtraDesigns ?? 'Extra Designs Added!';
-          final messageText = l10n?.fdSnackbarExtraDesignsMessage ?? '5 extra designs have been added to your account.';
+          final titleText = l10n?.fdExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
