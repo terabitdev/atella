@@ -755,7 +755,7 @@ class ManufacturerSuggestionController extends GetxController {
         style: const TextStyle(fontWeight: FontWeight.w600),
       ),
       const SizedBox(height: 6),
-      Text('Manufacturer: ${manufacturer.companyName} (${manufacturer.country})'),
+      Text(_l10n.tpManufacturerPrefix(manufacturer.companyName, manufacturer.country)),
       const SizedBox(height: 6),
       Text(
         'From: ${userName ?? 'Atelia Fashion'} ${userEmail != null ? "<$userEmail>" : ""}',

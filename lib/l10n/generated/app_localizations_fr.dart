@@ -1697,6 +1697,23 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tpContinueWithSelected => 'Continuer avec le Design Sélectionné';
 
   @override
+  String get tpContinueAsIs => 'Non, continuer tel quel';
+
+  @override
+  String get tpRecommendedManufacturers => 'Fabricants Recommandés';
+
+  @override
+  String get tpCustomTab => 'Personnalisé';
+
+  @override
+  String get tpSelectImageGallery => 'Sélectionner une image depuis la galerie';
+
+  @override
+  String tpManufacturerPrefix(String name, String country) {
+    return 'Fabricant: $name ($country)';
+  }
+
+  @override
   String get tpUpgradeRequired => 'Mise à Niveau Requise';
 
   @override

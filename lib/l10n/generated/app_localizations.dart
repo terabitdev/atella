@@ -3194,6 +3194,36 @@ abstract class AppLocalizations {
   /// **'Continue with Selected Design'**
   String get tpContinueWithSelected;
 
+  /// Button to continue without making changes
+  ///
+  /// In en, this message translates to:
+  /// **'No, continue as is'**
+  String get tpContinueAsIs;
+
+  /// Tab label for recommended manufacturers
+  ///
+  /// In en, this message translates to:
+  /// **'Recommended Manufacturers'**
+  String get tpRecommendedManufacturers;
+
+  /// Tab label for custom manufacturers
+  ///
+  /// In en, this message translates to:
+  /// **'Custom'**
+  String get tpCustomTab;
+
+  /// Placeholder text for image upload
+  ///
+  /// In en, this message translates to:
+  /// **'Select Image from Gallery'**
+  String get tpSelectImageGallery;
+
+  /// Manufacturer label with name and country
+  ///
+  /// In en, this message translates to:
+  /// **'Manufacturer: {name} ({country})'**
+  String tpManufacturerPrefix(String name, String country);
+
   /// Upgrade required dialog title
   ///
   /// In en, this message translates to:

@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackActionContainer extends StatelessWidget {
   final VoidCallback onMakeChanges;
@@ -19,6 +20,7 @@ class TechPackActionContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Column(
       children: [
         Container(
@@ -29,20 +31,20 @@ class TechPackActionContainer extends StatelessWidget {
             color: Color.fromRGBO(211, 213, 223, 1),
           ),
           child: Text(
-            'Would you like to make any changes before I create the final tech pack?',
+            l10n.tpWouldYouLikeChanges,
             textAlign: TextAlign.center,
             style: gsTextStyle16400,
           ),
         ),
         RoundButton(
-          title: "Yes, I'd like to make changes",
+          title: l10n.tpYesChanges,
           onTap: onMakeChanges,
           color: AppColors.buttonColor,
           isloading: isLoading,
         ),
         SizedBox(height: 12.h),
         OutlineGenerateRoundButton(
-          title: 'No, continue as is',
+          title: l10n.tpContinueAsIs,
           onTap: onContinue,
           color: AppColors.buttonColor,
           loading: isLoading,

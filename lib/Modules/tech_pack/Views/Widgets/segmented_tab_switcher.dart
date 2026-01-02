@@ -2,6 +2,7 @@ import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_con
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class SegmentedTabSwitcher extends StatelessWidget {
   final ManufacturerSuggestionController controller;
@@ -10,6 +11,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
       child: Container(
@@ -41,7 +43,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
                   child: Padding(
                     padding: EdgeInsets.all(8.r),
                     child: Text(
-                      'Recommended Manufacturers',
+                      l10n.tpRecommendedManufacturers,
                       style: TextStyle(
                         fontSize: 14.sp,
                         fontWeight: FontWeight.w600,
@@ -78,7 +80,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
                     child: Padding(
                       padding: EdgeInsets.all(8.r),
                       child: Text(
-                        'Custom',
+                        l10n.tpCustomTab,
                         style: TextStyle(
                           fontSize: 14.sp,
                           fontWeight: FontWeight.w600,

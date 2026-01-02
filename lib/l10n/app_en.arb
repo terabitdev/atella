@@ -1879,6 +1879,34 @@
   "@tpContinueWithSelected": {
     "description": "Button to continue with selected design"
   },
+  "tpContinueAsIs": "No, continue as is",
+  "@tpContinueAsIs": {
+    "description": "Button to continue without making changes"
+  },
+  "tpRecommendedManufacturers": "Recommended Manufacturers",
+  "@tpRecommendedManufacturers": {
+    "description": "Tab label for recommended manufacturers"
+  },
+  "tpCustomTab": "Custom",
+  "@tpCustomTab": {
+    "description": "Tab label for custom manufacturers"
+  },
+  "tpSelectImageGallery": "Select Image from Gallery",
+  "@tpSelectImageGallery": {
+    "description": "Placeholder text for image upload"
+  },
+  "tpManufacturerPrefix": "Manufacturer: {name} ({country})",
+  "@tpManufacturerPrefix": {
+    "description": "Manufacturer label with name and country",
+    "placeholders": {
+      "name": {
+        "type": "String"
+      },
+      "country": {
+        "type": "String"
+      }
+    }
+  },
   "tpUpgradeRequired": "Upgrade Required",
   "@tpUpgradeRequired": {
     "description": "Upgrade required dialog title"

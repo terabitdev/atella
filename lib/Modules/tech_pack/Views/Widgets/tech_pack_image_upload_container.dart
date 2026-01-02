@@ -3,6 +3,7 @@ import 'package:dotted_border/dotted_border.dart';
 import 'package:flutter/material.dart';
 import 'dart:io';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackImageUploadContainer extends StatelessWidget {
   final VoidCallback onTap;
@@ -18,6 +19,7 @@ class TechPackImageUploadContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
     return GestureDetector(
       onTap: onTap,
       child: DottedBorder(
@@ -45,7 +47,7 @@ class TechPackImageUploadContainer extends StatelessWidget {
                     ),
                     SizedBox(height: 8.h),
                     Text(
-                      'Select Image from Gallery',
+                      l10n.tpSelectImageGallery,
                       style: uiTextTextStyle13500,
                     ),
                   ],
