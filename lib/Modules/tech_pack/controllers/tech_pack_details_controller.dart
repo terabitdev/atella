@@ -708,6 +708,8 @@ class TechPackDetailsController extends GetxController {
       _showStarterLimitDialog(subscription);
     } else if (currentPlan == 'PRO' || currentPlan == 'PRO_YEARLY') {
       _showProLimitDialog(subscription);
+    } else if (currentPlan == 'STUDIO' || currentPlan == 'STUDIO_YEARLY') {
+      _showStudioLimitDialog(subscription);
     }
   }
 
@@ -926,12 +928,12 @@ class TechPackDetailsController extends GetxController {
               style: ssTitleTextTextStyle124003,
             ),
             SizedBox(height: 16),
-            // Extra techpacks option
+            // Extra techpack option
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
+                color: Colors.blue.shade50,
+                border: Border.all(color: Colors.blue.shade200),
                 borderRadius: BorderRadius.circular(8),
               ),
               child: Column(
@@ -939,57 +941,24 @@ class TechPackDetailsController extends GetxController {
                 children: [
                   Row(
                     children: [
+                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
+                      SizedBox(width: 8),
                       Text(
-                        '+5 Techpacks: €4.99',
+                        '+1 Techpack: €5.99',
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
-                          color: Colors.black,
+                          color: Colors.blue.shade700,
                         ),
                       ),
                     ],
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this month',
+                    'Get 1 additional techpack for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
-                      color: Colors.black,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            // More techpacks option
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        '+10 Techpacks: €8.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 10 additional techpacks for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.black,
+                      color: Colors.blue.shade600,
                     ),
                   ),
                 ],
@@ -1010,24 +979,13 @@ class TechPackDetailsController extends GetxController {
           TextButton(
             onPressed: () {
               Get.back();
-              _purchaseExtraTechpacks(5, 4.99);
+              _purchaseExtraTechpacks(1, 5.99);
             },
             child: Text(
-              '+5 Techpacks',
+              '+1 Techpack',
               style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(10, 8.99);
-            },
-            child: Text(
-              '+10 Techpacks',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
+                color: Colors.blue,
+                fontWeight: FontWeight.bold,
               ),
             ),
           ),
@@ -1145,7 +1103,7 @@ class TechPackDetailsController extends GetxController {
               style: ssTitleTextTextStyle124003,
             ),
             SizedBox(height: 16),
-            // Extra techpacks option
+            // Extra techpack option
             Container(
               padding: EdgeInsets.all(12),
               decoration: BoxDecoration(
@@ -1161,7 +1119,7 @@ class TechPackDetailsController extends GetxController {
                       Icon(Icons.add_circle, color: Colors.blue, size: 20),
                       SizedBox(width: 8),
                       Text(
-                        '+5 Techpacks: €4.99',
+                        '+1 Techpack: €5.99',
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 14,
                           fontWeight: FontWeight.bold,
@@ -1172,47 +1130,10 @@ class TechPackDetailsController extends GetxController {
                   ),
                   SizedBox(height: 4),
                   Text(
-                    'Get 5 additional techpacks for this month',
+                    'Get 1 additional techpack for this month',
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 12,
                       color: Colors.blue.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 8),
-            // More techpacks option
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.green.shade50,
-                border: Border.all(color: Colors.green.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.add_circle, color: Colors.green, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        '+10 Techpacks: €8.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.green.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 10 additional techpacks for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.green.shade600,
                     ),
                   ),
                 ],
@@ -1234,12 +1155,143 @@ class TechPackDetailsController extends GetxController {
           TextButton(
             onPressed: () {
               Get.back();
-              _purchaseExtraTechpacks(5, 4.99);
+              _purchaseExtraTechpacks(1, 5.99);
             },
             child: Text(
-              '+5 Techpacks',
+              '+1 Techpack',
               style: ssTitleTextTextStyle14400.copyWith(
                 color: Colors.blue,
+                fontWeight: FontWeight.bold,
+              ),
+            ),
+          ),
+        ],
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  void _showStudioLimitDialog(UserSubscription? subscription) {
+    Get.dialog(
+      AlertDialog(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+        title: Row(
+          children: [
+            Icon(
+              Icons.warning_amber_rounded,
+              color: Colors.orange,
+              size: 24,
+            ),
+            SizedBox(width: 8),
+            Text(
+              'Monthly Limit Reached',
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.orange),
+            ),
+          ],
+        ),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Current plan info
+            Container(
+              width: double.infinity,
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.orange.shade50,
+                borderRadius: BorderRadius.circular(8),
+                border: Border.all(color: Colors.orange.shade200),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.star, color: Colors.orange, size: 16),
+                      SizedBox(width: 4),
+                      Text(
+                        'Current Plan: ',
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          color: Colors.black,
+                          fontWeight: FontWeight.bold,
+                        ),
+                      ),
+                      Text(
+                        _getPlanDisplayName(subscription?.subscriptionPlan ?? 'STUDIO'),
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 12,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.orange,
+                        ),
+                      ),
+                    ],
+                  ),
+                  Padding(
+                    padding: EdgeInsets.only(top: 4),
+                    child: Text(
+                      'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 16} techpacks used',
+                      style: ssTitleTextTextStyle14400.copyWith(
+                        fontSize: 12,
+                        color: Colors.red.shade600,
+                        fontWeight: FontWeight.w500,
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+            SizedBox(height: 16),
+            Text(
+              'You\'ve reached your Studio plan monthly limit of ${subscription?.totalAllowedTechpacks ?? 16} techpacks. You can purchase additional techpacks to continue:',
+              style: ssTitleTextTextStyle124003,
+            ),
+            SizedBox(height: 16),
+            // Extra techpack option
+            Container(
+              padding: EdgeInsets.all(12),
+              decoration: BoxDecoration(
+                color: Colors.blue.shade50,
+                border: Border.all(color: Colors.blue.shade200),
+                borderRadius: BorderRadius.circular(8),
+              ),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Row(
+                    children: [
+                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
+                      SizedBox(width: 8),
+                      Text(
+                        '+1 Techpack: €5.99',
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 14,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.blue.shade700,
+                        ),
+                      ),
+                    ],
+                  ),
+                  SizedBox(height: 4),
+                  Text(
+                    'Get 1 additional techpack for this month',
+                    style: ssTitleTextTextStyle14400.copyWith(
+                      fontSize: 12,
+                      color: Colors.blue.shade600,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Get.back(),
+            child: Text(
+              'Maybe Later',
+              style: ssTitleTextTextStyle14400.copyWith(
+                color: Colors.grey[600],
                 fontWeight: FontWeight.bold,
               ),
             ),
@@ -1247,12 +1299,12 @@ class TechPackDetailsController extends GetxController {
           TextButton(
             onPressed: () {
               Get.back();
-              _purchaseExtraTechpacks(10, 8.99);
+              _purchaseExtraTechpacks(1, 5.99);
             },
             child: Text(
-              '+10 Techpacks',
+              '+1 Techpack',
               style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.green,
+                color: Colors.blue,
                 fontWeight: FontWeight.bold,
               ),
             ),
