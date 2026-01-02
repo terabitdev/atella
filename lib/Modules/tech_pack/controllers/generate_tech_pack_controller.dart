@@ -804,9 +804,10 @@ class TechPackController extends GetxController {
   void _show80PercentTechpackWarningDialog(subscription, int selectedIndex) async {
     final int usedCount = subscription.techpacksUsedThisMonth;
     final int totalCount = subscription.totalAllowedTechpacks;
-    // Check if user is on a paid plan (STARTER or PRO)
+    // Check if user is on a paid plan (STARTER, PRO, or STUDIO)
     final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
-                           subscription.subscriptionPlan.startsWith('PRO');
+                           subscription.subscriptionPlan.startsWith('PRO') ||
+                           subscription.subscriptionPlan.startsWith('STUDIO');
 
     Get.dialog(
       UsageWarningDialog(

@@ -432,7 +432,9 @@ class StripeSubscriptionService {
 
       // Determine base limit
       int baseLimit = 0;
-      if (subscription.subscriptionPlan.startsWith('PRO')) {
+      if (subscription.subscriptionPlan.startsWith('STUDIO')) {
+        baseLimit = 16;
+      } else if (subscription.subscriptionPlan.startsWith('PRO')) {
         baseLimit = 8;
       } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
         baseLimit = 2;
@@ -443,8 +445,10 @@ class StripeSubscriptionService {
         'techpacksUsedThisMonth': FieldValue.increment(1),
       };
 
-      // Check if this increment will exceed base quota (meaning we're using add-on)
-      if (subscription.techpacksUsedThisMonth >= baseLimit) {
+      // ONLY increment extraTechpacksUsed if:
+      // 1. User has purchased add-ons (extraTechpacksPurchased > 0)
+      // 2. User has exceeded their base quota
+      if (subscription.extraTechpacksPurchased > 0 && subscription.techpacksUsedThisMonth >= baseLimit) {
         // User is consuming from add-on pool
         updates['extraTechpacksUsed'] = FieldValue.increment(1);
         print('📦 Consuming add-on techpack (${subscription.extraTechpacksUsed + 1}/${subscription.extraTechpacksPurchased})');
@@ -489,7 +493,9 @@ class StripeSubscriptionService {
 
       // Determine base limit
       int baseLimit = 3; // FREE
-      if (subscription.subscriptionPlan.startsWith('PRO')) {
+      if (subscription.subscriptionPlan.startsWith('STUDIO')) {
+        baseLimit = 35;
+      } else if (subscription.subscriptionPlan.startsWith('PRO')) {
         baseLimit = 15;
       } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
         baseLimit = 5;
@@ -499,8 +505,10 @@ class StripeSubscriptionService {
         'designsGeneratedThisMonth': FieldValue.increment(1),
       };
 
-      // Check if this increment will exceed base quota (meaning we're using add-on)
-      if (subscription.designsGeneratedThisMonth >= baseLimit) {
+      // ONLY increment extraDesignsUsed if:
+      // 1. User has purchased add-ons (extraDesignsPurchased > 0)
+      // 2. User has exceeded their base quota
+      if (subscription.extraDesignsPurchased > 0 && subscription.designsGeneratedThisMonth >= baseLimit) {
         // User is consuming from add-on pool
         updates['extraDesignsUsed'] = FieldValue.increment(1);
         print('📦 Consuming add-on design (${subscription.extraDesignsUsed + 1}/${subscription.extraDesignsPurchased * 5})');

@@ -1583,9 +1583,10 @@ class RefiningConceptController extends GetxController {
   void _show80PercentWarningDialog(subscription) async {
     final int usedCount = subscription.designsGeneratedThisMonth;
     final int totalCount = subscription.getTotalAllowedDesigns();
-    // Check if user is on a paid plan (STARTER or PRO)
+    // Check if user is on a paid plan (STARTER, PRO, or STUDIO)
     final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
-                           subscription.subscriptionPlan.startsWith('PRO');
+                           subscription.subscriptionPlan.startsWith('PRO') ||
+                           subscription.subscriptionPlan.startsWith('STUDIO');
 
     Get.dialog(
       UsageWarningDialog(
@@ -1638,7 +1639,8 @@ class RefiningConceptController extends GetxController {
     final subscription = await _stripeService.getCurrentUserSubscription();
     final bool isPaidUser = subscription != null &&
                            (subscription.subscriptionPlan.startsWith('STARTER') ||
-                            subscription.subscriptionPlan.startsWith('PRO'));
+                            subscription.subscriptionPlan.startsWith('PRO') ||
+                            subscription.subscriptionPlan.startsWith('STUDIO'));
 
     Get.dialog(
       LimitExceededDialog(
