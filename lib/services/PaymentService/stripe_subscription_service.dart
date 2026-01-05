@@ -132,9 +132,11 @@ class StripeSubscriptionService {
 
         // Present payment sheet
         print('🔥 DEBUG: About to present payment sheet');
+        bool paymentSuccessful = false;
         try {
           await Stripe.instance.presentPaymentSheet();
           print('🔥 DEBUG: Payment sheet completed successfully');
+          paymentSuccessful = true;
 
           // NOTE: Firebase updates are now handled by webhooks only
           // No client-side updates to prevent dual updates
@@ -143,10 +145,10 @@ class StripeSubscriptionService {
           print('🔍 DEBUG: Billing period: ${plan.billingPeriod}');
           print('🔍 DEBUG: Stripe Price ID used: $priceId');
 
-          return true;
         } catch (paymentSheetError) {
           // User dismissed payment sheet or payment failed
           print('⚠️ Payment sheet dismissed or failed: $paymentSheetError');
+          paymentSuccessful = false;
 
           // Cancel the incomplete subscription in Stripe
           print('🔄 Cancelling incomplete subscription: $subscriptionId');
@@ -175,11 +177,7 @@ class StripeSubscriptionService {
 
             // If this subscription ID matches what's in Firestore, revert to FREE
             if (userData != null && userData['currentSubscriptionId'] == subscriptionId) {
-              await _firestore.collection('users').doc(user.uid).update({
-                'subscriptionPlan': 'FREE',
-                'subscriptionStatus': 'cancelled',
-                'currentSubscriptionId': null,
-              });
+              await _revertToFreePlan(user.uid);
               print('✅ Reverted user to FREE plan due to cancelled payment');
             }
           } catch (cleanupError) {
@@ -188,7 +186,16 @@ class StripeSubscriptionService {
 
           // Rethrow the original error
           rethrow;
+        } finally {
+          // EXTRA SAFEGUARD: Always validate subscription status after payment sheet interaction
+          // This catches edge cases where the catch block might not execute properly
+          if (!paymentSuccessful) {
+            print('🔍 SAFEGUARD: Validating subscription status as extra precaution...');
+            await _validateAndCleanupFailedSubscription(user.uid, subscriptionId);
+          }
         }
+
+        return paymentSuccessful;
       }
     } catch (e) {
       if (e is StripeException) {
@@ -819,6 +826,138 @@ class StripeSubscriptionService {
         return 'Studio (€799.99/year)';
       default:
         return 'Free';
+    }
+  }
+
+  /// Validate subscription status from Stripe API
+  /// Returns true if subscription is active and paid, false otherwise
+  Future<bool> _validateStripeSubscriptionStatus(String subscriptionId) async {
+    try {
+      print('🔍 Validating Stripe subscription status: $subscriptionId');
+
+      final response = await http.get(
+        Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
+        headers: {
+          'Authorization': 'Bearer $_stripeSecretKey',
+        },
+      );
+
+      if (response.statusCode == 200) {
+        final subscriptionData = json.decode(response.body);
+        final status = subscriptionData['status'];
+
+        print('🔍 Stripe subscription status: $status');
+
+        // Valid statuses: 'active', 'trialing'
+        // Invalid statuses: 'incomplete', 'incomplete_expired', 'past_due', 'canceled', 'unpaid'
+        return status == 'active' || status == 'trialing';
+      } else if (response.statusCode == 404) {
+        print('⚠️ Subscription not found in Stripe');
+        return false;
+      } else {
+        print('⚠️ Failed to validate subscription: ${response.statusCode}');
+        return false;
+      }
+    } catch (e) {
+      print('❌ Error validating subscription status: $e');
+      return false;
+    }
+  }
+
+  /// Validate and clean up incomplete/unpaid subscriptions on app launch
+  /// This fixes the issue where users close the app before completing payment
+  Future<void> validateAndCleanupSubscription() async {
+    User? user = _auth.currentUser;
+    if (user == null) return;
+
+    try {
+      print('🔍 Validating subscription for user: ${user.uid}');
+
+      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+      if (userData == null) return;
+
+      String? subscriptionId = userData['currentSubscriptionId'];
+      String subscriptionPlan = userData['subscriptionPlan'] ?? 'FREE';
+
+      // If user has FREE plan, no validation needed
+      if (subscriptionPlan == 'FREE') {
+        print('✅ User is on FREE plan, no validation needed');
+        return;
+      }
+
+      // If user has a paid plan but no subscription ID, revert to FREE
+      if (subscriptionId == null || subscriptionId.isEmpty) {
+        print('⚠️ User has paid plan but no subscription ID, reverting to FREE');
+        await _revertToFreePlan(user.uid);
+        return;
+      }
+
+      // Validate subscription status from Stripe
+      bool isValid = await _validateStripeSubscriptionStatus(subscriptionId);
+
+      if (!isValid) {
+        print('❌ Subscription is not valid (incomplete/unpaid/cancelled), reverting to FREE');
+        await _revertToFreePlan(user.uid);
+      } else {
+        print('✅ Subscription is valid and active');
+      }
+    } catch (e) {
+      print('❌ Error during subscription validation: $e');
+    }
+  }
+
+  /// Revert user to FREE plan and clean up subscription data
+  Future<void> _revertToFreePlan(String userId) async {
+    try {
+      await _firestore.collection('users').doc(userId).update({
+        'subscriptionPlan': 'FREE',
+        'subscriptionStatus': 'cancelled',
+        'currentSubscriptionId': null,
+        'techpacksUsedThisMonth': 0,
+        'techpacksUsedThisYear': 0,
+        'designsGeneratedThisMonth': 0,
+        'extraDesignsPurchased': 0,
+        'extraTechpacksPurchased': 0,
+        'extraDesignsUsed': 0,
+        'extraTechpacksUsed': 0,
+        'currentPeriodStart': null,
+        'currentPeriodEnd': null,
+      });
+      print('✅ User reverted to FREE plan successfully');
+    } catch (e) {
+      print('❌ Error reverting user to FREE plan: $e');
+    }
+  }
+
+  /// Extra safeguard: Validate and cleanup failed subscription
+  /// This method is called in the finally block to catch edge cases
+  Future<void> _validateAndCleanupFailedSubscription(String userId, String subscriptionId) async {
+    try {
+      // Short delay to allow any pending operations to complete
+      await Future.delayed(const Duration(milliseconds: 500));
+
+      // Check Stripe subscription status
+      bool isValid = await _validateStripeSubscriptionStatus(subscriptionId);
+
+      if (!isValid) {
+        print('⚠️ SAFEGUARD: Subscription is not valid, cleaning up...');
+
+        // Check if this subscription ID is still in Firebase
+        DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+        Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+
+        if (userData != null && userData['currentSubscriptionId'] == subscriptionId) {
+          await _revertToFreePlan(userId);
+          print('✅ SAFEGUARD: Successfully cleaned up failed subscription');
+        }
+      } else {
+        print('✅ SAFEGUARD: Subscription is valid, no cleanup needed');
+      }
+    } catch (e) {
+      print('❌ SAFEGUARD: Error during validation: $e');
+      // Don't throw - this is a safety check, shouldn't break the flow
     }
   }
 

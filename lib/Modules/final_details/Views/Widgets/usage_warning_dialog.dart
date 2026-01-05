@@ -11,6 +11,7 @@ class UsageWarningDialog extends StatelessWidget {
   final VoidCallback onContinue;
   final bool isDesign; // true for designs, false for techpacks
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
+  final VoidCallback? onGetExtraTechpacks; // Optional callback for purchasing extra techpacks
 
   const UsageWarningDialog({
     Key? key,
@@ -21,6 +22,7 @@ class UsageWarningDialog extends StatelessWidget {
     required this.onContinue,
     this.isDesign = true,
     this.isPaidUser = false, // Default to false (FREE user)
+    this.onGetExtraTechpacks, // Optional parameter for techpack purchases
   }) : super(key: key);
 
   @override
@@ -80,6 +82,33 @@ class UsageWarningDialog extends StatelessWidget {
                       ),
                       child: Text(
                         l10n.fdDialogGetExtraDesigns,
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 12.h),
+                ],
+                // Get Extra Techpacks Button (only for paid users with techpacks)
+                if (!isDesign && isPaidUser && onGetExtraTechpacks != null) ...[
+                  SizedBox(
+                    width: double.infinity,
+                    child: ElevatedButton(
+                      onPressed: onGetExtraTechpacks,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.black,
+                        foregroundColor: Colors.white,
+                        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(8.r),
+                        ),
+                      ),
+                      child: Text(
+                        'Get Extra Techpacks (€5.99)',
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,

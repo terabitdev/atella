@@ -819,6 +819,10 @@ class TechPackController extends GetxController {
           // Not used for techpacks, but required by widget
           Get.back();
         },
+        onGetExtraTechpacks: isPaidUser ? () {
+          Get.back(); // Close dialog
+          _purchaseExtraTechpacks(1, 5.99); // Purchase 1 extra techpack
+        } : null,
         onUpgradePlan: () {
           Get.back(); // Close dialog
           // Navigate to subscription screen

@@ -15,6 +15,7 @@ import 'package:posthog_flutter/posthog_flutter.dart';
 import 'services/firebase/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'services/PaymentService/subscription_manager_service.dart';
+import 'services/PaymentService/stripe_subscription_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
@@ -39,6 +40,9 @@ void main() async {
 
   // Initialize translation model (download if needed)
   await _initializeTranslationModel();
+
+  // Validate and cleanup incomplete/unpaid subscriptions
+  await _validateSubscriptionOnLaunch();
 
   runApp(const MyApp());
 }
@@ -144,6 +148,27 @@ Future<void> _identifyExistingUser() async {
       email: user.email,
       name: user.displayName,
     );
+  }
+}
+
+/// Validate subscription status on app launch
+/// This ensures that incomplete/unpaid subscriptions are cleaned up
+Future<void> _validateSubscriptionOnLaunch() async {
+  try {
+    final user = FirebaseAuth.instance.currentUser;
+    if (user != null) {
+      // Import required for StripeSubscriptionService
+      final stripeService = StripeSubscriptionService();
+      await stripeService.validateAndCleanupSubscription();
+      if (kDebugMode) {
+        debugPrint('Subscription: Validation completed on app launch');
+      }
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('Subscription: Error validating on launch - $e');
+    }
+    // Don't block app startup if validation fails
   }
 }
 
