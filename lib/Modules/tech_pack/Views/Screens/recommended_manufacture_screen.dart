@@ -368,96 +368,131 @@ Widget customTab(ManufacturerSuggestionController controller, AppLocalizations l
           SizedBox(height: 18.h),
 
           // Manufacturer list
-          Obx(() {
-            final filteredManufacturers = controller.filteredManufacturers;
+          Builder(
+            builder: (context) => Obx(() {
+              final filteredManufacturers = controller.filteredManufacturers;
+              final locale = Localizations.localeOf(context).languageCode;
 
-            if (controller.allManufacturersCache.isEmpty) {
-              return Center(
-                child: Column(
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Lottie.asset(
-                      'assets/lottie/Loading_dots.json',
-                      width: 100.w,
-                      height: 100.h,
-                      fit: BoxFit.cover,
-                    ),
-                    SizedBox(height: 16.h),
-                    Text(
-                      l10n.mfLoadingManufacturers,
-                      style: TextStyle(
-                        fontSize: 16.sp,
-                        color: const Color(0xFF666666),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            } else if (filteredManufacturers.isEmpty) {
-              return Center(
-                child: Padding(
-                  padding: EdgeInsets.symmetric(vertical: 40.h),
+              if (controller.allManufacturersCache.isEmpty) {
+                return Center(
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Icon(Icons.search_off, size: 64.sp, color: Colors.grey),
+                      Lottie.asset(
+                        'assets/lottie/Loading_dots.json',
+                        width: 100.w,
+                        height: 100.h,
+                        fit: BoxFit.cover,
+                      ),
                       SizedBox(height: 16.h),
                       Text(
-                        l10n.mfNoManufacturersFound,
-                        style: TextStyle(fontSize: 16.sp, color: Colors.grey),
-                      ),
-                      Padding(
-                        padding: EdgeInsets.only(top: 8.h),
-                        child: Text(
-                          l10n.mfTryAdjustingFilters,
-                          style: TextStyle(
-                            fontSize: 14.sp,
-                            color: Colors.grey,
-                          ),
+                        l10n.mfLoadingManufacturers,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          color: const Color(0xFF666666),
                         ),
                       ),
                     ],
                   ),
-                ),
-              );
-            } else {
-              return Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    l10n.mfManufacturersFound(
-                      filteredManufacturers.length,
-                      filteredManufacturers.length == 1 ? '' : 's',
-                    ),
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
-                      fontWeight: FontWeight.w500,
+                );
+              } else if (filteredManufacturers.isEmpty) {
+                return Center(
+                  child: Padding(
+                    padding: EdgeInsets.symmetric(vertical: 40.h),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.search_off, size: 64.sp, color: Colors.grey),
+                        SizedBox(height: 16.h),
+                        Text(
+                          l10n.mfNoManufacturersFound,
+                          style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                        ),
+                        Padding(
+                          padding: EdgeInsets.only(top: 8.h),
+                          child: Text(
+                            l10n.mfTryAdjustingFilters,
+                            style: TextStyle(
+                              fontSize: 14.sp,
+                              color: Colors.grey,
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                  SizedBox(height: 12.h),
-                  ...filteredManufacturers.map(
-                    (manufacturer) {
-                      // Convert to TranslatedManufacturer format
-                      final translatedManufacturer = TranslatedManufacturer.fromManufacturer(
-                        manufacturer,
-                        translatedMoq: manufacturer.moq,
-                        translatedProducts: manufacturer.products,
-                      );
-                      return TranslatedManufacturerCard(
-                        translatedManufacturer: translatedManufacturer,
-                        onViewProfile: () {
-                          Get.to(ViewProfileTechPackScreen());
-                        },
-                        onSendEmail: () =>
-                            controller.previewEmailToManufacturer(manufacturer),
-                      );
-                    },
+                );
+              } else {
+                return FutureBuilder<List<TranslatedManufacturer>>(
+                  future: _translateFilteredManufacturers(
+                    controller,
+                    filteredManufacturers,
+                    locale,
                   ),
-                ],
-              );
-            }
-          }),
+                  builder: (context, snapshot) {
+                    if (snapshot.connectionState == ConnectionState.waiting) {
+                      // Show loading while translating
+                      if (locale == 'fr') {
+                        return Center(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Lottie.asset(
+                                'assets/lottie/Loading_dots.json',
+                                width: 100.w,
+                                height: 100.h,
+                                fit: BoxFit.cover,
+                              ),
+                              SizedBox(height: 16.h),
+                              Text(
+                                l10n.mfLoadingManufacturers,
+                                style: TextStyle(
+                                  fontSize: 16.sp,
+                                  color: const Color(0xFF666666),
+                                ),
+                              ),
+                            ],
+                          ),
+                        );
+                      }
+                    }
+
+                    final translatedManufacturers = snapshot.data ?? [];
+
+                    return Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(
+                          l10n.mfManufacturersFound(
+                            filteredManufacturers.length,
+                            filteredManufacturers.length == 1 ? '' : 's',
+                          ),
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            color: const Color(0xFF666666),
+                            fontWeight: FontWeight.w500,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+                        ...translatedManufacturers.map(
+                          (translatedManufacturer) {
+                            return TranslatedManufacturerCard(
+                              translatedManufacturer: translatedManufacturer,
+                              onViewProfile: () {
+                                Get.to(ViewProfileTechPackScreen());
+                              },
+                              onSendEmail: () =>
+                                  controller.previewEmailToManufacturer(translatedManufacturer),
+                            );
+                          },
+                        ),
+                      ],
+                    );
+                  },
+                );
+              }
+            }),
+          ),
 
           SizedBox(height: 18.h),
         ],
@@ -466,4 +501,30 @@ Widget customTab(ManufacturerSuggestionController controller, AppLocalizations l
   );
 }
 
+/// Helper function to translate filtered manufacturers
+Future<List<TranslatedManufacturer>> _translateFilteredManufacturers(
+  ManufacturerSuggestionController controller,
+  List<dynamic> manufacturers,
+  String locale,
+) async {
+  if (locale != 'fr') {
+    // If not French, return as-is without translation
+    return manufacturers.map((m) => TranslatedManufacturer.fromManufacturer(
+      m,
+      translatedMoq: m.moq,
+      translatedProducts: m.products,
+    )).toList();
+  }
 
+  // Translate all manufacturers for French
+  final List<TranslatedManufacturer> translated = [];
+  for (final manufacturer in manufacturers) {
+    final translatedManufacturer = await controller.translateManufacturer(
+      manufacturer,
+      locale,
+    );
+    translated.add(translatedManufacturer);
+  }
+
+  return translated;
+}
