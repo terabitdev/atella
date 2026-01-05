@@ -7,8 +7,14 @@ import 'package:get/get.dart';
 class GlobalHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onBack;
+  final List<Widget>? actions;
 
-  const GlobalHeader({super.key, required this.title, this.onBack});
+  const GlobalHeader({
+    super.key,
+    required this.title,
+    this.onBack,
+    this.actions,
+  });
 
   @override
   Widget build(BuildContext context) {
@@ -25,7 +31,8 @@ class GlobalHeader extends StatelessWidget {
             ),
           ),
           SizedBox(width: 16.w),
-          Text(title, style: vsTextStyle20800),
+          Expanded(child: Text(title, style: vsTextStyle20800)),
+          if (actions != null) ...actions!,
         ],
       ),
     );

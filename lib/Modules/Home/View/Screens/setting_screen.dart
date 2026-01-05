@@ -1,10 +1,12 @@
 import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/core/controllers/locale_controller.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -15,6 +17,7 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final ProfileController controller = Get.put(ProfileController());
+  final LocaleController localeController = Get.find<LocaleController>();
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -29,7 +32,48 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Row(
                 children: [
                   SizedBox(width: 8.w),
-                  Text(l10n.settings, style: ssTitleTextTextStyle208001),
+                  Expanded(child: Text(l10n.settings, style: ssTitleTextTextStyle208001)),
+                  Builder(
+                    builder: (context) {
+                      // Get current locale from context (reflects phone language changes)
+                      final currentLocale = Localizations.localeOf(context).languageCode;
+                      final isFrench = currentLocale == 'fr';
+
+                      return GestureDetector(
+                        onTap: () => _showLanguageDialog(context, l10n),
+                        child: Container(
+                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withValues(alpha: 0.15),
+                            borderRadius: BorderRadius.circular(20.r),
+                            border: Border.all(
+                              color: Colors.white.withValues(alpha: 0.3),
+                              width: 1,
+                            ),
+                          ),
+                          child: Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Icon(
+                                Icons.language,
+                                size: 18.sp,
+                                color: Colors.white,
+                              ),
+                              SizedBox(width: 6.w),
+                              Text(
+                                isFrench ? 'FR' : 'EN',
+                                style: TextStyle(
+                                  fontSize: 13.sp,
+                                  fontWeight: FontWeight.w600,
+                                  color: Colors.white,
+                                ),
+                              ),
+                            ],
+                          ),
+                        ),
+                      );
+                    },
+                  ),
                 ],
               ),
             ),
@@ -289,6 +333,139 @@ class _SettingScreenState extends State<SettingScreen> {
                 ),
               ),
             ),
+          ],
+        ),
+      ),
+    );
+  }
+
+  void _showLanguageDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                Row(
+                  children: [
+                    Icon(
+                      Icons.language,
+                      color: AppColors.buttonColor,
+                      size: 24.sp,
+                    ),
+                    SizedBox(width: 12.w),
+                    Text(
+                      l10n.selectLanguage,
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
+                SizedBox(height: 24.h),
+                // Use context locale for selection state
+                Builder(
+                  builder: (ctx) {
+                    final currentLocale = Localizations.localeOf(ctx).languageCode;
+                    return Column(
+                      children: [
+                        _buildLanguageOption(
+                          context: context,
+                          languageCode: 'en',
+                          languageName: 'English',
+                          flag: '🇬🇧',
+                          isSelected: currentLocale == 'en',
+                        ),
+                        SizedBox(height: 12.h),
+                        _buildLanguageOption(
+                          context: context,
+                          languageCode: 'fr',
+                          languageName: 'Français',
+                          flag: '🇫🇷',
+                          isSelected: currentLocale == 'fr',
+                        ),
+                      ],
+                    );
+                  },
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  Widget _buildLanguageOption({
+    required BuildContext context,
+    required String languageCode,
+    required String languageName,
+    required String flag,
+    required bool isSelected,
+  }) {
+    return InkWell(
+      onTap: () async {
+        await localeController.changeLocale(Locale(languageCode));
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      borderRadius: BorderRadius.circular(12.r),
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 14.h),
+        decoration: BoxDecoration(
+          color: isSelected
+              ? AppColors.buttonColor.withValues(alpha: 0.1)
+              : Colors.grey.shade50,
+          borderRadius: BorderRadius.circular(12.r),
+          border: Border.all(
+            color: isSelected
+                ? AppColors.buttonColor
+                : Colors.grey.shade300,
+            width: isSelected ? 2 : 1,
+          ),
+        ),
+        child: Row(
+          children: [
+            Text(
+              flag,
+              style: TextStyle(fontSize: 28.sp),
+            ),
+            SizedBox(width: 16.w),
+            Expanded(
+              child: Text(
+                languageName,
+                style: TextStyle(
+                  fontSize: 16.sp,
+                  fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
+                  color: isSelected ? AppColors.buttonColor : Colors.black87,
+                ),
+              ),
+            ),
+            if (isSelected)
+              Icon(
+                Icons.check_circle,
+                color: AppColors.buttonColor,
+                size: 24.sp,
+              )
+            else
+              Icon(
+                Icons.circle_outlined,
+                color: Colors.grey.shade400,
+                size: 24.sp,
+              ),
           ],
         ),
       ),
