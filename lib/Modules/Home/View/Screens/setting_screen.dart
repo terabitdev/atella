@@ -17,7 +17,8 @@ class SettingScreen extends StatefulWidget {
 
 class _SettingScreenState extends State<SettingScreen> {
   final ProfileController controller = Get.put(ProfileController());
-  final LocaleController localeController = Get.find<LocaleController>();
+  // Use Get.put to ensure LocaleController is available, or reuse existing one
+  final LocaleController localeController = Get.put(LocaleController(), permanent: true);
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;

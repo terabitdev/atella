@@ -4999,6 +4999,102 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Today, {time}'**
   String fdToday(String time);
+
+  /// Error when Firebase user creation fails
+  ///
+  /// In en, this message translates to:
+  /// **'User creation failed. Please try again.'**
+  String get authUserCreationFailed;
+
+  /// Generic authentication error message
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred. Please try again.'**
+  String get authGenericError;
+
+  /// Error when email is already registered
+  ///
+  /// In en, this message translates to:
+  /// **'This email is already registered. Please sign in instead.'**
+  String get authEmailAlreadyInUse;
+
+  /// Error when password doesn't meet requirements
+  ///
+  /// In en, this message translates to:
+  /// **'Password is too weak. Please use a stronger password.'**
+  String get authWeakPassword;
+
+  /// Error when email format is invalid
+  ///
+  /// In en, this message translates to:
+  /// **'Invalid email address. Please check and try again.'**
+  String get authInvalidEmail;
+
+  /// Error when operation is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'This operation is not allowed. Please contact support.'**
+  String get authOperationNotAllowed;
+
+  /// Error when email doesn't exist
+  ///
+  /// In en, this message translates to:
+  /// **'No user found with this email. Please sign up first.'**
+  String get authUserNotFound;
+
+  /// Error when wrong password is entered
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password. Please try again.'**
+  String get authWrongPassword;
+
+  /// Error when account is disabled
+  ///
+  /// In en, this message translates to:
+  /// **'This account has been disabled. Please contact support.'**
+  String get authUserDisabled;
+
+  /// Error when too many login attempts
+  ///
+  /// In en, this message translates to:
+  /// **'Too many failed attempts. Please try again later.'**
+  String get authTooManyRequests;
+
+  /// Error when network request fails
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your internet connection.'**
+  String get authNetworkError;
+
+  /// Error when user cancels Google sign-in
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled.'**
+  String get authGoogleSignInCancelled;
+
+  /// Error when Google authentication fails
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in failed. Please try again.'**
+  String get authGoogleSignInFailed;
+
+  /// Error when SHA-1 not configured
+  ///
+  /// In en, this message translates to:
+  /// **'Configuration error. Please contact support.'**
+  String get authGoogleConfigError;
+
+  /// Generic Google sign-in error
+  ///
+  /// In en, this message translates to:
+  /// **'An error occurred during Google sign-in. Please try again.'**
+  String get authGoogleGenericError;
+
+  /// Error when login credentials are invalid (user not found or wrong password)
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect email or password. Please try again.'**
+  String get authInvalidCredentials;
 }
 
 class _AppLocalizationsDelegate

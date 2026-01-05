@@ -96,6 +96,10 @@ class SignupController extends GetxController {
       // Success - Track signup event
       PostHogAnalyticsService().trackUserSignedUp(method: 'email');
 
+      // CRITICAL: Sign out the user immediately after signup
+      // This ensures they must login with their credentials on the login page
+      await _authService.signOut();
+
       Get.snackbar(
         l10n.success,
         l10n.userRegisteredSuccessfully,
@@ -107,19 +111,47 @@ class SignupController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 300)); // Let UI settle
       Get.offAllNamed('/login');
     } else {
-      // Check for duplicate email error
-      if (result.toLowerCase().contains('email') &&
-          result.toLowerCase().contains('already')) {
-        emailError.value = l10n.userAlreadyExistsWithEmail;
+      debugPrint('Signup error code received: $result');
+      final errorMessage = _getLocalizedError(result, l10n);
+      debugPrint('Localized error message: $errorMessage');
+
+      // Show email-specific errors below the email field
+      if (result == 'auth-email-already-in-use') {
+        emailError.value = errorMessage;
+      } else if (result == 'auth-weak-password') {
+        passwordError.value = errorMessage;
+      } else if (result == 'auth-invalid-email') {
+        emailError.value = errorMessage;
       } else {
         Get.snackbar(
           l10n.error,
-          result,
+          errorMessage,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
         );
       }
+    }
+  }
+
+  String _getLocalizedError(String errorCode, AppLocalizations l10n) {
+    switch (errorCode) {
+      case 'auth-email-already-in-use':
+        return l10n.authEmailAlreadyInUse;
+      case 'auth-weak-password':
+        return l10n.authWeakPassword;
+      case 'auth-invalid-email':
+        return l10n.authInvalidEmail;
+      case 'auth-operation-not-allowed':
+        return l10n.authOperationNotAllowed;
+      case 'auth-user-creation-failed':
+        return l10n.authUserCreationFailed;
+      case 'auth-network-error':
+        return l10n.authNetworkError;
+      case 'auth-generic-error':
+        return l10n.authGenericError;
+      default:
+        return l10n.authGenericError;
     }
   }
 

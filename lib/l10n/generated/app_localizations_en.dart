@@ -2682,4 +2682,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String fdToday(String time) {
     return 'Today, $time';
   }
+
+  @override
+  String get authUserCreationFailed =>
+      'User creation failed. Please try again.';
+
+  @override
+  String get authGenericError => 'An error occurred. Please try again.';
+
+  @override
+  String get authEmailAlreadyInUse =>
+      'This email is already registered. Please sign in instead.';
+
+  @override
+  String get authWeakPassword =>
+      'Password is too weak. Please use a stronger password.';
+
+  @override
+  String get authInvalidEmail =>
+      'Invalid email address. Please check and try again.';
+
+  @override
+  String get authOperationNotAllowed =>
+      'This operation is not allowed. Please contact support.';
+
+  @override
+  String get authUserNotFound =>
+      'No user found with this email. Please sign up first.';
+
+  @override
+  String get authWrongPassword => 'Incorrect password. Please try again.';
+
+  @override
+  String get authUserDisabled =>
+      'This account has been disabled. Please contact support.';
+
+  @override
+  String get authTooManyRequests =>
+      'Too many failed attempts. Please try again later.';
+
+  @override
+  String get authNetworkError =>
+      'Network error. Please check your internet connection.';
+
+  @override
+  String get authGoogleSignInCancelled => 'Google sign-in was cancelled.';
+
+  @override
+  String get authGoogleSignInFailed =>
+      'Google sign-in failed. Please try again.';
+
+  @override
+  String get authGoogleConfigError =>
+      'Configuration error. Please contact support.';
+
+  @override
+  String get authGoogleGenericError =>
+      'An error occurred during Google sign-in. Please try again.';
+
+  @override
+  String get authInvalidCredentials =>
+      'Incorrect email or password. Please try again.';
 }

@@ -2732,4 +2732,66 @@ class AppLocalizationsFr extends AppLocalizations {
   String fdToday(String time) {
     return 'Aujourd\'hui, $time';
   }
+
+  @override
+  String get authUserCreationFailed =>
+      'La création de l\'utilisateur a échoué. Veuillez réessayer.';
+
+  @override
+  String get authGenericError =>
+      'Une erreur s\'est produite. Veuillez réessayer.';
+
+  @override
+  String get authEmailAlreadyInUse =>
+      'Cet email est déjà enregistré. Veuillez vous connecter à la place.';
+
+  @override
+  String get authWeakPassword =>
+      'Le mot de passe est trop faible. Veuillez utiliser un mot de passe plus fort.';
+
+  @override
+  String get authInvalidEmail =>
+      'Adresse email invalide. Veuillez vérifier et réessayer.';
+
+  @override
+  String get authOperationNotAllowed =>
+      'Cette opération n\'est pas autorisée. Veuillez contacter le support.';
+
+  @override
+  String get authUserNotFound =>
+      'Aucun utilisateur trouvé avec cet email. Veuillez d\'abord vous inscrire.';
+
+  @override
+  String get authWrongPassword => 'Mot de passe incorrect. Veuillez réessayer.';
+
+  @override
+  String get authUserDisabled =>
+      'Ce compte a été désactivé. Veuillez contacter le support.';
+
+  @override
+  String get authTooManyRequests =>
+      'Trop de tentatives échouées. Veuillez réessayer plus tard.';
+
+  @override
+  String get authNetworkError =>
+      'Erreur réseau. Veuillez vérifier votre connexion Internet.';
+
+  @override
+  String get authGoogleSignInCancelled => 'La connexion Google a été annulée.';
+
+  @override
+  String get authGoogleSignInFailed =>
+      'La connexion Google a échoué. Veuillez réessayer.';
+
+  @override
+  String get authGoogleConfigError =>
+      'Erreur de configuration. Veuillez contacter le support.';
+
+  @override
+  String get authGoogleGenericError =>
+      'Une erreur s\'est produite lors de la connexion Google. Veuillez réessayer.';
+
+  @override
+  String get authInvalidCredentials =>
+      'Email ou mot de passe incorrect. Veuillez réessayer.';
 }

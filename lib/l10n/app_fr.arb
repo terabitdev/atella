@@ -998,5 +998,69 @@
         "type": "String"
       }
     }
+  },
+  "authUserCreationFailed": "La création de l'utilisateur a échoué. Veuillez réessayer.",
+  "@authUserCreationFailed": {
+    "description": "Error when Firebase user creation fails"
+  },
+  "authGenericError": "Une erreur s'est produite. Veuillez réessayer.",
+  "@authGenericError": {
+    "description": "Generic authentication error message"
+  },
+  "authEmailAlreadyInUse": "Cet email est déjà enregistré. Veuillez vous connecter à la place.",
+  "@authEmailAlreadyInUse": {
+    "description": "Error when email is already registered"
+  },
+  "authWeakPassword": "Le mot de passe est trop faible. Veuillez utiliser un mot de passe plus fort.",
+  "@authWeakPassword": {
+    "description": "Error when password doesn't meet requirements"
+  },
+  "authInvalidEmail": "Adresse email invalide. Veuillez vérifier et réessayer.",
+  "@authInvalidEmail": {
+    "description": "Error when email format is invalid"
+  },
+  "authOperationNotAllowed": "Cette opération n'est pas autorisée. Veuillez contacter le support.",
+  "@authOperationNotAllowed": {
+    "description": "Error when operation is disabled"
+  },
+  "authUserNotFound": "Aucun utilisateur trouvé avec cet email. Veuillez d'abord vous inscrire.",
+  "@authUserNotFound": {
+    "description": "Error when email doesn't exist"
+  },
+  "authWrongPassword": "Mot de passe incorrect. Veuillez réessayer.",
+  "@authWrongPassword": {
+    "description": "Error when wrong password is entered"
+  },
+  "authUserDisabled": "Ce compte a été désactivé. Veuillez contacter le support.",
+  "@authUserDisabled": {
+    "description": "Error when account is disabled"
+  },
+  "authTooManyRequests": "Trop de tentatives échouées. Veuillez réessayer plus tard.",
+  "@authTooManyRequests": {
+    "description": "Error when too many login attempts"
+  },
+  "authNetworkError": "Erreur réseau. Veuillez vérifier votre connexion Internet.",
+  "@authNetworkError": {
+    "description": "Error when network request fails"
+  },
+  "authGoogleSignInCancelled": "La connexion Google a été annulée.",
+  "@authGoogleSignInCancelled": {
+    "description": "Error when user cancels Google sign-in"
+  },
+  "authGoogleSignInFailed": "La connexion Google a échoué. Veuillez réessayer.",
+  "@authGoogleSignInFailed": {
+    "description": "Error when Google authentication fails"
+  },
+  "authGoogleConfigError": "Erreur de configuration. Veuillez contacter le support.",
+  "@authGoogleConfigError": {
+    "description": "Error when SHA-1 not configured"
+  },
+  "authGoogleGenericError": "Une erreur s'est produite lors de la connexion Google. Veuillez réessayer.",
+  "@authGoogleGenericError": {
+    "description": "Generic Google sign-in error"
+  },
+  "authInvalidCredentials": "Email ou mot de passe incorrect. Veuillez réessayer.",
+  "@authInvalidCredentials": {
+    "description": "Error when login credentials are invalid (user not found or wrong password)"
   }
 }

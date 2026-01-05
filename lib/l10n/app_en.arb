@@ -3268,5 +3268,69 @@
         "type": "String"
       }
     }
+  },
+  "authUserCreationFailed": "User creation failed. Please try again.",
+  "@authUserCreationFailed": {
+    "description": "Error when Firebase user creation fails"
+  },
+  "authGenericError": "An error occurred. Please try again.",
+  "@authGenericError": {
+    "description": "Generic authentication error message"
+  },
+  "authEmailAlreadyInUse": "This email is already registered. Please sign in instead.",
+  "@authEmailAlreadyInUse": {
+    "description": "Error when email is already registered"
+  },
+  "authWeakPassword": "Password is too weak. Please use a stronger password.",
+  "@authWeakPassword": {
+    "description": "Error when password doesn't meet requirements"
+  },
+  "authInvalidEmail": "Invalid email address. Please check and try again.",
+  "@authInvalidEmail": {
+    "description": "Error when email format is invalid"
+  },
+  "authOperationNotAllowed": "This operation is not allowed. Please contact support.",
+  "@authOperationNotAllowed": {
+    "description": "Error when operation is disabled"
+  },
+  "authUserNotFound": "No user found with this email. Please sign up first.",
+  "@authUserNotFound": {
+    "description": "Error when email doesn't exist"
+  },
+  "authWrongPassword": "Incorrect password. Please try again.",
+  "@authWrongPassword": {
+    "description": "Error when wrong password is entered"
+  },
+  "authUserDisabled": "This account has been disabled. Please contact support.",
+  "@authUserDisabled": {
+    "description": "Error when account is disabled"
+  },
+  "authTooManyRequests": "Too many failed attempts. Please try again later.",
+  "@authTooManyRequests": {
+    "description": "Error when too many login attempts"
+  },
+  "authNetworkError": "Network error. Please check your internet connection.",
+  "@authNetworkError": {
+    "description": "Error when network request fails"
+  },
+  "authGoogleSignInCancelled": "Google sign-in was cancelled.",
+  "@authGoogleSignInCancelled": {
+    "description": "Error when user cancels Google sign-in"
+  },
+  "authGoogleSignInFailed": "Google sign-in failed. Please try again.",
+  "@authGoogleSignInFailed": {
+    "description": "Error when Google authentication fails"
+  },
+  "authGoogleConfigError": "Configuration error. Please contact support.",
+  "@authGoogleConfigError": {
+    "description": "Error when SHA-1 not configured"
+  },
+  "authGoogleGenericError": "An error occurred during Google sign-in. Please try again.",
+  "@authGoogleGenericError": {
+    "description": "Generic Google sign-in error"
+  },
+  "authInvalidCredentials": "Incorrect email or password. Please try again.",
+  "@authInvalidCredentials": {
+    "description": "Error when login credentials are invalid (user not found or wrong password)"
   }
 }

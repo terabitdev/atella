@@ -75,21 +75,20 @@ class LoginController extends GetxController {
       // Success
       Get.offAllNamed('/nav_bar');
     } else {
-      // Show error below the relevant field
-      if (result.toLowerCase().contains('email')) {
-        emailError.value = result;
-      } else if (result.toLowerCase().contains('password')) {
-        passwordError.value = result;
-      } else {
-        final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
-          l10n.error,
-          result,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-          duration: const Duration(milliseconds: 1500),
-        );
-      }
+      final l10n = AppLocalizations.of(Get.context!)!;
+      debugPrint('Login error code received: $result');
+      final errorMessage = _getLocalizedError(result, l10n);
+      debugPrint('Localized error message: $errorMessage');
+
+      // Show error as snackbar for all authentication errors
+      // This is a security best practice to not reveal which field is incorrect
+      Get.snackbar(
+        l10n.error,
+        errorMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
+      );
     }
   }
 
@@ -123,13 +122,45 @@ class LoginController extends GetxController {
       Get.offAllNamed('/nav_bar');
     } else {
       final l10n = AppLocalizations.of(Get.context!)!;
+      final errorMessage = _getLocalizedError(result, l10n);
       Get.snackbar(
         l10n.error,
-        result,
+        errorMessage,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
+    }
+  }
+
+  String _getLocalizedError(String errorCode, AppLocalizations l10n) {
+    switch (errorCode) {
+      case 'auth-invalid-credentials':
+        return l10n.authInvalidCredentials;
+      case 'auth-user-not-found':
+        return l10n.authUserNotFound;
+      case 'auth-wrong-password':
+        return l10n.authWrongPassword;
+      case 'auth-invalid-email':
+        return l10n.authInvalidEmail;
+      case 'auth-user-disabled':
+        return l10n.authUserDisabled;
+      case 'auth-too-many-requests':
+        return l10n.authTooManyRequests;
+      case 'auth-network-error':
+        return l10n.authNetworkError;
+      case 'auth-google-sign-in-cancelled':
+        return l10n.authGoogleSignInCancelled;
+      case 'auth-google-sign-in-failed':
+        return l10n.authGoogleSignInFailed;
+      case 'auth-google-config-error':
+        return l10n.authGoogleConfigError;
+      case 'auth-google-generic-error':
+        return l10n.authGoogleGenericError;
+      case 'auth-generic-error':
+        return l10n.authGenericError;
+      default:
+        return l10n.authGenericError;
     }
   }
 
