@@ -7,7 +7,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 import 'package:country_picker/country_picker.dart';
-import 'package:atella/Modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/translated_manufacturer_card.dart';
+import 'package:atella/Data/Models/translated_manufacturer_model.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 class RecommendedManufactureScreen extends StatelessWidget {
@@ -136,10 +137,43 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
           ),
           SizedBox(height: 8.h),
           SizedBox(height: 18.h),
-          Obx(() {
-            final manufacturers = controller.displayedManufacturers;
+          Builder(
+            builder: (context) => Obx(() {
+              final manufacturers = controller.displayedManufacturers;
+              final translatedManufacturers = controller.translatedDisplayedManufacturers;
+              final locale = Localizations.localeOf(context).languageCode;
+
+              // Trigger translation when manufacturers change
+              if (manufacturers.isNotEmpty &&
+                  (translatedManufacturers.isEmpty ||
+                   translatedManufacturers.length != manufacturers.length)) {
+                Future.microtask(() => controller.translateAllManufacturers(locale));
+              }
 
             if (controller.isLoading.value && manufacturers.isEmpty) {
+              return Center(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    Lottie.asset(
+                      'assets/lottie/Loading_dots.json',
+                      width: 100.w,
+                      height: 100.h,
+                      fit: BoxFit.cover,
+                    ),
+                    SizedBox(height: 16.h),
+                    Text(
+                      l10n.mfLoadingManufacturers,
+                      style: TextStyle(
+                        fontSize: 16.sp,
+                        color: const Color(0xFF666666),
+                      ),
+                    ),
+                  ],
+                ),
+              );
+            } else if (controller.isTranslating.value) {
+              // Show loading indicator while translating
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -196,12 +230,12 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
             } else {
               return Column(
                 children: [
-                  ...manufacturers.map(
-                    (manufacturer) => ManufacturerSuggestionCard(
-                      manufacturer: manufacturer,
+                  ...translatedManufacturers.map(
+                    (translatedManufacturer) => TranslatedManufacturerCard(
+                      translatedManufacturer: translatedManufacturer,
                       onViewProfile: () {},
                       onSendEmail: () =>
-                          controller.previewEmailToManufacturer(manufacturer),
+                          controller.previewEmailToManufacturer(translatedManufacturer),
                     ),
                   ),
                   if (controller.isLoadingMore.value)
@@ -229,7 +263,8 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
                 ],
               );
             }
-          }),
+            }),
+          ),
           SizedBox(height: 18.h),
         ],
       ),
@@ -402,14 +437,22 @@ Widget customTab(ManufacturerSuggestionController controller, AppLocalizations l
                   ),
                   SizedBox(height: 12.h),
                   ...filteredManufacturers.map(
-                    (manufacturer) => ManufacturerSuggestionCard(
-                      manufacturer: manufacturer,
-                      onViewProfile: () {
-                        Get.to(ViewProfileTechPackScreen());
-                      },
-                      onSendEmail: () =>
-                          controller.previewEmailToManufacturer(manufacturer),
-                    ),
+                    (manufacturer) {
+                      // Convert to TranslatedManufacturer format
+                      final translatedManufacturer = TranslatedManufacturer.fromManufacturer(
+                        manufacturer,
+                        translatedMoq: manufacturer.moq,
+                        translatedProducts: manufacturer.products,
+                      );
+                      return TranslatedManufacturerCard(
+                        translatedManufacturer: translatedManufacturer,
+                        onViewProfile: () {
+                          Get.to(ViewProfileTechPackScreen());
+                        },
+                        onSendEmail: () =>
+                            controller.previewEmailToManufacturer(manufacturer),
+                      );
+                    },
                   ),
                 ],
               );

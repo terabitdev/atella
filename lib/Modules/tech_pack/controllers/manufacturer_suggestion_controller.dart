@@ -3,10 +3,12 @@ import 'package:atella/services/email/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/Data/Models/new_manufacturer_model.dart';
+import 'package:atella/Data/Models/translated_manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/new_manufacturer_firebase_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:atella/services/translation/ml_translation_service.dart';
 
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
@@ -161,9 +163,101 @@ class ManufacturerSuggestionController extends GetxController {
   final NewManufacturerFirebaseService _manufacturerService =
       NewManufacturerFirebaseService();
   final AuthService _authService = AuthService();
+  final MLTranslationService _translationService = MLTranslationService();
 
   // Helper to get localization
   AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
+
+  // Translation cache to avoid re-translating same text
+  final Map<String, String> _translationCache = {};
+  final Map<String, List<String>> _listTranslationCache = {};
+
+  /// Translate manufacturer data (products and MOQ) based on locale
+  Future<TranslatedManufacturer> translateManufacturer(
+    NewManufacturer manufacturer,
+    String locale,
+  ) async {
+    // If not French, return as-is
+    if (locale != 'fr') {
+      return TranslatedManufacturer.fromManufacturer(
+        manufacturer,
+        translatedMoq: manufacturer.moq,
+        translatedProducts: manufacturer.products,
+      );
+    }
+
+    // Translate MOQ
+    final cacheKeyMoq = 'moq_${manufacturer.moq}';
+    String translatedMoq;
+    if (_translationCache.containsKey(cacheKeyMoq)) {
+      translatedMoq = _translationCache[cacheKeyMoq]!;
+    } else {
+      translatedMoq = await _translationService.translateToFrench(
+        manufacturer.moq,
+        locale: locale,
+      );
+      _translationCache[cacheKeyMoq] = translatedMoq;
+    }
+
+    // Translate products list
+    final cacheKeyProducts = 'products_${manufacturer.products.join('|')}';
+    List<String> translatedProducts;
+    if (_listTranslationCache.containsKey(cacheKeyProducts)) {
+      translatedProducts = _listTranslationCache[cacheKeyProducts]!;
+    } else {
+      translatedProducts = await _translationService.translateList(
+        manufacturer.products,
+        locale: locale,
+      );
+      _listTranslationCache[cacheKeyProducts] = translatedProducts;
+    }
+
+    return TranslatedManufacturer.fromManufacturer(
+      manufacturer,
+      translatedMoq: translatedMoq,
+      translatedProducts: translatedProducts,
+    );
+  }
+
+  /// Translate all displayed manufacturers at once
+  Future<void> translateAllManufacturers(String locale) async {
+    if (locale != 'fr' || displayedManufacturers.isEmpty) {
+      // If not French or no manufacturers, just convert to translated format
+      translatedDisplayedManufacturers.value = displayedManufacturers
+          .map((m) => TranslatedManufacturer.fromManufacturer(
+                m,
+                translatedMoq: m.moq,
+                translatedProducts: m.products,
+              ))
+          .toList();
+      return;
+    }
+
+    isTranslating.value = true;
+
+    try {
+      final List<TranslatedManufacturer> translated = [];
+
+      for (final manufacturer in displayedManufacturers) {
+        final translatedManufacturer = await translateManufacturer(manufacturer, locale);
+        translated.add(translatedManufacturer);
+      }
+
+      translatedDisplayedManufacturers.value = translated;
+    } catch (e) {
+      debugPrint('Translation error: $e');
+      // Fallback to untranslated
+      translatedDisplayedManufacturers.value = displayedManufacturers
+          .map((m) => TranslatedManufacturer.fromManufacturer(
+                m,
+                translatedMoq: m.moq,
+                translatedProducts: m.products,
+              ))
+          .toList();
+    } finally {
+      isTranslating.value = false;
+    }
+  }
 
   // Data - Using NewManufacturer model
   final RxList<NewManufacturer> recommendedManufacturers = <NewManufacturer>[].obs;
@@ -174,7 +268,11 @@ class ManufacturerSuggestionController extends GetxController {
   final RxBool isLoadingMore = false.obs;
   final RxBool isLoadingCustomTab = false.obs;
   final RxBool isDataReady = false.obs;
+  final RxBool isTranslating = false.obs;
   final RxString error = ''.obs;
+
+  // Translated manufacturers cache
+  final RxList<TranslatedManufacturer> translatedDisplayedManufacturers = <TranslatedManufacturer>[].obs;
 
   // Expanded card tracking
   final RxSet<String> expandedCards = <String>{}.obs;

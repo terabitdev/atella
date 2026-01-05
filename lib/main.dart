@@ -17,6 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'services/PaymentService/subscription_manager_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:atella/services/translation/ml_translation_service.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -36,7 +37,51 @@ void main() async {
   // Initialize LocaleController for language management
   Get.put(LocaleController());
 
+  // Initialize translation model (download if needed)
+  await _initializeTranslationModel();
+
   runApp(const MyApp());
+}
+
+/// Initialize and download French translation model if needed
+Future<void> _initializeTranslationModel() async {
+  try {
+    final translationService = MLTranslationService();
+
+    // Initialize the translator
+    await translationService.initialize();
+
+    // Check if French model is already downloaded
+    bool isDownloaded = await translationService.isModelDownloaded();
+
+    if (!isDownloaded) {
+      if (kDebugMode) {
+        debugPrint('Translation: Downloading French translation model (~30MB)...');
+      }
+
+      // Download the model
+      bool success = await translationService.downloadModel();
+
+      if (success) {
+        if (kDebugMode) {
+          debugPrint('Translation: French model downloaded successfully!');
+        }
+      } else {
+        if (kDebugMode) {
+          debugPrint('Translation: Failed to download French model. Translation will be disabled.');
+        }
+      }
+    } else {
+      if (kDebugMode) {
+        debugPrint('Translation: French model already downloaded and ready.');
+      }
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('Translation: Error initializing translation service: $e');
+    }
+    // Don't block app startup if translation fails
+  }
 }
 
 /// Initialize PostHog for analytics tracking
