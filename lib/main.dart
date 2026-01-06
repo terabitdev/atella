@@ -35,8 +35,8 @@ void main() async {
   // Identify returning user (if already authenticated)
   await _identifyExistingUser();
 
-  // Initialize LocaleController for language management
-  Get.put(LocaleController());
+  // Initialize LocaleController for language management (permanent to survive logout)
+  Get.put(LocaleController(), permanent: true);
 
   // Initialize translation model (download if needed)
   await _initializeTranslationModel();
@@ -183,7 +183,10 @@ class MyApp extends StatelessWidget {
         minTextAdapt: true,
         // useInheritedMediaQuery: true,
         builder: (context, child) {
-          final localeController = Get.find<LocaleController>();
+          // Ensure LocaleController exists before using it (handles hot reload)
+          final localeController = Get.isRegistered<LocaleController>()
+              ? Get.find<LocaleController>()
+              : Get.put(LocaleController(), permanent: true);
           return Obx(() => GetMaterialApp(
             title: 'Atelia',
             theme: AppTheme.lightTheme,

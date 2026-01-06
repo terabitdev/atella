@@ -26,7 +26,7 @@ class LoginController extends GetxController {
   String? validatePassword(String value) {
     final l10n = AppLocalizations.of(Get.context!)!;
     if (value.isEmpty) return l10n.passwordIsRequired;
-    if (value.length < 6) return l10n.passwordMinLength;
+    if (value.length < 8) return l10n.passwordMinLength;
     return null;
   }
 

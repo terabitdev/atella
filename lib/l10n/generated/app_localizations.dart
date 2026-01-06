@@ -1067,7 +1067,7 @@ abstract class AppLocalizations {
   /// Password length validation error
   ///
   /// In en, this message translates to:
-  /// **'Password must be at least 6 characters'**
+  /// **'Password must be at least 8 characters'**
   String get passwordMinLength;
 
   /// Name validation error

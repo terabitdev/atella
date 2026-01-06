@@ -836,7 +836,7 @@
   "@passwordIsRequired": {
     "description": "Password validation error"
   },
-  "passwordMinLength": "Password must be at least 6 characters",
+  "passwordMinLength": "Password must be at least 8 characters",
   "@passwordMinLength": {
     "description": "Password length validation error"
   },

@@ -178,7 +178,7 @@
   "emailIsRequired": "L'e-mail est requis",
   "enterValidEmail": "Entrez un e-mail valide",
   "passwordIsRequired": "Le mot de passe est requis",
-  "passwordMinLength": "Le mot de passe doit contenir au moins 6 caractères",
+  "passwordMinLength": "Le mot de passe doit contenir au moins 8 caractères",
   "nameIsRequired": "Le nom est requis",
   "confirmYourPassword": "Confirmez votre mot de passe",
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
