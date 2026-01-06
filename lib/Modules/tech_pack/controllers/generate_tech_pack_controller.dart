@@ -585,8 +585,8 @@ class TechPackController extends GetxController {
   Future<void> _purchaseExtraTechpacks(int count, double price) async {
     try {
       Get.snackbar(
-        'Processing',
-        'Processing your purchase...',
+        _l10n.tpdProcessing,
+        _l10n.tpdProcessingYourPurchase,
         backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
@@ -599,8 +599,8 @@ class TechPackController extends GetxController {
 
       if (success) {
         Get.snackbar(
-          'Success!',
-          'You now have $count additional techpacks for this month!',
+          _l10n.tpdSuccessExclamation,
+          _l10n.tpdAdditionalTechPacksAdded(count.toString()),
           backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -611,8 +611,8 @@ class TechPackController extends GetxController {
         // User should click the button again to proceed
       } else {
         Get.snackbar(
-          'Purchase Failed',
-          'Unable to process your purchase. Please try again.',
+          _l10n.tpdPurchaseFailed,
+          _l10n.tpdUnableToProcessPurchase,
           backgroundColor: Colors.red,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
@@ -620,8 +620,8 @@ class TechPackController extends GetxController {
       }
     } catch (e) {
       Get.snackbar(
-        'Error',
-        'An error occurred during purchase: ${e.toString()}',
+        _l10n.tpdError,
+        _l10n.tpdPurchaseError(e.toString()),
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
