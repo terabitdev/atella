@@ -9,6 +9,7 @@ import '../../../Data/Models/user_subscription.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
+import '../Views/Widgets/techpack_limit_dialog.dart';
 
 class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
@@ -852,176 +853,32 @@ class TechPackDetailsController extends GetxController {
 
   void _showStarterLimitDialog(UserSubscription? subscription) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.red,
-              size: 24,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Limit Exceeded',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Current plan info
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.grey.shade100,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Text(
-                        'Current Plan: ',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _getPlanDisplayName(subscription?.subscriptionPlan ?? 'STARTER'),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.black,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text(
-                      subscription?.subscriptionPlan == 'STARTER_YEARLY' 
-                        ? 'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/3 techpacks used this month\nYearly usage: ${subscription?.techpacksUsedThisYear ?? 0}/36 techpacks'
-                        : 'Limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 3} techpacks used this month',
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 12,
-                        color: Colors.red.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              subscription?.subscriptionPlan == 'STARTER_YEARLY'
-                ? 'You\'ve reached your monthly limit of 3 techpacks. Choose an option to continue:'
-                : 'You\'ve reached your monthly limit of techpacks. Choose an option to continue:',
-              style: ssTitleTextTextStyle124003,
-            ),
-            SizedBox(height: 16),
-            // Extra techpack option
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        '+1 Techpack: €5.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 1 additional techpack for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Maybe Later',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.grey[600],
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(1, 5.99);
-            },
-            child: Text(
-              '+1 Techpack',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-              
-              // Set callback to refresh the UI state after subscription
-              SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-                print('Subscription upgraded, TechPack UI refreshed');
-              });
+      TechpackLimitDialog(
+        title: 'Techpack Limit Reached',
+        message: 'You\'ve reached your monthly techpack generation limit.',
+        isPaidUser: true,
+        onGetExtraTechpacks: () {
+          Get.back();
+          _purchaseExtraTechpacks(1, 5.99);
+        },
+        onUpgradePlan: () {
+          Get.back();
 
-              // Navigate to subscription screen
-              Get.toNamed(
-                '/subscribe',
-                arguments: {
-                  'returnRoute': '/tech_pack_details_screen',
-                  'showSuccessMessage': true,
-                },
-              );
+          // Set callback to refresh the UI state after subscription
+          SubscriptionCallbackService().setOnSubscriptionSuccess(() {
+            print('Subscription upgraded, TechPack UI refreshed');
+          });
+
+          // Navigate to subscription screen
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/tech_pack_details_screen',
+              'showSuccessMessage': true,
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-            child: Text(
-              'Upgrade to Pro',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.white,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
+        onMaybeLater: () => Get.back(),
       ),
       barrierDismissible: false,
     );
@@ -1029,143 +886,27 @@ class TechPackDetailsController extends GetxController {
 
   void _showProLimitDialog(UserSubscription? subscription) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.purple,
-              size: 24,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Monthly Limit Reached',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.purple),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Current plan info
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.purple.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.purple.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.purple, size: 16),
-                      SizedBox(width: 4),
-                      Text(
-                        'Current Plan: ',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _getPlanDisplayName(subscription?.subscriptionPlan ?? 'PRO'),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.purple,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text(
-                      'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 20} techpacks used',
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 12,
-                        color: Colors.red.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'You\'ve reached your Pro plan monthly limit of ${subscription?.totalAllowedTechpacks ?? 20} techpacks. You can purchase additional techpacks to continue:',
-              style: ssTitleTextTextStyle124003,
-            ),
-            SizedBox(height: 16),
-            // Extra techpack option
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        '+1 Techpack: €5.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 1 additional techpack for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Maybe Later',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(1, 5.99);
+      TechpackLimitDialog(
+        title: 'Techpack Limit Reached',
+        message: 'You\'ve reached your monthly techpack generation limit.',
+        isPaidUser: true,
+        onGetExtraTechpacks: () {
+          Get.back();
+          _purchaseExtraTechpacks(1, 5.99);
+        },
+        onUpgradePlan: () {
+          Get.back();
+
+          // Navigate to subscription screen
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/tech_pack_details_screen',
+              'showSuccessMessage': true,
             },
-            child: Text(
-              '+1 Techpack',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
+        onMaybeLater: () => Get.back(),
       ),
       barrierDismissible: false,
     );
@@ -1173,143 +914,27 @@ class TechPackDetailsController extends GetxController {
 
   void _showStudioLimitDialog(UserSubscription? subscription) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Icon(
-              Icons.warning_amber_rounded,
-              color: Colors.orange,
-              size: 24,
-            ),
-            SizedBox(width: 8),
-            Text(
-              'Monthly Limit Reached',
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.orange),
-            ),
-          ],
-        ),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            // Current plan info
-            Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.orange.shade50,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.orange.shade200),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.star, color: Colors.orange, size: 16),
-                      SizedBox(width: 4),
-                      Text(
-                        'Current Plan: ',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                      ),
-                      Text(
-                        _getPlanDisplayName(subscription?.subscriptionPlan ?? 'STUDIO'),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.orange,
-                        ),
-                      ),
-                    ],
-                  ),
-                  Padding(
-                    padding: EdgeInsets.only(top: 4),
-                    child: Text(
-                      'Monthly limit reached: ${subscription?.techpacksUsedThisMonth ?? 0}/${subscription?.totalAllowedTechpacks ?? 16} techpacks used',
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 12,
-                        color: Colors.red.shade600,
-                        fontWeight: FontWeight.w500,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              'You\'ve reached your Studio plan monthly limit of ${subscription?.totalAllowedTechpacks ?? 16} techpacks. You can purchase additional techpacks to continue:',
-              style: ssTitleTextTextStyle124003,
-            ),
-            SizedBox(height: 16),
-            // Extra techpack option
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.blue.shade50,
-                border: Border.all(color: Colors.blue.shade200),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Icon(Icons.add_circle, color: Colors.blue, size: 20),
-                      SizedBox(width: 8),
-                      Text(
-                        '+1 Techpack: €5.99',
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 14,
-                          fontWeight: FontWeight.bold,
-                          color: Colors.blue.shade700,
-                        ),
-                      ),
-                    ],
-                  ),
-                  SizedBox(height: 4),
-                  Text(
-                    'Get 1 additional techpack for this month',
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 12,
-                      color: Colors.blue.shade600,
-                    ),
-                  ),
-                ],
-              ),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              'Maybe Later',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.grey[600],
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(1, 5.99);
+      TechpackLimitDialog(
+        title: 'Techpack Limit Reached',
+        message: 'You\'ve reached your monthly techpack generation limit.',
+        isPaidUser: true,
+        onGetExtraTechpacks: () {
+          Get.back();
+          _purchaseExtraTechpacks(1, 5.99);
+        },
+        onUpgradePlan: () {
+          Get.back();
+
+          // Navigate to subscription screen (Studio users can still see upgrade options)
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/tech_pack_details_screen',
+              'showSuccessMessage': true,
             },
-            child: Text(
-              '+1 Techpack',
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.blue,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
+        onMaybeLater: () => Get.back(),
       ),
       barrierDismissible: false,
     );
@@ -1320,23 +945,23 @@ class TechPackDetailsController extends GetxController {
       Get.snackbar(
         _l10n.tpdProcessing,
         _l10n.tpdProcessingYourPurchase,
-        backgroundColor: Colors.blue,
+        backgroundColor: Colors.black,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,
       );
 
       bool success = await _subscriptionService.purchaseExtraTechpacks(count, price);
-      
+
       if (success) {
         Get.snackbar(
           _l10n.tpdSuccessExclamation,
           _l10n.tpdAdditionalTechPacksAdded(count.toString()),
-          backgroundColor: Colors.green,
+          backgroundColor: Colors.black,
           colorText: Colors.white,
           snackPosition: SnackPosition.TOP,
           duration: const Duration(milliseconds: 1500),
         );
-        
+
         // After successful purchase, allow user to generate techpack
         generateTechPackImages();
         Get.toNamed('/tech_pack_ready_screen');

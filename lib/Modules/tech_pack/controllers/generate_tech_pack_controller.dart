@@ -1,4 +1,3 @@
-import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
@@ -12,6 +11,7 @@ import 'package:atella/services/PaymentService/stripe_subscription_service.dart'
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/techpack_limit_dialog.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackController extends GetxController {
@@ -196,7 +196,6 @@ class TechPackController extends GetxController {
         numberOfDesigns: base64Images.length,
         generationTime: DateTime.now().difference(startTime),
       );
-
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();
@@ -239,7 +238,8 @@ class TechPackController extends GetxController {
 
   void onContinueWithDesign(int selectedIndex) async {
     // Check for 80% usage warning first
-    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    final subscription = await _subscriptionService
+        .getCurrentUserSubscription();
     if (subscription != null && subscription.isTechpackUsageAt80Percent) {
       _show80PercentTechpackWarningDialog(subscription, selectedIndex);
       return;
@@ -297,9 +297,13 @@ class TechPackController extends GetxController {
     }
 
     // Check for 80% usage warning first
-    final subscription = await _subscriptionService.getCurrentUserSubscription();
+    final subscription = await _subscriptionService
+        .getCurrentUserSubscription();
     if (subscription != null && subscription.isTechpackUsageAt80Percent) {
-      _show80PercentTechpackWarningDialog(subscription, selectedDesignIndex.value);
+      _show80PercentTechpackWarningDialog(
+        subscription,
+        selectedDesignIndex.value,
+      );
       return;
     }
 
@@ -316,18 +320,18 @@ class TechPackController extends GetxController {
 
     if (selectedDesignIndex.value >= 0 &&
         selectedDesignIndex.value < generatedImages.length) {
+      if (selectedDesignIndex.value >= 0 &&
+          selectedDesignIndex.value < generatedImages.length) {
+        // Track tech pack creation started
+        PostHogAnalyticsService().trackTechPackStarted();
 
-    if (selectedDesignIndex.value >= 0 && selectedDesignIndex.value < generatedImages.length) {
-      // Track tech pack creation started
-      PostHogAnalyticsService().trackTechPackStarted();
+        // Navigate immediately - no waiting
+        onContinueWithDesign(selectedDesignIndex.value);
 
-      // Navigate immediately - no waiting
-      onContinueWithDesign(selectedDesignIndex.value);
-
-      // Save in background
-      _saveDesignsInBackground();
+        // Save in background
+        _saveDesignsInBackground();
+      }
     }
-  }
   }
 
   // Background save function - OPTIMIZED VERSION
@@ -443,371 +447,87 @@ class TechPackController extends GetxController {
     final subscription = await _subscriptionService
         .getCurrentUserSubscription();
     String currentPlan = subscription?.subscriptionPlan ?? 'FREE';
-    int remainingTechpacks = subscription?.remainingTechpacks ?? 0;
 
-    // If Pro plan user has reached limit, show extra purchase dialog
-    if (currentPlan.startsWith('PRO')) {
+    // If Pro or Studio plan user has reached limit, show extra purchase dialog
+    if (currentPlan.startsWith('PRO') || currentPlan.startsWith('STUDIO')) {
       _showProLimitDialog(subscription);
       return;
     }
 
+    // For FREE and STARTER users, show limit dialog with upgrade option
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Text(
-              _l10n.tpUpgradeRequired,
-              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Current plan info
-              Container(
-              width: double.infinity,
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Expanded(
-                        child: Text(
-                          _l10n.tpDialogCurrentPlan(_getPlanDisplayName(currentPlan)),
-                          style: ssTitleTextTextStyle14400.copyWith(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                          textAlign: TextAlign.center,
-                        ),
-                      ),
-                    ],
-                  ),
-                  if (remainingTechpacks > 0)
-                    Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Text(
-                        currentPlan.startsWith('PRO')
-                            ? _l10n.tpDialogRemainingTechpacksPro(remainingTechpacks)
-                            : _l10n.tpDialogRemainingTechpacksStarter(remainingTechpacks),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.black,
-                          fontWeight: FontWeight.bold,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
-                ],
-              ),
-            ),
-            SizedBox(height: 16),
-            Text(
-              currentPlan == 'FREE'
-                  ? _l10n.tpTechpackFeaturePremium
-                  : currentPlan.startsWith('PRO')
-                  ? _l10n.tpProMonthlyLimitReached
-                  : currentPlan == 'STARTER_YEARLY'
-                  ? _l10n.tpStarterYearlyLimitReached
-                  : _l10n.tpStarterMonthlyLimitReached,
-              style: ssTitleTextTextStyle14400.copyWith(
-                fontSize: 12,
-                color: Colors.black,
-              ),
-              textAlign: TextAlign.center,
-            ),
-            SizedBox(height: 12),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: Colors.grey.shade300),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    currentPlan == 'FREE'
-                        ? _l10n.tpDialogChoosePlan
-                        : _l10n.tpDialogUpgradeToPro,
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      color: Colors.black,
-                      fontWeight: FontWeight.bold,
-                    ),
-                  ),
-                  SizedBox(height: 8),
-                  if (currentPlan == 'FREE') ...[
-                    _buildFeatureItem(
-                      _l10n.tpDialogStarterPlanOption,
-                    ),
-                    _buildFeatureItem(
-                      _l10n.tpDialogProPlanOption,
-                    ),
-                  ] else if (currentPlan.startsWith('STARTER')) ...[
-                    _buildFeatureItem(_l10n.tpDialogProUpgradeOption),
-                  ] else if (currentPlan.startsWith('PRO')) ...[
-                    _buildFeatureItem(_l10n.tpDialogExtraTechpackOption),
-                  ],
-                  _buildFeatureItem(_l10n.tpDialogFeatureCustomPDFExport),
-                  _buildFeatureItem(_l10n.tpDialogFeatureManufacturerAccess),
-                  _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
-                ],
-              ),
-            ),
-          ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              _l10n.tpMaybeLater,
-              style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
-            ),
-          ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
+      TechpackLimitDialog(
+        title: 'Techpack Limit Reached',
+        message: currentPlan == 'FREE'
+            ? 'Tech pack generation is a premium feature. Upgrade to access tech packs.'
+            : 'You\'ve reached your monthly techpack generation limit.',
+        isPaidUser: currentPlan.startsWith('STARTER'),
+        onGetExtraTechpacks: () {
+          Get.back();
+          _purchaseExtraTechpacks(1, 5.99);
+        },
+        onUpgradePlan: () {
+          Get.back();
 
-              // Set callback to refresh the UI state after subscription
-              SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-                // Just refresh the UI, don't automatically navigate
-                // User needs to manually click the button again
-                print('Subscription upgraded, UI refreshed');
-              });
+          // Set callback to refresh the UI state after subscription
+          SubscriptionCallbackService().setOnSubscriptionSuccess(() {
+            print('Subscription upgraded, UI refreshed');
+          });
 
-              Get.toNamed(
-                '/subscribe',
-                arguments: {
-                  'returnRoute': '/generate_tech_pack',
-                  'showSuccessMessage': true,
-                },
-              );
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/generate_tech_pack',
+              'showSuccessMessage': true,
             },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
-            child: Text(
-              _l10n.tpViewPlans,
-              style: ssTitleTextTextStyle14400.copyWith(color: Colors.white),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+          );
+        },
+        onMaybeLater: () => Get.back(),
       ),
       barrierDismissible: false,
     );
   }
 
-  String _getPlanDisplayName(String plan) {
-    // CRITICAL: 'plan' parameter stays in English (FREE, STARTER, PRO, STUDIO) - only return value is localized
-    switch (plan) {
-      case 'FREE':
-        return _l10n.tpPlanFree;
-      case 'STARTER':
-        return '${_l10n.tpPlanStarter} (€14.99/month)';
-      case 'STARTER_YEARLY':
-        return '${_l10n.tpPlanStarter} (€149.99/year)';
-      case 'PRO':
-        return '${_l10n.tpPlanPro} (€34.99/month)';
-      case 'PRO_YEARLY':
-        return '${_l10n.tpPlanPro} (€349.99/year)';
-      case 'STUDIO':
-        return 'Studio (€79.99/month)';
-      case 'STUDIO_YEARLY':
-        return 'Studio (€799.99/year)';
-      default:
-        return _l10n.tpPlanFree;
-    }
-  }
-
-  Widget _buildFeatureItem(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.green, size: 16),
-          SizedBox(width: 8),
-          Expanded(child: Text(text, style: TextStyle(fontSize: 14))),
-        ],
-      ),
-    );
-  }
-
   void _showProLimitDialog(UserSubscription? subscription) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Icon(Icons.warning_amber_rounded, color: Colors.red, size: 24),
-            SizedBox(width: 8),
-            Expanded(
-              child: Text(
-                _l10n.tpProLimitDialogTitle,
-                style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.purple.shade50,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.purple.shade200),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Icon(Icons.star, color: Colors.black, size: 16),
-                        SizedBox(width: 4),
-                        Text(
-                          _l10n.tpProLimitDialogProPlan,
-                          style: ssTitleTextTextStyle14400.copyWith(
-                            fontSize: 12,
-                            color: Colors.black,
-                            fontWeight: FontWeight.bold,
-                          ),
-                        ),
-                        Expanded(
-                          child: Text(
-                            _getPlanDisplayName(
-                              subscription?.subscriptionPlan ?? 'PRO',
-                            ),
-                            style: ssTitleTextTextStyle14400.copyWith(
-                              fontSize: 12,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    Padding(
-                      padding: EdgeInsets.only(top: 4),
-                      child: Text(
-                        _l10n.tpProLimitDialogMonthlyUsed(subscription?.techpacksUsedThisMonth ?? 0),
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 12,
-                          color: Colors.red.shade600,
-                          fontWeight: FontWeight.w500,
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                _l10n.tpProLimitDialogMessage,
-                style: ssTitleTextTextStyle14400.copyWith(
-                  fontSize: 14,
-                  color: Colors.black,
-                ),
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 16),
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            _l10n.tpProLimitDialogTechpackPrice,
-                            style: ssTitleTextTextStyle14400.copyWith(
-                              fontSize: 14,
-                              fontWeight: FontWeight.bold,
-                              color: Colors.black,
-                            ),
-                          ),
-                        ),
-                      ],
-                    ),
-                    SizedBox(height: 4),
-                    Text(
-                      _l10n.tpProLimitDialogTechpackDescription,
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 12,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              _l10n.tpMaybeLater,
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.grey,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () {
-              Get.back();
-              _purchaseExtraTechpacks(1, 5.99);
+      TechpackLimitDialog(
+        title: 'Techpack Limit Reached',
+        message: 'You\'ve reached your monthly techpack generation limit.',
+        isPaidUser: true,
+        onGetExtraTechpacks: () {
+          Get.back();
+          _purchaseExtraTechpacks(1, 5.99);
+        },
+        onUpgradePlan: () {
+          Get.back();
+
+          // Navigate to subscription screen
+          Get.toNamed(
+            '/subscribe',
+            arguments: {
+              'returnRoute': '/generate_tech_pack',
+              'showSuccessMessage': true,
             },
-            child: Text(
-              _l10n.tpProLimitDialogPurchaseButton,
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-        ],
+          );
+        },
+        onMaybeLater: () => Get.back(),
       ),
-      barrierDismissible: true,
+      barrierDismissible: false,
     );
   }
 
   // Show 80% techpack usage warning dialog
-  void _show80PercentTechpackWarningDialog(subscription, int selectedIndex) async {
+  void _show80PercentTechpackWarningDialog(
+    subscription,
+    int selectedIndex,
+  ) async {
     final int usedCount = subscription.techpacksUsedThisMonth;
     final int totalCount = subscription.totalAllowedTechpacks;
     // Check if user is on a paid plan (STARTER, PRO, or STUDIO)
-    final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
-                           subscription.subscriptionPlan.startsWith('PRO') ||
-                           subscription.subscriptionPlan.startsWith('STUDIO');
+    final bool isPaidUser =
+        subscription.subscriptionPlan.startsWith('STARTER') ||
+        subscription.subscriptionPlan.startsWith('PRO') ||
+        subscription.subscriptionPlan.startsWith('STUDIO');
 
     Get.dialog(
       UsageWarningDialog(
@@ -819,10 +539,12 @@ class TechPackController extends GetxController {
           // Not used for techpacks, but required by widget
           Get.back();
         },
-        onGetExtraTechpacks: isPaidUser ? () {
-          Get.back(); // Close dialog
-          _purchaseExtraTechpacks(1, 5.99); // Purchase 1 extra techpack
-        } : null,
+        onGetExtraTechpacks: isPaidUser
+            ? () {
+                Get.back(); // Close dialog
+                _purchaseExtraTechpacks(1, 5.99); // Purchase 1 extra techpack
+              }
+            : null,
         onUpgradePlan: () {
           Get.back(); // Close dialog
           // Navigate to subscription screen

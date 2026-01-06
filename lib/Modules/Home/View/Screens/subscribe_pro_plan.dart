@@ -316,10 +316,11 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                               (isYearly && currentPlan == 'PRO') ||
                               (!isYearly && currentPlan == 'PRO_YEARLY');
 
-                          // Check if user is on Starter plan (for upgrade messaging)
-                          bool isStarterUser =
-                              currentPlan == 'STARTER' ||
-                              currentPlan == 'STARTER_YEARLY';
+                          // Check if user has any other active subscription (strict rule)
+                          bool hasOtherSubscription = currentPlan != null &&
+                                                      currentPlan != 'FREE' &&
+                                                      !isExactCurrentPlan &&
+                                                      !hasOppositeBillingPeriod;
 
                           return Column(
                             children: [
@@ -328,7 +329,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                 onTap:
                                     (controller.isLoading.value ||
                                         isExactCurrentPlan ||
-                                        hasOppositeBillingPeriod)
+                                        hasOppositeBillingPeriod ||
+                                        hasOtherSubscription)
                                     ? null
                                     : () {
                                         controller.subscribeToPlan(
@@ -342,7 +344,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                     color:
                                         (controller.isLoading.value ||
                                             isExactCurrentPlan ||
-                                            hasOppositeBillingPeriod)
+                                            hasOppositeBillingPeriod ||
+                                            hasOtherSubscription)
                                         ? Colors.grey[400]
                                         : Colors.black,
                                     borderRadius: BorderRadius.circular(10.r),
@@ -364,8 +367,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                                 ? (isYearly
                                                       ? l10n.cancelMonthlyPlanFirst
                                                       : l10n.cancelYearlyPlanFirst)
-                                                : isStarterUser
-                                                ? l10n.upgradePlan
+                                                : hasOtherSubscription
+                                                ? l10n.cancelSubscriptionFirst
                                                 : l10n.start,
                                             style: TextStyle(
                                               color: Colors.white,

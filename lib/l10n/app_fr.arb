@@ -120,7 +120,7 @@
   "currentPlan": "Plan actuel",
   "cancelMonthlyPlanFirst": "Annulez d'abord le plan mensuel",
   "cancelYearlyPlanFirst": "Annulez d'abord le plan annuel",
-  "cancelSubscriptionFirst": "Annulez d'abord l'abonnement",
+  "cancelSubscriptionFirst": "Annulez d'abord le plan actuel",
   "upgradePlan": "Mettre à niveau le plan",
   "cancelSubscription": "Annuler l'abonnement",
   "keepSubscription": "Garder l'abonnement",

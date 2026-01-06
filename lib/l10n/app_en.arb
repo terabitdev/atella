@@ -524,9 +524,9 @@
   "@cancelYearlyPlanFirst": {
     "description": "Cancel yearly plan first message"
   },
-  "cancelSubscriptionFirst": "Cancel subscription first",
+  "cancelSubscriptionFirst": "Cancel current plan first",
   "@cancelSubscriptionFirst": {
-    "description": "Cancel subscription first message"
+    "description": "Cancel current plan first message"
   },
   "upgradePlan": "Upgrade Plan",
   "@upgradePlan": {

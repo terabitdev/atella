@@ -818,10 +818,10 @@ abstract class AppLocalizations {
   /// **'Cancel Yearly plan first'**
   String get cancelYearlyPlanFirst;
 
-  /// Cancel subscription first message
+  /// Cancel current plan first message
   ///
   /// In en, this message translates to:
-  /// **'Cancel subscription first'**
+  /// **'Cancel current plan first'**
   String get cancelSubscriptionFirst;
 
   /// Upgrade plan button

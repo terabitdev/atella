@@ -388,7 +388,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get cancelYearlyPlanFirst => 'Cancel Yearly plan first';
 
   @override
-  String get cancelSubscriptionFirst => 'Cancel subscription first';
+  String get cancelSubscriptionFirst => 'Cancel current plan first';
 
   @override
   String get upgradePlan => 'Upgrade Plan';
