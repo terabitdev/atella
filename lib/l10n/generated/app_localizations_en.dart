@@ -524,6 +524,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get imageFailed => 'Image failed';
+
+  @override
   String get searchDesigns => 'Search Designs';
 
   @override

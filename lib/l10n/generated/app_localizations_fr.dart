@@ -533,6 +533,9 @@ class AppLocalizationsFr extends AppLocalizations {
   }
 
   @override
+  String get imageFailed => 'Image failed';
+
+  @override
   String get searchDesigns => 'Rechercher des designs';
 
   @override

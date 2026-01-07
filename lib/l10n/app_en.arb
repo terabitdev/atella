@@ -805,6 +805,10 @@
         }
       }
     },
+  "imageFailed": "Image failed",
+  "@imageFailed": {
+    "description": "Error text when image fails to load"
+  },
 
 
   "searchDesigns": "Search Designs",

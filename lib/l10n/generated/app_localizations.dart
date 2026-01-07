@@ -1040,6 +1040,12 @@ abstract class AppLocalizations {
   /// **'Tech Pack Image {number}'**
   String techPackImage(int number);
 
+  /// Error text when image fails to load
+  ///
+  /// In en, this message translates to:
+  /// **'Image failed'**
+  String get imageFailed;
+
   /// Search placeholder text
   ///
   /// In en, this message translates to:

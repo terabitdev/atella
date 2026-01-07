@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:shimmer/shimmer.dart';
 import '../Data/Models/tech_pack_model.dart';
 import 'dart:convert';
+import 'package:intl/intl.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class DesignGridItem extends StatelessWidget {
   final TechPackModel techPack;
@@ -18,12 +20,12 @@ class DesignGridItem extends StatelessWidget {
     this.onFavoriteToggle,
   });
 
-  Widget _buildImage() {
+  Widget _buildImage(BuildContext context) {
     final imageUrl = techPack.displayImage;
-    
+
     // Debug: Print the image URL being used
     print('Loading image for ${techPack.projectName}: $imageUrl');
-    
+
     if (imageUrl == null) {
       return Container(
         height: 177.h,
@@ -111,11 +113,8 @@ class DesignGridItem extends StatelessWidget {
                   color: Colors.grey[400],
                 ),
                 Text(
-                  'Image failed',
-                  style: TextStyle(
-                    fontSize: 10.sp,
-                    color: Colors.grey[500],
-                  ),
+                  AppLocalizations.of(context)!.imageFailed,
+                  style: TextStyle(fontSize: 10.sp, color: Colors.grey[500]),
                 ),
               ],
             ),
@@ -150,35 +149,41 @@ class DesignGridItem extends StatelessWidget {
               child: Stack(
                 children: [
                   ClipRRect(
-                    borderRadius: BorderRadius.vertical(top: Radius.circular(16.r)),
-                    child: _buildImage(),
+                    borderRadius: BorderRadius.vertical(
+                      top: Radius.circular(16.r),
+                    ),
+                    child: _buildImage(context),
                   ),
-                
-                // Favorite icon overlay
-                if (showFavoriteIcon)
-                  Positioned(
-                    top: 8.h,
-                    right: 8.w,
-                    child: GestureDetector(
-                      onTap: onFavoriteToggle,
-                      child: Container(
-                        padding: EdgeInsets.all(4.w),
-                        decoration: BoxDecoration(
-                          color: Colors.white.withOpacity(0.9),
-                          borderRadius: BorderRadius.circular(20.r),
-                        ),
-                        child: Icon(
-                          techPack.isFavorite ? Icons.favorite : Icons.favorite_border,
-                          color: techPack.isFavorite ? Colors.black : Colors.black,
-                          size: 20.sp,
+
+                  // Favorite icon overlay
+                  if (showFavoriteIcon)
+                    Positioned(
+                      top: 8.h,
+                      right: 8.w,
+                      child: GestureDetector(
+                        onTap: onFavoriteToggle,
+                        child: Container(
+                          padding: EdgeInsets.all(4.w),
+                          decoration: BoxDecoration(
+                            color: Colors.white.withOpacity(0.9),
+                            borderRadius: BorderRadius.circular(20.r),
+                          ),
+                          child: Icon(
+                            techPack.isFavorite
+                                ? Icons.favorite
+                                : Icons.favorite_border,
+                            color: techPack.isFavorite
+                                ? Colors.black
+                                : Colors.black,
+                            size: 20.sp,
+                          ),
                         ),
                       ),
                     ),
-                  ),
                 ],
               ),
             ),
-            
+
             // Project details
             Padding(
               padding: EdgeInsets.all(12.w),
@@ -195,14 +200,11 @@ class DesignGridItem extends StatelessWidget {
                     maxLines: 1,
                     overflow: TextOverflow.ellipsis,
                   ),
-                  
+
                   SizedBox(height: 4.h),
                   Text(
-                    _formatDate(techPack.createdAt),
-                    style: TextStyle(
-                      color: Colors.grey,
-                      fontSize: 10.sp,
-                    ),
+                    DateFormat.yMMMd().format(techPack.createdAt),
+                    style: TextStyle(color: Colors.grey, fontSize: 10.sp),
                   ),
                 ],
               ),
@@ -211,14 +213,5 @@ class DesignGridItem extends StatelessWidget {
         ),
       ),
     );
-  }
-
-  String _formatDate(DateTime date) {
-    final months = [
-      'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
-      'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
-    ];
-    
-    return '${date.day} ${months[date.month - 1]} ${date.year}';
   }
 }
