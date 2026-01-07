@@ -1208,7 +1208,7 @@ class CreativeBriefController extends GetxController {
 
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
-    _nextQuestion();
+    _advanceAfterAnswer();
   }
 
   // Submit custom answer for categorized questions (garment_type, fabrics)
@@ -1246,11 +1246,9 @@ class CreativeBriefController extends GetxController {
     _isTextLoading.value = false;
     update();
 
-    // Auto-advance to next question if this is the current question
-    if (questionId == currentQuestion.id) {
-      await Future.delayed(const Duration(milliseconds: 400));
-      _nextQuestion();
-    }
+    // Auto-advance to next question
+    await Future.delayed(const Duration(milliseconds: 400));
+    _advanceAfterAnswer();
   }
 
   // Submit custom answer for colors question (Prints or Techniques)
@@ -1338,11 +1336,9 @@ class CreativeBriefController extends GetxController {
     _isTextLoading.value = false;
     update();
 
-    // Auto-advance to next question if this is the current question
-    if (currentQuestion.id == 'colors') {
-      await Future.delayed(const Duration(milliseconds: 400));
-      _nextQuestion();
-    }
+    // Auto-advance to next question
+    await Future.delayed(const Duration(milliseconds: 400));
+    _advanceAfterAnswer();
   }
 
   void submitTextAnswer(
@@ -1372,7 +1368,7 @@ class CreativeBriefController extends GetxController {
 
     // Auto-advance to next question
     await Future.delayed(const Duration(milliseconds: 400));
-    _nextQuestion();
+    _advanceAfterAnswer();
   }
 
   // Add a new image to the inspiration images list
@@ -1395,7 +1391,7 @@ class CreativeBriefController extends GetxController {
     // Auto-advance to next question when first image is selected
     if (isFirstImage && currentQuestion.id == 'inspiration') {
       await Future.delayed(const Duration(milliseconds: 800));
-      _nextQuestion();
+      _advanceAfterAnswer();
     }
   }
 
@@ -1755,6 +1751,54 @@ class CreativeBriefController extends GetxController {
         print('Not all questions completed yet');
         update();
       }
+    }
+  }
+
+  // Helper to advance to the next appropriate question after answering
+  // This handles "catching up" if the user edited a previous question
+  void _advanceAfterAnswer() {
+    print('=== ADVANCE AFTER ANSWER ===');
+    print('Current index: $_currentQuestionIndex');
+    print('Max reached: $_maxQuestionIndexReached');
+
+    // If we are behind the max reached, try to find the next unanswered question
+    if (_currentQuestionIndex.value < _maxQuestionIndexReached.value) {
+      print('We are behind max index, looking for next unanswered question...');
+
+      int nextUnanswered = -1;
+      // Check from current+1 up to max
+      for (
+        int i = _currentQuestionIndex.value + 1;
+        i <= _maxQuestionIndexReached.value;
+        i++
+      ) {
+        if (!isQuestionAnswered(questions[i].id)) {
+          nextUnanswered = i;
+          break;
+        }
+      }
+
+      if (nextUnanswered != -1) {
+        print(
+          'Found unanswered question at index $nextUnanswered. Jumping there.',
+        );
+        jumpToQuestion(nextUnanswered);
+      } else {
+        print('All questions up to max are answered.');
+        // If there are more questions after max, go to max + 1
+        if (_maxQuestionIndexReached.value < questions.length - 1) {
+          print('Jumping to next new question after max.');
+          jumpToQuestion(_maxQuestionIndexReached.value + 1);
+        } else {
+          // We are at the end, stay at max
+          print('At the end of the form. Staying at max.');
+          jumpToQuestion(_maxQuestionIndexReached.value);
+        }
+      }
+    } else {
+      // Normal advance if we are at the leading edge
+      print('At leading edge, calling _nextQuestion()');
+      _nextQuestion();
     }
   }
 
