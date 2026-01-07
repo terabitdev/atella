@@ -491,7 +491,7 @@ abstract class AppLocalizations {
   /// Create new project button
   ///
   /// In en, this message translates to:
-  /// **'Create a  new Project'**
+  /// **'Create New Project'**
   String get createNewProject;
 
   /// Favorites screen title

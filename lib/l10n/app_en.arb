@@ -282,7 +282,7 @@
   "@createNewDesign": {
     "description": "Create new design button"
   },
-  "createNewProject": "Create a  new Project",
+  "createNewProject": "Create New Project",
   "@createNewProject": {
     "description": "Create new project button"
   },
@@ -800,10 +800,13 @@
     "description": "Tech pack image label",
     "placeholders": {
       "number": {
-        "type": "int"
+        "type": "int",
+        "example": "1"
+        }
       }
-    }
-  },
+    },
+
+
   "searchDesigns": "Search Designs",
   "@searchDesigns": {
     "description": "Search placeholder text"

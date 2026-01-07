@@ -3,6 +3,8 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 
+import 'package:atella/l10n/generated/app_localizations.dart';
+
 class EmptyStateWidget extends StatelessWidget {
   final String title;
   final String? subtitle;
@@ -82,16 +84,13 @@ class EmptyStateWidget extends StatelessWidget {
 class HomeEmptyState extends StatelessWidget {
   final VoidCallback onCreateProject;
 
-  const HomeEmptyState({
-    super.key,
-    required this.onCreateProject,
-  });
+  const HomeEmptyState({super.key, required this.onCreateProject});
 
   @override
   Widget build(BuildContext context) {
     return EmptyStateWidget(
-      title: "Here to guide you through creating the garment you have in mind.",
-      buttonText: "Create a  new Project",
+      title: AppLocalizations.of(context)!.homeEmptyStateTitle,
+      buttonText: AppLocalizations.of(context)!.createNewProject,
       onButtonPressed: onCreateProject,
       imagePath: "assets/images/empty.png",
     );
@@ -101,17 +100,14 @@ class HomeEmptyState extends StatelessWidget {
 class FavoritesEmptyState extends StatelessWidget {
   final VoidCallback onCreateProject;
 
-  const FavoritesEmptyState({
-    super.key,
-    required this.onCreateProject,
-  });
+  const FavoritesEmptyState({super.key, required this.onCreateProject});
 
   @override
   Widget build(BuildContext context) {
     return EmptyStateWidget(
-      title: "No favorite projects yet",
-      subtitle: "Start creating projects and mark your favorites to see them here.",
-      buttonText: "Create New Project",
+      title: AppLocalizations.of(context)!.noFavoritesYet,
+      subtitle: AppLocalizations.of(context)!.noFavoritesSubtitle,
+      buttonText: AppLocalizations.of(context)!.createNewProject,
       onButtonPressed: onCreateProject,
       imagePath: "assets/images/empty.png",
     );
@@ -136,16 +132,12 @@ class SearchEmptyState extends StatelessWidget {
       child: Column(
         mainAxisAlignment: MainAxisAlignment.center,
         children: [
-          Icon(
-            Icons.search_off,
-            size: 80.w,
-            color: Color(0xFFCCCCCC),
-          ),
-          
+          Icon(Icons.search_off, size: 80.w, color: Color(0xFFCCCCCC)),
+
           SizedBox(height: 24.h),
-          
+
           Text(
-            'No results found for "$searchQuery"',
+            AppLocalizations.of(context)!.noResultsFor(searchQuery),
             textAlign: TextAlign.center,
             style: TextStyle(
               fontSize: 16.sp,
@@ -153,28 +145,22 @@ class SearchEmptyState extends StatelessWidget {
               color: Color(0xFF666666),
             ),
           ),
-          
+
           SizedBox(height: 8.h),
-          
+
           Text(
-            'Try adjusting your search terms or create a new project.',
+            AppLocalizations.of(context)!.tryAdjustingSearch,
             textAlign: TextAlign.center,
-            style: TextStyle(
-              fontSize: 14.sp,
-              color: Color(0xFF999999),
-            ),
+            style: TextStyle(fontSize: 14.sp, color: Color(0xFF999999)),
           ),
-          
+
           if (onClearSearch != null) ...[
             SizedBox(height: 24.h),
             TextButton(
               onPressed: onClearSearch,
               child: Text(
-                'Clear Search',
-                style: TextStyle(
-                  fontSize: 14.sp,
-                  color: AppColors.buttonColor,
-                ),
+                AppLocalizations.of(context)!.clearSearch,
+                style: TextStyle(fontSize: 14.sp, color: AppColors.buttonColor),
               ),
             ),
           ],

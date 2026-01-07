@@ -213,7 +213,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get createNewDesign => 'Create New Design';
 
   @override
-  String get createNewProject => 'Create a  new Project';
+  String get createNewProject => 'Create New Project';
 
   @override
   String get favorites => 'Favorites';
