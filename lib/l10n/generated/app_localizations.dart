@@ -3467,19 +3467,19 @@ abstract class AppLocalizations {
   /// Message shown to Pro users when monthly techpack limit reached
   ///
   /// In en, this message translates to:
-  /// **'You\'ve reached your Pro plan monthly limit of 8 techpacks.'**
+  /// **'Your monthly techpack generation limit has been reached.'**
   String get tpProMonthlyLimitReached;
 
   /// Message shown to Starter yearly users when monthly techpack limit reached
   ///
   /// In en, this message translates to:
-  /// **'You\'ve reached your monthly limit of 2 techpacks (24/year total).'**
+  /// **'Your monthly techpack generation limit has been reached.'**
   String get tpStarterYearlyLimitReached;
 
   /// Message shown to Starter monthly users when monthly techpack limit reached
   ///
   /// In en, this message translates to:
-  /// **'You\'ve reached your monthly limit of 2 techpacks.'**
+  /// **'Your monthly techpack generation limit has been reached.'**
   String get tpStarterMonthlyLimitReached;
 
   /// Header text when showing plan options to free users

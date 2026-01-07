@@ -455,13 +455,19 @@ class TechPackController extends GetxController {
     }
 
     // For FREE and STARTER users, show limit dialog with upgrade option
+    final bool isStarter = currentPlan.startsWith('STARTER');
+    final bool isStarterYearly = currentPlan == 'STARTER_YEARLY';
+    final String message = currentPlan == 'FREE'
+        ? _l10n.tpTechpackFeaturePremium
+        : (isStarterYearly
+              ? _l10n.tpStarterYearlyLimitReached
+              : _l10n.tpStarterMonthlyLimitReached);
+
     Get.dialog(
       TechpackLimitDialog(
-        title: 'Techpack Limit Reached',
-        message: currentPlan == 'FREE'
-            ? 'Tech pack generation is a premium feature. Upgrade to access tech packs.'
-            : 'You\'ve reached your monthly techpack generation limit.',
-        isPaidUser: currentPlan.startsWith('STARTER'),
+        title: _l10n.tpProLimitDialogTitle,
+        message: message,
+        isPaidUser: isStarter,
         onGetExtraTechpacks: () {
           Get.back();
           _purchaseExtraTechpacks(1, 5.99);
@@ -491,8 +497,8 @@ class TechPackController extends GetxController {
   void _showProLimitDialog(UserSubscription? subscription) {
     Get.dialog(
       TechpackLimitDialog(
-        title: 'Techpack Limit Reached',
-        message: 'You\'ve reached your monthly techpack generation limit.',
+        title: _l10n.tpProLimitDialogTitle,
+        message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
         onGetExtraTechpacks: () {
           Get.back();

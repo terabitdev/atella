@@ -2067,15 +2067,15 @@
   "@tpTechpackFeaturePremium": {
     "description": "Message shown to free users about techpack being premium"
   },
-  "tpProMonthlyLimitReached": "You've reached your Pro plan monthly limit of 8 techpacks.",
+  "tpProMonthlyLimitReached": "Your monthly techpack generation limit has been reached.",
   "@tpProMonthlyLimitReached": {
     "description": "Message shown to Pro users when monthly techpack limit reached"
   },
-  "tpStarterYearlyLimitReached": "You've reached your monthly limit of 2 techpacks (24/year total).",
+  "tpStarterYearlyLimitReached": "Your monthly techpack generation limit has been reached.",
   "@tpStarterYearlyLimitReached": {
     "description": "Message shown to Starter yearly users when monthly techpack limit reached"
   },
-  "tpStarterMonthlyLimitReached": "You've reached your monthly limit of 2 techpacks.",
+  "tpStarterMonthlyLimitReached": "Your monthly techpack generation limit has been reached.",
   "@tpStarterMonthlyLimitReached": {
     "description": "Message shown to Starter monthly users when monthly techpack limit reached"
   },

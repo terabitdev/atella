@@ -1821,15 +1821,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpProMonthlyLimitReached =>
-      'You\'ve reached your Pro plan monthly limit of 8 techpacks.';
+      'Your monthly techpack generation limit has been reached.';
 
   @override
   String get tpStarterYearlyLimitReached =>
-      'You\'ve reached your monthly limit of 2 techpacks (24/year total).';
+      'Your monthly techpack generation limit has been reached.';
 
   @override
   String get tpStarterMonthlyLimitReached =>
-      'You\'ve reached your monthly limit of 2 techpacks.';
+      'Your monthly techpack generation limit has been reached.';
 
   @override
   String get tpDialogChoosePlan => 'Choose a plan:';

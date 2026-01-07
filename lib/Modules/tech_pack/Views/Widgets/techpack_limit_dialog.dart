@@ -1,12 +1,14 @@
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechpackLimitDialog extends StatelessWidget {
   final VoidCallback onGetExtraTechpacks;
   final VoidCallback onUpgradePlan;
   final VoidCallback onMaybeLater;
-  final bool isPaidUser; // true for STARTER/PRO/STUDIO users, false for FREE users
+  final bool
+  isPaidUser; // true for STARTER/PRO/STUDIO users, false for FREE users
   final String title;
   final String message;
 
@@ -22,21 +24,17 @@ class TechpackLimitDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+
     return Dialog(
-      shape: RoundedRectangleBorder(
-        borderRadius: BorderRadius.circular(16),
-      ),
+      shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
       child: Padding(
         padding: const EdgeInsets.all(24),
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
             // Alert Icon
-            Icon(
-              Icons.warning_amber_rounded,
-              size: 60.h,
-              color: Colors.red,
-            ),
+            Icon(Icons.warning_amber_rounded, size: 60.h, color: Colors.red),
             SizedBox(height: 16.h),
             // Title
             Text(
@@ -64,13 +62,16 @@ class TechpackLimitDialog extends StatelessWidget {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                          vertical: 12.h,
+                          horizontal: 16.w,
+                        ),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
                       child: Text(
-                        'Get Extra Techpacks (€5.99)',
+                        l10n.tpDialogExtraTechpackOption,
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
@@ -90,13 +91,16 @@ class TechpackLimitDialog extends StatelessWidget {
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                      padding: EdgeInsets.symmetric(
+                        vertical: 12.h,
+                        horizontal: 16.w,
+                      ),
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(8.r),
                       ),
                     ),
                     child: Text(
-                      'Upgrade Plan',
+                      l10n.tpDialogUpgradeNow,
                       style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
@@ -111,7 +115,7 @@ class TechpackLimitDialog extends StatelessWidget {
                 TextButton(
                   onPressed: onMaybeLater,
                   child: Text(
-                    'Maybe Later',
+                    l10n.tpMaybeLater,
                     style: ssTitleTextTextStyle14400.copyWith(
                       fontSize: 16.sp,
                       fontWeight: FontWeight.w600,

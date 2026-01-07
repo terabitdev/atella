@@ -95,7 +95,7 @@ class TechPackDetailsController extends GetxController {
     _initializeWithArguments();
     _setupInputListeners();
   }
-  
+
   void _setupInputListeners() {
     // Listen to measurement text changes - hide image upload when text is filled
     measurementChartController.addListener(() {
@@ -105,7 +105,7 @@ class TechPackDetailsController extends GetxController {
         showMeasurementImage.value = true;
       }
     });
-    
+
     // Listen to measurement image changes - hide text field when image is uploaded
     measurementImagePath.listen((imagePath) {
       if (imagePath.isNotEmpty) {
@@ -115,7 +115,7 @@ class TechPackDetailsController extends GetxController {
       }
       checkSizesBlockComplete();
     });
-    
+
     // Listen to label text changes - hide image upload when text is filled
     labelsNeededController.addListener(() {
       if (labelsNeededController.text.trim().isNotEmpty) {
@@ -124,7 +124,7 @@ class TechPackDetailsController extends GetxController {
         showLabelImage.value = true;
       }
     });
-    
+
     // Listen to label image changes - hide text field when image is uploaded
     labelImagePath.listen((imagePath) {
       if (imagePath.isNotEmpty) {
@@ -247,7 +247,9 @@ class TechPackDetailsController extends GetxController {
     measurementImagePath.value = sizes['measurementImage'] ?? '';
 
     print('📏 Measurement data from Firebase:');
-    print('   measurementImage field exists: ${sizes.containsKey('measurementImage')}');
+    print(
+      '   measurementImage field exists: ${sizes.containsKey('measurementImage')}',
+    );
     print('   measurementImage value: ${sizes['measurementImage']}');
 
     // Technical Details
@@ -307,7 +309,6 @@ class TechPackDetailsController extends GetxController {
     showManufacturersBlock.value = true;
   }
 
-
   void checkMaterialsBlockComplete() {
     if (mainFabricController.text.isNotEmpty &&
         secondaryMaterialsController.text.isNotEmpty &&
@@ -326,9 +327,10 @@ class TechPackDetailsController extends GetxController {
 
   void checkSizesBlockComplete() {
     // Check if size range is filled AND either measurement text OR image is provided
-    bool hasMeasurementInput = measurementChartController.text.isNotEmpty || 
-                               measurementImagePath.value.isNotEmpty;
-    
+    bool hasMeasurementInput =
+        measurementChartController.text.isNotEmpty ||
+        measurementImagePath.value.isNotEmpty;
+
     if (sizeRangeController.text.isNotEmpty && hasMeasurementInput) {
       showTechnicalBlock.value = true;
     }
@@ -344,9 +346,10 @@ class TechPackDetailsController extends GetxController {
 
   void checkLabelingBlockComplete() {
     // Check if logo placement is filled AND either label text OR image is provided
-    bool hasLabelInput = labelsNeededController.text.isNotEmpty || 
-                         labelImagePath.value.isNotEmpty;
-    
+    bool hasLabelInput =
+        labelsNeededController.text.isNotEmpty ||
+        labelImagePath.value.isNotEmpty;
+
     if (logoPlacementController.text.isNotEmpty && hasLabelInput) {
       showPackagingBlock.value = true;
     }
@@ -381,25 +384,31 @@ class TechPackDetailsController extends GetxController {
 
   Map<String, String> _collectReferenceImages() {
     Map<String, String> images = {};
-    
+
     // Add selected design image (main reference)
     if (selectedDesignImagePath.value.isNotEmpty) {
       images['selectedDesign'] = selectedDesignImagePath.value;
-      print('Added selected design image: ${selectedDesignImagePath.value.substring(0, 50)}...');
+      print(
+        'Added selected design image: ${selectedDesignImagePath.value.substring(0, 50)}...',
+      );
     }
-    
+
     // Add measurement chart image if uploaded
     if (measurementImagePath.value.isNotEmpty) {
       images['measurementChart'] = measurementImagePath.value;
-      print('Added measurement chart image: ${measurementImagePath.value.substring(0, 50)}...');
+      print(
+        'Added measurement chart image: ${measurementImagePath.value.substring(0, 50)}...',
+      );
     }
-    
+
     // Add label reference image if uploaded
     if (labelImagePath.value.isNotEmpty) {
       images['labelReference'] = labelImagePath.value;
-      print('Added label reference image: ${labelImagePath.value.substring(0, 50)}...');
+      print(
+        'Added label reference image: ${labelImagePath.value.substring(0, 50)}...',
+      );
     }
-    
+
     print('Total reference images collected: ${images.length}');
     return images;
   }
@@ -469,7 +478,9 @@ class TechPackDetailsController extends GetxController {
       print('Technical Prompt: ${prompts['technical_flat_prompt']}');
 
       // Generate manufacturing layout image with reference images
-      print('Generating manufacturing layout image with ${referenceImages.length} reference images...');
+      print(
+        'Generating manufacturing layout image with ${referenceImages.length} reference images...',
+      );
       List<String> manufacturingImages = [];
       try {
         manufacturingImages = await OpenAIService.generateTechPackImages(
@@ -479,14 +490,18 @@ class TechPackDetailsController extends GetxController {
           size: '1024x1024',
         );
         print('✅ Manufacturing image generated successfully');
-        print('   Base64 preview: ${manufacturingImages.isNotEmpty ? manufacturingImages[0].substring(0, 50) : "EMPTY"}...');
+        print(
+          '   Base64 preview: ${manufacturingImages.isNotEmpty ? manufacturingImages[0].substring(0, 50) : "EMPTY"}...',
+        );
       } catch (e) {
         print('❌ Manufacturing image generation failed: $e');
         throw Exception('Failed to generate manufacturing image');
       }
 
       // Generate technical flat drawing with detailed approach and reference images
-      print('Generating detailed technical flat drawing with ${referenceImages.length} reference images...');
+      print(
+        'Generating detailed technical flat drawing with ${referenceImages.length} reference images...',
+      );
       List<String> technicalImages = [];
       try {
         technicalImages = await OpenAIService.generateTechPackImages(
@@ -496,7 +511,9 @@ class TechPackDetailsController extends GetxController {
           size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
         );
         print('✅ Technical flat drawing generated successfully');
-        print('   Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...');
+        print(
+          '   Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...',
+        );
       } catch (e) {
         print('❌ Technical image generation failed, trying fallback: $e');
 
@@ -508,30 +525,40 @@ class TechPackDetailsController extends GetxController {
           numberOfImages: 1,
           size: '1024x1024',
         );
-        print('   Fallback Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...');
+        print(
+          '   Fallback Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...',
+        );
       }
 
       // CRITICAL CHECK: Verify images are different before adding to list
       if (manufacturingImages.isNotEmpty && technicalImages.isNotEmpty) {
         final areIdentical = manufacturingImages[0] == technicalImages[0];
         print('⚠️ COMPARING GENERATED IMAGES:');
-        print('   Manufacturing: ${manufacturingImages[0].substring(0, 50)}...');
+        print(
+          '   Manufacturing: ${manufacturingImages[0].substring(0, 50)}...',
+        );
         print('   Technical: ${technicalImages[0].substring(0, 50)}...');
         print('   Are identical: $areIdentical');
-        
+
         if (areIdentical) {
-          print('❌ ERROR: AI generated IDENTICAL images for manufacturing and technical!');
-          print('This is likely an OpenAI API issue or both prompts are too similar.');
+          print(
+            '❌ ERROR: AI generated IDENTICAL images for manufacturing and technical!',
+          );
+          print(
+            'This is likely an OpenAI API issue or both prompts are too similar.',
+          );
         }
       }
 
       // Add images to the list
       generatedTechPackImages.addAll(manufacturingImages);
       generatedTechPackImages.addAll(technicalImages);
-      
+
       print('📦 Final image list:');
       for (int i = 0; i < generatedTechPackImages.length; i++) {
-        print('   Image[$i]: ${generatedTechPackImages[i].substring(0, 50)}...');
+        print(
+          '   Image[$i]: ${generatedTechPackImages[i].substring(0, 50)}...',
+        );
       }
 
       print('=== DETAILED TECH PACK GENERATION COMPLETED ===');
@@ -683,17 +710,21 @@ class TechPackDetailsController extends GetxController {
 
   Future<void> checkSubscriptionAndGenerate() async {
     // Check subscription before generating final techpack (with monthly reset check)
-    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset('techpack');
-    
+    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
+      'techpack',
+    );
+
     if (!canGenerate) {
       // Show upgrade prompt
       _showUpgradeDialog();
       return;
     }
-    
+
     // If user has permission, start generation and navigate immediately
     generateTechPackImages(); // Don't await - let it run in background
-    Get.toNamed('/tech_pack_ready_screen'); // Navigate immediately to show generating state
+    Get.toNamed(
+      '/tech_pack_ready_screen',
+    ); // Navigate immediately to show generating state
   }
 
   void _showUpgradeDialog() async {
@@ -749,7 +780,9 @@ class TechPackDetailsController extends GetxController {
                       children: [
                         Expanded(
                           child: Text(
-                            _l10n.tpDialogCurrentPlan(_getPlanDisplayName(currentPlan)),
+                            _l10n.tpDialogCurrentPlan(
+                              _getPlanDisplayName(currentPlan),
+                            ),
                             style: ssTitleTextTextStyle14400.copyWith(
                               fontSize: 12,
                               color: Colors.black,
@@ -769,35 +802,35 @@ class TechPackDetailsController extends GetxController {
                 style: ssTitleTextTextStyle124003,
                 textAlign: TextAlign.center,
               ),
-            SizedBox(height: 12),
-            Container(
-              padding: EdgeInsets.all(12),
-              decoration: BoxDecoration(
-                color: Colors.white,
-                border: Border.all(color: Colors.grey.shade300),
-                borderRadius: BorderRadius.circular(8),
-              ),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    _l10n.tpDialogChoosePlan,
-                    style: ssTitleTextTextStyle14400.copyWith(
-                      fontSize: 16,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.black,
+              SizedBox(height: 12),
+              Container(
+                padding: EdgeInsets.all(12),
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  border: Border.all(color: Colors.grey.shade300),
+                  borderRadius: BorderRadius.circular(8),
+                ),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      _l10n.tpDialogChoosePlan,
+                      style: ssTitleTextTextStyle14400.copyWith(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.black,
+                      ),
                     ),
-                  ),
-                  SizedBox(height: 8),
-                  _buildFeatureItem(_l10n.tpDialogStarterPlanOption),
-                  _buildFeatureItem(_l10n.tpDialogProPlanOption),
-                  _buildFeatureItem(_l10n.tpDialogFeatureProfessionalPDF),
-                  _buildFeatureItem(_l10n.tpDialogFeatureManufacturerDB),
-                  _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
-                ],
+                    SizedBox(height: 8),
+                    _buildFeatureItem(_l10n.tpDialogStarterPlanOption),
+                    _buildFeatureItem(_l10n.tpDialogProPlanOption),
+                    _buildFeatureItem(_l10n.tpDialogFeatureProfessionalPDF),
+                    _buildFeatureItem(_l10n.tpDialogFeatureManufacturerDB),
+                    _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
+                  ],
+                ),
               ),
-            ),
-          ],
+            ],
           ),
         ),
         actions: [
@@ -852,10 +885,15 @@ class TechPackDetailsController extends GetxController {
   }
 
   void _showStarterLimitDialog(UserSubscription? subscription) {
+    final plan = subscription?.subscriptionPlan ?? 'STARTER';
+    final isYearly = plan.contains('YEARLY');
+
     Get.dialog(
       TechpackLimitDialog(
-        title: 'Techpack Limit Reached',
-        message: 'You\'ve reached your monthly techpack generation limit.',
+        title: _l10n.tpProLimitDialogTitle,
+        message: isYearly
+            ? _l10n.tpStarterYearlyLimitReached
+            : _l10n.tpStarterMonthlyLimitReached,
         isPaidUser: true,
         onGetExtraTechpacks: () {
           Get.back();
@@ -887,8 +925,8 @@ class TechPackDetailsController extends GetxController {
   void _showProLimitDialog(UserSubscription? subscription) {
     Get.dialog(
       TechpackLimitDialog(
-        title: 'Techpack Limit Reached',
-        message: 'You\'ve reached your monthly techpack generation limit.',
+        title: _l10n.tpProLimitDialogTitle,
+        message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
         onGetExtraTechpacks: () {
           Get.back();
@@ -913,10 +951,11 @@ class TechPackDetailsController extends GetxController {
   }
 
   void _showStudioLimitDialog(UserSubscription? subscription) {
+    // Studio users share the same generic monthly-limit copy for now.
     Get.dialog(
       TechpackLimitDialog(
-        title: 'Techpack Limit Reached',
-        message: 'You\'ve reached your monthly techpack generation limit.',
+        title: _l10n.tpProLimitDialogTitle,
+        message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
         onGetExtraTechpacks: () {
           Get.back();
@@ -950,7 +989,10 @@ class TechPackDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
 
-      bool success = await _subscriptionService.purchaseExtraTechpacks(count, price);
+      bool success = await _subscriptionService.purchaseExtraTechpacks(
+        count,
+        price,
+      );
 
       if (success) {
         Get.snackbar(
@@ -1006,8 +1048,6 @@ class TechPackDetailsController extends GetxController {
     }
   }
 
-
-
   Widget _buildFeatureItem(String text) {
     return Padding(
       padding: EdgeInsets.only(bottom: 4),
@@ -1060,9 +1100,7 @@ class TechPackDetailsController extends GetxController {
         'quantity': quantityController.text,
         'deliveryDate': deliveryDateController.text,
       },
-      'manufacturers': {
-        'country': manufacturerCountryController.text,
-      },
+      'manufacturers': {'country': manufacturerCountryController.text},
     };
   }
 

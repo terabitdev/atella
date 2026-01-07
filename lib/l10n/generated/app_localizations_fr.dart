@@ -1849,15 +1849,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpProMonthlyLimitReached =>
-      'Vous avez atteint votre limite mensuelle de 8 dossiers techniques du plan Pro.';
+      'Votre limite mensuelle de génération de dossiers techniques a été atteinte.';
 
   @override
   String get tpStarterYearlyLimitReached =>
-      'Vous avez atteint votre limite mensuelle de 2 dossiers techniques (24/an au total).';
+      'Votre limite mensuelle de génération de dossiers techniques a été atteinte.';
 
   @override
   String get tpStarterMonthlyLimitReached =>
-      'Vous avez atteint votre limite mensuelle de 2 dossiers techniques.';
+      'Votre limite mensuelle de génération de dossiers techniques a été atteinte.';
 
   @override
   String get tpDialogChoosePlan => 'Choisissez un forfait :';
