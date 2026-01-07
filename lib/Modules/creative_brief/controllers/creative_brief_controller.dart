@@ -100,7 +100,8 @@ class CreativeBriefController extends GetxController {
 
   // Helper methods for expandable categories
   void toggleCategory(String categoryKey) {
-    _expandedCategories[categoryKey] = !(_expandedCategories[categoryKey] ?? false);
+    _expandedCategories[categoryKey] =
+        !(_expandedCategories[categoryKey] ?? false);
   }
 
   void collapseCategory(String categoryKey) {
@@ -153,13 +154,7 @@ class CreativeBriefController extends GetxController {
           'Mini dress',
           'Custom',
         ],
-        'Jumpsuits': [
-          'Jumpsuit',
-          'Romper',
-          'Playsuit',
-          'Overalls',
-          'Custom',
-        ],
+        'Jumpsuits': ['Jumpsuit', 'Romper', 'Playsuit', 'Overalls', 'Custom'],
         'Outerwear': [
           'Trench coat',
           'Bomber jacket',
@@ -200,7 +195,7 @@ class CreativeBriefController extends GetxController {
       question: 'Do you have any visual inspirations or references? 🖼️',
       type: 'image',
       options: [],
-    ), 
+    ),
     BriefQuestion(
       id: 'colors',
       question: 'What colors and patterns should the design include? 🎨',
@@ -294,7 +289,8 @@ class CreativeBriefController extends GetxController {
         // Answers are already in memory from previous screens, just show them
         _showLastTwoQuestions.value = true;
         _currentQuestionIndex.value = questions.length - 1;
-        _maxQuestionIndexReached.value = questions.length - 1; // Show all questions
+        _maxQuestionIndexReached.value =
+            questions.length - 1; // Show all questions
       } else if (isEditMode) {
         print('🟢 ENTERING EDIT MODE (from saved tech pack)');
         _isEditMode.value = true;
@@ -566,12 +562,16 @@ class CreativeBriefController extends GetxController {
       if (solidColors is List && solidColors.isNotEmpty) {
         // Filter out empty strings from the colors array
         final filteredColors = solidColors
-            .where((color) => color != null && color.toString().trim().isNotEmpty)
+            .where(
+              (color) => color != null && color.toString().trim().isNotEmpty,
+            )
             .map((color) => color.toString())
             .toList();
         _selectedColors.value = filteredColors;
         colorController.text = _selectedColors.join(', ');
-        debugPrint('   ✅ Loaded ${_selectedColors.length} solid colors (filtered from ${solidColors.length})');
+        debugPrint(
+          '   ✅ Loaded ${_selectedColors.length} solid colors (filtered from ${solidColors.length})',
+        );
       } else if (solidColors is String && solidColors.isNotEmpty) {
         _selectedColors.value = [solidColors];
         colorController.text = solidColors;
@@ -804,10 +804,7 @@ class CreativeBriefController extends GetxController {
     if (customCategory.isNotEmpty && customCategory.contains(':')) {
       final parts = customCategory.split(':');
       if (parts.length == 2) {
-        return {
-          'questionId': parts[0],
-          'categoryName': parts[1],
-        };
+        return {'questionId': parts[0], 'categoryName': parts[1]};
       }
     }
     return null;
@@ -836,7 +833,8 @@ class CreativeBriefController extends GetxController {
     // Check if this option is already selected (for deselection)
     final tempValue = categoryName != null ? '$categoryName:$option' : option;
     final answerValue = categoryName != null ? '$categoryName:$option' : option;
-    final isAlreadySelected = _tempSelections[questionId] == tempValue ||
+    final isAlreadySelected =
+        _tempSelections[questionId] == tempValue ||
         (_answers.containsKey(questionId) &&
             _answers[questionId]!.selectedOptions.contains(answerValue));
 
@@ -948,7 +946,9 @@ class CreativeBriefController extends GetxController {
         const Duration(milliseconds: 2000),
       ); // Increased delay to 2 seconds
       // Check if the selection is still the same (user hasn't changed it)
-      final expectedValue = categoryName != null ? '$categoryName:$option' : option;
+      final expectedValue = categoryName != null
+          ? '$categoryName:$option'
+          : option;
       if (_tempSelections[questionId] == expectedValue) {
         _confirmCurrentSelection(questionId);
       }
@@ -1128,7 +1128,8 @@ class CreativeBriefController extends GetxController {
         _selectedPrint.value = ''; // Clear selection
       } else if (categoryName == 'Techniques') {
         updatedOptions.removeWhere(
-          (opt) => opt == _selectedTechnique.value || opt == 'Techniques:Custom',
+          (opt) =>
+              opt == _selectedTechnique.value || opt == 'Techniques:Custom',
         );
         _selectedTechnique.value = ''; // Clear selection
       }
@@ -1309,7 +1310,8 @@ class CreativeBriefController extends GetxController {
     } else if (categoryName == 'Techniques') {
       // Remove any existing technique options (both prefixed and non-prefixed)
       selectedOptions.removeWhere(
-        (opt) => opt.startsWith('Techniques:') || opt == _selectedTechnique.value,
+        (opt) =>
+            opt.startsWith('Techniques:') || opt == _selectedTechnique.value,
       );
       _selectedTechnique.value = 'Custom';
       customParts[1] = controller.text.trim();
@@ -2059,7 +2061,9 @@ class CreativeBriefController extends GetxController {
                                         tempSelectedOptions.removeWhere(
                                           (opt) =>
                                               category.value.contains(opt) ||
-                                              opt.startsWith('${category.key}:'),
+                                              opt.startsWith(
+                                                '${category.key}:',
+                                              ),
                                         );
                                         tempSelectedOptions.value = [option];
                                       }
@@ -2199,7 +2203,8 @@ class CreativeBriefController extends GetxController {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n?.cbDialogEnterCustomAnswer ?? 'Enter custom answer:',
+                              l10n?.cbDialogEnterCustomAnswer ??
+                                  'Enter custom answer:',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -2209,7 +2214,9 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: tempCustomController,
                               decoration: InputDecoration(
-                                hintText: l10n?.cbDialogCustomAnswerHint ?? 'Type your custom answer...',
+                                hintText:
+                                    l10n?.cbDialogCustomAnswerHint ??
+                                    'Type your custom answer...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2245,7 +2252,10 @@ class CreativeBriefController extends GetxController {
                 }
               });
             },
-            child: Text(l10n?.cbDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(
+              l10n?.cbDialogCancel ?? 'Cancel',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -2432,7 +2442,8 @@ class CreativeBriefController extends GetxController {
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Text(
-                  l10n?.cbDialogSelectPrintsTechniques ?? 'Select your prints and techniques',
+                  l10n?.cbDialogSelectPrintsTechniques ??
+                      'Select your prints and techniques',
                   style: TextStyle(fontSize: 14, color: Colors.grey[600]),
                 ),
                 SizedBox(height: 16),
@@ -2498,7 +2509,9 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: printCustomController,
                               decoration: InputDecoration(
-                                hintText: l10n?.cbDialogEnterCustomPrint ?? 'Enter custom print...',
+                                hintText:
+                                    l10n?.cbDialogEnterCustomPrint ??
+                                    'Enter custom print...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2576,7 +2589,9 @@ class CreativeBriefController extends GetxController {
                             TextField(
                               controller: techniqueCustomController,
                               decoration: InputDecoration(
-                                hintText: l10n?.cbDialogEnterCustomTechnique ?? 'Enter custom technique...',
+                                hintText:
+                                    l10n?.cbDialogEnterCustomTechnique ??
+                                    'Enter custom technique...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2598,7 +2613,10 @@ class CreativeBriefController extends GetxController {
         actions: [
           TextButton(
             onPressed: () => Navigator.of(Get.overlayContext!).pop(),
-            child: Text(l10n?.cbDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(
+              l10n?.cbDialogCancel ?? 'Cancel',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
@@ -2740,12 +2758,13 @@ class CreativeBriefController extends GetxController {
       return false;
     }
 
-    // Show animation below the current unanswered question
-    // This means animation shows below current question's answers, not after answering
-    bool isCurrentQuestion = questionIndex == currentQuestionIndex;
+    // Show animation below the furthest revealed question (ratchet logic)
+    // This ensures stability when backtracking
+    bool isLastRevealedQuestion =
+        questionIndex == _maxQuestionIndexReached.value;
     bool isNotLastQuestion = questionIndex < questions.length - 1;
 
-    return isCurrentQuestion && isNotLastQuestion;
+    return isLastRevealedQuestion && isNotLastQuestion;
   }
 
   // Manual methods for debugging
@@ -2869,7 +2888,10 @@ class CreativeBriefController extends GetxController {
             if (parts.isNotEmpty) {
               // First part is solid colors (can be empty or hex codes separated by commas)
               if (parts[0].isNotEmpty && parts[0].contains('#')) {
-                solidColorsList = parts[0].split(',').map((e) => e.trim()).toList();
+                solidColorsList = parts[0]
+                    .split(',')
+                    .map((e) => e.trim())
+                    .toList();
               }
               // Second part is custom print text (if exists)
               if (parts.length >= 2 && parts[1].isNotEmpty) {
@@ -2898,9 +2920,12 @@ class CreativeBriefController extends GetxController {
 
             if (printOptionWithPrefix.isNotEmpty) {
               // Custom option format: "Prints:Custom"
-              final printValue = printOptionWithPrefix.substring('Prints:'.length);
+              final printValue = printOptionWithPrefix.substring(
+                'Prints:'.length,
+              );
               if (printValue == 'Custom' && customPrintText != null) {
-                creativeBriefData['print'] = customPrintText; // Use actual custom text
+                creativeBriefData['print'] =
+                    customPrintText; // Use actual custom text
                 print('Using custom print text: $customPrintText');
               } else {
                 creativeBriefData['print'] = printValue;
@@ -2927,9 +2952,12 @@ class CreativeBriefController extends GetxController {
 
             if (techniqueOptionWithPrefix.isNotEmpty) {
               // Custom option format: "Techniques:Custom"
-              final techniqueValue = techniqueOptionWithPrefix.substring('Techniques:'.length);
+              final techniqueValue = techniqueOptionWithPrefix.substring(
+                'Techniques:'.length,
+              );
               if (techniqueValue == 'Custom' && customTechniqueText != null) {
-                creativeBriefData['technique'] = customTechniqueText; // Use actual custom text
+                creativeBriefData['technique'] =
+                    customTechniqueText; // Use actual custom text
                 print('Using custom technique text: $customTechniqueText');
               } else {
                 creativeBriefData['technique'] = techniqueValue;
@@ -2941,13 +2969,17 @@ class CreativeBriefController extends GetxController {
               // Make sure it's not a Prints option
               if (!regularTechniqueOption.startsWith('Prints:')) {
                 creativeBriefData['technique'] = regularTechniqueOption;
-                print('Using regular technique option: $regularTechniqueOption');
+                print(
+                  'Using regular technique option: $regularTechniqueOption',
+                );
               }
             }
           }
 
           print('Final print value for API: ${creativeBriefData['print']}');
-          print('Final technique value for API: ${creativeBriefData['technique']}');
+          print(
+            'Final technique value for API: ${creativeBriefData['technique']}',
+          );
           break;
         case 'fabrics':
           print('=== PROCESSING FABRICS FOR API ===');
@@ -2964,11 +2996,14 @@ class CreativeBriefController extends GetxController {
               final fabricValue = parts.length > 1 ? parts[1] : fabricOption;
 
               // If value is "Custom", use the textInput instead
-              if (fabricValue == 'Custom' && answer.textInput?.isNotEmpty == true) {
-                creativeBriefData['fabrics'] = answer.textInput!; // Use actual custom text
+              if (fabricValue == 'Custom' &&
+                  answer.textInput?.isNotEmpty == true) {
+                creativeBriefData['fabrics'] =
+                    answer.textInput!; // Use actual custom text
                 print('Using custom fabric text: ${answer.textInput}');
               } else {
-                creativeBriefData['fabrics'] = fabricValue; // Use regular option
+                creativeBriefData['fabrics'] =
+                    fabricValue; // Use regular option
                 print('Using regular fabric option: $fabricValue');
               }
             } else {
@@ -3051,7 +3086,10 @@ class CreativeBriefController extends GetxController {
 
   /// Get localized list of options for display
   /// Internal options list remains in English
-  List<String> getLocalizedOptions(BuildContext context, List<String> englishOptions) {
+  List<String> getLocalizedOptions(
+    BuildContext context,
+    List<String> englishOptions,
+  ) {
     final service = CreativeBriefLocalizationService(context);
     return service.getLocalizedOptions(englishOptions);
   }
@@ -3068,14 +3106,20 @@ class CreativeBriefController extends GetxController {
 
   /// Convert user-selected localized option back to English for storage
   /// This ensures internal storage always uses English
-  String getEnglishOptionFromLocalized(BuildContext context, String localizedOption) {
+  String getEnglishOptionFromLocalized(
+    BuildContext context,
+    String localizedOption,
+  ) {
     final service = CreativeBriefLocalizationService(context);
     return service.getEnglishOption(localizedOption);
   }
 
   /// Convert user-selected localized category back to English for storage
   /// This ensures internal storage always uses English
-  String getEnglishCategoryFromLocalized(BuildContext context, String localizedCategory) {
+  String getEnglishCategoryFromLocalized(
+    BuildContext context,
+    String localizedCategory,
+  ) {
     final service = CreativeBriefLocalizationService(context);
     return service.getEnglishCategory(localizedCategory);
   }
