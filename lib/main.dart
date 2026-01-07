@@ -57,7 +57,9 @@ Future<void> _initializeTranslationModel() async {
 
     if (!isDownloaded) {
       if (kDebugMode) {
-        debugPrint('Translation: Downloading French translation model (~30MB)...');
+        debugPrint(
+          'Translation: Downloading French translation model (~30MB)...',
+        );
       }
 
       // Download the model
@@ -69,7 +71,9 @@ Future<void> _initializeTranslationModel() async {
         }
       } else {
         if (kDebugMode) {
-          debugPrint('Translation: Failed to download French model. Translation will be disabled.');
+          debugPrint(
+            'Translation: Failed to download French model. Translation will be disabled.',
+          );
         }
       }
     } else {
@@ -117,8 +121,9 @@ Future<void> _initializePostHog() async {
     config.sessionReplayConfig.maskAllTexts = false;
     config.sessionReplayConfig.maskAllImages = false;
     // Slightly tighter throttle to balance fidelity/perf
-    config.sessionReplayConfig.throttleDelay =
-        const Duration(milliseconds: 700);
+    config.sessionReplayConfig.throttleDelay = const Duration(
+      milliseconds: 700,
+    );
 
     await Posthog().setup(config);
 
@@ -127,7 +132,9 @@ Future<void> _initializePostHog() async {
     await Posthog().reloadFeatureFlags();
 
     if (kDebugMode) {
-      debugPrint('PostHog: Initialized (optIn: $analyticsOptIn, replay: $analyticsOptIn)');
+      debugPrint(
+        'PostHog: Initialized (optIn: $analyticsOptIn, replay: $analyticsOptIn)',
+      );
     }
   } catch (e) {
     if (kDebugMode) {
@@ -188,7 +195,7 @@ class _MyAppState extends State<MyApp> {
   Future<void> _initializeApp() async {
     // Initialize translation model (download if needed)
     await _initializeTranslationModel();
-    
+
     // Mark initialization as complete
     if (mounted) {
       setState(() {
@@ -211,7 +218,7 @@ class _MyAppState extends State<MyApp> {
           final localeController = Get.isRegistered<LocaleController>()
               ? Get.find<LocaleController>()
               : Get.put(LocaleController(), permanent: true);
-          
+
           return Obx(() {
             final app = GetMaterialApp(
               title: 'Atelia',
@@ -235,61 +242,59 @@ class _MyAppState extends State<MyApp> {
 
             // Show loading dialog overlay while initializing
             if (_isInitializing) {
-              return Stack(
-                children: [
-                  app,
-                  // Non-dismissable overlay
-                  Container(
-                    color: Colors.black.withOpacity(0.5),
-                    child: Center(
-                      child: Container(
-                        margin: EdgeInsets.symmetric(horizontal: 40.w),
-                        padding: EdgeInsets.all(24.r),
-                        decoration: BoxDecoration(
-                          color: Colors.white,
-                          borderRadius: BorderRadius.circular(16.r),
-                        ),
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          children: [
-                            // Loading indicator
-                            SizedBox(
-                              width: 40.w,
-                              height: 40.h,
-                              child: const CircularProgressIndicator(
-                                strokeWidth: 3,
-                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
-                              ),
+              return Directionality(
+                textDirection: TextDirection.ltr,
+                child: Stack(
+                  children: [
+                    app,
+                    // Non-dismissable overlay
+                    Container(
+                      color: Colors.black.withOpacity(0.5),
+                      child: Center(
+                        child: Material(
+                          color: Colors.transparent,
+                          child: Container(
+                            width: 140.w,
+                            height: 140.w,
+                            padding: EdgeInsets.all(24.r),
+                            decoration: BoxDecoration(
+                              color: Colors.white,
+                              borderRadius: BorderRadius.circular(16.r),
                             ),
-                            SizedBox(height: 20.h),
-                            
-                            // Loading text
-                            Text(
-                              'Setting things up...',
-                              style: TextStyle(
-                                fontSize: 16.sp,
-                                fontWeight: FontWeight.w600,
-                                color: Colors.black87,
-                              ),
-                              textAlign: TextAlign.center,
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [
+                                // Loading indicator
+                                SizedBox(
+                                  width: 32.w,
+                                  height: 32.h,
+                                  child: const CircularProgressIndicator(
+                                    strokeWidth: 3,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.black87,
+                                    ),
+                                  ),
+                                ),
+                                SizedBox(height: 16.h),
+
+                                // Loading text
+                                Text(
+                                  'Setting things up...',
+                                  style: TextStyle(
+                                    fontSize: 13.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.black87,
+                                  ),
+                                  textAlign: TextAlign.center,
+                                ),
+                              ],
                             ),
-                            SizedBox(height: 8.h),
-                            
-                            // Subtitle
-                            Text(
-                              'Preparing language support',
-                              style: TextStyle(
-                                fontSize: 13.sp,
-                                color: Colors.black54,
-                              ),
-                              textAlign: TextAlign.center,
-                            ),
-                          ],
+                          ),
                         ),
                       ),
                     ),
-                  ),
-                ],
+                  ],
+                ),
               );
             }
 
