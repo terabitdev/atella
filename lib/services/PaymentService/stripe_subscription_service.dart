@@ -9,13 +9,14 @@ import 'dart:convert';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 
 class StripeSubscriptionService {
-  static final StripeSubscriptionService _instance = StripeSubscriptionService._internal();
+  static final StripeSubscriptionService _instance =
+      StripeSubscriptionService._internal();
   factory StripeSubscriptionService() => _instance;
   StripeSubscriptionService._internal();
 
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  
+
   String get _stripeSecretKey => dotenv.env['StripeSecretKey'] ?? '';
   static const String _stripeApiUrl = 'https://api.stripe.com/v1';
 
@@ -25,7 +26,10 @@ class StripeSubscriptionService {
     if (user == null) return null;
 
     try {
-      DocumentSnapshot doc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot doc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .get();
       if (doc.exists) {
         return UserSubscription.fromFirestore(doc);
       }
@@ -36,12 +40,18 @@ class StripeSubscriptionService {
   }
 
   // Create or get Stripe customer
-  Future<String?> _createOrGetStripeCustomer(String email, String userId) async {
+  Future<String?> _createOrGetStripeCustomer(
+    String email,
+    String userId,
+  ) async {
     try {
       // Check if user already has a Stripe customer ID
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(userId)
+          .get();
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-      
+
       if (userData != null && userData['stripeCustomerId'] != null) {
         return userData['stripeCustomerId'];
       }
@@ -53,21 +63,18 @@ class StripeSubscriptionService {
           'Authorization': 'Bearer $_stripeSecretKey',
           'Content-Type': 'application/x-www-form-urlencoded',
         },
-        body: {
-          'email': email,
-          'metadata[firebase_uid]': userId,
-        },
+        body: {'email': email, 'metadata[firebase_uid]': userId},
       );
 
       if (response.statusCode == 200) {
         final customerData = json.decode(response.body);
         String customerId = customerData['id'];
-        
+
         // Save customer ID to Firebase
         await _firestore.collection('users').doc(userId).update({
           'stripeCustomerId': customerId,
         });
-        
+
         return customerId;
       }
     } catch (e) {
@@ -78,20 +85,27 @@ class StripeSubscriptionService {
 
   // Create payment sheet for subscription
   Future<bool> createSubscriptionPaymentSheet(SubscriptionPlan plan) async {
-    print('🔥 DEBUG: createSubscriptionPaymentSheet called for plan: ${plan.name}');
+    print(
+      '🔥 DEBUG: createSubscriptionPaymentSheet called for plan: ${plan.name}',
+    );
     try {
       User? user = _auth.currentUser;
       if (user == null) return false;
 
       // Get or create Stripe customer
-      String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
+      String? customerId = await _createOrGetStripeCustomer(
+        user.email!,
+        user.uid,
+      );
       if (customerId == null) return false;
 
       // Get the appropriate Stripe price ID based on billing period
-      String priceId = plan.billingPeriod == BillingPeriod.YEARLY && plan.stripeYearlyPriceId != null
+      String priceId =
+          plan.billingPeriod == BillingPeriod.YEARLY &&
+              plan.stripeYearlyPriceId != null
           ? plan.stripeYearlyPriceId!
           : plan.stripePriceId;
-      
+
       // Create subscription on the backend
       final response = await http.post(
         Uri.parse('$_stripeApiUrl/subscriptions'),
@@ -107,13 +121,16 @@ class StripeSubscriptionService {
           'expand[]': 'latest_invoice.payment_intent',
           'metadata[firebase_uid]': user.uid,
           'metadata[plan_name]': plan.name,
-          'metadata[billing_period]': plan.billingPeriod == BillingPeriod.YEARLY ? 'YEARLY' : 'MONTHLY',
+          'metadata[billing_period]': plan.billingPeriod == BillingPeriod.YEARLY
+              ? 'YEARLY'
+              : 'MONTHLY',
         },
       );
 
       if (response.statusCode == 200) {
         final subscriptionData = json.decode(response.body);
-        final clientSecret = subscriptionData['latest_invoice']['payment_intent']['client_secret'];
+        final clientSecret =
+            subscriptionData['latest_invoice']['payment_intent']['client_secret'];
         final subscriptionId = subscriptionData['id'];
 
         print('🔍 DEBUG: Created subscription with ID: $subscriptionId');
@@ -126,7 +143,6 @@ class StripeSubscriptionService {
             customerId: customerId,
             customerEphemeralKeySecret: await _getEphemeralKey(customerId),
             style: ThemeMode.dark,
-
           ),
         );
 
@@ -140,11 +156,12 @@ class StripeSubscriptionService {
 
           // NOTE: Firebase updates are now handled by webhooks only
           // No client-side updates to prevent dual updates
-          print('✅ Payment completed successfully. Webhook will update Firebase automatically.');
+          print(
+            '✅ Payment completed successfully. Webhook will update Firebase automatically.',
+          );
           print('🔍 DEBUG: Plan being sent to webhook: ${plan.name}');
           print('🔍 DEBUG: Billing period: ${plan.billingPeriod}');
           print('🔍 DEBUG: Stripe Price ID used: $priceId');
-
         } catch (paymentSheetError) {
           // User dismissed payment sheet or payment failed
           print('⚠️ Payment sheet dismissed or failed: $paymentSheetError');
@@ -155,28 +172,35 @@ class StripeSubscriptionService {
           try {
             final cancelResponse = await http.delete(
               Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
-              headers: {
-                'Authorization': 'Bearer $_stripeSecretKey',
-              },
+              headers: {'Authorization': 'Bearer $_stripeSecretKey'},
             );
 
             if (cancelResponse.statusCode == 200) {
               print('✅ Incomplete subscription cancelled successfully');
             } else {
-              print('⚠️ Failed to cancel incomplete subscription: ${cancelResponse.statusCode}');
+              print(
+                '⚠️ Failed to cancel incomplete subscription: ${cancelResponse.statusCode}',
+              );
             }
           } catch (cancelError) {
             print('❌ Error cancelling incomplete subscription: $cancelError');
           }
 
           // CRITICAL: Clean up any Firestore data that might have been created
-          print('🧹 Cleaning up any incomplete subscription data from Firestore');
+          print(
+            '🧹 Cleaning up any incomplete subscription data from Firestore',
+          );
           try {
-            DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
-            Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+            DocumentSnapshot userDoc = await _firestore
+                .collection('users')
+                .doc(user.uid)
+                .get();
+            Map<String, dynamic>? userData =
+                userDoc.data() as Map<String, dynamic>?;
 
             // If this subscription ID matches what's in Firestore, revert to FREE
-            if (userData != null && userData['currentSubscriptionId'] == subscriptionId) {
+            if (userData != null &&
+                userData['currentSubscriptionId'] == subscriptionId) {
               await _revertToFreePlan(user.uid);
               print('✅ Reverted user to FREE plan due to cancelled payment');
             }
@@ -190,8 +214,13 @@ class StripeSubscriptionService {
           // EXTRA SAFEGUARD: Always validate subscription status after payment sheet interaction
           // This catches edge cases where the catch block might not execute properly
           if (!paymentSuccessful) {
-            print('🔍 SAFEGUARD: Validating subscription status as extra precaution...');
-            await _validateAndCleanupFailedSubscription(user.uid, subscriptionId);
+            print(
+              '🔍 SAFEGUARD: Validating subscription status as extra precaution...',
+            );
+            await _validateAndCleanupFailedSubscription(
+              user.uid,
+              subscriptionId,
+            );
           }
         }
 
@@ -216,9 +245,7 @@ class StripeSubscriptionService {
         'Stripe-Version': '2024-11-20.acacia',
         'Content-Type': 'application/x-www-form-urlencoded',
       },
-      body: {
-        'customer': customerId,
-      },
+      body: {'customer': customerId},
     );
 
     if (response.statusCode == 200) {
@@ -237,14 +264,17 @@ class StripeSubscriptionService {
       }
 
       print('🔍 Cancelling subscription for user: ${user.uid}');
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .get();
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-      
+
       if (userData == null) {
         print('❌ Cancel subscription failed: No user data found');
         return false;
       }
-      
+
       if (userData['currentSubscriptionId'] == null) {
         print('❌ Cancel subscription failed: No subscription ID found');
         return false;
@@ -256,9 +286,7 @@ class StripeSubscriptionService {
       // Cancel subscription in Stripe
       final response = await http.delete(
         Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
-        headers: {
-          'Authorization': 'Bearer $_stripeSecretKey',
-        },
+        headers: {'Authorization': 'Bearer $_stripeSecretKey'},
       );
 
       print('📤 Stripe API response status: ${response.statusCode}');
@@ -275,13 +303,16 @@ class StripeSubscriptionService {
           'currentSubscriptionId': null,
           'techpacksUsedThisMonth': 0,
           'techpacksUsedThisYear': 0,
-          'designsGeneratedThisMonth': 0,
+          // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
+          // Free designs should only reset based on freeDesignResetDate
           'extraDesignsPurchased': 0,
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
           'extraTechpacksUsed': 0,
         });
-        print('✅ Firebase updated immediately. Webhook will also run as backup.');
+        print(
+          '✅ Firebase updated immediately. Webhook will also run as backup.',
+        );
         return true;
       } else if (response.statusCode == 404) {
         print('⚠️ Subscription not found in Stripe - cleaning up user data');
@@ -293,7 +324,8 @@ class StripeSubscriptionService {
           'planEndDate': null,
           'techpacksUsedThisMonth': 0,
           'techpacksUsedThisYear': 0,
-          'designsGeneratedThisMonth': 0,
+          // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
+          // Free designs should only reset based on freeDesignResetDate
           'extraDesignsPurchased': 0,
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
@@ -302,7 +334,9 @@ class StripeSubscriptionService {
         print('✅ User subscription data cleaned up - user is now on FREE plan');
         return true;
       } else {
-        print('❌ Failed to cancel subscription. Status: ${response.statusCode}, Body: ${response.body}');
+        print(
+          '❌ Failed to cancel subscription. Status: ${response.statusCode}, Body: ${response.body}',
+        );
       }
     } catch (e) {
       print('❌ Error canceling subscription: $e');
@@ -329,7 +363,9 @@ class StripeSubscriptionService {
 
       print('📊 Current values before reset:');
       print('  extraDesignsPurchased: ${userData?['extraDesignsPurchased']}');
-      print('  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}');
+      print(
+        '  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}',
+      );
       print('  extraDesignsUsed: ${userData?['extraDesignsUsed']}');
       print('  extraTechpacksUsed: ${userData?['extraTechpacksUsed']}');
 
@@ -352,7 +388,9 @@ class StripeSubscriptionService {
           'extraTechpacksUsed': 0,
         });
 
-        print('   ✓ Transaction prepared - will update all 4 fields atomically');
+        print(
+          '   ✓ Transaction prepared - will update all 4 fields atomically',
+        );
       });
 
       print('✅ Transaction completed successfully');
@@ -366,26 +404,33 @@ class StripeSubscriptionService {
 
       print('📊 Values after reset (fresh from server):');
       print('  extraDesignsPurchased: ${userData?['extraDesignsPurchased']}');
-      print('  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}');
+      print(
+        '  extraTechpacksPurchased: ${userData?['extraTechpacksPurchased']}',
+      );
       print('  extraDesignsUsed: ${userData?['extraDesignsUsed']}');
       print('  extraTechpacksUsed: ${userData?['extraTechpacksUsed']}');
 
       // Print ALL fields to debug
       print('📋 All extra/design related fields:');
       userData?.forEach((key, value) {
-        if (key.toLowerCase().contains('extra') || key.toLowerCase().contains('design')) {
+        if (key.toLowerCase().contains('extra') ||
+            key.toLowerCase().contains('design')) {
           print('     $key: $value');
         }
       });
 
       // If extraDesignsUsed is STILL not 0, there's something very wrong
       if (userData?['extraDesignsUsed'] != 0) {
-        print('🚨 CRITICAL: extraDesignsUsed did NOT reset! Current value: ${userData?['extraDesignsUsed']}');
+        print(
+          '🚨 CRITICAL: extraDesignsUsed did NOT reset! Current value: ${userData?['extraDesignsUsed']}',
+        );
         print('🚨 This suggests either:');
         print('   1. Firestore security rules are blocking the write');
         print('   2. A Cloud Function is reverting the value');
         print('   3. There\'s a listener overwriting the value');
-        print('   4. You\'re looking at a different document in Firebase Console');
+        print(
+          '   4. You\'re looking at a different document in Firebase Console',
+        );
       }
     } catch (e) {
       print('❌ Error resetting add-on counters: $e');
@@ -405,21 +450,27 @@ class StripeSubscriptionService {
     switch (feature) {
       case 'techpack':
         canUse = subscription.canGenerateTechpack;
-        print('🔍 Techpack access check: ${subscription.subscriptionPlan} plan, ${subscription.techpacksUsedThisMonth}/${subscription.totalAllowedTechpacks} used, can generate: $canUse');
+        print(
+          '🔍 Techpack access check: ${subscription.subscriptionPlan} plan, ${subscription.techpacksUsedThisMonth}/${subscription.totalAllowedTechpacks} used, can generate: $canUse',
+        );
         break;
       case 'pdf_export':
         canUse = subscription.subscriptionPlan != 'FREE';
-        print('🔍 PDF export access check: ${subscription.subscriptionPlan} plan, access: $canUse');
+        print(
+          '🔍 PDF export access check: ${subscription.subscriptionPlan} plan, access: $canUse',
+        );
         break;
       case 'manufacturers':
         canUse = subscription.subscriptionPlan != 'FREE';
-        print('🔍 Manufacturers access check: ${subscription.subscriptionPlan} plan, access: $canUse');
+        print(
+          '🔍 Manufacturers access check: ${subscription.subscriptionPlan} plan, access: $canUse',
+        );
         break;
       default:
         print('❌ Unknown feature: $feature');
         return false;
     }
-    
+
     return canUse;
   }
 
@@ -435,7 +486,9 @@ class StripeSubscriptionService {
       UserSubscription? subscription = await getCurrentUserSubscription();
       if (subscription == null) return;
 
-      bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+      bool isYearly =
+          subscription.billingPeriod == 'YEARLY' ||
+          subscription.subscriptionPlan.contains('YEARLY');
 
       // Determine base limit
       int baseLimit = 0;
@@ -455,10 +508,13 @@ class StripeSubscriptionService {
       // ONLY increment extraTechpacksUsed if:
       // 1. User has purchased add-ons (extraTechpacksPurchased > 0)
       // 2. User has exceeded their base quota
-      if (subscription.extraTechpacksPurchased > 0 && subscription.techpacksUsedThisMonth >= baseLimit) {
+      if (subscription.extraTechpacksPurchased > 0 &&
+          subscription.techpacksUsedThisMonth >= baseLimit) {
         // User is consuming from add-on pool
         updates['extraTechpacksUsed'] = FieldValue.increment(1);
-        print('📦 Consuming add-on techpack (${subscription.extraTechpacksUsed + 1}/${subscription.extraTechpacksPurchased})');
+        print(
+          '📦 Consuming add-on techpack (${subscription.extraTechpacksUsed + 1}/${subscription.extraTechpacksPurchased})',
+        );
       }
 
       // For yearly plans, also increment yearly counter
@@ -467,15 +523,21 @@ class StripeSubscriptionService {
       }
 
       await _firestore.collection('users').doc(user.uid).update(updates);
-      print('✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly + monthly' : 'monthly'})');
+      print(
+        '✅ Incremented techpack usage for user: ${user.uid} (${isYearly ? 'yearly + monthly' : 'monthly'})',
+      );
 
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
         String maxTechpacks = '${updatedSubscription.totalAllowedTechpacks}';
-        print('📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks per month (${updatedSubscription.subscriptionPlan} plan)');
+        print(
+          '📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks per month (${updatedSubscription.subscriptionPlan} plan)',
+        );
         if (isYearly) {
-          print('📊 Yearly usage: ${updatedSubscription.techpacksUsedThisYear}/36 per year');
+          print(
+            '📊 Yearly usage: ${updatedSubscription.techpacksUsedThisYear}/36 per year',
+          );
         }
 
         // Check if all add-ons are fully consumed and reset if needed
@@ -498,6 +560,33 @@ class StripeSubscriptionService {
       UserSubscription? subscription = await getCurrentUserSubscription();
       if (subscription == null) return;
 
+      // For FREE plan users, use separate counter
+      if (subscription.subscriptionPlan == 'FREE') {
+        Map<String, dynamic> updates = {
+          'freeDesignsGeneratedThisMonth': FieldValue.increment(1),
+        };
+
+        // If this is the first free design, set the reset date to 30 days from now
+        if (subscription.freeDesignResetDate == null) {
+          updates['freeDesignResetDate'] = Timestamp.fromDate(
+            DateTime.now().add(Duration(days: 30)),
+          );
+        }
+
+        await _firestore.collection('users').doc(user.uid).update(updates);
+        print('✅ Incremented FREE design usage for user: ${user.uid}');
+
+        // Log current usage
+        final updatedSubscription = await getCurrentUserSubscription();
+        if (updatedSubscription != null) {
+          print(
+            '📊 Current FREE design usage: ${updatedSubscription.freeDesignsGeneratedThisMonth}/3',
+          );
+        }
+        return;
+      }
+
+      // For paid plans, use the regular counter
       // Determine base limit
       int baseLimit = 3; // FREE
       if (subscription.subscriptionPlan.startsWith('STUDIO')) {
@@ -515,10 +604,13 @@ class StripeSubscriptionService {
       // ONLY increment extraDesignsUsed if:
       // 1. User has purchased add-ons (extraDesignsPurchased > 0)
       // 2. User has exceeded their base quota
-      if (subscription.extraDesignsPurchased > 0 && subscription.designsGeneratedThisMonth >= baseLimit) {
+      if (subscription.extraDesignsPurchased > 0 &&
+          subscription.designsGeneratedThisMonth >= baseLimit) {
         // User is consuming from add-on pool
         updates['extraDesignsUsed'] = FieldValue.increment(1);
-        print('📦 Consuming add-on design (${subscription.extraDesignsUsed + 1}/${subscription.extraDesignsPurchased * 5})');
+        print(
+          '📦 Consuming add-on design (${subscription.extraDesignsUsed + 1}/${subscription.extraDesignsPurchased * 5})',
+        );
       }
 
       await _firestore.collection('users').doc(user.uid).update(updates);
@@ -527,7 +619,9 @@ class StripeSubscriptionService {
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
-        print('📊 Current design usage: ${updatedSubscription.designCounterDisplay} (${updatedSubscription.subscriptionPlan} plan)');
+        print(
+          '📊 Current design usage: ${updatedSubscription.designCounterDisplay} (${updatedSubscription.subscriptionPlan} plan)',
+        );
 
         // Check if all add-ons are fully consumed and reset if needed
         await _checkAndResetFullyConsumedAddons(user.uid, updatedSubscription);
@@ -538,7 +632,10 @@ class StripeSubscriptionService {
   }
 
   // Check if add-ons are fully consumed and reset them
-  Future<void> _checkAndResetFullyConsumedAddons(String userId, UserSubscription subscription) async {
+  Future<void> _checkAndResetFullyConsumedAddons(
+    String userId,
+    UserSubscription subscription,
+  ) async {
     Map<String, dynamic> updates = {};
 
     // NOTE: Add-ons now accumulate - we don't reset them when fully consumed
@@ -575,18 +672,23 @@ class StripeSubscriptionService {
     }
 
     bool canGenerate = subscription.canGenerateDesign;
-    print('🔍 Design generation check: ${subscription.designCounterDisplay}, can generate: $canGenerate');
+    print(
+      '🔍 Design generation check: ${subscription.designCounterDisplay}, can generate: $canGenerate',
+    );
     return canGenerate;
   }
 
-  // Purchase extra techpacks (one-time payment) 
+  // Purchase extra techpacks (one-time payment)
   Future<bool> purchaseExtraTechpacks(int count, double price) async {
     try {
       User? user = _auth.currentUser;
       if (user == null) return false;
 
       // Get or create Stripe customer
-      String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
+      String? customerId = await _createOrGetStripeCustomer(
+        user.email!,
+        user.uid,
+      );
       if (customerId == null) return false;
 
       // Create payment intent for one-time payment
@@ -609,7 +711,7 @@ class StripeSubscriptionService {
       if (response.statusCode == 200) {
         final paymentIntentData = json.decode(response.body);
         final clientSecret = paymentIntentData['client_secret'];
-        
+
         // Initialize payment sheet
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -623,14 +725,16 @@ class StripeSubscriptionService {
 
         // Present payment sheet
         await Stripe.instance.presentPaymentSheet();
-        
+
         // Payment completed successfully - update user's extra techpacks
         // Each add-on = +1 techpack (€5.99)
         await _firestore.collection('users').doc(user.uid).update({
           'extraTechpacksPurchased': FieldValue.increment(count),
         });
-        
-        print('✅ Extra techpacks purchased successfully: $count techpacks for €$price');
+
+        print(
+          '✅ Extra techpacks purchased successfully: $count techpacks for €$price',
+        );
         return true;
       }
     } catch (e) {
@@ -650,7 +754,10 @@ class StripeSubscriptionService {
       if (user == null) return false;
 
       // Get or create Stripe customer
-      String? customerId = await _createOrGetStripeCustomer(user.email!, user.uid);
+      String? customerId = await _createOrGetStripeCustomer(
+        user.email!,
+        user.uid,
+      );
       if (customerId == null) return false;
 
       // Create payment intent for one-time payment
@@ -673,7 +780,7 @@ class StripeSubscriptionService {
       if (response.statusCode == 200) {
         final paymentIntentData = json.decode(response.body);
         final clientSecret = paymentIntentData['client_secret'];
-        
+
         // Initialize payment sheet
         await Stripe.instance.initPaymentSheet(
           paymentSheetParameters: SetupPaymentSheetParameters(
@@ -687,12 +794,12 @@ class StripeSubscriptionService {
 
         // Present payment sheet
         await Stripe.instance.presentPaymentSheet();
-        
+
         // Payment completed successfully - update user's extra designs
         await _firestore.collection('users').doc(user.uid).update({
           'extraDesignsPurchased': FieldValue.increment(1),
         });
-        
+
         print('✅ Extra designs purchased successfully');
         return true;
       }
@@ -710,8 +817,7 @@ class StripeSubscriptionService {
   Future<void> resetMonthlyCounts(String userId) async {
     UserSubscription? subscription = await getCurrentUserSubscription();
     if (subscription == null) return;
-    
-    
+
     Map<String, dynamic> updates = {
       // Reset monthly usage counters only
       'techpacksUsedThisMonth': 0,
@@ -720,12 +826,14 @@ class StripeSubscriptionService {
       // They accumulate across months - users can purchase multiple add-on packs
       // Example: Buy pack in Jan + buy pack in Feb = 2 packs total available
       'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(DateTime.now().add(Duration(days: 30))), // Always 30 days for monthly reset
+      'currentPeriodEnd': Timestamp.fromDate(
+        DateTime.now().add(Duration(days: 30)),
+      ), // Always 30 days for monthly reset
     };
-    
+
     // Note: techpacksUsedThisYear is only reset at the yearly billing cycle, not monthly
     // This is handled separately in a yearly reset function if needed
-    
+
     await _firestore.collection('users').doc(userId).update(updates);
   }
 
@@ -733,16 +841,18 @@ class StripeSubscriptionService {
   Future<void> resetYearlyCounts(String userId) async {
     UserSubscription? subscription = await getCurrentUserSubscription();
     if (subscription == null) return;
-    
+
     // Only reset yearly counter if user has a yearly subscription
-    bool isYearly = subscription.billingPeriod == 'YEARLY' || subscription.subscriptionPlan.contains('YEARLY');
+    bool isYearly =
+        subscription.billingPeriod == 'YEARLY' ||
+        subscription.subscriptionPlan.contains('YEARLY');
     if (!isYearly) return;
-    
+
     await _firestore.collection('users').doc(userId).update({
       'techpacksUsedThisYear': 0,
       // Note: Monthly counters are reset separately every month
     });
-    
+
     print('✅ Yearly techpack count reset for user: $userId');
   }
 
@@ -750,39 +860,70 @@ class StripeSubscriptionService {
   Future<void> resetMonthlyTechpackCount(String userId) async {
     await resetMonthlyCounts(userId);
   }
-  
+
   // Check and handle monthly reset for current user
   Future<void> checkAndHandleMonthlyReset() async {
     User? user = _auth.currentUser;
     if (user == null) return;
-    
+
     try {
       UserSubscription? subscription = await getCurrentUserSubscription();
       if (subscription == null) return;
-      
-      // Check if current period has ended
-      if (subscription.currentPeriodEnd != null && 
+
+      // Check if current period has ended (for paid plans)
+      if (subscription.currentPeriodEnd != null &&
           DateTime.now().isAfter(subscription.currentPeriodEnd!)) {
-        
         // Reset the monthly usage counts
         await resetMonthlyCounts(user.uid);
-        
+
         print('Monthly techpack count reset for user: ${user.uid}');
       }
+
+      // Check if free design reset date has passed (for FREE plan users)
+      await _checkAndResetFreeDesigns(user.uid, subscription);
     } catch (e) {
       print('Error checking monthly reset: $e');
     }
   }
-  
+
+  /// Check and reset free designs if reset date has passed
+  Future<void> _checkAndResetFreeDesigns(
+    String userId,
+    UserSubscription subscription,
+  ) async {
+    try {
+      // Only check for FREE plan users
+      if (subscription.subscriptionPlan != 'FREE') return;
+
+      // If no reset date is set, nothing to reset
+      if (subscription.freeDesignResetDate == null) return;
+
+      // Check if reset date has passed
+      if (DateTime.now().isAfter(subscription.freeDesignResetDate!)) {
+        // Reset free design counter and set new reset date
+        await _firestore.collection('users').doc(userId).update({
+          'freeDesignsGeneratedThisMonth': 0,
+          'freeDesignResetDate': Timestamp.fromDate(
+            DateTime.now().add(Duration(days: 30)),
+          ),
+        });
+
+        print('✅ Free design counter reset for user: $userId');
+      }
+    } catch (e) {
+      print('❌ Error resetting free designs: $e');
+    }
+  }
+
   // Enhanced method that checks reset before checking premium features
   Future<bool> canUsePremiumFeatureWithReset(String feature) async {
     // First check and handle monthly reset
     await checkAndHandleMonthlyReset();
-    
+
     // Then check if user can use the feature
     return await canUsePremiumFeature(feature);
   }
-  
+
   // Get subscription status for UI display
   Future<Map<String, dynamic>> getSubscriptionStatus() async {
     UserSubscription? subscription = await getCurrentUserSubscription();
@@ -796,18 +937,21 @@ class StripeSubscriptionService {
         'periodEnd': null,
       };
     }
-    
+
     return {
       'plan': subscription.subscriptionPlan,
       'displayName': _getPlanDisplayName(subscription.subscriptionPlan),
       'remainingTechpacks': subscription.remainingTechpacks,
-      'maxTechpacks': subscription.subscriptionPlan.startsWith('PRO') ? -1 :
-                      subscription.subscriptionPlan.startsWith('STARTER') ? 2 : 0,
+      'maxTechpacks': subscription.subscriptionPlan.startsWith('PRO')
+          ? -1
+          : subscription.subscriptionPlan.startsWith('STARTER')
+          ? 2
+          : 0,
       'isActive': subscription.subscriptionStatus == 'active',
       'periodEnd': subscription.currentPeriodEnd,
     };
   }
-  
+
   String _getPlanDisplayName(String plan) {
     switch (plan) {
       case 'FREE':
@@ -837,9 +981,7 @@ class StripeSubscriptionService {
 
       final response = await http.get(
         Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
-        headers: {
-          'Authorization': 'Bearer $_stripeSecretKey',
-        },
+        headers: {'Authorization': 'Bearer $_stripeSecretKey'},
       );
 
       if (response.statusCode == 200) {
@@ -873,7 +1015,10 @@ class StripeSubscriptionService {
     try {
       print('🔍 Validating subscription for user: ${user.uid}');
 
-      DocumentSnapshot userDoc = await _firestore.collection('users').doc(user.uid).get();
+      DocumentSnapshot userDoc = await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .get();
       Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
 
       if (userData == null) return;
@@ -889,7 +1034,9 @@ class StripeSubscriptionService {
 
       // If user has a paid plan but no subscription ID, revert to FREE
       if (subscriptionId == null || subscriptionId.isEmpty) {
-        print('⚠️ User has paid plan but no subscription ID, reverting to FREE');
+        print(
+          '⚠️ User has paid plan but no subscription ID, reverting to FREE',
+        );
         await _revertToFreePlan(user.uid);
         return;
       }
@@ -898,7 +1045,9 @@ class StripeSubscriptionService {
       bool isValid = await _validateStripeSubscriptionStatus(subscriptionId);
 
       if (!isValid) {
-        print('❌ Subscription is not valid (incomplete/unpaid/cancelled), reverting to FREE');
+        print(
+          '❌ Subscription is not valid (incomplete/unpaid/cancelled), reverting to FREE',
+        );
         await _revertToFreePlan(user.uid);
       } else {
         print('✅ Subscription is valid and active');
@@ -917,7 +1066,8 @@ class StripeSubscriptionService {
         'currentSubscriptionId': null,
         'techpacksUsedThisMonth': 0,
         'techpacksUsedThisYear': 0,
-        'designsGeneratedThisMonth': 0,
+        // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
+        // Free designs should only reset based on freeDesignResetDate
         'extraDesignsPurchased': 0,
         'extraTechpacksPurchased': 0,
         'extraDesignsUsed': 0,
@@ -933,7 +1083,10 @@ class StripeSubscriptionService {
 
   /// Extra safeguard: Validate and cleanup failed subscription
   /// This method is called in the finally block to catch edge cases
-  Future<void> _validateAndCleanupFailedSubscription(String userId, String subscriptionId) async {
+  Future<void> _validateAndCleanupFailedSubscription(
+    String userId,
+    String subscriptionId,
+  ) async {
     try {
       // Short delay to allow any pending operations to complete
       await Future.delayed(const Duration(milliseconds: 500));
@@ -945,10 +1098,15 @@ class StripeSubscriptionService {
         print('⚠️ SAFEGUARD: Subscription is not valid, cleaning up...');
 
         // Check if this subscription ID is still in Firebase
-        DocumentSnapshot userDoc = await _firestore.collection('users').doc(userId).get();
-        Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
+        DocumentSnapshot userDoc = await _firestore
+            .collection('users')
+            .doc(userId)
+            .get();
+        Map<String, dynamic>? userData =
+            userDoc.data() as Map<String, dynamic>?;
 
-        if (userData != null && userData['currentSubscriptionId'] == subscriptionId) {
+        if (userData != null &&
+            userData['currentSubscriptionId'] == subscriptionId) {
           await _revertToFreePlan(userId);
           print('✅ SAFEGUARD: Successfully cleaned up failed subscription');
         }
@@ -960,5 +1118,4 @@ class StripeSubscriptionService {
       // Don't throw - this is a safety check, shouldn't break the flow
     }
   }
-
 }

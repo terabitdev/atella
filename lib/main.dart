@@ -38,9 +38,6 @@ void main() async {
   // Initialize LocaleController for language management (permanent to survive logout)
   Get.put(LocaleController(), permanent: true);
 
-  // Initialize translation model (download if needed)
-  await _initializeTranslationModel();
-
   // Validate and cleanup incomplete/unpaid subscriptions
   await _validateSubscriptionOnLaunch();
 
@@ -172,10 +169,37 @@ Future<void> _validateSubscriptionOnLaunch() async {
   }
 }
 
-class MyApp extends StatelessWidget {
+class MyApp extends StatefulWidget {
   const MyApp({super.key});
+
+  @override
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  bool _isInitializing = true;
+
+  @override
+  void initState() {
+    super.initState();
+    _initializeApp();
+  }
+
+  Future<void> _initializeApp() async {
+    // Initialize translation model (download if needed)
+    await _initializeTranslationModel();
+    
+    // Mark initialization as complete
+    if (mounted) {
+      setState(() {
+        _isInitializing = false;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
+    // Show main app immediately
     // PostHogWidget is required for mobile session replay
     return PostHogWidget(
       child: ScreenUtilInit(
@@ -187,25 +211,90 @@ class MyApp extends StatelessWidget {
           final localeController = Get.isRegistered<LocaleController>()
               ? Get.find<LocaleController>()
               : Get.put(LocaleController(), permanent: true);
-          return Obx(() => GetMaterialApp(
-            title: 'Atelia',
-            theme: AppTheme.lightTheme,
-            themeMode: ThemeMode.light,
-            debugShowCheckedModeBanner: false,
-            initialRoute: AppPages.initial,
-            getPages: AppPages.routes,
-            // PostHog: Automatic screen view tracking
-            navigatorObservers: [PosthogObserver()],
-            // Localization configuration
-            locale: localeController.currentLocale,
-            supportedLocales: LocaleController.supportedLocales,
-            localizationsDelegates: const [
-              AppLocalizations.delegate,
-              GlobalMaterialLocalizations.delegate,
-              GlobalWidgetsLocalizations.delegate,
-              GlobalCupertinoLocalizations.delegate,
-            ],
-          ));
+          
+          return Obx(() {
+            final app = GetMaterialApp(
+              title: 'Atelia',
+              theme: AppTheme.lightTheme,
+              themeMode: ThemeMode.light,
+              debugShowCheckedModeBanner: false,
+              initialRoute: AppPages.initial,
+              getPages: AppPages.routes,
+              // PostHog: Automatic screen view tracking
+              navigatorObservers: [PosthogObserver()],
+              // Localization configuration
+              locale: localeController.currentLocale,
+              supportedLocales: LocaleController.supportedLocales,
+              localizationsDelegates: const [
+                AppLocalizations.delegate,
+                GlobalMaterialLocalizations.delegate,
+                GlobalWidgetsLocalizations.delegate,
+                GlobalCupertinoLocalizations.delegate,
+              ],
+            );
+
+            // Show loading dialog overlay while initializing
+            if (_isInitializing) {
+              return Stack(
+                children: [
+                  app,
+                  // Non-dismissable overlay
+                  Container(
+                    color: Colors.black.withOpacity(0.5),
+                    child: Center(
+                      child: Container(
+                        margin: EdgeInsets.symmetric(horizontal: 40.w),
+                        padding: EdgeInsets.all(24.r),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          borderRadius: BorderRadius.circular(16.r),
+                        ),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.min,
+                          children: [
+                            // Loading indicator
+                            SizedBox(
+                              width: 40.w,
+                              height: 40.h,
+                              child: const CircularProgressIndicator(
+                                strokeWidth: 3,
+                                valueColor: AlwaysStoppedAnimation<Color>(Colors.black87),
+                              ),
+                            ),
+                            SizedBox(height: 20.h),
+                            
+                            // Loading text
+                            Text(
+                              'Setting things up...',
+                              style: TextStyle(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.black87,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                            SizedBox(height: 8.h),
+                            
+                            // Subtitle
+                            Text(
+                              'Preparing language support',
+                              style: TextStyle(
+                                fontSize: 13.sp,
+                                color: Colors.black54,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
+                          ],
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              );
+            }
+
+            return app;
+          });
         },
       ),
     );

@@ -8,6 +8,8 @@ class UserSubscription {
   final String? currentSubscriptionId;
   final int techpacksUsedThisMonth;
   final int designsGeneratedThisMonth;
+  final int freeDesignsGeneratedThisMonth; // Separate counter for FREE plan users
+  final DateTime? freeDesignResetDate; // When to reset free design counter
   final int extraDesignsPurchased;
   final int extraTechpacksPurchased;
   final int extraDesignsUsed; // Track how many add-on designs have been used
@@ -25,6 +27,8 @@ class UserSubscription {
     this.currentSubscriptionId,
     this.techpacksUsedThisMonth = 0,
     this.designsGeneratedThisMonth = 0,
+    this.freeDesignsGeneratedThisMonth = 0,
+    this.freeDesignResetDate,
     this.extraDesignsPurchased = 0,
     this.extraTechpacksPurchased = 0,
     this.extraDesignsUsed = 0,
@@ -45,6 +49,10 @@ class UserSubscription {
       currentSubscriptionId: data['currentSubscriptionId'],
       techpacksUsedThisMonth: data['techpacksUsedThisMonth'] ?? 0,
       designsGeneratedThisMonth: data['designsGeneratedThisMonth'] ?? 0,
+      freeDesignsGeneratedThisMonth: data['freeDesignsGeneratedThisMonth'] ?? 0,
+      freeDesignResetDate: data['freeDesignResetDate'] != null
+          ? (data['freeDesignResetDate'] as Timestamp).toDate()
+          : null,
       extraDesignsPurchased: data['extraDesignsPurchased'] ?? 0,
       extraTechpacksPurchased: data['extraTechpacksPurchased'] ?? 0,
       extraDesignsUsed: data['extraDesignsUsed'] ?? 0,
@@ -69,6 +77,10 @@ class UserSubscription {
       'currentSubscriptionId': currentSubscriptionId,
       'techpacksUsedThisMonth': techpacksUsedThisMonth,
       'designsGeneratedThisMonth': designsGeneratedThisMonth,
+      'freeDesignsGeneratedThisMonth': freeDesignsGeneratedThisMonth,
+      'freeDesignResetDate': freeDesignResetDate != null
+          ? Timestamp.fromDate(freeDesignResetDate!)
+          : null,
       'extraDesignsPurchased': extraDesignsPurchased,
       'extraTechpacksPurchased': extraTechpacksPurchased,
       'extraDesignsUsed': extraDesignsUsed,
@@ -157,10 +169,10 @@ class UserSubscription {
   }
 
   bool get canGenerateDesign {
-    // For FREE users, only check quotas (no subscription status check needed)
+    // For FREE users, check free design counter (separate from subscription)
     if (subscriptionPlan == 'FREE') {
-      int baseLimit = _getBaseDesignLimit();
-      return designsGeneratedThisMonth < baseLimit;
+      int baseLimit = 3; // FREE users get 3 designs per month
+      return freeDesignsGeneratedThisMonth < baseLimit;
     }
 
     // CRITICAL: For paid plans, validate subscription is active
@@ -192,12 +204,21 @@ class UserSubscription {
   }
 
   int get remainingDesigns {
-    // All plans have limited designs
+    // For FREE users, use the free design counter
+    if (subscriptionPlan == 'FREE') {
+      return 3 - freeDesignsGeneratedThisMonth;
+    }
+    // For paid plans, use the regular counter
     return getTotalAllowedDesigns() - designsGeneratedThisMonth;
   }
 
   // Get design count for display (used/total)
-  String get designsUsedCount => '$designsGeneratedThisMonth';
+  String get designsUsedCount {
+    if (subscriptionPlan == 'FREE') {
+      return '$freeDesignsGeneratedThisMonth';
+    }
+    return '$designsGeneratedThisMonth';
+  }
 
   String get designsTotalCount {
     return '${getTotalAllowedDesigns()}';
@@ -262,7 +283,11 @@ class UserSubscription {
 
   // Backward compatibility - non-localized display strings
   String get designCounterDisplay {
-    // All plans show limited count
+    // For FREE users, show free design count
+    if (subscriptionPlan == 'FREE') {
+      return 'Designs used: $freeDesignsGeneratedThisMonth/3 this month';
+    }
+    // For paid plans, show regular count
     return 'Designs used: $designsGeneratedThisMonth/${getTotalAllowedDesigns()} this month';
   }
 
