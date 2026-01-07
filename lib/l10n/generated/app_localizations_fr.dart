@@ -1902,7 +1902,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpDialogExtraTechpackOption =>
-      'Acheter des dossiers techniques supplémentaires : +1 pour 5,99€';
+      'Achetez un pack technologique +1 supplémentaire (5,99 €)';
 
   @override
   String get tpDialogFeatureCustomPDFExport =>

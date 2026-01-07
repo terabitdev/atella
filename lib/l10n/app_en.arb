@@ -2139,7 +2139,7 @@
   "@tpDialogProUpgradeOption": {
     "description": "Pro upgrade option for Starter users"
   },
-  "tpDialogExtraTechpackOption": "Purchase extra techpacks: +1 for €5.99",
+  "tpDialogExtraTechpackOption": "Purchase extra +1 techpack (€5.99)",
   "@tpDialogExtraTechpackOption": {
     "description": "Extra techpack purchase option for Pro users"
   },

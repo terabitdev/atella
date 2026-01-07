@@ -1874,7 +1874,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpDialogExtraTechpackOption =>
-      'Purchase extra techpacks: +1 for €5.99';
+      'Purchase extra +1 techpack (€5.99)';
 
   @override
   String get tpDialogFeatureCustomPDFExport =>

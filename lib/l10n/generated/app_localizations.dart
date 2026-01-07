@@ -3545,7 +3545,7 @@ abstract class AppLocalizations {
   /// Extra techpack purchase option for Pro users
   ///
   /// In en, this message translates to:
-  /// **'Purchase extra techpacks: +1 for €5.99'**
+  /// **'Purchase extra +1 techpack (€5.99)'**
   String get tpDialogExtraTechpackOption;
 
   /// Feature description for custom PDF export

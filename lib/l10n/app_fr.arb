@@ -594,7 +594,7 @@
   "tpDialogStudioPlanOption": "Studio : 16 dossiers techniques/mois (79,99€/mois ou 799,99€/an)",
   "tpDialogRemainingTechpacksStudio": "Restant : {remaining}/16 ce mois-ci",
   "tpDialogProUpgradeOption": "Pro : 8 dossiers techniques/mois",
-  "tpDialogExtraTechpackOption": "Acheter des dossiers techniques supplémentaires : +1 pour 5,99€",
+  "tpDialogExtraTechpackOption": "Achetez un pack technologique +1 supplémentaire (5,99 €)",
   "tpDialogFeatureCustomPDFExport": "Export PDF personnalisé avec votre logo",
   "tpDialogFeatureManufacturerAccess": "Accès à la liste des fabricants",
   "tpDialogFeatureUnlimited3D": "Visualisation 3D illimitée",

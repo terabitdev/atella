@@ -108,7 +108,7 @@ class UsageWarningDialog extends StatelessWidget {
                         ),
                       ),
                       child: Text(
-                        'Get Extra Techpacks (€5.99)',
+                        l10n.tpDialogExtraTechpackOption,
                         style: ssTitleTextTextStyle14400.copyWith(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,
