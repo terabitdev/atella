@@ -3332,5 +3332,13 @@
   "authInvalidCredentials": "Incorrect email or password. Please try again.",
   "@authInvalidCredentials": {
     "description": "Error when login credentials are invalid (user not found or wrong password)"
+  },
+  "collectionSummer": "SUMMER COLLECTION",
+  "@collectionSummer": {
+    "description": "Name of the summer collection"
+  },
+  "collectionWinter": "WINTER COLLECTION",
+  "@collectionWinter": {
+    "description": "Name of the winter collection"
   }
 }

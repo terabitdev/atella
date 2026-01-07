@@ -2743,4 +2743,10 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get authInvalidCredentials =>
       'Incorrect email or password. Please try again.';
+
+  @override
+  String get collectionSummer => 'SUMMER COLLECTION';
+
+  @override
+  String get collectionWinter => 'WINTER COLLECTION';
 }

@@ -1062,5 +1062,13 @@
   "authInvalidCredentials": "Email ou mot de passe incorrect. Veuillez réessayer.",
   "@authInvalidCredentials": {
     "description": "Error when login credentials are invalid (user not found or wrong password)"
+  },
+  "collectionSummer": "COLLECTION ÉTÉ",
+  "@collectionSummer": {
+    "description": "Name of the summer collection"
+  },
+  "collectionWinter": "COLLECTION HIVER",
+  "@collectionWinter": {
+    "description": "Name of the winter collection"
   }
 }

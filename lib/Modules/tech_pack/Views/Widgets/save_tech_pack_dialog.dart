@@ -39,6 +39,16 @@ class SaveTechPackDialog extends StatelessWidget {
     );
   }
 
+  String _getLocalizedCollectionName(BuildContext context, String collectionName) {
+    final l10n = AppLocalizations.of(context)!;
+    if (collectionName == 'SUMMER COLLECTION') {
+      return l10n.collectionSummer;
+    } else if (collectionName == 'WINTER COLLECTION') {
+      return l10n.collectionWinter;
+    }
+    return collectionName;
+  }
+
   @override
   Widget build(BuildContext context) {
     final controller = Get.find<TechPackReadyController>();
@@ -108,7 +118,7 @@ class SaveTechPackDialog extends StatelessWidget {
                         return DropdownMenuItem<String>(
                           value: collection,
                           child: Text(
-                            collection,
+                            _getLocalizedCollectionName(context, collection),
                             style: TextStyle(
                               fontSize: 14.sp,
                               color: Color(0xFF333333),

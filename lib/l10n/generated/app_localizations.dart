@@ -5095,6 +5095,18 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Incorrect email or password. Please try again.'**
   String get authInvalidCredentials;
+
+  /// Name of the summer collection
+  ///
+  /// In en, this message translates to:
+  /// **'SUMMER COLLECTION'**
+  String get collectionSummer;
+
+  /// Name of the winter collection
+  ///
+  /// In en, this message translates to:
+  /// **'WINTER COLLECTION'**
+  String get collectionWinter;
 }
 
 class _AppLocalizationsDelegate
