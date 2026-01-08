@@ -24,6 +24,7 @@ import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/subscribe_studio_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/terms_and_conditions_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/privacy_policy_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/delete_account_password_screen.dart';
 import 'package:atella/Modules/Home/bindings/subscribe_binding.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refining_brief_screen.dart';
@@ -134,6 +135,10 @@ class AppPages {
     GetPage(name: AppRoutes.subscribeStudio, page: () => const SubscribeStudioPlan()),
     GetPage(name: AppRoutes.terms, page: () => const TermsAndConditionsScreen()),
     GetPage(name: AppRoutes.privacy, page: () => const PrivacyPolicyScreen()),
+    GetPage(
+      name: AppRoutes.deleteAccountPassword,
+      page: () => const DeleteAccountPasswordScreen(),
+    ),
     // Add more routes here
   ];
 }

@@ -1,14 +1,14 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
-import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+// import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 
 class DeleteAccountService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseStorage _storage = FirebaseStorage.instance;
-  final StripeSubscriptionService _stripeService = StripeSubscriptionService();
+  // final StripeSubscriptionService _stripeService = StripeSubscriptionService();
   final PostHogAnalyticsService _analyticsService = PostHogAnalyticsService();
 
   /// Main method to delete user account and all associated data
@@ -236,11 +236,11 @@ class DeleteAccountService {
       }
 
       // Check if user has Google provider
-      final googleProvider = user.providerData
-          .firstWhere(
-            (provider) => provider.providerId == 'google.com',
-            orElse: () => throw Exception('User is not signed in with Google'),
-          );
+      // final googleProvider = user.providerData
+      //     .firstWhere(
+      //       (provider) => provider.providerId == 'google.com',
+      //       orElse: () => throw Exception('User is not signed in with Google'),
+      //     );
 
       // For Google re-authentication, we need to trigger the Google sign-in flow again
       // This is handled by the GoogleSignIn package
