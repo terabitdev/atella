@@ -110,9 +110,9 @@ class _SettingScreenState extends State<SettingScreen> {
                         },
                       ),
                       SettingCard(
-                        title: l10n.termsOfUse,
+                        title: l10n.termsAndConditions,
                         onTap: () {
-                          // Get.toNamed('/terms');
+                          Get.toNamed('/terms');
                         },
                       ),
                       SettingCard(

@@ -27,6 +27,7 @@ class AppRoutes {
   static const String subscribeStarter = '/subscribe_starter';
   static const String subscribePro = '/subscribe_pro';
   static const String subscribeStudio = '/subscribe_studio';
+  static const String terms = '/terms';
 
   static const String wordGenerator = '/word_generator';
 }

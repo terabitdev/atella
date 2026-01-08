@@ -3347,5 +3347,145 @@
   "collectionWinter": "WINTER COLLECTION",
   "@collectionWinter": {
     "description": "Name of the winter collection"
+  },
+  "termsAndConditions": "Terms & Conditions",
+  "@termsAndConditions": {
+    "description": "Terms and Conditions screen title"
+  },
+  "tcLastUpdated": "Last updated: January 2025",
+  "@tcLastUpdated": {
+    "description": "Last updated date for terms and conditions"
+  },
+  "tcIntroduction": "These Terms & Conditions govern your access to and use of the Atelia mobile application, website, and services.\n\nBy downloading, accessing, or using Atelia, you agree to these Terms.",
+  "@tcIntroduction": {
+    "description": "Introduction text for terms and conditions"
+  },
+  "tcCompanyInformation": "Company Information",
+  "@tcCompanyInformation": {
+    "description": "Section title: Company Information"
+  },
+  "tcCompanyInformationContent": "Atelia SAS – France\nRegistered office: Guérande, France\nContact email: ateliadesign.contact@gmail.com",
+  "@tcCompanyInformationContent": {
+    "description": "Content for Company Information section"
+  },
+  "tcDescriptionOfService": "Description of the Service",
+  "@tcDescriptionOfService": {
+    "description": "Section title: Description of the Service"
+  },
+  "tcDescriptionOfServiceContent": "Atelia is a SaaS platform that allows users to:\n• Generate fashion designs using AI\n• Create technical packs (techpacks)\n• Visualize designs in 3D\n• Access a directory of garment manufacturers\n• Export files and documents related to production\n\nAtelia provides assistance tools and does not replace professional designers, manufacturers, or consultants.",
+  "@tcDescriptionOfServiceContent": {
+    "description": "Content for Description of Service section"
+  },
+  "tcEligibility": "Eligibility",
+  "@tcEligibility": {
+    "description": "Section title: Eligibility"
+  },
+  "tcEligibilityContent": "• You must be at least 16 years old\n• You must have the legal capacity to enter into a contract\n• You are responsible for ensuring your use complies with local laws",
+  "@tcEligibilityContent": {
+    "description": "Content for Eligibility section"
+  },
+  "tcUserAccount": "User Account",
+  "@tcUserAccount": {
+    "description": "Section title: User Account"
+  },
+  "tcUserAccountContent": "• You are responsible for maintaining the confidentiality of your login credentials\n• You are responsible for all activity under your account\n• Atelia reserves the right to suspend or terminate accounts for misuse or violation of these Terms",
+  "@tcUserAccountContent": {
+    "description": "Content for User Account section"
+  },
+  "tcSubscriptionsAndPayments": "Subscriptions & Payments",
+  "@tcSubscriptionsAndPayments": {
+    "description": "Section title: Subscriptions & Payments"
+  },
+  "tcSubscriptionsAndPaymentsContent": "Atelia offers free and paid subscription plans. Details of pricing, limits, and features are displayed inside the app.\n\nSubscriptions may include:\n• Monthly or yearly billing\n• Usage limits (designs, techpacks, exports)\n• Optional add-ons\n\nPayments are processed through Apple App Store (iOS) or Google Play Store (Android). Atelia does not store payment information.\n\nSubscriptions automatically renew unless canceled at least 24 hours before the end of the current period. You can manage or cancel your subscription via Apple ID settings or Google Play account settings.\n\nRefunds are managed exclusively by Apple or Google, according to their respective policies. Atelia cannot issue refunds directly.",
+  "@tcSubscriptionsAndPaymentsContent": {
+    "description": "Content for Subscriptions & Payments section"
+  },
+  "tcUsageLimits": "Usage Limits & Fair Use",
+  "@tcUsageLimits": {
+    "description": "Section title: Usage Limits & Fair Use"
+  },
+  "tcUsageLimitsContent": "Each subscription plan includes usage limits.\n• Unused credits do not roll over\n• Abuse or excessive usage may result in temporary limitations or account suspension\n• Atelia reserves the right to modify usage limits to ensure service stability",
+  "@tcUsageLimitsContent": {
+    "description": "Content for Usage Limits section"
+  },
+  "tcIntellectualProperty": "Intellectual Property",
+  "@tcIntellectualProperty": {
+    "description": "Section title: Intellectual Property"
+  },
+  "tcIntellectualPropertyContent": "All software, trademarks, logos, and content are owned by Atelia. You may not copy, modify, or redistribute Atelia's platform without authorization.\n\nYou retain ownership of the content you create. You grant Atelia a non-exclusive license to process and store content to provide the service. Atelia does not claim ownership over your designs.",
+  "@tcIntellectualPropertyContent": {
+    "description": "Content for Intellectual Property section"
+  },
+  "tcAIContentDisclaimer": "AI-Generated Content Disclaimer",
+  "@tcAIContentDisclaimer": {
+    "description": "Section title: AI-Generated Content Disclaimer"
+  },
+  "tcAIContentDisclaimerContent": "• AI-generated designs and techpacks are suggestions, not guarantees\n• Atelia does not guarantee manufacturability, compliance, or production success\n• Users remain fully responsible for verifying outputs before production",
+  "@tcAIContentDisclaimerContent": {
+    "description": "Content for AI-Generated Content Disclaimer section"
+  },
+  "tcFactoryDirectoryDisclaimer": "Factory Directory Disclaimer",
+  "@tcFactoryDirectoryDisclaimer": {
+    "description": "Section title: Factory Directory Disclaimer"
+  },
+  "tcFactoryDirectoryDisclaimerContent": "• Atelia does not own or operate the listed factories\n• Atelia is not responsible for contracts, pricing, quality, or disputes between users and manufacturers\n• Any collaboration is strictly between the user and the factory",
+  "@tcFactoryDirectoryDisclaimerContent": {
+    "description": "Content for Factory Directory Disclaimer section"
+  },
+  "tcLimitationOfLiability": "Limitation of Liability",
+  "@tcLimitationOfLiability": {
+    "description": "Section title: Limitation of Liability"
+  },
+  "tcLimitationOfLiabilityContent": "To the maximum extent permitted by law:\n• Atelia is not liable for indirect or consequential damages\n• Atelia is not responsible for financial losses, production issues, or business failure\n• Total liability shall not exceed the amount paid by the user in the last 12 months",
+  "@tcLimitationOfLiabilityContent": {
+    "description": "Content for Limitation of Liability section"
+  },
+  "tcServiceAvailability": "Service Availability",
+  "@tcServiceAvailability": {
+    "description": "Section title: Service Availability"
+  },
+  "tcServiceAvailabilityContent": "• Atelia strives for high availability but does not guarantee uninterrupted access\n• Features may be modified, suspended, or discontinued at any time",
+  "@tcServiceAvailabilityContent": {
+    "description": "Content for Service Availability section"
+  },
+  "tcTermination": "Termination",
+  "@tcTermination": {
+    "description": "Section title: Termination"
+  },
+  "tcTerminationContent": "You may stop using Atelia at any time.\n\nAtelia may terminate access in case of:\n• Breach of these Terms\n• Fraud or abuse\n• Legal obligations",
+  "@tcTerminationContent": {
+    "description": "Content for Termination section"
+  },
+  "tcPrivacy": "Privacy",
+  "@tcPrivacy": {
+    "description": "Section title: Privacy"
+  },
+  "tcPrivacyContent": "Your use of Atelia is governed by our Privacy Policy, available at:\nhttps://www.atelia.ai/privacy",
+  "@tcPrivacyContent": {
+    "description": "Content for Privacy section"
+  },
+  "tcGoverningLaw": "Governing Law",
+  "@tcGoverningLaw": {
+    "description": "Section title: Governing Law"
+  },
+  "tcGoverningLawContent": "These Terms are governed by French law.\n\nAny dispute shall be subject to the jurisdiction of the courts of France.",
+  "@tcGoverningLawContent": {
+    "description": "Content for Governing Law section"
+  },
+  "tcChangesToTerms": "Changes to Terms",
+  "@tcChangesToTerms": {
+    "description": "Section title: Changes to Terms"
+  },
+  "tcChangesToTermsContent": "Atelia may update these Terms at any time. Continued use of the app constitutes acceptance of the updated Terms.",
+  "@tcChangesToTermsContent": {
+    "description": "Content for Changes to Terms section"
+  },
+  "tcContact": "Contact",
+  "@tcContact": {
+    "description": "Section title: Contact"
+  },
+  "tcContactContent": "For any questions or concerns regarding these Terms & Conditions, please contact us at:\n\nateliadesign.contact@gmail.com",
+  "@tcContactContent": {
+    "description": "Content for Contact section"
   }
 }

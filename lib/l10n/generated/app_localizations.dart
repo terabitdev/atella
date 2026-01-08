@@ -5113,6 +5113,216 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'WINTER COLLECTION'**
   String get collectionWinter;
+
+  /// Terms and Conditions screen title
+  ///
+  /// In en, this message translates to:
+  /// **'Terms & Conditions'**
+  String get termsAndConditions;
+
+  /// Last updated date for terms and conditions
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: January 2025'**
+  String get tcLastUpdated;
+
+  /// Introduction text for terms and conditions
+  ///
+  /// In en, this message translates to:
+  /// **'These Terms & Conditions govern your access to and use of the Atelia mobile application, website, and services.\n\nBy downloading, accessing, or using Atelia, you agree to these Terms.'**
+  String get tcIntroduction;
+
+  /// Section title: Company Information
+  ///
+  /// In en, this message translates to:
+  /// **'Company Information'**
+  String get tcCompanyInformation;
+
+  /// Content for Company Information section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia SAS – France\nRegistered office: Guérande, France\nContact email: ateliadesign.contact@gmail.com'**
+  String get tcCompanyInformationContent;
+
+  /// Section title: Description of the Service
+  ///
+  /// In en, this message translates to:
+  /// **'Description of the Service'**
+  String get tcDescriptionOfService;
+
+  /// Content for Description of Service section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia is a SaaS platform that allows users to:\n• Generate fashion designs using AI\n• Create technical packs (techpacks)\n• Visualize designs in 3D\n• Access a directory of garment manufacturers\n• Export files and documents related to production\n\nAtelia provides assistance tools and does not replace professional designers, manufacturers, or consultants.'**
+  String get tcDescriptionOfServiceContent;
+
+  /// Section title: Eligibility
+  ///
+  /// In en, this message translates to:
+  /// **'Eligibility'**
+  String get tcEligibility;
+
+  /// Content for Eligibility section
+  ///
+  /// In en, this message translates to:
+  /// **'• You must be at least 16 years old\n• You must have the legal capacity to enter into a contract\n• You are responsible for ensuring your use complies with local laws'**
+  String get tcEligibilityContent;
+
+  /// Section title: User Account
+  ///
+  /// In en, this message translates to:
+  /// **'User Account'**
+  String get tcUserAccount;
+
+  /// Content for User Account section
+  ///
+  /// In en, this message translates to:
+  /// **'• You are responsible for maintaining the confidentiality of your login credentials\n• You are responsible for all activity under your account\n• Atelia reserves the right to suspend or terminate accounts for misuse or violation of these Terms'**
+  String get tcUserAccountContent;
+
+  /// Section title: Subscriptions & Payments
+  ///
+  /// In en, this message translates to:
+  /// **'Subscriptions & Payments'**
+  String get tcSubscriptionsAndPayments;
+
+  /// Content for Subscriptions & Payments section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia offers free and paid subscription plans. Details of pricing, limits, and features are displayed inside the app.\n\nSubscriptions may include:\n• Monthly or yearly billing\n• Usage limits (designs, techpacks, exports)\n• Optional add-ons\n\nPayments are processed through Apple App Store (iOS) or Google Play Store (Android). Atelia does not store payment information.\n\nSubscriptions automatically renew unless canceled at least 24 hours before the end of the current period. You can manage or cancel your subscription via Apple ID settings or Google Play account settings.\n\nRefunds are managed exclusively by Apple or Google, according to their respective policies. Atelia cannot issue refunds directly.'**
+  String get tcSubscriptionsAndPaymentsContent;
+
+  /// Section title: Usage Limits & Fair Use
+  ///
+  /// In en, this message translates to:
+  /// **'Usage Limits & Fair Use'**
+  String get tcUsageLimits;
+
+  /// Content for Usage Limits section
+  ///
+  /// In en, this message translates to:
+  /// **'Each subscription plan includes usage limits.\n• Unused credits do not roll over\n• Abuse or excessive usage may result in temporary limitations or account suspension\n• Atelia reserves the right to modify usage limits to ensure service stability'**
+  String get tcUsageLimitsContent;
+
+  /// Section title: Intellectual Property
+  ///
+  /// In en, this message translates to:
+  /// **'Intellectual Property'**
+  String get tcIntellectualProperty;
+
+  /// Content for Intellectual Property section
+  ///
+  /// In en, this message translates to:
+  /// **'All software, trademarks, logos, and content are owned by Atelia. You may not copy, modify, or redistribute Atelia\'s platform without authorization.\n\nYou retain ownership of the content you create. You grant Atelia a non-exclusive license to process and store content to provide the service. Atelia does not claim ownership over your designs.'**
+  String get tcIntellectualPropertyContent;
+
+  /// Section title: AI-Generated Content Disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'AI-Generated Content Disclaimer'**
+  String get tcAIContentDisclaimer;
+
+  /// Content for AI-Generated Content Disclaimer section
+  ///
+  /// In en, this message translates to:
+  /// **'• AI-generated designs and techpacks are suggestions, not guarantees\n• Atelia does not guarantee manufacturability, compliance, or production success\n• Users remain fully responsible for verifying outputs before production'**
+  String get tcAIContentDisclaimerContent;
+
+  /// Section title: Factory Directory Disclaimer
+  ///
+  /// In en, this message translates to:
+  /// **'Factory Directory Disclaimer'**
+  String get tcFactoryDirectoryDisclaimer;
+
+  /// Content for Factory Directory Disclaimer section
+  ///
+  /// In en, this message translates to:
+  /// **'• Atelia does not own or operate the listed factories\n• Atelia is not responsible for contracts, pricing, quality, or disputes between users and manufacturers\n• Any collaboration is strictly between the user and the factory'**
+  String get tcFactoryDirectoryDisclaimerContent;
+
+  /// Section title: Limitation of Liability
+  ///
+  /// In en, this message translates to:
+  /// **'Limitation of Liability'**
+  String get tcLimitationOfLiability;
+
+  /// Content for Limitation of Liability section
+  ///
+  /// In en, this message translates to:
+  /// **'To the maximum extent permitted by law:\n• Atelia is not liable for indirect or consequential damages\n• Atelia is not responsible for financial losses, production issues, or business failure\n• Total liability shall not exceed the amount paid by the user in the last 12 months'**
+  String get tcLimitationOfLiabilityContent;
+
+  /// Section title: Service Availability
+  ///
+  /// In en, this message translates to:
+  /// **'Service Availability'**
+  String get tcServiceAvailability;
+
+  /// Content for Service Availability section
+  ///
+  /// In en, this message translates to:
+  /// **'• Atelia strives for high availability but does not guarantee uninterrupted access\n• Features may be modified, suspended, or discontinued at any time'**
+  String get tcServiceAvailabilityContent;
+
+  /// Section title: Termination
+  ///
+  /// In en, this message translates to:
+  /// **'Termination'**
+  String get tcTermination;
+
+  /// Content for Termination section
+  ///
+  /// In en, this message translates to:
+  /// **'You may stop using Atelia at any time.\n\nAtelia may terminate access in case of:\n• Breach of these Terms\n• Fraud or abuse\n• Legal obligations'**
+  String get tcTerminationContent;
+
+  /// Section title: Privacy
+  ///
+  /// In en, this message translates to:
+  /// **'Privacy'**
+  String get tcPrivacy;
+
+  /// Content for Privacy section
+  ///
+  /// In en, this message translates to:
+  /// **'Your use of Atelia is governed by our Privacy Policy, available at:\nhttps://www.atelia.ai/privacy'**
+  String get tcPrivacyContent;
+
+  /// Section title: Governing Law
+  ///
+  /// In en, this message translates to:
+  /// **'Governing Law'**
+  String get tcGoverningLaw;
+
+  /// Content for Governing Law section
+  ///
+  /// In en, this message translates to:
+  /// **'These Terms are governed by French law.\n\nAny dispute shall be subject to the jurisdiction of the courts of France.'**
+  String get tcGoverningLawContent;
+
+  /// Section title: Changes to Terms
+  ///
+  /// In en, this message translates to:
+  /// **'Changes to Terms'**
+  String get tcChangesToTerms;
+
+  /// Content for Changes to Terms section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia may update these Terms at any time. Continued use of the app constitutes acceptance of the updated Terms.'**
+  String get tcChangesToTermsContent;
+
+  /// Section title: Contact
+  ///
+  /// In en, this message translates to:
+  /// **'Contact'**
+  String get tcContact;
+
+  /// Content for Contact section
+  ///
+  /// In en, this message translates to:
+  /// **'For any questions or concerns regarding these Terms & Conditions, please contact us at:\n\nateliadesign.contact@gmail.com'**
+  String get tcContactContent;
 }
 
 class _AppLocalizationsDelegate

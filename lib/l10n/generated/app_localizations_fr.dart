@@ -2803,4 +2803,128 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get collectionWinter => 'COLLECTION HIVER';
+
+  @override
+  String get termsAndConditions => 'Conditions Générales';
+
+  @override
+  String get tcLastUpdated => 'Dernière mise à jour : janvier 2025';
+
+  @override
+  String get tcIntroduction =>
+      'Ces Conditions Générales régissent votre accès et votre utilisation de l\'application mobile Atelia, du site web et des services.\n\nEn téléchargeant, en accédant ou en utilisant Atelia, vous acceptez ces Conditions.';
+
+  @override
+  String get tcCompanyInformation => 'Informations sur l\'Entreprise';
+
+  @override
+  String get tcCompanyInformationContent =>
+      'Atelia SAS – France\nSiège social : Guérande, France\nEmail de contact : ateliadesign.contact@gmail.com';
+
+  @override
+  String get tcDescriptionOfService => 'Description du Service';
+
+  @override
+  String get tcDescriptionOfServiceContent =>
+      'Atelia est une plateforme SaaS qui permet aux utilisateurs de :\n• Générer des designs de mode à l\'aide de l\'IA\n• Créer des fiches techniques (techpacks)\n• Visualiser les designs en 3D\n• Accéder à un répertoire de fabricants de vêtements\n• Exporter des fichiers et documents liés à la production\n\nAtelia fournit des outils d\'assistance et ne remplace pas les designers, fabricants ou consultants professionnels.';
+
+  @override
+  String get tcEligibility => 'Éligibilité';
+
+  @override
+  String get tcEligibilityContent =>
+      '• Vous devez avoir au moins 16 ans\n• Vous devez avoir la capacité juridique de conclure un contrat\n• Vous êtes responsable de vous assurer que votre utilisation est conforme aux lois locales';
+
+  @override
+  String get tcUserAccount => 'Compte Utilisateur';
+
+  @override
+  String get tcUserAccountContent =>
+      '• Vous êtes responsable du maintien de la confidentialité de vos identifiants de connexion\n• Vous êtes responsable de toute activité sur votre compte\n• Atelia se réserve le droit de suspendre ou de résilier les comptes en cas d\'utilisation abusive ou de violation de ces Conditions';
+
+  @override
+  String get tcSubscriptionsAndPayments => 'Abonnements et Paiements';
+
+  @override
+  String get tcSubscriptionsAndPaymentsContent =>
+      'Atelia propose des plans d\'abonnement gratuits et payants. Les détails sur les tarifs, les limites et les fonctionnalités sont affichés dans l\'application.\n\nLes abonnements peuvent inclure :\n• Facturation mensuelle ou annuelle\n• Limites d\'utilisation (designs, techpacks, exports)\n• Options supplémentaires\n\nLes paiements sont traités via l\'App Store d\'Apple (iOS) ou le Google Play Store (Android). Atelia ne stocke pas les informations de paiement.\n\nLes abonnements se renouvellent automatiquement sauf annulation au moins 24 heures avant la fin de la période en cours. Vous pouvez gérer ou annuler votre abonnement via les paramètres de l\'identifiant Apple ou du compte Google Play.\n\nLes remboursements sont gérés exclusivement par Apple ou Google, selon leurs politiques respectives. Atelia ne peut pas émettre de remboursements directement.';
+
+  @override
+  String get tcUsageLimits => 'Limites d\'Utilisation et Usage Raisonnable';
+
+  @override
+  String get tcUsageLimitsContent =>
+      'Chaque plan d\'abonnement comprend des limites d\'utilisation.\n• Les crédits inutilisés ne sont pas reportés\n• Un abus ou une utilisation excessive peut entraîner des limitations temporaires ou une suspension du compte\n• Atelia se réserve le droit de modifier les limites d\'utilisation pour assurer la stabilité du service';
+
+  @override
+  String get tcIntellectualProperty => 'Propriété Intellectuelle';
+
+  @override
+  String get tcIntellectualPropertyContent =>
+      'Tous les logiciels, marques de commerce, logos et contenus appartiennent à Atelia. Vous ne pouvez pas copier, modifier ou redistribuer la plateforme d\'Atelia sans autorisation.\n\nVous conservez la propriété du contenu que vous créez. Vous accordez à Atelia une licence non exclusive pour traiter et stocker le contenu afin de fournir le service. Atelia ne revendique pas la propriété de vos designs.';
+
+  @override
+  String get tcAIContentDisclaimer =>
+      'Avertissement sur le Contenu Généré par l\'IA';
+
+  @override
+  String get tcAIContentDisclaimerContent =>
+      '• Les designs et techpacks générés par l\'IA sont des suggestions, pas des garanties\n• Atelia ne garantit pas la fabricabilité, la conformité ou le succès de la production\n• Les utilisateurs restent entièrement responsables de la vérification des résultats avant la production';
+
+  @override
+  String get tcFactoryDirectoryDisclaimer =>
+      'Avertissement sur le Répertoire d\'Usines';
+
+  @override
+  String get tcFactoryDirectoryDisclaimerContent =>
+      '• Atelia ne possède ni n\'exploite les usines répertoriées\n• Atelia n\'est pas responsable des contrats, des prix, de la qualité ou des litiges entre les utilisateurs et les fabricants\n• Toute collaboration est strictement entre l\'utilisateur et l\'usine';
+
+  @override
+  String get tcLimitationOfLiability => 'Limitation de Responsabilité';
+
+  @override
+  String get tcLimitationOfLiabilityContent =>
+      'Dans toute la mesure permise par la loi :\n• Atelia n\'est pas responsable des dommages indirects ou consécutifs\n• Atelia n\'est pas responsable des pertes financières, des problèmes de production ou de l\'échec commercial\n• La responsabilité totale ne doit pas dépasser le montant payé par l\'utilisateur au cours des 12 derniers mois';
+
+  @override
+  String get tcServiceAvailability => 'Disponibilité du Service';
+
+  @override
+  String get tcServiceAvailabilityContent =>
+      '• Atelia s\'efforce d\'assurer une haute disponibilité mais ne garantit pas un accès ininterrompu\n• Les fonctionnalités peuvent être modifiées, suspendues ou interrompues à tout moment';
+
+  @override
+  String get tcTermination => 'Résiliation';
+
+  @override
+  String get tcTerminationContent =>
+      'Vous pouvez arrêter d\'utiliser Atelia à tout moment.\n\nAtelia peut résilier l\'accès en cas de :\n• Violation de ces Conditions\n• Fraude ou abus\n• Obligations légales';
+
+  @override
+  String get tcPrivacy => 'Confidentialité';
+
+  @override
+  String get tcPrivacyContent =>
+      'Votre utilisation d\'Atelia est régie par notre Politique de Confidentialité, disponible à :\nhttps://www.atelia.ai/privacy';
+
+  @override
+  String get tcGoverningLaw => 'Loi Applicable';
+
+  @override
+  String get tcGoverningLawContent =>
+      'Ces Conditions sont régies par le droit français.\n\nTout litige sera soumis à la juridiction des tribunaux de France.';
+
+  @override
+  String get tcChangesToTerms => 'Modifications des Conditions';
+
+  @override
+  String get tcChangesToTermsContent =>
+      'Atelia peut mettre à jour ces Conditions à tout moment. L\'utilisation continue de l\'application constitue l\'acceptation des Conditions mises à jour.';
+
+  @override
+  String get tcContact => 'Contact';
+
+  @override
+  String get tcContactContent =>
+      'Pour toute question ou préoccupation concernant ces Conditions Générales, veuillez nous contacter à :\n\nateliadesign.contact@gmail.com';
 }
