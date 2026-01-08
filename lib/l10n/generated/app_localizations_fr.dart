@@ -2927,4 +2927,92 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tcContactContent =>
       'Pour toute question ou préoccupation concernant ces Conditions Générales, veuillez nous contacter à :\n\nateliadesign.contact@gmail.com';
+
+  @override
+  String get ppLastUpdated => 'Dernière mise à jour : janvier 2025';
+
+  @override
+  String get ppIntroduction =>
+      'Atelia exploite l\'application mobile Atelia et la plateforme web.\n\nCette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre Service.\n\nEn accédant ou en utilisant Atelia, vous acceptez la collecte et l\'utilisation des informations conformément à cette Politique de Confidentialité.';
+
+  @override
+  String get ppInformationWeCollect => '1. Informations que Nous Collectons';
+
+  @override
+  String get ppInformationWeCollectContent =>
+      'a. Informations Personnelles\n\nLorsque vous créez un compte ou utilisez notre Service, nous pouvons collecter :\n• Nom ou nom d\'utilisateur\n• Adresse e-mail\n• Informations de paiement et de facturation (traitées en toute sécurité par des fournisseurs tiers)\n• Préférences du compte\n\nb. Données d\'Utilisation\n\nNous collectons automatiquement des informations telles que :\n• Type d\'appareil, système d\'exploitation et version de l\'application\n• Adresse IP et localisation approximative\n• Pages/écrans consultés et fonctionnalités utilisées\n• Heure et date d\'utilisation\n\nc. Contenu Utilisateur\n\nLorsque vous utilisez Atelia, vous pouvez fournir :\n• Invites et entrées de design\n• Designs et fiches techniques générés\n• Fichiers ou contenu téléchargé sur la plateforme\n\nNous ne revendiquons pas la propriété de votre contenu.';
+
+  @override
+  String get ppHowWeUseYourInformation =>
+      '2. Comment Nous Utilisons Vos Informations';
+
+  @override
+  String get ppHowWeUseYourInformationContent =>
+      'Nous utilisons vos données pour :\n• Fournir et exploiter le Service\n• Générer des designs et des fiches techniques basés sur l\'IA\n• Gérer les abonnements et les paiements\n• Améliorer les performances du produit et l\'expérience utilisateur\n• Communiquer les mises à jour, les messages d\'assistance et les avis importants\n• Détecter la fraude, l\'abus ou l\'utilisation abusive du Service';
+
+  @override
+  String get ppAIAndThirdPartyServices => '3. IA et Services Tiers';
+
+  @override
+  String get ppAIAndThirdPartyServicesContent =>
+      'Atelia utilise des services tiers pour fonctionner :\n• Fournisseurs de modèles d\'IA\n• Infrastructure cloud et hébergement\n• Analytique et surveillance des performances\n• Processeurs de paiement\n\nVos données peuvent être traitées par ces fournisseurs uniquement pour fournir le Service et conformément aux lois applicables sur la protection des données.';
+
+  @override
+  String get ppDataRetention => '4. Conservation des Données';
+
+  @override
+  String get ppDataRetentionContent =>
+      'Nous ne conservons les données personnelles que le temps nécessaire pour :\n• Fournir le Service\n• Se conformer aux obligations légales\n• Résoudre les litiges\n• Faire respecter les accords\n\nVous pouvez demander la suppression de votre compte et de vos données à tout moment.';
+
+  @override
+  String get ppDataSharingAndDisclosure =>
+      '5. Partage et Divulgation des Données';
+
+  @override
+  String get ppDataSharingAndDisclosureContent =>
+      'Nous ne vendons pas vos données personnelles.\n\nNous ne partageons les données que :\n• Avec des fournisseurs de services de confiance sous accords de confidentialité\n• Pour se conformer aux obligations légales\n• Pour protéger nos droits, les utilisateurs ou la sécurité de la plateforme';
+
+  @override
+  String get ppSecurity => '6. Sécurité';
+
+  @override
+  String get ppSecurityContent =>
+      'Nous mettons en œuvre des mesures de sécurité conformes aux normes de l\'industrie pour protéger vos données.\n\nCependant, aucune méthode de transmission ou de stockage n\'est sécurisée à 100%.';
+
+  @override
+  String get ppYourRights => '7. Vos Droits';
+
+  @override
+  String get ppYourRightsContent =>
+      'Selon votre emplacement, vous pouvez avoir le droit de :\n• Accéder à vos données personnelles\n• Corriger les données inexactes\n• Demander la suppression de vos données\n• Vous opposer ou restreindre le traitement\n\nPour exercer ces droits, contactez-nous à :\nateliadesign.contact@gmail.com';
+
+  @override
+  String get ppChildrensPrivacy => '8. Confidentialité des Enfants';
+
+  @override
+  String get ppChildrensPrivacyContent =>
+      'Atelia n\'est pas destiné aux utilisateurs de moins de 16 ans.\n\nNous ne collectons pas sciemment de données personnelles auprès d\'enfants de moins de 16 ans. Si nous en prenons connaissance, nous les supprimerons immédiatement.';
+
+  @override
+  String get ppInternationalDataTransfers =>
+      '9. Transferts Internationaux de Données';
+
+  @override
+  String get ppInternationalDataTransfersContent =>
+      'Vos informations peuvent être transférées et stockées sur des serveurs situés en dehors de votre pays.\n\nEn utilisant Atelia, vous consentez à ces transferts.';
+
+  @override
+  String get ppChangesToThisPrivacyPolicy =>
+      '10. Modifications de Cette Politique de Confidentialité';
+
+  @override
+  String get ppChangesToThisPrivacyPolicyContent =>
+      'Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre. Toute modification sera publiée dans l\'application ou sur notre site web.\n\nL\'utilisation continue du Service après les modifications constitue une acceptation.';
+
+  @override
+  String get ppContactUs => '11. Nous Contacter';
+
+  @override
+  String get ppContactUsContent =>
+      'Si vous avez des questions concernant cette Politique de Confidentialité, contactez-nous :\n\nEmail : ateliadesign.contact@gmail.com';
 }

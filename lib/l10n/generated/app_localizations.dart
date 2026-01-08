@@ -5323,6 +5323,150 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'For any questions or concerns regarding these Terms & Conditions, please contact us at:\n\nateliadesign.contact@gmail.com'**
   String get tcContactContent;
+
+  /// Last updated date for privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'Last updated: January 2025'**
+  String get ppLastUpdated;
+
+  /// Introduction text for privacy policy
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia operates the Atelia mobile application and web platform.\n\nThis Privacy Policy explains how we collect, use, disclose, and protect your information when you use our Service.\n\nBy accessing or using Atelia, you agree to the collection and use of information in accordance with this Privacy Policy.'**
+  String get ppIntroduction;
+
+  /// Section title: Information We Collect
+  ///
+  /// In en, this message translates to:
+  /// **'1. Information We Collect'**
+  String get ppInformationWeCollect;
+
+  /// Content for Information We Collect section
+  ///
+  /// In en, this message translates to:
+  /// **'a. Personal Information\n\nWhen you create an account or use our Service, we may collect:\n• Name or username\n• Email address\n• Payment and billing information (processed securely by third-party providers)\n• Account preferences\n\nb. Usage Data\n\nWe automatically collect information such as:\n• Device type, operating system, and app version\n• IP address and approximate location\n• Pages/screens viewed and features used\n• Time and date of usage\n\nc. User Content\n\nWhen you use Atelia, you may provide:\n• Design prompts and inputs\n• Generated designs and techpacks\n• Files or content uploaded to the platform\n\nWe do not claim ownership over your content.'**
+  String get ppInformationWeCollectContent;
+
+  /// Section title: How We Use Your Information
+  ///
+  /// In en, this message translates to:
+  /// **'2. How We Use Your Information'**
+  String get ppHowWeUseYourInformation;
+
+  /// Content for How We Use Your Information section
+  ///
+  /// In en, this message translates to:
+  /// **'We use your data to:\n• Provide and operate the Service\n• Generate AI-based designs and techpacks\n• Manage subscriptions and payments\n• Improve product performance and user experience\n• Communicate updates, support messages, and important notices\n• Detect fraud, abuse, or misuse of the Service'**
+  String get ppHowWeUseYourInformationContent;
+
+  /// Section title: AI & Third-Party Services
+  ///
+  /// In en, this message translates to:
+  /// **'3. AI & Third-Party Services'**
+  String get ppAIAndThirdPartyServices;
+
+  /// Content for AI & Third-Party Services section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia uses third-party services to operate:\n• AI model providers\n• Cloud infrastructure and hosting\n• Analytics and performance monitoring\n• Payment processors\n\nYour data may be processed by these providers only to deliver the Service and in accordance with applicable data protection laws.'**
+  String get ppAIAndThirdPartyServicesContent;
+
+  /// Section title: Data Retention
+  ///
+  /// In en, this message translates to:
+  /// **'4. Data Retention'**
+  String get ppDataRetention;
+
+  /// Content for Data Retention section
+  ///
+  /// In en, this message translates to:
+  /// **'We retain personal data only for as long as necessary to:\n• Provide the Service\n• Comply with legal obligations\n• Resolve disputes\n• Enforce agreements\n\nYou may request deletion of your account and data at any time.'**
+  String get ppDataRetentionContent;
+
+  /// Section title: Data Sharing & Disclosure
+  ///
+  /// In en, this message translates to:
+  /// **'5. Data Sharing & Disclosure'**
+  String get ppDataSharingAndDisclosure;
+
+  /// Content for Data Sharing & Disclosure section
+  ///
+  /// In en, this message translates to:
+  /// **'We do not sell your personal data.\n\nWe may share data only:\n• With trusted service providers under confidentiality agreements\n• To comply with legal obligations\n• To protect our rights, users, or platform security'**
+  String get ppDataSharingAndDisclosureContent;
+
+  /// Section title: Security
+  ///
+  /// In en, this message translates to:
+  /// **'6. Security'**
+  String get ppSecurity;
+
+  /// Content for Security section
+  ///
+  /// In en, this message translates to:
+  /// **'We implement industry-standard security measures to protect your data.\n\nHowever, no method of transmission or storage is 100% secure.'**
+  String get ppSecurityContent;
+
+  /// Section title: Your Rights
+  ///
+  /// In en, this message translates to:
+  /// **'7. Your Rights'**
+  String get ppYourRights;
+
+  /// Content for Your Rights section
+  ///
+  /// In en, this message translates to:
+  /// **'Depending on your location, you may have the right to:\n• Access your personal data\n• Correct inaccurate data\n• Request deletion of your data\n• Object to or restrict processing\n\nTo exercise these rights, contact us at:\nateliadesign.contact@gmail.com'**
+  String get ppYourRightsContent;
+
+  /// Section title: Children's Privacy
+  ///
+  /// In en, this message translates to:
+  /// **'8. Children\'s Privacy'**
+  String get ppChildrensPrivacy;
+
+  /// Content for Children's Privacy section
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia is not intended for users under the age of 16.\n\nWe do not knowingly collect personal data from children under 16. If we become aware of such data, we will delete it immediately.'**
+  String get ppChildrensPrivacyContent;
+
+  /// Section title: International Data Transfers
+  ///
+  /// In en, this message translates to:
+  /// **'9. International Data Transfers'**
+  String get ppInternationalDataTransfers;
+
+  /// Content for International Data Transfers section
+  ///
+  /// In en, this message translates to:
+  /// **'Your information may be transferred and stored on servers located outside your country.\n\nBy using Atelia, you consent to such transfers.'**
+  String get ppInternationalDataTransfersContent;
+
+  /// Section title: Changes to This Privacy Policy
+  ///
+  /// In en, this message translates to:
+  /// **'10. Changes to This Privacy Policy'**
+  String get ppChangesToThisPrivacyPolicy;
+
+  /// Content for Changes to This Privacy Policy section
+  ///
+  /// In en, this message translates to:
+  /// **'We may update this Privacy Policy from time to time. Any changes will be posted within the app or on our website.\n\nContinued use of the Service after changes constitutes acceptance.'**
+  String get ppChangesToThisPrivacyPolicyContent;
+
+  /// Section title: Contact Us
+  ///
+  /// In en, this message translates to:
+  /// **'11. Contact Us'**
+  String get ppContactUs;
+
+  /// Content for Contact Us section
+  ///
+  /// In en, this message translates to:
+  /// **'If you have questions about this Privacy Policy, contact us:\n\nEmail: ateliadesign.contact@gmail.com'**
+  String get ppContactUsContent;
 }
 
 class _AppLocalizationsDelegate

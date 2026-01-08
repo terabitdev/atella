@@ -1210,5 +1210,101 @@
   "tcContactContent": "Pour toute question ou préoccupation concernant ces Conditions Générales, veuillez nous contacter à :\n\nateliadesign.contact@gmail.com",
   "@tcContactContent": {
     "description": "Content for Contact section"
+  },
+  "ppLastUpdated": "Dernière mise à jour : janvier 2025",
+  "@ppLastUpdated": {
+    "description": "Last updated date for privacy policy"
+  },
+  "ppIntroduction": "Atelia exploite l'application mobile Atelia et la plateforme web.\n\nCette Politique de Confidentialité explique comment nous collectons, utilisons, divulguons et protégeons vos informations lorsque vous utilisez notre Service.\n\nEn accédant ou en utilisant Atelia, vous acceptez la collecte et l'utilisation des informations conformément à cette Politique de Confidentialité.",
+  "@ppIntroduction": {
+    "description": "Introduction text for privacy policy"
+  },
+  "ppInformationWeCollect": "1. Informations que Nous Collectons",
+  "@ppInformationWeCollect": {
+    "description": "Section title: Information We Collect"
+  },
+  "ppInformationWeCollectContent": "a. Informations Personnelles\n\nLorsque vous créez un compte ou utilisez notre Service, nous pouvons collecter :\n• Nom ou nom d'utilisateur\n• Adresse e-mail\n• Informations de paiement et de facturation (traitées en toute sécurité par des fournisseurs tiers)\n• Préférences du compte\n\nb. Données d'Utilisation\n\nNous collectons automatiquement des informations telles que :\n• Type d'appareil, système d'exploitation et version de l'application\n• Adresse IP et localisation approximative\n• Pages/écrans consultés et fonctionnalités utilisées\n• Heure et date d'utilisation\n\nc. Contenu Utilisateur\n\nLorsque vous utilisez Atelia, vous pouvez fournir :\n• Invites et entrées de design\n• Designs et fiches techniques générés\n• Fichiers ou contenu téléchargé sur la plateforme\n\nNous ne revendiquons pas la propriété de votre contenu.",
+  "@ppInformationWeCollectContent": {
+    "description": "Content for Information We Collect section"
+  },
+  "ppHowWeUseYourInformation": "2. Comment Nous Utilisons Vos Informations",
+  "@ppHowWeUseYourInformation": {
+    "description": "Section title: How We Use Your Information"
+  },
+  "ppHowWeUseYourInformationContent": "Nous utilisons vos données pour :\n• Fournir et exploiter le Service\n• Générer des designs et des fiches techniques basés sur l'IA\n• Gérer les abonnements et les paiements\n• Améliorer les performances du produit et l'expérience utilisateur\n• Communiquer les mises à jour, les messages d'assistance et les avis importants\n• Détecter la fraude, l'abus ou l'utilisation abusive du Service",
+  "@ppHowWeUseYourInformationContent": {
+    "description": "Content for How We Use Your Information section"
+  },
+  "ppAIAndThirdPartyServices": "3. IA et Services Tiers",
+  "@ppAIAndThirdPartyServices": {
+    "description": "Section title: AI & Third-Party Services"
+  },
+  "ppAIAndThirdPartyServicesContent": "Atelia utilise des services tiers pour fonctionner :\n• Fournisseurs de modèles d'IA\n• Infrastructure cloud et hébergement\n• Analytique et surveillance des performances\n• Processeurs de paiement\n\nVos données peuvent être traitées par ces fournisseurs uniquement pour fournir le Service et conformément aux lois applicables sur la protection des données.",
+  "@ppAIAndThirdPartyServicesContent": {
+    "description": "Content for AI & Third-Party Services section"
+  },
+  "ppDataRetention": "4. Conservation des Données",
+  "@ppDataRetention": {
+    "description": "Section title: Data Retention"
+  },
+  "ppDataRetentionContent": "Nous ne conservons les données personnelles que le temps nécessaire pour :\n• Fournir le Service\n• Se conformer aux obligations légales\n• Résoudre les litiges\n• Faire respecter les accords\n\nVous pouvez demander la suppression de votre compte et de vos données à tout moment.",
+  "@ppDataRetentionContent": {
+    "description": "Content for Data Retention section"
+  },
+  "ppDataSharingAndDisclosure": "5. Partage et Divulgation des Données",
+  "@ppDataSharingAndDisclosure": {
+    "description": "Section title: Data Sharing & Disclosure"
+  },
+  "ppDataSharingAndDisclosureContent": "Nous ne vendons pas vos données personnelles.\n\nNous ne partageons les données que :\n• Avec des fournisseurs de services de confiance sous accords de confidentialité\n• Pour se conformer aux obligations légales\n• Pour protéger nos droits, les utilisateurs ou la sécurité de la plateforme",
+  "@ppDataSharingAndDisclosureContent": {
+    "description": "Content for Data Sharing & Disclosure section"
+  },
+  "ppSecurity": "6. Sécurité",
+  "@ppSecurity": {
+    "description": "Section title: Security"
+  },
+  "ppSecurityContent": "Nous mettons en œuvre des mesures de sécurité conformes aux normes de l'industrie pour protéger vos données.\n\nCependant, aucune méthode de transmission ou de stockage n'est sécurisée à 100%.",
+  "@ppSecurityContent": {
+    "description": "Content for Security section"
+  },
+  "ppYourRights": "7. Vos Droits",
+  "@ppYourRights": {
+    "description": "Section title: Your Rights"
+  },
+  "ppYourRightsContent": "Selon votre emplacement, vous pouvez avoir le droit de :\n• Accéder à vos données personnelles\n• Corriger les données inexactes\n• Demander la suppression de vos données\n• Vous opposer ou restreindre le traitement\n\nPour exercer ces droits, contactez-nous à :\nateliadesign.contact@gmail.com",
+  "@ppYourRightsContent": {
+    "description": "Content for Your Rights section"
+  },
+  "ppChildrensPrivacy": "8. Confidentialité des Enfants",
+  "@ppChildrensPrivacy": {
+    "description": "Section title: Children's Privacy"
+  },
+  "ppChildrensPrivacyContent": "Atelia n'est pas destiné aux utilisateurs de moins de 16 ans.\n\nNous ne collectons pas sciemment de données personnelles auprès d'enfants de moins de 16 ans. Si nous en prenons connaissance, nous les supprimerons immédiatement.",
+  "@ppChildrensPrivacyContent": {
+    "description": "Content for Children's Privacy section"
+  },
+  "ppInternationalDataTransfers": "9. Transferts Internationaux de Données",
+  "@ppInternationalDataTransfers": {
+    "description": "Section title: International Data Transfers"
+  },
+  "ppInternationalDataTransfersContent": "Vos informations peuvent être transférées et stockées sur des serveurs situés en dehors de votre pays.\n\nEn utilisant Atelia, vous consentez à ces transferts.",
+  "@ppInternationalDataTransfersContent": {
+    "description": "Content for International Data Transfers section"
+  },
+  "ppChangesToThisPrivacyPolicy": "10. Modifications de Cette Politique de Confidentialité",
+  "@ppChangesToThisPrivacyPolicy": {
+    "description": "Section title: Changes to This Privacy Policy"
+  },
+  "ppChangesToThisPrivacyPolicyContent": "Nous pouvons mettre à jour cette Politique de Confidentialité de temps à autre. Toute modification sera publiée dans l'application ou sur notre site web.\n\nL'utilisation continue du Service après les modifications constitue une acceptation.",
+  "@ppChangesToThisPrivacyPolicyContent": {
+    "description": "Content for Changes to This Privacy Policy section"
+  },
+  "ppContactUs": "11. Nous Contacter",
+  "@ppContactUs": {
+    "description": "Section title: Contact Us"
+  },
+  "ppContactUsContent": "Si vous avez des questions concernant cette Politique de Confidentialité, contactez-nous :\n\nEmail : ateliadesign.contact@gmail.com",
+  "@ppContactUsContent": {
+    "description": "Content for Contact Us section"
   }
 }

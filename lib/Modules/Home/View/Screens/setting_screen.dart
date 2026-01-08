@@ -118,7 +118,7 @@ class _SettingScreenState extends State<SettingScreen> {
                       SettingCard(
                         title: l10n.privacyPolicy,
                         onTap: () {
-                          // Get.toNamed('/terms');
+                          Get.toNamed('/privacy');
                         },
                       ),
                       SettingCard(
