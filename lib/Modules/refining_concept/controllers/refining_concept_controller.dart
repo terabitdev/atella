@@ -5,17 +5,21 @@ import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Modules/creative_brief/controllers/creative_brief_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/firebase/services/design_quota_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/services/localization/refining_concept_localization_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
+  final DesignQuotaService _quotaService = DesignQuotaService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
@@ -1559,20 +1563,70 @@ class RefiningConceptController extends GetxController {
 
     // Check if user can generate designs (only for non-edit mode)
     if (!_isEditMode.value) {
-      // Check for 80% usage warning first
+      // Get current subscription to determine plan type
       final subscription = await _stripeService.getCurrentUserSubscription();
-      if (subscription != null && subscription.isDesignUsageAt80Percent) {
-        _show80PercentWarningDialog(subscription);
-        return;
-      }
 
-      bool canGenerate = await _stripeService.canGenerateDesign();
-      if (!canGenerate) {
-        _showLimitExceededDialog();
-        return;
+      // Check if user is on FREE plan - use email-based quota
+      if (subscription != null && subscription.subscriptionPlan == 'FREE') {
+        final user = _auth.currentUser;
+        if (user?.email == null) {
+          Get.snackbar(
+            'Error',
+            'Unable to verify user email',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+
+        // Check email-based quota (persists across account deletions)
+        bool hasQuota = await _quotaService.hasRemainingQuota(user!.email!);
+        if (!hasQuota) {
+          _showLimitExceededDialog();
+          return;
+        }
+
+        // Increment email-based quota
+        try {
+          bool incrementSuccess = await _quotaService.incrementDesignUsage(user.email!);
+          if (!incrementSuccess) {
+            Get.snackbar(
+              'Error',
+              'Failed to track design usage. Please try again.',
+              snackPosition: SnackPosition.TOP,
+              backgroundColor: Colors.red,
+              colorText: Colors.white,
+            );
+            return;
+          }
+        } catch (e) {
+          print('❌ Failed to increment quota: $e');
+          Get.snackbar(
+            'Error',
+            'Failed to track design usage. Please try again.',
+            snackPosition: SnackPosition.TOP,
+            backgroundColor: Colors.red,
+            colorText: Colors.white,
+          );
+          return;
+        }
+      } else {
+        // For paid plans - use existing stripe service logic
+        if (subscription != null && subscription.isDesignUsageAt80Percent) {
+          _show80PercentWarningDialog(subscription);
+          return;
+        }
+
+        bool canGenerate = await _stripeService.canGenerateDesign();
+        if (!canGenerate) {
+          _showLimitExceededDialog();
+          return;
+        }
+
+        // Increment design usage count for paid plans
+        await _stripeService.incrementDesignUsage();
       }
-      // Increment design usage count for new generations ONLY if we can generate
-      await _stripeService.incrementDesignUsage();
     }
 
     // Proceed with actual generation

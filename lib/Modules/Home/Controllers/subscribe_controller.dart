@@ -1,6 +1,8 @@
 import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/firebase/services/design_quota_service.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -9,12 +11,17 @@ import '../../../services/PaymentService/subscription_callback_service.dart';
 
 class SubscribeController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
-  
+  final DesignQuotaService _quotaService = DesignQuotaService();
+  final FirebaseAuth _auth = FirebaseAuth.instance;
+
   RxString selectedPlan = 'FREE'.obs;
   Rx<UserSubscription?> currentSubscription = Rx<UserSubscription?>(null);
   RxBool isLoading = false.obs;
   RxBool isCancellingSubscription = false.obs;
   RxBool isYearlyBilling = false.obs; // Toggle for monthly/yearly billing
+
+  // Email-based quota for FREE users (persists across account deletions)
+  Rx<Map<String, dynamic>?> emailBasedQuota = Rx<Map<String, dynamic>?>(null);
 
   // Cancellation reasons for analytics
   // Cancellation reasons - will be populated with localized strings
@@ -78,6 +85,11 @@ class SubscribeController extends GetxController {
         print('📌 Updated selectedPlan to: FREE (no subscription)');
       }
 
+      // Load email-based quota for FREE users
+      if (selectedPlan.value == 'FREE') {
+        await loadEmailBasedQuota();
+      }
+
       // Force UI update
       print('🔄 Forcing UI update...');
       update();
@@ -97,6 +109,26 @@ class SubscribeController extends GetxController {
       );
     } finally {
       isLoading.value = false;
+    }
+  }
+
+  /// Load email-based quota for FREE users
+  /// This data persists across account deletions to prevent abuse
+  Future<void> loadEmailBasedQuota() async {
+    try {
+      final user = _auth.currentUser;
+      if (user?.email == null) {
+        print('⚠️ No user email found for loading quota');
+        return;
+      }
+
+      print('📥 Loading email-based quota for: ${user!.email}');
+      final quota = await _quotaService.getQuotaByEmail(user.email!);
+      emailBasedQuota.value = quota;
+      print('✅ Email-based quota loaded: ${quota['designsUsed']}/${quota['monthlyLimit']}');
+    } catch (e) {
+      print('❌ Error loading email-based quota: $e');
+      emailBasedQuota.value = null;
     }
   }
 
@@ -313,6 +345,34 @@ class SubscribeController extends GetxController {
 
   int get remainingTechpacks {
     return currentSubscription.value?.remainingTechpacks ?? 0;
+  }
+
+  // Getter methods for design usage - returns correct values for FREE users from email-based quota
+  int get designsUsedThisMonth {
+    if (selectedPlan.value == 'FREE' && emailBasedQuota.value != null) {
+      // For FREE users, use email-based quota
+      return emailBasedQuota.value!['designsUsed'] as int? ?? 0;
+    } else if (currentSubscription.value != null) {
+      // For paid users, use subscription data
+      return currentSubscription.value!.designsGeneratedThisMonth;
+    }
+    return 0;
+  }
+
+  int get monthlyDesignLimit {
+    if (selectedPlan.value == 'FREE' && emailBasedQuota.value != null) {
+      // For FREE users, use email-based quota
+      return emailBasedQuota.value!['monthlyLimit'] as int? ?? 3;
+    } else if (currentSubscription.value != null) {
+      // For paid users, use subscription data
+      return currentSubscription.value!.getTotalAllowedDesigns();
+    }
+    return 3; // Default FREE limit
+  }
+
+  int get remainingDesigns {
+    final remaining = monthlyDesignLimit - designsUsedThisMonth;
+    return remaining > 0 ? remaining : 0;
   }
 
   // Helper methods for billing period

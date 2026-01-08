@@ -3,11 +3,13 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
 import 'package:atella/services/firebase/services/delete_account_service.dart';
+import 'package:atella/services/firebase/services/design_quota_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final DesignQuotaService _quotaService = DesignQuotaService();
 
   Future<String?> signUp({
     required String name,
@@ -30,6 +32,16 @@ class AuthService {
           'currentSubscriptionId': null,
           'techpacksUsedThisMonth': 0,
         });
+
+        // Initialize or fetch email-based quota (persists across account deletions)
+        try {
+          await _quotaService.getQuotaByEmail(email);
+          debugPrint('✅ Email-based quota initialized for: $email');
+        } catch (e) {
+          debugPrint('⚠️ Error initializing quota: $e');
+          // Don't fail signup if quota initialization fails
+        }
+
         return null; // Success
       } else {
         return 'auth-user-creation-failed';
@@ -91,6 +103,16 @@ class AuthService {
   }) async {
     try {
       await _auth.signInWithEmailAndPassword(email: email, password: password);
+
+      // Check and initialize email-based quota (persists across account deletions)
+      try {
+        await _quotaService.getQuotaByEmail(email);
+        debugPrint('✅ Email-based quota checked for: $email');
+      } catch (e) {
+        debugPrint('⚠️ Error checking quota: $e');
+        // Don't fail signin if quota check fails
+      }
+
       return null; // Success
     } on FirebaseAuthException catch (e) {
       debugPrint('FirebaseAuthException code: ${e.code}');
@@ -228,6 +250,18 @@ class AuthService {
             'techpacksUsedThisMonth': 0,
           });
         }
+
+        // Check and initialize email-based quota (persists across account deletions)
+        if (user.email != null) {
+          try {
+            await _quotaService.getQuotaByEmail(user.email!);
+            debugPrint('✅ Email-based quota checked for Google user: ${user.email}');
+          } catch (e) {
+            debugPrint('⚠️ Error checking quota for Google user: $e');
+            // Don't fail signin if quota check fails
+          }
+        }
+
         return null;
       } else {
         return 'auth-google-sign-in-failed';

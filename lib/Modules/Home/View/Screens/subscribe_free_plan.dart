@@ -97,16 +97,21 @@ class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
                                         SizedBox(height: 8.h),
                                         // Design counter
                                         Obx(() {
-                                          final subscription = controller.currentSubscription.value;
-                                          if (subscription != null && subscription.subscriptionPlan == 'FREE') {
+                                          // For FREE users, use email-based quota from design_quotas collection
+                                          final emailQuota = controller.emailBasedQuota.value;
+                                          if (emailQuota != null) {
+                                            final designsUsed = emailQuota['designsUsed'] as int? ?? 0;
+                                            final monthlyLimit = emailQuota['monthlyLimit'] as int? ?? 3;
+                                            final remaining = monthlyLimit - designsUsed;
+
                                             return Text(
                                               l10n.designsUsed(
-                                                subscription.designsUsedCount,
-                                                subscription.designsTotalCount,
+                                                designsUsed.toString(),
+                                                monthlyLimit.toString(),
                                               ),
                                               style: TextStyle(
                                                 fontSize: 14.sp,
-                                                color: subscription.remainingDesigns > 0
+                                                color: remaining > 0
                                                     ? Colors.white
                                                     : Colors.red[300],
                                                 fontWeight: FontWeight.w600,

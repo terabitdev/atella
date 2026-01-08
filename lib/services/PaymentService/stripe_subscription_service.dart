@@ -303,8 +303,8 @@ class StripeSubscriptionService {
           'currentSubscriptionId': null,
           'techpacksUsedThisMonth': 0,
           'techpacksUsedThisYear': 0,
-          // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
-          // Free designs should only reset based on freeDesignResetDate
+          // NOTE: Do NOT reset designsGeneratedThisMonth
+          // Free designs are now tracked via email-based quota service (design_quotas collection)
           'extraDesignsPurchased': 0,
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
@@ -324,8 +324,8 @@ class StripeSubscriptionService {
           'planEndDate': null,
           'techpacksUsedThisMonth': 0,
           'techpacksUsedThisYear': 0,
-          // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
-          // Free designs should only reset based on freeDesignResetDate
+          // NOTE: Do NOT reset designsGeneratedThisMonth
+          // Free designs are now tracked via email-based quota service (design_quotas collection)
           'extraDesignsPurchased': 0,
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
@@ -560,29 +560,9 @@ class StripeSubscriptionService {
       UserSubscription? subscription = await getCurrentUserSubscription();
       if (subscription == null) return;
 
-      // For FREE plan users, use separate counter
+      // For FREE plan users, do nothing - email-based quota is handled in final_detail_controller
       if (subscription.subscriptionPlan == 'FREE') {
-        Map<String, dynamic> updates = {
-          'freeDesignsGeneratedThisMonth': FieldValue.increment(1),
-        };
-
-        // If this is the first free design, set the reset date to 30 days from now
-        if (subscription.freeDesignResetDate == null) {
-          updates['freeDesignResetDate'] = Timestamp.fromDate(
-            DateTime.now().add(Duration(days: 30)),
-          );
-        }
-
-        await _firestore.collection('users').doc(user.uid).update(updates);
-        print('✅ Incremented FREE design usage for user: ${user.uid}');
-
-        // Log current usage
-        final updatedSubscription = await getCurrentUserSubscription();
-        if (updatedSubscription != null) {
-          print(
-            '📊 Current FREE design usage: ${updatedSubscription.freeDesignsGeneratedThisMonth}/3',
-          );
-        }
+        print('ℹ️ FREE plan user - design usage tracked via email-based quota service');
         return;
       }
 
@@ -879,41 +859,13 @@ class StripeSubscriptionService {
         print('Monthly techpack count reset for user: ${user.uid}');
       }
 
-      // Check if free design reset date has passed (for FREE plan users)
-      await _checkAndResetFreeDesigns(user.uid, subscription);
+      // Free design reset is now handled by email-based quota service
+      // (no longer tracking freeDesignsGeneratedThisMonth in user document)
     } catch (e) {
       print('Error checking monthly reset: $e');
     }
   }
 
-  /// Check and reset free designs if reset date has passed
-  Future<void> _checkAndResetFreeDesigns(
-    String userId,
-    UserSubscription subscription,
-  ) async {
-    try {
-      // Only check for FREE plan users
-      if (subscription.subscriptionPlan != 'FREE') return;
-
-      // If no reset date is set, nothing to reset
-      if (subscription.freeDesignResetDate == null) return;
-
-      // Check if reset date has passed
-      if (DateTime.now().isAfter(subscription.freeDesignResetDate!)) {
-        // Reset free design counter and set new reset date
-        await _firestore.collection('users').doc(userId).update({
-          'freeDesignsGeneratedThisMonth': 0,
-          'freeDesignResetDate': Timestamp.fromDate(
-            DateTime.now().add(Duration(days: 30)),
-          ),
-        });
-
-        print('✅ Free design counter reset for user: $userId');
-      }
-    } catch (e) {
-      print('❌ Error resetting free designs: $e');
-    }
-  }
 
   // Enhanced method that checks reset before checking premium features
   Future<bool> canUsePremiumFeatureWithReset(String feature) async {
@@ -1066,8 +1018,8 @@ class StripeSubscriptionService {
         'currentSubscriptionId': null,
         'techpacksUsedThisMonth': 0,
         'techpacksUsedThisYear': 0,
-        // NOTE: Do NOT reset designsGeneratedThisMonth or freeDesignsGeneratedThisMonth
-        // Free designs should only reset based on freeDesignResetDate
+        // NOTE: Do NOT reset designsGeneratedThisMonth
+        // Free designs are now tracked via email-based quota service (design_quotas collection)
         'extraDesignsPurchased': 0,
         'extraTechpacksPurchased': 0,
         'extraDesignsUsed': 0,

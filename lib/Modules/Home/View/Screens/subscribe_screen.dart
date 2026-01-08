@@ -396,18 +396,23 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
             // Show design counter for Free plan users
             if (plan.type == SubscriptionPlanType.FREE && isSelected)
               Obx(() {
-                final subscription = controller.currentSubscription.value;
-                if (subscription != null && subscription.subscriptionPlan == 'FREE') {
+                // For FREE users, use email-based quota from design_quotas collection
+                final emailQuota = controller.emailBasedQuota.value;
+                if (emailQuota != null) {
+                  final designsUsed = emailQuota['designsUsed'] as int? ?? 0;
+                  final monthlyLimit = emailQuota['monthlyLimit'] as int? ?? 3;
+                  final remaining = monthlyLimit - designsUsed;
+
                   return Padding(
                     padding: EdgeInsets.only(top: 6.h),
                     child: Text(
                       l10n.designsUsed(
-                        subscription.designsUsedCount,
-                        subscription.designsTotalCount,
+                        designsUsed.toString(),
+                        monthlyLimit.toString(),
                       ),
                       style: TextStyle(
                         fontSize: 12.sp,
-                        color: subscription.remainingDesigns > 0
+                        color: remaining > 0
                             ? Colors.grey[700]
                             : Colors.red[600],
                         fontWeight: FontWeight.w500,
