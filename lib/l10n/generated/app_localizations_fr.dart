@@ -39,7 +39,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get email => 'E-mail';
 
   @override
-  String get password => 'Mot de passe';
+  String get password => 'Mot de Passe';
 
   @override
   String get confirmPassword => 'Confirmer le mot de passe';
@@ -3015,4 +3015,72 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get ppContactUsContent =>
       'Si vous avez des questions concernant cette Politique de Confidentialité, contactez-nous :\n\nEmail : ateliadesign.contact@gmail.com';
+
+  @override
+  String get deleteAccount => 'Supprimer le Compte';
+
+  @override
+  String get deleteAccountTitle => 'Supprimer Votre Compte';
+
+  @override
+  String get deleteAccountWarning =>
+      'Êtes-vous sûr de vouloir supprimer votre compte ?\n\nCette action est irréversible et supprimera définitivement toutes vos données, y compris votre profil, vos designs, vos fiches techniques et votre abonnement.';
+
+  @override
+  String get confirmDelete => 'Oui, Supprimer Mon Compte';
+
+  @override
+  String get cancelDelete => 'Annuler';
+
+  @override
+  String get enterPassword => 'Entrez Votre Mot de Passe';
+
+  @override
+  String get enterPasswordToConfirm =>
+      'Veuillez entrer votre mot de passe pour confirmer la suppression du compte :';
+
+  @override
+  String get deleteMyAccount => 'Supprimer Mon Compte';
+
+  @override
+  String get confirmWithGoogle => 'Confirmer avec Google';
+
+  @override
+  String get signInWithGoogleToConfirm =>
+      'Veuillez vous connecter avec Google pour confirmer la suppression du compte :';
+
+  @override
+  String get accountDeleted => 'Compte Supprimé';
+
+  @override
+  String get accountDeletedSuccess =>
+      'Votre compte a été supprimé avec succès. Nous sommes désolés de vous voir partir !';
+
+  @override
+  String get accountDeleteFailed =>
+      'Échec de la suppression du compte. Veuillez réessayer.';
+
+  @override
+  String get wrongPassword => 'Mot de passe incorrect. Veuillez réessayer.';
+
+  @override
+  String get requiresRecentLogin =>
+      'Pour des raisons de sécurité, veuillez vous déconnecter et vous reconnecter avant de supprimer votre compte.';
+
+  @override
+  String get userNotFound => 'Compte utilisateur introuvable.';
+
+  @override
+  String get networkError =>
+      'Erreur réseau. Veuillez vérifier votre connexion et réessayer.';
+
+  @override
+  String get googleReauthCancelled =>
+      'La connexion Google a été annulée. Suppression du compte annulée.';
+
+  @override
+  String get deletingAccount => 'Suppression du compte...';
+
+  @override
+  String get couldNotOpenLink => 'Impossible d\'ouvrir le lien';
 }

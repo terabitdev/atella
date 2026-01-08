@@ -3583,5 +3583,94 @@
   "ppContactUsContent": "If you have questions about this Privacy Policy, contact us:\n\nEmail: ateliadesign.contact@gmail.com",
   "@ppContactUsContent": {
     "description": "Content for Contact Us section"
+  },
+
+  "deleteAccount": "Delete Account",
+  "@deleteAccount": {
+    "description": "Delete account button label"
+  },
+  "deleteAccountTitle": "Delete Your Account",
+  "@deleteAccountTitle": {
+    "description": "Title for delete account dialog"
+  },
+  "deleteAccountWarning": "Are you sure you want to delete your account?\n\nThis action cannot be undone and will permanently delete all your data including your profile, designs, tech packs, and subscription.",
+  "@deleteAccountWarning": {
+    "description": "Warning message for account deletion"
+  },
+  "confirmDelete": "Yes, Delete My Account",
+  "@confirmDelete": {
+    "description": "Confirm delete button text"
+  },
+  "cancelDelete": "Cancel",
+  "@cancelDelete": {
+    "description": "Cancel delete button text"
+  },
+  "enterPassword": "Enter Your Password",
+  "@enterPassword": {
+    "description": "Enter password dialog title"
+  },
+  "enterPasswordToConfirm": "Please enter your password to confirm account deletion:",
+  "@enterPasswordToConfirm": {
+    "description": "Password confirmation message"
+  },
+  "password": "Password",
+  "@password": {
+    "description": "Password field label"
+  },
+  "deleteMyAccount": "Delete My Account",
+  "@deleteMyAccount": {
+    "description": "Final delete button text"
+  },
+  "confirmWithGoogle": "Confirm with Google",
+  "@confirmWithGoogle": {
+    "description": "Google confirmation dialog title"
+  },
+  "signInWithGoogleToConfirm": "Please sign in with Google to confirm account deletion:",
+  "@signInWithGoogleToConfirm": {
+    "description": "Google confirmation message"
+  },
+  "continueWithGoogle": "Continue with Google",
+  "@continueWithGoogle": {
+    "description": "Google sign-in button text"
+  },
+  "accountDeleted": "Account Deleted",
+  "@accountDeleted": {
+    "description": "Account deleted success title"
+  },
+  "accountDeletedSuccess": "Your account has been successfully deleted. We're sorry to see you go!",
+  "@accountDeletedSuccess": {
+    "description": "Account deleted success message"
+  },
+  "accountDeleteFailed": "Failed to delete account. Please try again.",
+  "@accountDeleteFailed": {
+    "description": "Account deletion failed message"
+  },
+  "wrongPassword": "Incorrect password. Please try again.",
+  "@wrongPassword": {
+    "description": "Wrong password error message"
+  },
+  "requiresRecentLogin": "For security reasons, please log out and log back in before deleting your account.",
+  "@requiresRecentLogin": {
+    "description": "Requires recent login error message"
+  },
+  "userNotFound": "User account not found.",
+  "@userNotFound": {
+    "description": "User not found error message"
+  },
+  "networkError": "Network error. Please check your connection and try again.",
+  "@networkError": {
+    "description": "Network error message"
+  },
+  "googleReauthCancelled": "Google sign-in was cancelled. Account deletion aborted.",
+  "@googleReauthCancelled": {
+    "description": "Google re-authentication cancelled message"
+  },
+  "deletingAccount": "Deleting account...",
+  "@deletingAccount": {
+    "description": "Deleting account loading message"
+  },
+  "couldNotOpenLink": "Could not open link",
+  "@couldNotOpenLink": {
+    "description": "Error message when a link cannot be opened"
   }
 }

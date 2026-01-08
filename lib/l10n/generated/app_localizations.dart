@@ -182,7 +182,7 @@ abstract class AppLocalizations {
   /// **'Forgot Password?'**
   String get forgotPassword;
 
-  /// Google sign in button text
+  /// Google sign-in button text
   ///
   /// In en, this message translates to:
   /// **'Continue with Google'**
@@ -5467,6 +5467,126 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'If you have questions about this Privacy Policy, contact us:\n\nEmail: ateliadesign.contact@gmail.com'**
   String get ppContactUsContent;
+
+  /// Delete account button label
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Account'**
+  String get deleteAccount;
+
+  /// Title for delete account dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Delete Your Account'**
+  String get deleteAccountTitle;
+
+  /// Warning message for account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Are you sure you want to delete your account?\n\nThis action cannot be undone and will permanently delete all your data including your profile, designs, tech packs, and subscription.'**
+  String get deleteAccountWarning;
+
+  /// Confirm delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Delete My Account'**
+  String get confirmDelete;
+
+  /// Cancel delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Cancel'**
+  String get cancelDelete;
+
+  /// Enter password dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Enter Your Password'**
+  String get enterPassword;
+
+  /// Password confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please enter your password to confirm account deletion:'**
+  String get enterPasswordToConfirm;
+
+  /// Final delete button text
+  ///
+  /// In en, this message translates to:
+  /// **'Delete My Account'**
+  String get deleteMyAccount;
+
+  /// Google confirmation dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm with Google'**
+  String get confirmWithGoogle;
+
+  /// Google confirmation message
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in with Google to confirm account deletion:'**
+  String get signInWithGoogleToConfirm;
+
+  /// Account deleted success title
+  ///
+  /// In en, this message translates to:
+  /// **'Account Deleted'**
+  String get accountDeleted;
+
+  /// Account deleted success message
+  ///
+  /// In en, this message translates to:
+  /// **'Your account has been successfully deleted. We\'re sorry to see you go!'**
+  String get accountDeletedSuccess;
+
+  /// Account deletion failed message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to delete account. Please try again.'**
+  String get accountDeleteFailed;
+
+  /// Wrong password error message
+  ///
+  /// In en, this message translates to:
+  /// **'Incorrect password. Please try again.'**
+  String get wrongPassword;
+
+  /// Requires recent login error message
+  ///
+  /// In en, this message translates to:
+  /// **'For security reasons, please log out and log back in before deleting your account.'**
+  String get requiresRecentLogin;
+
+  /// User not found error message
+  ///
+  /// In en, this message translates to:
+  /// **'User account not found.'**
+  String get userNotFound;
+
+  /// Network error message
+  ///
+  /// In en, this message translates to:
+  /// **'Network error. Please check your connection and try again.'**
+  String get networkError;
+
+  /// Google re-authentication cancelled message
+  ///
+  /// In en, this message translates to:
+  /// **'Google sign-in was cancelled. Account deletion aborted.'**
+  String get googleReauthCancelled;
+
+  /// Deleting account loading message
+  ///
+  /// In en, this message translates to:
+  /// **'Deleting account...'**
+  String get deletingAccount;
+
+  /// Error message when a link cannot be opened
+  ///
+  /// In en, this message translates to:
+  /// **'Could not open link'**
+  String get couldNotOpenLink;
 }
 
 class _AppLocalizationsDelegate

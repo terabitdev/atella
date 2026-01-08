@@ -237,6 +237,11 @@ class PostHogAnalyticsService {
     await reset();
   }
 
+  /// Track account deletion
+  Future<void> trackAccountDeleted() async {
+    await trackEvent('account_deleted');
+  }
+
   // ==================== FEATURE FLAGS ====================
 
   /// Check if a feature flag is enabled

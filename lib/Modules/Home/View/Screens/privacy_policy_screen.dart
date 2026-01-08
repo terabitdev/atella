@@ -217,6 +217,7 @@ class PrivacyPolicyScreen extends StatelessWidget {
   }
 
   Future<void> _launchUrl(String urlString) async {
+    final l10n = AppLocalizations.of(Get.context!)!;
     // Add mailto: prefix for email addresses
     if (!urlString.startsWith('http') && urlString.contains('@')) {
       urlString = 'mailto:$urlString';
@@ -226,8 +227,8 @@ class PrivacyPolicyScreen extends StatelessWidget {
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       // Optionally show an error message
       Get.snackbar(
-        'Error',
-        'Could not open link',
+        l10n.error,
+        l10n.couldNotOpenLink,
         backgroundColor: Colors.red,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

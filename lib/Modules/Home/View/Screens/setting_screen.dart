@@ -2,6 +2,7 @@ import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -18,12 +19,16 @@ class SettingScreen extends StatefulWidget {
 class _SettingScreenState extends State<SettingScreen> {
   final ProfileController controller = Get.put(ProfileController());
   // Use Get.put to ensure LocaleController is available, or reuse existing one
-  final LocaleController localeController = Get.put(LocaleController(), permanent: true);
+  final LocaleController localeController = Get.put(
+    LocaleController(),
+    permanent: true,
+  );
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
       backgroundColor: Colors.black,
+      resizeToAvoidBottomInset: false,
       body: SafeArea(
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
@@ -33,17 +38,27 @@ class _SettingScreenState extends State<SettingScreen> {
               child: Row(
                 children: [
                   SizedBox(width: 8.w),
-                  Expanded(child: Text(l10n.settings, style: ssTitleTextTextStyle208001)),
+                  Expanded(
+                    child: Text(
+                      l10n.settings,
+                      style: ssTitleTextTextStyle208001,
+                    ),
+                  ),
                   Builder(
                     builder: (context) {
                       // Get current locale from context (reflects phone language changes)
-                      final currentLocale = Localizations.localeOf(context).languageCode;
+                      final currentLocale = Localizations.localeOf(
+                        context,
+                      ).languageCode;
                       final isFrench = currentLocale == 'fr';
 
                       return GestureDetector(
                         onTap: () => _showLanguageDialog(context, l10n),
                         child: Container(
-                          padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 8.h),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 12.w,
+                            vertical: 8.h,
+                          ),
                           decoration: BoxDecoration(
                             color: Colors.white.withValues(alpha: 0.15),
                             borderRadius: BorderRadius.circular(20.r),
@@ -122,6 +137,13 @@ class _SettingScreenState extends State<SettingScreen> {
                         },
                       ),
                       SettingCard(
+                        title: l10n.deleteAccount,
+                        textColor: Colors.red,
+                        onTap: () {
+                          _showDeleteAccountDialog(context, l10n);
+                        },
+                      ),
+                      SettingCard(
                         title: l10n.logout,
                         onTap: () {
                           showDialog(
@@ -161,15 +183,18 @@ class _SettingScreenState extends State<SettingScreen> {
                                                   ),
                                                 ),
                                                 onPressed: () {
-                                                  Navigator.of(dialogContext).pop();
+                                                  Navigator.of(
+                                                    dialogContext,
+                                                  ).pop();
                                                 },
                                                 child: Text(
                                                   l10n.cancel,
                                                   textAlign: TextAlign.center,
-                                                  style: lLastTextStyle16500.copyWith(
-                                                    fontSize: 14,
-                                                    height: 1.2,
-                                                  ),
+                                                  style: lLastTextStyle16500
+                                                      .copyWith(
+                                                        fontSize: 14,
+                                                        height: 1.2,
+                                                      ),
                                                 ),
                                               ),
                                             ),
@@ -190,11 +215,12 @@ class _SettingScreenState extends State<SettingScreen> {
                                                 child: Text(
                                                   l10n.logout,
                                                   textAlign: TextAlign.center,
-                                                  style: lLastTextStyle16500.copyWith(
-                                                    color: Colors.white,
-                                                    fontSize: 14,
-                                                    height: 1.2,
-                                                  ),
+                                                  style: lLastTextStyle16500
+                                                      .copyWith(
+                                                        color: Colors.white,
+                                                        fontSize: 14,
+                                                        height: 1.2,
+                                                      ),
                                                 ),
                                               ),
                                             ),
@@ -379,7 +405,9 @@ class _SettingScreenState extends State<SettingScreen> {
                 // Use context locale for selection state
                 Builder(
                   builder: (ctx) {
-                    final currentLocale = Localizations.localeOf(ctx).languageCode;
+                    final currentLocale = Localizations.localeOf(
+                      ctx,
+                    ).languageCode;
                     return Column(
                       children: [
                         _buildLanguageOption(
@@ -432,18 +460,13 @@ class _SettingScreenState extends State<SettingScreen> {
               : Colors.grey.shade50,
           borderRadius: BorderRadius.circular(12.r),
           border: Border.all(
-            color: isSelected
-                ? AppColors.buttonColor
-                : Colors.grey.shade300,
+            color: isSelected ? AppColors.buttonColor : Colors.grey.shade300,
             width: isSelected ? 2 : 1,
           ),
         ),
         child: Row(
           children: [
-            Text(
-              flag,
-              style: TextStyle(fontSize: 28.sp),
-            ),
+            Text(flag, style: TextStyle(fontSize: 28.sp)),
             SizedBox(width: 16.w),
             Expanded(
               child: Text(
@@ -470,6 +493,442 @@ class _SettingScreenState extends State<SettingScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void _showDeleteAccountDialog(BuildContext context, AppLocalizations l10n) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Warning Icon
+                Icon(Icons.warning_rounded, color: Colors.red, size: 60.sp),
+                SizedBox(height: 20.h),
+
+                // Title
+                Text(
+                  l10n.deleteAccountTitle,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 16.h),
+
+                // Warning Message
+                Text(
+                  l10n.deleteAccountWarning,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                    height: 1.5,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+
+                // Action Buttons
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: ElevatedButton(
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.red,
+                          foregroundColor: Colors.white,
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16.h,
+                            horizontal: 20.w,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                          _confirmDeleteAccount(context, l10n);
+                        },
+                        child: Text(
+                          l10n.confirmDelete,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          side: BorderSide(color: Colors.grey.shade300),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16.h,
+                            horizontal: 20.w,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: Text(
+                          l10n.cancelDelete,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _confirmDeleteAccount(BuildContext context, AppLocalizations l10n) {
+    // Check if user is Google user
+    final isGoogleUser = controller.isGoogleUser();
+
+    if (isGoogleUser) {
+      // Show Google confirmation dialog
+      _showGoogleConfirmationDialog(context, l10n);
+    } else {
+      // Show password confirmation dialog
+      _showPasswordConfirmationDialog(context, l10n);
+    }
+  }
+
+  void _showPasswordConfirmationDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    final TextEditingController passwordController = TextEditingController();
+    final RxBool isPasswordVisible = false.obs;
+
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        final keyboardHeight = MediaQuery.of(dialogContext).viewInsets.bottom;
+
+        return Align(
+          alignment: keyboardHeight > 0
+              ? Alignment.topCenter
+              : Alignment.center,
+          child: Padding(
+            padding: EdgeInsets.only(
+              left: 20.w,
+              right: 20.w,
+              top: keyboardHeight > 0 ? 40.h : 24.h,
+              bottom: keyboardHeight > 0 ? keyboardHeight + 20.h : 24.h,
+            ),
+            child: Material(
+              color: Colors.transparent,
+              child: Container(
+                decoration: BoxDecoration(
+                  color: Colors.white,
+                  borderRadius: BorderRadius.circular(20.r),
+                ),
+                child: SingleChildScrollView(
+                  child: Padding(
+                    padding: EdgeInsets.all(24.r),
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        // Title
+                        Text(
+                          l10n.enterPassword,
+                          style: TextStyle(
+                            fontSize: 20.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                        SizedBox(height: 12.h),
+
+                        // Message
+                        Text(
+                          l10n.enterPasswordToConfirm,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 14.sp,
+                            fontWeight: FontWeight.w500,
+                            color: Colors.black87,
+                          ),
+                        ),
+                        SizedBox(height: 20.h),
+
+                        // Password Field
+                        Obx(
+                          () => TextField(
+                            controller: passwordController,
+                            obscureText: !isPasswordVisible.value,
+                            decoration: InputDecoration(
+                              labelText: l10n.password,
+                              border: OutlineInputBorder(
+                                borderRadius: BorderRadius.circular(12.r),
+                              ),
+                              suffixIcon: IconButton(
+                                icon: Icon(
+                                  isPasswordVisible.value
+                                      ? Icons.visibility
+                                      : Icons.visibility_off,
+                                ),
+                                onPressed: () {
+                                  isPasswordVisible.value = !isPasswordVisible.value;
+                                },
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 24.h),
+
+                        // Action Buttons
+                        Column(
+                          children: [
+                            SizedBox(
+                              width: double.infinity,
+                              child: Obx(
+                                () => ElevatedButton(
+                                  style: ElevatedButton.styleFrom(
+                                    backgroundColor: Colors.red,
+                                    foregroundColor: Colors.white,
+                                    padding: EdgeInsets.symmetric(
+                                      vertical: 16.h,
+                                      horizontal: 20.w,
+                                    ),
+                                    shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.circular(12.r),
+                                    ),
+                                  ),
+                                  onPressed: controller.isDeletingAccount.value
+                                      ? null
+                                      : () async {
+                                          if (passwordController.text.isNotEmpty) {
+                                            await controller
+                                                .deleteAccountWithPassword(
+                                                  passwordController.text,
+                                                );
+                                            passwordController.dispose();
+                                          }
+                                        },
+                                  child: controller.isDeletingAccount.value
+                                      ? SizedBox(
+                                          width: 20.w,
+                                          height: 20.h,
+                                          child: CircularProgressIndicator(
+                                            strokeWidth: 2,
+                                            valueColor: AlwaysStoppedAnimation<Color>(
+                                              Colors.white,
+                                            ),
+                                          ),
+                                        )
+                                      : Text(
+                                          l10n.deleteMyAccount,
+                                          textAlign: TextAlign.center,
+                                          style: TextStyle(
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w600,
+                                          ),
+                                        ),
+                                ),
+                              ),
+                            ),
+                            SizedBox(height: 12.h),
+                            SizedBox(
+                              width: double.infinity,
+                              child: OutlinedButton(
+                                style: OutlinedButton.styleFrom(
+                                  foregroundColor: Colors.black,
+                                  side: BorderSide(color: Colors.grey.shade300),
+                                  padding: EdgeInsets.symmetric(
+                                    vertical: 16.h,
+                                    horizontal: 20.w,
+                                  ),
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12.r),
+                                  ),
+                                ),
+                                onPressed: () {
+                                  Navigator.of(dialogContext).pop();
+                                  passwordController.dispose();
+                                },
+                                child: Text(
+                                  l10n.cancelDelete,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showGoogleConfirmationDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Google Icon
+                Image.asset(googleIcon, width: 48.w, height: 48.h),
+                SizedBox(height: 20.h),
+
+                // Title
+                Text(
+                  l10n.confirmWithGoogle,
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+
+                // Message
+                Text(
+                  l10n.signInWithGoogleToConfirm,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+
+                // Action Buttons
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Obx(
+                        () => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.h,
+                              horizontal: 20.w,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          onPressed: controller.isDeletingAccount.value
+                              ? null
+                              : () async {
+                                  await controller.deleteAccountWithGoogle();
+                                },
+                          child: controller.isDeletingAccount.value
+                              ? SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  l10n.continueWithGoogle,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          side: BorderSide(color: Colors.grey.shade300),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16.h,
+                            horizontal: 20.w,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: Text(
+                          l10n.cancelDelete,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
     );
   }
 }

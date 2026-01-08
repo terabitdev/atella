@@ -14,6 +14,7 @@ class ProfileController extends GetxController {
   final RxBool isLoading = false.obs;
   final AuthService _authService = AuthService();
   final RxBool analyticsOptIn = true.obs;
+  final RxBool isDeletingAccount = false.obs;
 
   @override
   void onInit() {
@@ -169,6 +170,168 @@ class ProfileController extends GetxController {
           : l10n.analyticsDisabledMessage,
       snackPosition: SnackPosition.TOP,
       backgroundColor: Colors.black,
+      colorText: Colors.white,
+      duration: const Duration(seconds: 3),
+    );
+  }
+
+  // ========= Delete Account =========
+
+  /// Delete account for email/password users
+  Future<void> deleteAccountWithPassword(String password) async {
+    try {
+      isDeletingAccount.value = true;
+      final l10n = AppLocalizations.of(Get.context!)!;
+
+      print('🗑️ Starting account deletion with password...');
+
+      // Call auth service to delete account
+      final errorCode = await _authService.deleteAccountWithPassword(password);
+
+      if (errorCode == null) {
+        // Success
+        print('✅ Account deleted successfully');
+
+        // Clear all controllers
+        Get.deleteAll(force: true);
+
+        // Show success message
+        Get.snackbar(
+          l10n.accountDeleted,
+          l10n.accountDeletedSuccess,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
+        // Navigate to login screen
+        Get.offAllNamed('/login');
+      } else {
+        // Handle error
+        print('❌ Account deletion failed: $errorCode');
+        // Close the dialog before showing error
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+        _handleDeleteAccountError(errorCode);
+      }
+    } catch (e) {
+      print('❌ Error during account deletion: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
+      // Close the dialog before showing error
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+      Get.snackbar(
+        l10n.error,
+        l10n.accountDeleteFailed,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isDeletingAccount.value = false;
+    }
+  }
+
+  /// Delete account for Google users
+  Future<void> deleteAccountWithGoogle() async {
+    try {
+      isDeletingAccount.value = true;
+      final l10n = AppLocalizations.of(Get.context!)!;
+
+      print('🗑️ Starting account deletion with Google...');
+
+      // Call auth service to delete account
+      final errorCode = await _authService.deleteAccountWithGoogle();
+
+      if (errorCode == null) {
+        // Success
+        print('✅ Account deleted successfully');
+
+        // Clear all controllers
+        Get.deleteAll(force: true);
+
+        // Show success message
+        Get.snackbar(
+          l10n.accountDeleted,
+          l10n.accountDeletedSuccess,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
+        // Navigate to login screen
+        Get.offAllNamed('/login');
+      } else {
+        // Handle error
+        print('❌ Account deletion failed: $errorCode');
+        // Close the dialog before showing error
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+        _handleDeleteAccountError(errorCode);
+      }
+    } catch (e) {
+      print('❌ Error during account deletion: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
+      // Close the dialog before showing error
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+      Get.snackbar(
+        l10n.error,
+        l10n.accountDeleteFailed,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isDeletingAccount.value = false;
+    }
+  }
+
+  /// Check if current user is a Google user
+  bool isGoogleUser() {
+    return _authService.isGoogleUser();
+  }
+
+  /// Handle delete account errors
+  void _handleDeleteAccountError(String errorCode) {
+    final l10n = AppLocalizations.of(Get.context!)!;
+    String errorMessage;
+
+    switch (errorCode) {
+      case 'auth-wrong-password':
+        errorMessage = l10n.wrongPassword;
+        break;
+      case 'auth-requires-recent-login':
+        errorMessage = l10n.requiresRecentLogin;
+        break;
+      case 'auth-user-not-found':
+        errorMessage = l10n.userNotFound;
+        break;
+      case 'auth-network-error':
+        errorMessage = l10n.networkError;
+        break;
+      case 'auth-google-reauthentication-cancelled':
+        errorMessage = l10n.googleReauthCancelled;
+        break;
+      case 'auth-delete-account-failed':
+      default:
+        errorMessage = l10n.accountDeleteFailed;
+        break;
+    }
+
+    Get.snackbar(
+      l10n.error,
+      errorMessage,
+      snackPosition: SnackPosition.TOP,
+      backgroundColor: Colors.red,
       colorText: Colors.white,
       duration: const Duration(seconds: 3),
     );

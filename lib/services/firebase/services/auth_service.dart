@@ -2,6 +2,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:atella/services/firebase/services/delete_account_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -257,5 +258,108 @@ class AuthService {
   Future<void> signOut() async {
     await _auth.signOut();
     await _googleSignIn.signOut();
+  }
+
+  // ==================== ACCOUNT DELETION ====================
+
+  /// Delete user account with re-authentication
+  /// For email/password users
+  Future<String?> deleteAccountWithPassword(String password) async {
+    try {
+      final deleteService = DeleteAccountService();
+
+      // Step 1: Re-authenticate user
+      final reauthSuccess = await deleteService.reauthenticateWithPassword(password);
+
+      if (!reauthSuccess) {
+        return 'auth-reauthentication-failed';
+      }
+
+      // Step 2: Delete all user data
+      await deleteService.deleteUserAccount();
+
+      // Step 3: Sign out from Google Sign-In if applicable
+      await _googleSignIn.signOut();
+
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Firebase Auth Error during deletion: ${e.code} - ${e.message}');
+
+      switch (e.code) {
+        case 'wrong-password':
+        case 'invalid-credential':
+          return 'auth-wrong-password';
+        case 'requires-recent-login':
+          return 'auth-requires-recent-login';
+        case 'user-not-found':
+          return 'auth-user-not-found';
+        case 'network-request-failed':
+          return 'auth-network-error';
+        default:
+          return 'auth-delete-account-failed';
+      }
+    } catch (e) {
+      debugPrint('Error during account deletion: $e');
+      return 'auth-delete-account-failed';
+    }
+  }
+
+  /// Delete user account for Google sign-in users
+  Future<String?> deleteAccountWithGoogle() async {
+    try {
+      final deleteService = DeleteAccountService();
+
+      // Step 1: Re-authenticate with Google
+      final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
+      if (googleUser == null) {
+        return 'auth-google-reauthentication-cancelled';
+      }
+
+      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final credential = GoogleAuthProvider.credential(
+        accessToken: googleAuth.accessToken,
+        idToken: googleAuth.idToken,
+      );
+
+      // Re-authenticate the user
+      final user = _auth.currentUser;
+      if (user == null) {
+        return 'auth-user-not-found';
+      }
+
+      await user.reauthenticateWithCredential(credential);
+
+      // Step 2: Delete all user data
+      await deleteService.deleteUserAccount();
+
+      // Step 3: Sign out from Google Sign-In
+      await _googleSignIn.signOut();
+
+      return null; // Success
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Firebase Auth Error during Google account deletion: ${e.code} - ${e.message}');
+
+      switch (e.code) {
+        case 'requires-recent-login':
+          return 'auth-requires-recent-login';
+        case 'user-not-found':
+          return 'auth-user-not-found';
+        case 'network-request-failed':
+          return 'auth-network-error';
+        default:
+          return 'auth-delete-account-failed';
+      }
+    } catch (e) {
+      debugPrint('Error during Google account deletion: $e');
+      return 'auth-delete-account-failed';
+    }
+  }
+
+  /// Check if current user signed in with Google
+  bool isGoogleUser() {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+
+    return user.providerData.any((provider) => provider.providerId == 'google.com');
   }
 }

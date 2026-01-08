@@ -2959,4 +2959,72 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get ppContactUsContent =>
       'If you have questions about this Privacy Policy, contact us:\n\nEmail: ateliadesign.contact@gmail.com';
+
+  @override
+  String get deleteAccount => 'Delete Account';
+
+  @override
+  String get deleteAccountTitle => 'Delete Your Account';
+
+  @override
+  String get deleteAccountWarning =>
+      'Are you sure you want to delete your account?\n\nThis action cannot be undone and will permanently delete all your data including your profile, designs, tech packs, and subscription.';
+
+  @override
+  String get confirmDelete => 'Yes, Delete My Account';
+
+  @override
+  String get cancelDelete => 'Cancel';
+
+  @override
+  String get enterPassword => 'Enter Your Password';
+
+  @override
+  String get enterPasswordToConfirm =>
+      'Please enter your password to confirm account deletion:';
+
+  @override
+  String get deleteMyAccount => 'Delete My Account';
+
+  @override
+  String get confirmWithGoogle => 'Confirm with Google';
+
+  @override
+  String get signInWithGoogleToConfirm =>
+      'Please sign in with Google to confirm account deletion:';
+
+  @override
+  String get accountDeleted => 'Account Deleted';
+
+  @override
+  String get accountDeletedSuccess =>
+      'Your account has been successfully deleted. We\'re sorry to see you go!';
+
+  @override
+  String get accountDeleteFailed =>
+      'Failed to delete account. Please try again.';
+
+  @override
+  String get wrongPassword => 'Incorrect password. Please try again.';
+
+  @override
+  String get requiresRecentLogin =>
+      'For security reasons, please log out and log back in before deleting your account.';
+
+  @override
+  String get userNotFound => 'User account not found.';
+
+  @override
+  String get networkError =>
+      'Network error. Please check your connection and try again.';
+
+  @override
+  String get googleReauthCancelled =>
+      'Google sign-in was cancelled. Account deletion aborted.';
+
+  @override
+  String get deletingAccount => 'Deleting account...';
+
+  @override
+  String get couldNotOpenLink => 'Could not open link';
 }
