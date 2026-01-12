@@ -341,28 +341,28 @@ class AppLocalizationsFr extends AppLocalizations {
   String get starterDesignLimit => '5 générations de designs IA par mois';
 
   @override
-  String get starterMonthlyPrice => 'Starter €14.99/Mois';
+  String get starterMonthlyPrice => 'Starter €19.99/Mois';
 
   @override
-  String get starterYearlyPrice => 'Starter €149.99/An';
+  String get starterYearlyPrice => 'Starter €199.99/An';
 
   @override
-  String get proMonthlyPrice => 'Pro €34.99/Mois';
+  String get proMonthlyPrice => 'Pro €49.99/Mois';
 
   @override
-  String get proYearlyPrice => 'Pro €349.99/An';
+  String get proYearlyPrice => 'Pro €499.99/An';
 
   @override
-  String get proDesignLimit => '15 générations de designs IA par mois';
+  String get proDesignLimit => '12 générations de designs IA par mois';
 
   @override
-  String get studioMonthlyPrice => 'Studio €79,99/Mois';
+  String get studioMonthlyPrice => 'Studio €99,99/Mois';
 
   @override
-  String get studioYearlyPrice => 'Studio €799,99/An';
+  String get studioYearlyPrice => 'Studio €999,99/An';
 
   @override
-  String get studioDesignLimit => '35 générations de designs IA par mois';
+  String get studioDesignLimit => '25 générations de designs IA par mois';
 
   @override
   String get perMonth => '/Mois';
@@ -1875,7 +1875,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String tpDialogRemainingTechpacksPro(int remaining) {
-    return 'Restant : $remaining/8 dossiers techniques ce mois-ci';
+    return 'Restant : $remaining/6 dossiers techniques ce mois-ci';
   }
 
   @override
@@ -1885,19 +1885,19 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpDialogStarterPlanOption =>
-      'Starter : 2 dossiers techniques/mois (14,99€/mois ou 149,99€/an)';
+      'Starter : 2 dossiers techniques/mois (19,99€/mois ou 199,99€/an)';
 
   @override
   String get tpDialogProPlanOption =>
-      'Pro : 8 dossiers techniques/mois (34,99€/mois ou 349,99€/an)';
+      'Pro : 6 dossiers techniques/mois (49,99€/mois ou 499,99€/an)';
 
   @override
   String get tpDialogStudioPlanOption =>
-      'Studio : 16 dossiers techniques/mois (79,99€/mois ou 799,99€/an)';
+      'Studio : 10 dossiers techniques/mois (99,99€/mois ou 999,99€/an)';
 
   @override
   String tpDialogRemainingTechpacksStudio(int remaining) {
-    return 'Restant : $remaining/16 ce mois-ci';
+    return 'Restant : $remaining/10 ce mois-ci';
   }
 
   @override
@@ -2636,14 +2636,14 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get studioFeatureAiDesignLimit =>
-      '35 générations de designs IA par mois';
+      '25 générations de designs IA par mois';
 
   @override
-  String get studioFeatureTechpackMonthly => '16 techpacks par mois';
+  String get studioFeatureTechpackMonthly => '10 techpacks par mois';
 
   @override
   String get studioFeatureTechpackYearly =>
-      '16 techpacks par mois (192 par an)';
+      '10 techpacks par mois (120 par an)';
 
   @override
   String get studio => 'Studio';

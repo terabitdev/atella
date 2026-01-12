@@ -452,35 +452,35 @@
   "@starterDesignLimit": {
     "description": "Starter plan design limit"
   },
-  "starterMonthlyPrice": "Starter €14.99/Month",
+  "starterMonthlyPrice": "Starter €19.99/Month",
   "@starterMonthlyPrice": {
     "description": "Starter plan monthly price"
   },
-  "starterYearlyPrice": "Starter €149.99/Year",
+  "starterYearlyPrice": "Starter €199.99/Year",
   "@starterYearlyPrice": {
     "description": "Starter plan yearly price"
   },
-  "proMonthlyPrice": "Pro €34.99/Month",
+  "proMonthlyPrice": "Pro €49.99/Month",
   "@proMonthlyPrice": {
     "description": "Pro plan monthly price"
   },
-  "proYearlyPrice": "Pro €349.99/Year",
+  "proYearlyPrice": "Pro €499.99/Year",
   "@proYearlyPrice": {
     "description": "Pro plan yearly price"
   },
-  "proDesignLimit": "15 AI design generations per month",
+  "proDesignLimit": "12 AI design generations per month",
   "@proDesignLimit": {
     "description": "Pro plan design limit"
   },
-  "studioMonthlyPrice": "Studio €79.99/Month",
+  "studioMonthlyPrice": "Studio €99.99/Month",
   "@studioMonthlyPrice": {
     "description": "Studio plan monthly price"
   },
-  "studioYearlyPrice": "Studio €799.99/Year",
+  "studioYearlyPrice": "Studio €999.99/Year",
   "@studioYearlyPrice": {
     "description": "Studio plan yearly price"
   },
-  "studioDesignLimit": "35 AI design generations per month",
+  "studioDesignLimit": "25 AI design generations per month",
   "@studioDesignLimit": {
     "description": "Studio plan design limit"
   },
@@ -2103,7 +2103,7 @@
       }
     }
   },
-  "tpDialogRemainingTechpacksPro": "Remaining: {remaining}/8 techpacks this month",
+  "tpDialogRemainingTechpacksPro": "Remaining: {remaining}/6 techpacks this month",
   "@tpDialogRemainingTechpacksPro": {
     "description": "Shows remaining techpacks for Pro users",
     "placeholders": {
@@ -2121,19 +2121,19 @@
       }
     }
   },
-  "tpDialogStarterPlanOption": "Starter: 2 techpacks/month (€14.99/mo or €149.99/yr)",
+  "tpDialogStarterPlanOption": "Starter: 2 techpacks/month (€19.99/mo or €199.99/yr)",
   "@tpDialogStarterPlanOption": {
     "description": "Starter plan option in upgrade dialog"
   },
-  "tpDialogProPlanOption": "Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)",
+  "tpDialogProPlanOption": "Pro: 6 techpacks/month (€49.99/mo or €499.99/yr)",
   "@tpDialogProPlanOption": {
     "description": "Pro plan option in upgrade dialog"
   },
-  "tpDialogStudioPlanOption": "Studio: 16 techpacks/month (€79.99/mo or €799.99/yr)",
+  "tpDialogStudioPlanOption": "Studio: 10 techpacks/month (€99.99/mo or €999.99/yr)",
   "@tpDialogStudioPlanOption": {
     "description": "Studio plan option in upgrade dialog"
   },
-  "tpDialogRemainingTechpacksStudio": "Remaining: {remaining}/16 this month",
+  "tpDialogRemainingTechpacksStudio": "Remaining: {remaining}/10 this month",
   "@tpDialogRemainingTechpacksStudio": {
     "description": "Shows remaining techpacks for Studio users",
     "placeholders": {
@@ -3106,15 +3106,15 @@
   "@studioDescription": {
     "description": "Studio plan description"
   },
-  "studioFeatureAiDesignLimit": "35 AI design generations per month",
+  "studioFeatureAiDesignLimit": "25 AI design generations per month",
   "@studioFeatureAiDesignLimit": {
     "description": "Studio plan feature - design limit"
   },
-  "studioFeatureTechpackMonthly": "16 techpacks per month",
+  "studioFeatureTechpackMonthly": "10 techpacks per month",
   "@studioFeatureTechpackMonthly": {
     "description": "Studio plan feature - monthly techpack limit"
   },
-  "studioFeatureTechpackYearly": "16 techpacks per month (192 per year)",
+  "studioFeatureTechpackYearly": "10 techpacks per month (120 per year)",
   "@studioFeatureTechpackYearly": {
     "description": "Studio plan feature - yearly techpack limit"
   },

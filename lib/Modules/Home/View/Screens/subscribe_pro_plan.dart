@@ -279,8 +279,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(
                                     controller.isYearlyBilling.value
-                                        ? l10n.techpacksPerMonthYearly(8, 96)
-                                        : l10n.techpacksPerMonth(8),
+                                        ? l10n.techpacksPerMonthYearly(6, 72)
+                                        : l10n.techpacksPerMonth(6),
                                   ),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(

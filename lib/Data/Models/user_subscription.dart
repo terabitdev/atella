@@ -149,9 +149,9 @@ class UserSubscription {
     // Return base limit + total add-ons purchased (not remaining)
     int baseLimit = 0;
     if (subscriptionPlan.startsWith('STUDIO')) {
-      baseLimit = 16;
+      baseLimit = 10;
     } else if (subscriptionPlan.startsWith('PRO')) {
-      baseLimit = 8;
+      baseLimit = 6;
     } else if (subscriptionPlan.startsWith('STARTER')) {
       baseLimit = 2;
     }
@@ -190,8 +190,8 @@ class UserSubscription {
   }
 
   int _getBaseDesignLimit() {
-    if (subscriptionPlan.startsWith('STUDIO')) return 35;
-    if (subscriptionPlan.startsWith('PRO')) return 15;
+    if (subscriptionPlan.startsWith('STUDIO')) return 25;
+    if (subscriptionPlan.startsWith('PRO')) return 12;
     if (subscriptionPlan.startsWith('STARTER')) return 5;
     return 3; // FREE
   }

@@ -713,49 +713,49 @@ abstract class AppLocalizations {
   /// Starter plan monthly price
   ///
   /// In en, this message translates to:
-  /// **'Starter €14.99/Month'**
+  /// **'Starter €19.99/Month'**
   String get starterMonthlyPrice;
 
   /// Starter plan yearly price
   ///
   /// In en, this message translates to:
-  /// **'Starter €149.99/Year'**
+  /// **'Starter €199.99/Year'**
   String get starterYearlyPrice;
 
   /// Pro plan monthly price
   ///
   /// In en, this message translates to:
-  /// **'Pro €34.99/Month'**
+  /// **'Pro €49.99/Month'**
   String get proMonthlyPrice;
 
   /// Pro plan yearly price
   ///
   /// In en, this message translates to:
-  /// **'Pro €349.99/Year'**
+  /// **'Pro €499.99/Year'**
   String get proYearlyPrice;
 
   /// Pro plan design limit
   ///
   /// In en, this message translates to:
-  /// **'15 AI design generations per month'**
+  /// **'12 AI design generations per month'**
   String get proDesignLimit;
 
   /// Studio plan monthly price
   ///
   /// In en, this message translates to:
-  /// **'Studio €79.99/Month'**
+  /// **'Studio €99.99/Month'**
   String get studioMonthlyPrice;
 
   /// Studio plan yearly price
   ///
   /// In en, this message translates to:
-  /// **'Studio €799.99/Year'**
+  /// **'Studio €999.99/Year'**
   String get studioYearlyPrice;
 
   /// Studio plan design limit
   ///
   /// In en, this message translates to:
-  /// **'35 AI design generations per month'**
+  /// **'25 AI design generations per month'**
   String get studioDesignLimit;
 
   /// Per month suffix for pricing
@@ -3509,7 +3509,7 @@ abstract class AppLocalizations {
   /// Shows remaining techpacks for Pro users
   ///
   /// In en, this message translates to:
-  /// **'Remaining: {remaining}/8 techpacks this month'**
+  /// **'Remaining: {remaining}/6 techpacks this month'**
   String tpDialogRemainingTechpacksPro(int remaining);
 
   /// Shows remaining techpacks for Starter users
@@ -3521,25 +3521,25 @@ abstract class AppLocalizations {
   /// Starter plan option in upgrade dialog
   ///
   /// In en, this message translates to:
-  /// **'Starter: 2 techpacks/month (€14.99/mo or €149.99/yr)'**
+  /// **'Starter: 2 techpacks/month (€19.99/mo or €199.99/yr)'**
   String get tpDialogStarterPlanOption;
 
   /// Pro plan option in upgrade dialog
   ///
   /// In en, this message translates to:
-  /// **'Pro: 8 techpacks/month (€34.99/mo or €349.99/yr)'**
+  /// **'Pro: 6 techpacks/month (€49.99/mo or €499.99/yr)'**
   String get tpDialogProPlanOption;
 
   /// Studio plan option in upgrade dialog
   ///
   /// In en, this message translates to:
-  /// **'Studio: 16 techpacks/month (€79.99/mo or €799.99/yr)'**
+  /// **'Studio: 10 techpacks/month (€99.99/mo or €999.99/yr)'**
   String get tpDialogStudioPlanOption;
 
   /// Shows remaining techpacks for Studio users
   ///
   /// In en, this message translates to:
-  /// **'Remaining: {remaining}/16 this month'**
+  /// **'Remaining: {remaining}/10 this month'**
   String tpDialogRemainingTechpacksStudio(int remaining);
 
   /// Pro upgrade option for Starter users
@@ -4835,19 +4835,19 @@ abstract class AppLocalizations {
   /// Studio plan feature - design limit
   ///
   /// In en, this message translates to:
-  /// **'35 AI design generations per month'**
+  /// **'25 AI design generations per month'**
   String get studioFeatureAiDesignLimit;
 
   /// Studio plan feature - monthly techpack limit
   ///
   /// In en, this message translates to:
-  /// **'16 techpacks per month'**
+  /// **'10 techpacks per month'**
   String get studioFeatureTechpackMonthly;
 
   /// Studio plan feature - yearly techpack limit
   ///
   /// In en, this message translates to:
-  /// **'16 techpacks per month (192 per year)'**
+  /// **'10 techpacks per month (120 per year)'**
   String get studioFeatureTechpackYearly;
 
   /// Studio plan name

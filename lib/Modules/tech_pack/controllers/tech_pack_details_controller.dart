@@ -1032,17 +1032,17 @@ class TechPackDetailsController extends GetxController {
       case 'FREE':
         return 'Free';
       case 'STARTER':
-        return 'Starter (€14.99/month)';
+        return 'Starter (€19.99/month)';
       case 'STARTER_YEARLY':
-        return 'Starter (€149.99/year)';
+        return 'Starter (€199.99/year)';
       case 'PRO':
-        return 'Pro (€34.99/month)';
+        return 'Pro (€49.99/month)';
       case 'PRO_YEARLY':
-        return 'Pro (€349.99/year)';
+        return 'Pro (€499.99/year)';
       case 'STUDIO':
-        return 'Studio (€79.99/month)';
+        return 'Studio (€99.99/month)';
       case 'STUDIO_YEARLY':
-        return 'Studio (€799.99/year)';
+        return 'Studio (€999.99/year)';
       default:
         return 'Free';
     }
