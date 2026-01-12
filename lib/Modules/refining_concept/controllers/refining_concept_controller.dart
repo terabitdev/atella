@@ -31,6 +31,10 @@ class RefiningConceptController extends GetxController {
   final RxInt _currentQuestionIndex = 0.obs;
   int get currentQuestionIndex => _currentQuestionIndex.value;
 
+  // Maximum question index that has ever been shown (to keep questions visible)
+  final RxInt _maxQuestionIndexShown = 0.obs;
+  int get maxQuestionIndexShown => _maxQuestionIndexShown.value;
+
   // Real-time timestamp
   final RxString _currentTime = ''.obs;
   String get currentTime => _currentTime.value;
@@ -416,6 +420,7 @@ class RefiningConceptController extends GetxController {
 
       // In edit mode, show all questions
       _currentQuestionIndex.value = questions.length - 1;
+      _maxQuestionIndexShown.value = questions.length - 1; // Set max to show all questions
 
       // Force reactive update
       _answers.refresh();
@@ -696,13 +701,13 @@ class RefiningConceptController extends GetxController {
     // If question is already answered, update the answer immediately (no delay for edits)
     if (isQuestionAnswered(questionId)) {
       print('Updating already answered question immediately: $questionId');
-      _confirmCurrentSelection(forQuestionId: questionId);
+      _confirmCurrentSelection(forQuestionId: questionId, shouldAdvance: false); // Don't advance when editing
     } else {
       // Auto-advance to next question after delay for new answers (2 seconds like creative brief)
       await Future.delayed(const Duration(milliseconds: 2000));
       // Check if the selection is still the same (user hasn't changed it)
       if (_tempSelections[questionId] == option) {
-        _confirmCurrentSelection(forQuestionId: questionId);
+        _confirmCurrentSelection(forQuestionId: questionId, shouldAdvance: true); // Advance for new answers
       }
     }
   }
@@ -732,6 +737,17 @@ class RefiningConceptController extends GetxController {
     );
     _tempMultiSelections.clear();
     _answers.refresh();
+
+    // Update max question index to ensure next question becomes visible
+    final questionIndex = questions.indexWhere((q) => q.id == confirmedQuestionId);
+    if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
+      // Show the next question by updating max index
+      final nextIndex = questionIndex + 1;
+      if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+        _maxQuestionIndexShown.value = nextIndex;
+      }
+    }
+
     update();
 
     // Only advance to next question if this is a new answer (not editing)
@@ -940,13 +956,24 @@ class RefiningConceptController extends GetxController {
     );
     _tempCategorizedSelections.clear();
     _answers.refresh();
+
+    // Update max question index to ensure next question becomes visible
+    final questionIndex = questions.indexWhere((q) => q.id == questionId);
+    if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
+      // Show the next question by updating max index
+      final nextIndex = questionIndex + 1;
+      if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+        _maxQuestionIndexShown.value = nextIndex;
+      }
+    }
+
     update();
 
     _nextQuestion();
   }
 
   // Method to confirm current selection and advance
-  void _confirmCurrentSelection({String? forQuestionId}) {
+  void _confirmCurrentSelection({String? forQuestionId, bool shouldAdvance = true}) {
     final confirmedQuestionId = forQuestionId ?? currentQuestion.id;
     final tempSelection = _tempSelections[confirmedQuestionId];
     if (tempSelection != null) {
@@ -959,10 +986,22 @@ class RefiningConceptController extends GetxController {
       // Clear temporary selection
       _tempSelections.remove(confirmedQuestionId);
 
+      // Update max question index to ensure next question becomes visible
+      final questionIndex = questions.indexWhere((q) => q.id == confirmedQuestionId);
+      if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
+        // Show the next question by updating max index
+        final nextIndex = questionIndex + 1;
+        if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+          _maxQuestionIndexShown.value = nextIndex;
+        }
+      }
+
       update();
 
-      // Advance to next question
-      _nextQuestion();
+      // Only advance to next question if this is a new answer (not editing)
+      if (shouldAdvance) {
+        _nextQuestion();
+      }
     }
   }
 
@@ -1266,6 +1305,10 @@ class RefiningConceptController extends GetxController {
 
     if (currentQuestionIndex < questions.length - 1) {
       _currentQuestionIndex.value++;
+      // Update max index if we've moved forward
+      if (_currentQuestionIndex.value > _maxQuestionIndexShown.value) {
+        _maxQuestionIndexShown.value = _currentQuestionIndex.value;
+      }
       update();
     } else {
       // Check if all questions are actually answered
@@ -1309,6 +1352,10 @@ class RefiningConceptController extends GetxController {
   void jumpToQuestion(int index) {
     if (index >= 0 && index < questions.length) {
       _currentQuestionIndex.value = index;
+      // Update max index if we've jumped forward
+      if (index > _maxQuestionIndexShown.value) {
+        _maxQuestionIndexShown.value = index;
+      }
       update();
     }
   }
@@ -1331,6 +1378,7 @@ class RefiningConceptController extends GetxController {
     _tempSelections.clear();
     _customSelectedForQuestion.value = '';
     _currentQuestionIndex.value = 0;
+    _maxQuestionIndexShown.value = 0; // Reset max shown index
     _editingQuestions.clear();
     colorController.clear();
     fabricController.clear();
@@ -1363,9 +1411,9 @@ class RefiningConceptController extends GetxController {
 
   // Check if we should show animation after a specific question
   bool shouldShowAnimationAfterQuestion(int questionIndex) {
-    // Don't show animation when custom is selected for current question
+    // Don't show animation when custom is selected for the max question shown
     if (isCustomSelectedForCurrentQuestion() &&
-        questionIndex == currentQuestionIndex) {
+        questionIndex == maxQuestionIndexShown) {
       return false;
     }
 
@@ -1374,12 +1422,12 @@ class RefiningConceptController extends GetxController {
       return false;
     }
 
-    // Show animation below the current unanswered question
-    // This means animation shows below current question's answers, not after answering
-    bool isCurrentQuestion = questionIndex == currentQuestionIndex;
+    // Show animation below the furthest question reached (not the current edited question)
+    // This ensures the loading indicator never moves backward when editing previous answers
+    bool isMaxQuestion = questionIndex == maxQuestionIndexShown;
     bool isNotLastQuestion = questionIndex < questions.length - 1;
 
-    return isCurrentQuestion && isNotLastQuestion;
+    return isMaxQuestion && isNotLastQuestion;
   }
 
   // Method to get number of questions to show in the list
@@ -1395,10 +1443,11 @@ class RefiningConceptController extends GetxController {
       return questions.length;
     }
 
-    if (currentQuestionIndex >= 5) {
-      return questions.length; // Show all questions after question 5
+    if (maxQuestionIndexShown >= 5) {
+      return questions.length; // Show all questions after question 5 has been shown
     }
-    return currentQuestionIndex + 1; // Show progressive questions for 1-5
+    // Use max index to keep questions visible even when user goes back to edit
+    return maxQuestionIndexShown + 1; // Show progressive questions for 1-5
   }
 
   // Save refined concept data to DesignDataService
