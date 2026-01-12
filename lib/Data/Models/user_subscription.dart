@@ -261,9 +261,9 @@ class UserSubscription {
     // Get base limit only (without add-ons)
     int baseLimit = 0;
     if (subscriptionPlan.startsWith('STUDIO')) {
-      baseLimit = 16;
+      baseLimit = 10;
     } else if (subscriptionPlan.startsWith('PRO')) {
-      baseLimit = 8;
+      baseLimit = 6;
     } else if (subscriptionPlan.startsWith('STARTER')) {
       baseLimit = 2;
     }
