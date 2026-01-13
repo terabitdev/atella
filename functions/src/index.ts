@@ -85,7 +85,9 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
     const userDoc = usersSnapshot.docs[0];
     const userId = userDoc.id;
     const planName = getPlanNameFromPriceId(priceId);
-    
+
+    console.log(`📋 Subscription created - Price ID: ${priceId} → Plan: ${planName}`);
+
     const isYearly = planName.includes('YEARLY');
     const billingPeriod = isYearly ? 'YEARLY' : 'MONTHLY';
     
@@ -137,7 +139,9 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     const userDoc = usersSnapshot.docs[0];
     const userId = userDoc.id;
     const planName = getPlanNameFromPriceId(priceId);
-    
+
+    console.log(`📋 Subscription updated - Price ID: ${priceId} → Plan: ${planName}`);
+
     // Check if it's a new billing period to reset techpack count
     const currentData = userDoc.data();
     const oldPeriodStart = currentData?.currentPeriodStart?.toDate();
@@ -215,26 +219,59 @@ async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
 // Payment succeeded
 async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
-  
+
   try {
     const usersSnapshot = await db.collection('users')
       .where('stripeCustomerId', '==', customerId)
       .get();
-    
+
     if (usersSnapshot.empty) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-    
+
     const userDoc = usersSnapshot.docs[0];
     const userId = userDoc.id;
-    
-    await db.collection('users').doc(userId).update({
+
+    // Update payment status
+    const updateData: any = {
       lastPaymentStatus: 'succeeded',
       lastPaymentDate: admin.firestore.FieldValue.serverTimestamp()
-    });
-    
-    console.log(`✅ Payment succeeded for user ${userId}`);
+    };
+
+    // If this payment is for a subscription, also update the subscription plan
+    if (invoice.subscription) {
+      const subscriptionId = invoice.subscription as string;
+
+      // Fetch the subscription details from Stripe to get the price ID
+      const subscription = await stripe.subscriptions.retrieve(subscriptionId);
+      const priceId = subscription.items.data[0].price.id;
+      const planName = getPlanNameFromPriceId(priceId);
+      const status = subscription.status;
+
+      console.log(`📋 Payment for subscription - Price ID: ${priceId} → Plan: ${planName}`);
+      const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
+      const currentPeriodStart = new Date(subscription.current_period_start * 1000);
+
+      const isYearly = planName.includes('YEARLY');
+      const billingPeriod = isYearly ? 'YEARLY' : 'MONTHLY';
+
+      // Update subscription details
+      updateData.subscriptionPlan = planName;
+      updateData.subscriptionStatus = status;
+      updateData.currentSubscriptionId = subscriptionId;
+      updateData.billingPeriod = billingPeriod;
+      updateData.currentPeriodStart = admin.firestore.Timestamp.fromDate(currentPeriodStart);
+      updateData.currentPeriodEnd = admin.firestore.Timestamp.fromDate(currentPeriodEnd);
+      updateData.lastUpdated = admin.firestore.FieldValue.serverTimestamp();
+      updateData.updatedBy = 'WEBHOOK_PAYMENT';
+
+      console.log(`✅ Payment succeeded for user ${userId} - Updating to ${planName} plan`);
+    } else {
+      console.log(`✅ Payment succeeded for user ${userId} - One-time payment (no subscription update)`);
+    }
+
+    await db.collection('users').doc(userId).update(updateData);
   } catch (error) {
     console.error(`❌ Error handling payment succeeded:`, error);
   }
@@ -272,17 +309,17 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 // Helper function to map price IDs to plan names
 function getPlanNameFromPriceId(priceId: string): string {
   switch (priceId) {
-    case 'price_1SkpjzB0j1hBhcavgG4UB87r': // STARTER monthly
+    case 'price_1SokjDB0j1hBhcavV5F0hkvX': // STARTER monthly
       return 'STARTER';
-    case 'price_1Skpl7B0j1hBhcav7os5P9pw': // STARTER yearly
+    case 'price_1Sokk3B0j1hBhcavbpjVtnGv': // STARTER yearly
       return 'STARTER_YEARLY';
-    case 'price_1SkpjMB0j1hBhcavs7UzslCL': // PRO monthly
+    case 'price_1SoklQB0j1hBhcavYA4erwqY': // PRO monthly
       return 'PRO';
-    case 'price_1SklhgB0j1hBhcavEji0sk0o': // PRO yearly
+    case 'price_1SokkxB0j1hBhcaviwspqhPv': // PRO yearly
       return 'PRO_YEARLY';
-    case 'price_1SkqNeB0j1hBhcavJhDuJAbm': // STUDIO monthly
+    case 'price_1SokmOB0j1hBhcavZWbByj8F': // STUDIO monthly
       return 'STUDIO';
-    case 'price_1SkqO3B0j1hBhcavvZewFYVF': // STUDIO yearly
+    case 'price_1SokmqB0j1hBhcavGcXmnQEk': // STUDIO yearly
       return 'STUDIO_YEARLY';
     default:
       return 'FREE';
