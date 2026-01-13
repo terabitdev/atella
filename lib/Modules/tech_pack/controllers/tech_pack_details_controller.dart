@@ -1032,9 +1032,14 @@ class TechPackDetailsController extends GetxController {
           duration: const Duration(milliseconds: 1500),
         );
 
-        // After successful purchase, allow user to generate techpack
-        generateTechPackImages();
-        Get.toNamed('/tech_pack_ready_screen');
+        // After successful purchase, follow the same flow as manual generate
+        // CRITICAL: Increment counter IMMEDIATELY before generation starts
+        await _subscriptionService.incrementTechpackUsage();
+        print('✅ Tech pack usage incremented BEFORE generation (after add-on purchase)');
+
+        generationCancelled.value = false; // Reset cancellation flag
+        generateTechPackImages(); // Start generation (non-awaited)
+        Get.toNamed('/tech_pack_ready_screen'); // Navigate
       } else {
         Get.snackbar(
           _l10n.tpdPurchaseFailed,
