@@ -592,28 +592,46 @@ class StripeSubscriptionService {
 
       // For paid plans, use the regular counter
       // Determine base limit
-      int baseLimit = 3; // FREE
+      int baseLimit = 3; // FREE (fallback)
       if (subscription.subscriptionPlan.startsWith('STUDIO')) {
-        baseLimit = 35;
+        baseLimit = 25;
       } else if (subscription.subscriptionPlan.startsWith('PRO')) {
-        baseLimit = 15;
+        baseLimit = 12;
       } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
         baseLimit = 5;
       }
 
+      // Current usage counts BEFORE increment
+      int currentDesignUsage = subscription.designsGeneratedThisMonth;
+      int currentExtraUsage = subscription.extraDesignsUsed;
+      int extrasPurchased = subscription.extraDesignsPurchased;
+
+      print('🔍 DESIGN BEFORE INCREMENT:');
+      print('   Base limit: $baseLimit');
+      print('   Designs generated: $currentDesignUsage');
+      print('   Extra packs purchased: $extrasPurchased (${extrasPurchased * 5} designs)');
+      print('   Extras used: $currentExtraUsage');
+
+      // Determine if this generation will use base quota or extras
+      bool usingExtra = currentDesignUsage >= baseLimit && extrasPurchased > 0;
+
       Map<String, dynamic> updates = {
+        // Always increment monthly counter - this tracks TOTAL designs generated
         'designsGeneratedThisMonth': FieldValue.increment(1),
       };
 
       // ONLY increment extraDesignsUsed if:
       // 1. User has purchased add-ons (extraDesignsPurchased > 0)
-      // 2. User has exceeded their base quota
-      if (subscription.extraDesignsPurchased > 0 &&
-          subscription.designsGeneratedThisMonth >= baseLimit) {
+      // 2. User has ALREADY exceeded their base quota (current usage >= base limit)
+      if (usingExtra) {
         // User is consuming from add-on pool
         updates['extraDesignsUsed'] = FieldValue.increment(1);
         print(
-          '📦 Consuming add-on design (${subscription.extraDesignsUsed + 1}/${subscription.extraDesignsPurchased * 5})',
+          '📦 Consuming EXTRA design (will be: ${currentExtraUsage + 1}/${extrasPurchased * 5})',
+        );
+      } else {
+        print(
+          '📦 Consuming BASE design (will be: ${currentDesignUsage + 1}/$baseLimit)',
         );
       }
 
@@ -623,8 +641,16 @@ class StripeSubscriptionService {
       // Log current usage after increment
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
+        int totalAllowed = updatedSubscription.getTotalAllowedDesigns();
+        print('🔍 DESIGN AFTER INCREMENT:');
         print(
-          '📊 Current design usage: ${updatedSubscription.designCounterDisplay} (${updatedSubscription.subscriptionPlan} plan)',
+          '   Designs generated: ${updatedSubscription.designsGeneratedThisMonth}/$totalAllowed',
+        );
+        print(
+          '   Extras used: ${updatedSubscription.extraDesignsUsed}/${extrasPurchased * 5}',
+        );
+        print(
+          '   Plan: ${updatedSubscription.subscriptionPlan}',
         );
 
         // Check if all add-ons are fully consumed and reset if needed
