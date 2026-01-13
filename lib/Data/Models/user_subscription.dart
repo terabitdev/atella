@@ -105,7 +105,7 @@ class UserSubscription {
     bool isYearly = billingPeriod == 'YEARLY' || subscriptionPlan.contains('YEARLY');
 
     if (subscriptionPlan.startsWith('STUDIO')) {
-      int baseLimit = 16;
+      int baseLimit = 10;
       // Check if user has consumed all monthly quota
       if (techpacksUsedThisMonth < baseLimit) {
         return true; // Still have monthly quota
@@ -116,7 +116,7 @@ class UserSubscription {
       return addonsAvailable > 0;
     }
     if (subscriptionPlan.startsWith('PRO')) {
-      int baseLimit = 8;
+      int baseLimit = 6;
       // Check if user has consumed all monthly quota
       if (techpacksUsedThisMonth < baseLimit) {
         return true; // Still have monthly quota

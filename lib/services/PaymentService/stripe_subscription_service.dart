@@ -493,27 +493,44 @@ class StripeSubscriptionService {
       // Determine base limit
       int baseLimit = 0;
       if (subscription.subscriptionPlan.startsWith('STUDIO')) {
-        baseLimit = 16;
+        baseLimit = 10;
       } else if (subscription.subscriptionPlan.startsWith('PRO')) {
-        baseLimit = 8;
+        baseLimit = 6;
       } else if (subscription.subscriptionPlan.startsWith('STARTER')) {
         baseLimit = 2;
       }
 
+      // Current usage counts BEFORE increment
+      int currentMonthlyUsage = subscription.techpacksUsedThisMonth;
+      int currentExtraUsage = subscription.extraTechpacksUsed;
+      int extrasPurchased = subscription.extraTechpacksPurchased;
+
+      print('🔍 BEFORE INCREMENT:');
+      print('   Base limit: $baseLimit');
+      print('   Monthly usage: $currentMonthlyUsage');
+      print('   Extras purchased: $extrasPurchased');
+      print('   Extras used: $currentExtraUsage');
+
+      // Determine if this generation will use base quota or extras
+      bool usingExtra = currentMonthlyUsage >= baseLimit && extrasPurchased > 0;
+
       Map<String, dynamic> updates = {
-        // Always increment monthly counter
+        // Always increment monthly counter - this tracks TOTAL techpacks generated
         'techpacksUsedThisMonth': FieldValue.increment(1),
       };
 
       // ONLY increment extraTechpacksUsed if:
       // 1. User has purchased add-ons (extraTechpacksPurchased > 0)
-      // 2. User has exceeded their base quota
-      if (subscription.extraTechpacksPurchased > 0 &&
-          subscription.techpacksUsedThisMonth >= baseLimit) {
+      // 2. User has ALREADY exceeded their base quota (current usage >= base limit)
+      if (usingExtra) {
         // User is consuming from add-on pool
         updates['extraTechpacksUsed'] = FieldValue.increment(1);
         print(
-          '📦 Consuming add-on techpack (${subscription.extraTechpacksUsed + 1}/${subscription.extraTechpacksPurchased})',
+          '📦 Consuming EXTRA techpack (will be: ${currentExtraUsage + 1}/$extrasPurchased)',
+        );
+      } else {
+        print(
+          '📦 Consuming BASE techpack (will be: ${currentMonthlyUsage + 1}/$baseLimit)',
         );
       }
 
@@ -531,12 +548,19 @@ class StripeSubscriptionService {
       final updatedSubscription = await getCurrentUserSubscription();
       if (updatedSubscription != null) {
         String maxTechpacks = '${updatedSubscription.totalAllowedTechpacks}';
+        print('🔍 AFTER INCREMENT:');
         print(
-          '📊 Current techpack usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks per month (${updatedSubscription.subscriptionPlan} plan)',
+          '   Monthly usage: ${updatedSubscription.techpacksUsedThisMonth}/$maxTechpacks',
+        );
+        print(
+          '   Extras used: ${updatedSubscription.extraTechpacksUsed}/$extrasPurchased',
+        );
+        print(
+          '   Plan: ${updatedSubscription.subscriptionPlan}',
         );
         if (isYearly) {
           print(
-            '📊 Yearly usage: ${updatedSubscription.techpacksUsedThisYear}/36 per year',
+            '   Yearly usage: ${updatedSubscription.techpacksUsedThisYear}',
           );
         }
 
