@@ -2369,6 +2369,19 @@ class AppLocalizationsFr extends AppLocalizations {
       'Aucune image de dossier technique générée pour le moment';
 
   @override
+  String get tprWarningTitle => 'Avertissement';
+
+  @override
+  String get tprNavigationWarningMessage =>
+      'La génération est en cours. Revenir en arrière annulera la génération et vous perdrez votre dossier technique. Êtes-vous sûr ?';
+
+  @override
+  String get tprStayHere => 'Rester Ici';
+
+  @override
+  String get tprGoBack => 'Revenir';
+
+  @override
   String get tprGetManufacturerSuggestions =>
       'Obtenir des Suggestions de Fabricants';
 

@@ -1,6 +1,7 @@
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../Data/api/openai_service.dart';
@@ -82,6 +83,7 @@ class TechPackDetailsController extends GetxController {
 
   // Tech pack generation state
   final RxBool isGeneratingTechPack = false.obs;
+  final RxBool generationCancelled = false.obs;
   final RxList<String> generatedTechPackImages = <String>[].obs;
   final RxString selectedDesignImagePath = ''.obs;
   final RxString selectedDesignPrompt = ''.obs;
@@ -417,10 +419,19 @@ class TechPackDetailsController extends GetxController {
     // Subscription check is now handled by checkSubscriptionAndGenerate method
     // This method only handles the actual generation
 
+    // REMOVED: Duplicate prevention guard - counter is now incremented BEFORE generation
+    // User has already "paid" by this point, so let generation proceed
+
     try {
       print('=== STARTING DETAILED TECH PACK GENERATION ===');
       isGeneratingTechPack.value = true;
       generatedTechPackImages.clear();
+
+      // Check if cancelled before starting expensive operations
+      if (generationCancelled.value) {
+        print('⚠️ Generation cancelled before starting');
+        return;
+      }
 
       final techPackDetails = _collectTechPackDetails();
       final referenceImages = _collectReferenceImages();
@@ -498,6 +509,12 @@ class TechPackDetailsController extends GetxController {
         throw Exception('Failed to generate manufacturing image');
       }
 
+      // Check if cancelled after first image generation
+      if (generationCancelled.value) {
+        print('⚠️ Generation cancelled after manufacturing image');
+        return;
+      }
+
       // Generate technical flat drawing with detailed approach and reference images
       print(
         'Generating detailed technical flat drawing with ${referenceImages.length} reference images...',
@@ -566,10 +583,13 @@ class TechPackDetailsController extends GetxController {
         'Generated ${generatedTechPackImages.length} tech pack images using: $approach',
       );
 
-      // Increment techpack usage for STARTER plan users after successful generation
-      await _subscriptionService.incrementTechpackUsage();
+      // Check if generation was cancelled during execution
+      if (generationCancelled.value) {
+        print('⚠️ Generation was cancelled - skipping success notification');
+        return; // Don't show success message if cancelled
+      }
 
-      // Validate and provide feedback
+      // Validate and provide feedback ONLY if not cancelled
       if (generatedTechPackImages.length >= 2) {
         print(
           '✅ Both manufacturing and detailed technical images generated successfully',
@@ -720,11 +740,19 @@ class TechPackDetailsController extends GetxController {
       return;
     }
 
-    // If user has permission, start generation and navigate immediately
-    generateTechPackImages(); // Don't await - let it run in background
-    Get.toNamed(
-      '/tech_pack_ready_screen',
-    ); // Navigate immediately to show generating state
+    // CRITICAL: Increment counter IMMEDIATELY before generation starts
+    // This ensures the counter is updated even if user navigates away
+    await _subscriptionService.incrementTechpackUsage();
+    print('✅ Tech pack usage incremented BEFORE generation');
+
+    // Reset cancellation flag
+    generationCancelled.value = false;
+
+    // Start generation (don't await - runs in background)
+    generateTechPackImages();
+
+    // Navigate to ready screen
+    Get.toNamed('/tech_pack_ready_screen');
   }
 
   void _showUpgradeDialog() async {
@@ -1059,6 +1087,141 @@ class TechPackDetailsController extends GetxController {
         ],
       ),
     );
+  }
+
+  // Cancel ongoing generation
+  void cancelGeneration() {
+    if (isGeneratingTechPack.value) {
+      generationCancelled.value = true;
+      isGeneratingTechPack.value = false;
+      generatedTechPackImages.clear();
+      print('🚫 Tech pack generation cancelled by user');
+    }
+  }
+
+  // Check if user wants to navigate back during generation
+  Future<bool> handleBackNavigation() async {
+    if (!isGeneratingTechPack.value) {
+      return true; // Allow navigation if not generating
+    }
+
+    // Show warning dialog with app design
+    final l10n = AppLocalizations.of(Get.context!)!;
+    final result = await Get.dialog<bool>(
+      Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              // Warning icon and title
+              Row(
+                children: [
+                  Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3E7),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.warning_amber_rounded,
+                      color: const Color(0xFFFF9800),
+                      size: 24.sp,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      l10n.tprWarningTitle,
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+
+              // Warning message
+              Text(
+                l10n.tprNavigationWarningMessage,
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF666666),
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 24.h),
+
+              // Action buttons
+              Row(
+                children: [
+                  Expanded(
+                    child: OutlinedButton(
+                      onPressed: () => Get.back(result: false),
+                      style: OutlinedButton.styleFrom(
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        side: const BorderSide(color: Color(0xFF1A1A1A)),
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                      ),
+                      child: Text(
+                        l10n.tprStayHere,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: const Color(0xFF1A1A1A),
+                        ),
+                      ),
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: ElevatedButton(
+                      onPressed: () => Get.back(result: true),
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFE53935),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12.r),
+                        ),
+                        padding: EdgeInsets.symmetric(vertical: 14.h),
+                        elevation: 0,
+                      ),
+                      child: Text(
+                        l10n.tprGoBack,
+                        style: TextStyle(
+                          fontSize: 16.sp,
+                          fontWeight: FontWeight.w600,
+                          color: Colors.white,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
+    );
+
+    if (result == true) {
+      // User confirmed - cancel generation
+      cancelGeneration();
+      return true;
+    }
+
+    return false; // User chose to stay
   }
 
   // Collect all current tech pack details from form inputs

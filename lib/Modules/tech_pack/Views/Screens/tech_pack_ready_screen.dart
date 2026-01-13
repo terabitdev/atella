@@ -16,6 +16,7 @@ import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:lottie/lottie.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import '../../controllers/tech_pack_details_controller.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -263,21 +264,48 @@ class TechPackReadyScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final controller = Get.put(TechPackReadyController());
+    final detailsController = Get.find<TechPackDetailsController>();
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFD),
-      body: TapTrackingWrapper(
-        screenName: 'TechPackReadyScreen',
-        child: SafeArea(
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 26),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+        // Show warning dialog if generating, otherwise go back
+        final canGoBack = await detailsController.handleBackNavigation();
+        if (canGoBack && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFDFDFD),
+        body: TapTrackingWrapper(
+          screenName: 'TechPackReadyScreen',
+          child: SafeArea(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 26),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+              // Header with back button, title, and edit icon
+              Row(
+                children: [
+                  // Back button
+                  GestureDetector(
+                    onTap: () async {
+                      final canGoBack = await detailsController.handleBackNavigation();
+                      if (canGoBack) {
+                        Get.back();
+                      }
+                    },
+                    child: Icon(
+                      Icons.arrow_back_ios_new,
+                      size: 20.sp,
+                      color: Colors.black,
+                    ),
+                  ),
+                  SizedBox(width: 16.w),
+                  // Title
                   Expanded(
                     child: Text(
                       l10n.tprYourTechPackReady,
@@ -287,6 +315,7 @@ class TechPackReadyScreen extends StatelessWidget {
                     ),
                   ),
                   SizedBox(width: 12.w),
+                  // Edit icon
                   InkWell(
                     onTap: () => Get.toNamed('/tech_pack_details_screen'),
                     child: Image.asset(
@@ -462,10 +491,11 @@ class TechPackReadyScreen extends StatelessWidget {
                   ],
                 );
               }),
-            ],
+                ],
+              ),
+            ),
           ),
         ),
-      ),
       ),
     );
   }

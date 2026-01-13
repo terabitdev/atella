@@ -22,19 +22,35 @@ class TechPackDetailsScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
-    return Scaffold(
-      backgroundColor: const Color(0xFFFDFDFD),
-      body: SafeArea(
-        child: SingleChildScrollView(
-          padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              SizedBox(height: 8.h),
-              GlobalHeader(
-                title: l10n.tpdFinalDesignValidated,
-                onBack: () => Get.back(),
-              ),
+    return PopScope(
+      canPop: false,
+      onPopInvokedWithResult: (bool didPop, dynamic result) async {
+        if (didPop) return;
+        // Show warning dialog if generating, otherwise go back
+        final canGoBack = await controller.handleBackNavigation();
+        if (canGoBack && context.mounted) {
+          Navigator.of(context).pop();
+        }
+      },
+      child: Scaffold(
+        backgroundColor: const Color(0xFFFDFDFD),
+        body: SafeArea(
+          child: SingleChildScrollView(
+            padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 8.h),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                SizedBox(height: 8.h),
+                GlobalHeader(
+                  title: l10n.tpdFinalDesignValidated,
+                  onBack: () async {
+                    // Show warning dialog if generating, otherwise go back
+                    final canGoBack = await controller.handleBackNavigation();
+                    if (canGoBack) {
+                      Get.back();
+                    }
+                  },
+                ),
               SizedBox(height: 18.h),
               // Materials & Fabrics Block
               Container(
@@ -554,7 +570,8 @@ class TechPackDetailsScreen extends StatelessWidget {
                     : const SizedBox.shrink(),
               ),
               SizedBox(height: 30.h),
-            ],
+              ],
+            ),
           ),
         ),
       ),

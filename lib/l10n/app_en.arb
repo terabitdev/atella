@@ -2753,6 +2753,22 @@
   "@tprNoTechPackImages": {
     "description": "Empty state message for tech pack images"
   },
+  "tprWarningTitle": "Warning",
+  "@tprWarningTitle": {
+    "description": "Warning dialog title"
+  },
+  "tprNavigationWarningMessage": "Generation is in progress. Going back will cancel the generation and you will lose your tech pack. Are you sure?",
+  "@tprNavigationWarningMessage": {
+    "description": "Warning message when user tries to navigate back during generation"
+  },
+  "tprStayHere": "Stay Here",
+  "@tprStayHere": {
+    "description": "Button to stay on current screen"
+  },
+  "tprGoBack": "Go Back",
+  "@tprGoBack": {
+    "description": "Button to go back and cancel generation"
+  },
   "tprGetManufacturerSuggestions": "Get Manufacturer Suggestions",
   "@tprGetManufacturerSuggestions": {
     "description": "Get manufacturer suggestions button text"

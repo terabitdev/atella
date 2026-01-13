@@ -4370,6 +4370,30 @@ abstract class AppLocalizations {
   /// **'No tech pack images generated yet'**
   String get tprNoTechPackImages;
 
+  /// Warning dialog title
+  ///
+  /// In en, this message translates to:
+  /// **'Warning'**
+  String get tprWarningTitle;
+
+  /// Warning message when user tries to navigate back during generation
+  ///
+  /// In en, this message translates to:
+  /// **'Generation is in progress. Going back will cancel the generation and you will lose your tech pack. Are you sure?'**
+  String get tprNavigationWarningMessage;
+
+  /// Button to stay on current screen
+  ///
+  /// In en, this message translates to:
+  /// **'Stay Here'**
+  String get tprStayHere;
+
+  /// Button to go back and cancel generation
+  ///
+  /// In en, this message translates to:
+  /// **'Go Back'**
+  String get tprGoBack;
+
   /// Get manufacturer suggestions button text
   ///
   /// In en, this message translates to:

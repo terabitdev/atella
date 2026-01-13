@@ -2333,6 +2333,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tprNoTechPackImages => 'No tech pack images generated yet';
 
   @override
+  String get tprWarningTitle => 'Warning';
+
+  @override
+  String get tprNavigationWarningMessage =>
+      'Generation is in progress. Going back will cancel the generation and you will lose your tech pack. Are you sure?';
+
+  @override
+  String get tprStayHere => 'Stay Here';
+
+  @override
+  String get tprGoBack => 'Go Back';
+
+  @override
   String get tprGetManufacturerSuggestions => 'Get Manufacturer Suggestions';
 
   @override
