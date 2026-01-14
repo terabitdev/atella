@@ -420,7 +420,8 @@ class RefiningConceptController extends GetxController {
 
       // In edit mode, show all questions
       _currentQuestionIndex.value = questions.length - 1;
-      _maxQuestionIndexShown.value = questions.length - 1; // Set max to show all questions
+      _maxQuestionIndexShown.value =
+          questions.length - 1; // Set max to show all questions
 
       // Force reactive update
       _answers.refresh();
@@ -633,7 +634,9 @@ class RefiningConceptController extends GetxController {
           if (existingAnswer != null && existingAnswer.textInput != null) {
             _answers[questionId] = BriefAnswer(
               questionId: questionId,
-              selectedOptions: existingAnswer.selectedOptions.where((opt) => opt != 'Custom').toList(),
+              selectedOptions: existingAnswer.selectedOptions
+                  .where((opt) => opt != 'Custom')
+                  .toList(),
               textInput: null, // Clear custom text
             );
           }
@@ -701,13 +704,19 @@ class RefiningConceptController extends GetxController {
     // If question is already answered, update the answer immediately (no delay for edits)
     if (isQuestionAnswered(questionId)) {
       print('Updating already answered question immediately: $questionId');
-      _confirmCurrentSelection(forQuestionId: questionId, shouldAdvance: false); // Don't advance when editing
+      _confirmCurrentSelection(
+        forQuestionId: questionId,
+        shouldAdvance: false,
+      ); // Don't advance when editing
     } else {
       // Auto-advance to next question after delay for new answers (2 seconds like creative brief)
       await Future.delayed(const Duration(milliseconds: 2000));
       // Check if the selection is still the same (user hasn't changed it)
       if (_tempSelections[questionId] == option) {
-        _confirmCurrentSelection(forQuestionId: questionId, shouldAdvance: true); // Advance for new answers
+        _confirmCurrentSelection(
+          forQuestionId: questionId,
+          shouldAdvance: true,
+        ); // Advance for new answers
       }
     }
   }
@@ -739,11 +748,14 @@ class RefiningConceptController extends GetxController {
     _answers.refresh();
 
     // Update max question index to ensure next question becomes visible
-    final questionIndex = questions.indexWhere((q) => q.id == confirmedQuestionId);
+    final questionIndex = questions.indexWhere(
+      (q) => q.id == confirmedQuestionId,
+    );
     if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
       // Show the next question by updating max index
       final nextIndex = questionIndex + 1;
-      if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+      if (nextIndex < questions.length &&
+          nextIndex > _maxQuestionIndexShown.value) {
         _maxQuestionIndexShown.value = nextIndex;
       }
     }
@@ -780,9 +792,7 @@ class RefiningConceptController extends GetxController {
 
     // If "Custom" is selected, show text field
     if (option == 'Custom') {
-      print(
-        'Custom selected for question: $questionId, category: $category',
-      );
+      print('Custom selected for question: $questionId, category: $category');
       _customSelectedForCategory.value = '$questionId:$category';
       // Clear any temporary selection for this category
       _tempCategorizedSelections.remove(category);
@@ -800,9 +810,11 @@ class RefiningConceptController extends GetxController {
 
     // Also check if this option exists in the final answer
     final existingAnswer = _answers[questionId];
-    final isInFinalAnswer = existingAnswer?.selectedOptions.any(
-      (opt) => opt == '$category:$option' || opt == option
-    ) ?? false;
+    final isInFinalAnswer =
+        existingAnswer?.selectedOptions.any(
+          (opt) => opt == '$category:$option' || opt == option,
+        ) ??
+        false;
 
     if (questionId == 'specific_features') {
       print('Is same option selected: $isSameOptionSelected');
@@ -866,7 +878,8 @@ class RefiningConceptController extends GetxController {
     update();
 
     // Check if this is an already answered question being edited
-    if (isQuestionAnswered(questionId) && _tempCategorizedSelections.isNotEmpty) {
+    if (isQuestionAnswered(questionId) &&
+        _tempCategorizedSelections.isNotEmpty) {
       // For editing existing answers, update immediately (no debounce)
       _categorizedDebounce?.cancel();
       _confirmCategorizedSelections(questionId);
@@ -913,7 +926,9 @@ class RefiningConceptController extends GetxController {
           }
         }
       }
-    } else if (customText != null && customText.isNotEmpty && customText.contains(':')) {
+    } else if (customText != null &&
+        customText.isNotEmpty &&
+        customText.contains(':')) {
       // Single custom text format
       final separatorIndex = customText.indexOf(':');
       final key = customText.substring(0, separatorIndex);
@@ -962,7 +977,8 @@ class RefiningConceptController extends GetxController {
     if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
       // Show the next question by updating max index
       final nextIndex = questionIndex + 1;
-      if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+      if (nextIndex < questions.length &&
+          nextIndex > _maxQuestionIndexShown.value) {
         _maxQuestionIndexShown.value = nextIndex;
       }
     }
@@ -973,7 +989,10 @@ class RefiningConceptController extends GetxController {
   }
 
   // Method to confirm current selection and advance
-  void _confirmCurrentSelection({String? forQuestionId, bool shouldAdvance = true}) {
+  void _confirmCurrentSelection({
+    String? forQuestionId,
+    bool shouldAdvance = true,
+  }) {
     final confirmedQuestionId = forQuestionId ?? currentQuestion.id;
     final tempSelection = _tempSelections[confirmedQuestionId];
     if (tempSelection != null) {
@@ -987,11 +1006,15 @@ class RefiningConceptController extends GetxController {
       _tempSelections.remove(confirmedQuestionId);
 
       // Update max question index to ensure next question becomes visible
-      final questionIndex = questions.indexWhere((q) => q.id == confirmedQuestionId);
-      if (questionIndex != -1 && questionIndex >= _maxQuestionIndexShown.value) {
+      final questionIndex = questions.indexWhere(
+        (q) => q.id == confirmedQuestionId,
+      );
+      if (questionIndex != -1 &&
+          questionIndex >= _maxQuestionIndexShown.value) {
         // Show the next question by updating max index
         final nextIndex = questionIndex + 1;
-        if (nextIndex < questions.length && nextIndex > _maxQuestionIndexShown.value) {
+        if (nextIndex < questions.length &&
+            nextIndex > _maxQuestionIndexShown.value) {
           _maxQuestionIndexShown.value = nextIndex;
         }
       }
@@ -1335,7 +1358,8 @@ class RefiningConceptController extends GetxController {
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
         l10n?.rcSnackbarRefiningComplete ?? 'Refining Complete!',
-        l10n?.rcSnackbarRefiningCompleteMessage ?? 'Your concept has been refined successfully.',
+        l10n?.rcSnackbarRefiningCompleteMessage ??
+            'Your concept has been refined successfully.',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1444,7 +1468,8 @@ class RefiningConceptController extends GetxController {
     }
 
     if (maxQuestionIndexShown >= 5) {
-      return questions.length; // Show all questions after question 5 has been shown
+      return questions
+          .length; // Show all questions after question 5 has been shown
     }
     // Use max index to keep questions visible even when user goes back to edit
     return maxQuestionIndexShown + 1; // Show progressive questions for 1-5
@@ -1574,8 +1599,14 @@ class RefiningConceptController extends GetxController {
     // Track refined concept completion
     final data = _dataService.getRefinedConceptData();
     PostHogAnalyticsService().trackRefinedConceptCompleted(
-      silhouette: data['garment_type']?.toString() ?? data['silhouette']?.toString() ?? '',
-      features: data['specific_features']?.toString() ?? data['features']?.toString() ?? '',
+      silhouette:
+          data['garment_type']?.toString() ??
+          data['silhouette']?.toString() ??
+          '',
+      features:
+          data['specific_features']?.toString() ??
+          data['features']?.toString() ??
+          '',
     );
 
     // Pass edit mode data to next screen
@@ -1638,7 +1669,9 @@ class RefiningConceptController extends GetxController {
 
         // Increment email-based quota
         try {
-          bool incrementSuccess = await _quotaService.incrementDesignUsage(user.email!);
+          bool incrementSuccess = await _quotaService.incrementDesignUsage(
+            user.email!,
+          );
           if (!incrementSuccess) {
             Get.snackbar(
               'Error',
@@ -1687,9 +1720,10 @@ class RefiningConceptController extends GetxController {
     final int usedCount = subscription.designsGeneratedThisMonth;
     final int totalCount = subscription.getTotalAllowedDesigns();
     // Check if user is on a paid plan (STARTER, PRO, or STUDIO)
-    final bool isPaidUser = subscription.subscriptionPlan.startsWith('STARTER') ||
-                           subscription.subscriptionPlan.startsWith('PRO') ||
-                           subscription.subscriptionPlan.startsWith('STUDIO');
+    final bool isPaidUser =
+        subscription.subscriptionPlan.startsWith('STARTER') ||
+        subscription.subscriptionPlan.startsWith('PRO') ||
+        subscription.subscriptionPlan.startsWith('STUDIO');
 
     Get.dialog(
       UsageWarningDialog(
@@ -1701,8 +1735,11 @@ class RefiningConceptController extends GetxController {
           // Get localized strings before async operation
           final context = Get.context;
           final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
-          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
+          final titleText =
+              l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText =
+              l10n?.rcSnackbarExtraDesignsAddedMessage ??
+              '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
@@ -1740,10 +1777,11 @@ class RefiningConceptController extends GetxController {
   void _showLimitExceededDialog() async {
     // Get current subscription to check if user is paid
     final subscription = await _stripeService.getCurrentUserSubscription();
-    final bool isPaidUser = subscription != null &&
-                           (subscription.subscriptionPlan.startsWith('STARTER') ||
-                            subscription.subscriptionPlan.startsWith('PRO') ||
-                            subscription.subscriptionPlan.startsWith('STUDIO'));
+    final bool isPaidUser =
+        subscription != null &&
+        (subscription.subscriptionPlan.startsWith('STARTER') ||
+            subscription.subscriptionPlan.startsWith('PRO') ||
+            subscription.subscriptionPlan.startsWith('STUDIO'));
 
     Get.dialog(
       LimitExceededDialog(
@@ -1752,8 +1790,11 @@ class RefiningConceptController extends GetxController {
           // Get localized strings before async operation
           final context = Get.context;
           final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
-          final messageText = l10n?.rcSnackbarExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
+          final titleText =
+              l10n?.rcSnackbarExtraDesignsAdded ?? 'Extra Designs Added!';
+          final messageText =
+              l10n?.rcSnackbarExtraDesignsAddedMessage ??
+              '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
           bool success = await _stripeService.purchaseExtraDesigns();
@@ -1813,7 +1854,8 @@ class RefiningConceptController extends GetxController {
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
         l10n?.rcSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
-        l10n?.rcSnackbarRegeneratingDesignsMessage ?? 'Creating 3 new designs based on your updated preferences...',
+        l10n?.rcSnackbarRegeneratingDesignsMessage ??
+            'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1831,7 +1873,8 @@ class RefiningConceptController extends GetxController {
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
         l10n?.rcSnackbarGeneratingDesigns ?? 'Generating Designs!',
-        l10n?.rcSnackbarGeneratingDesignsMessage ?? 'Creating 3 unique designs based on your preferences...',
+        l10n?.rcSnackbarGeneratingDesignsMessage ??
+            'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1846,7 +1889,8 @@ class RefiningConceptController extends GetxController {
     // The API expects English values, not localized ones
     Map<String, dynamic> finalDetailsData = {
       'season': 'All-Season (Layer-Friendly)', // Default to all-season
-      'budget': 'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
+      'budget':
+          'Mid-Range (€30-50 Production / €60-120 Retail)', // Default to mid-range
       'features': '', // No special features by default
       'customFeatures': '',
       'additionalDetails': '', // No additional details
@@ -2198,7 +2242,8 @@ class RefiningConceptController extends GetxController {
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
                             Text(
-                              l10n?.rcDialogEnterCustomAnswer ?? 'Enter custom answer:',
+                              l10n?.rcDialogEnterCustomAnswer ??
+                                  'Enter custom answer:',
                               style: TextStyle(
                                 fontSize: 14,
                                 fontWeight: FontWeight.w500,
@@ -2208,7 +2253,9 @@ class RefiningConceptController extends GetxController {
                             TextField(
                               controller: tempCustomController,
                               decoration: InputDecoration(
-                                hintText: l10n?.rcDialogCustomAnswerHint ?? 'Type your custom answer...',
+                                hintText:
+                                    l10n?.rcDialogCustomAnswerHint ??
+                                    'Type your custom answer...',
                                 border: OutlineInputBorder(
                                   borderRadius: BorderRadius.circular(8),
                                 ),
@@ -2244,13 +2291,18 @@ class RefiningConceptController extends GetxController {
                 }
               });
             },
-            child: Text(l10n?.rcDialogCancel ?? 'Cancel', style: TextStyle(color: Colors.grey[600])),
+            child: Text(
+              l10n?.rcDialogCancel ?? 'Cancel',
+              style: TextStyle(color: Colors.grey[600]),
+            ),
           ),
           ElevatedButton(
             onPressed: () {
               // Get localization before any operations
               final context = Get.context;
-              final l10n = context != null ? AppLocalizations.of(context) : null;
+              final l10n = context != null
+                  ? AppLocalizations.of(context)
+                  : null;
 
               final bool isCategorizedDialog =
                   question.type == 'chips_categorized' && categoriesMap != null;
@@ -2265,7 +2317,10 @@ class RefiningConceptController extends GetxController {
                   if (hasCustom && controller.text.trim().isEmpty) {
                     Get.snackbar(
                       l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
-                      l10n?.rcSnackbarInvalidInputCategoryMessage(category.key) ?? 'Please enter a custom answer for ${category.key}',
+                      l10n?.rcSnackbarInvalidInputCategoryMessage(
+                            category.key,
+                          ) ??
+                          'Please enter a custom answer for ${category.key}',
                       backgroundColor: Colors.black,
                       colorText: Colors.white,
                       snackPosition: SnackPosition.TOP,
@@ -2306,7 +2361,8 @@ class RefiningConceptController extends GetxController {
                     tempCustomController.text.trim().isEmpty) {
                   Get.snackbar(
                     l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
-                    l10n?.rcSnackbarInvalidInputMessage ?? 'Please enter a custom answer',
+                    l10n?.rcSnackbarInvalidInputMessage ??
+                        'Please enter a custom answer',
                     backgroundColor: Colors.black,
                     colorText: Colors.white,
                     snackPosition: SnackPosition.TOP,
@@ -2333,7 +2389,8 @@ class RefiningConceptController extends GetxController {
               update();
               Get.snackbar(
                 l10n?.rcSnackbarAnswerUpdated ?? 'Answer Updated',
-                l10n?.rcSnackbarAnswerUpdatedMessage ?? 'Your answer has been updated successfully',
+                l10n?.rcSnackbarAnswerUpdatedMessage ??
+                    'Your answer has been updated successfully',
                 backgroundColor: Colors.black,
                 colorText: Colors.white,
                 snackPosition: SnackPosition.TOP,
@@ -2390,7 +2447,10 @@ class RefiningConceptController extends GetxController {
   }
 
   /// Get localized options for display (list of options)
-  List<String> getLocalizedOptions(BuildContext context, List<String> englishOptions) {
+  List<String> getLocalizedOptions(
+    BuildContext context,
+    List<String> englishOptions,
+  ) {
     final service = RefiningConceptLocalizationService(context);
     return service.getLocalizedOptions(englishOptions);
   }
@@ -2405,7 +2465,10 @@ class RefiningConceptController extends GetxController {
   }
 
   /// Convert localized option back to English for API/storage
-  String getEnglishOptionFromLocalized(BuildContext context, String localizedOption) {
+  String getEnglishOptionFromLocalized(
+    BuildContext context,
+    String localizedOption,
+  ) {
     final service = RefiningConceptLocalizationService(context);
     return service.getEnglishOption(localizedOption);
   }

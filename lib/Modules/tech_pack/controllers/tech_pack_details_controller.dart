@@ -89,6 +89,10 @@ class TechPackDetailsController extends GetxController {
   final RxString selectedDesignPrompt = ''.obs;
   Map<String, dynamic> designData = {};
 
+  // Generation ID + In-Flight Guard for preventing duplicate generations
+  String? _activeGenerationId;
+  bool _isGenerationInFlight = false;
+
   TechPackModel? get editingTechPack => _editingTechPack;
 
   @override
@@ -415,15 +419,22 @@ class TechPackDetailsController extends GetxController {
     return images;
   }
 
-  Future<void> generateTechPackImages() async {
+  Future<void> generateTechPackImages(String generationId) async {
     // Subscription check is now handled by checkSubscriptionAndGenerate method
     // This method only handles the actual generation
-
-    // REMOVED: Duplicate prevention guard - counter is now incremented BEFORE generation
-    // User has already "paid" by this point, so let generation proceed
+    // Generation ID is passed to track and validate this specific generation
 
     try {
       print('=== STARTING DETAILED TECH PACK GENERATION ===');
+      print('🆔 Generation ID: $generationId');
+
+      // GENERATION ID CHECK: Verify this generation is still active
+      if (generationId != _activeGenerationId) {
+        print('⚠️ Generation outdated or cancelled (ID mismatch), aborting');
+        print('   Expected: $_activeGenerationId, Got: $generationId');
+        return;
+      }
+
       isGeneratingTechPack.value = true;
       generatedTechPackImages.clear();
 
@@ -509,6 +520,13 @@ class TechPackDetailsController extends GetxController {
         throw Exception('Failed to generate manufacturing image');
       }
 
+      // GENERATION ID CHECK: Verify this generation is still active after manufacturing image
+      if (generationId != _activeGenerationId) {
+        print('⚠️ Generation cancelled after manufacturing image (ID mismatch)');
+        print('   Discarding manufacturing image from outdated generation');
+        return;
+      }
+
       // Check if cancelled after first image generation
       if (generationCancelled.value) {
         print('⚠️ Generation cancelled after manufacturing image');
@@ -567,6 +585,13 @@ class TechPackDetailsController extends GetxController {
         }
       }
 
+      // FINAL GENERATION ID CHECK: Verify before adding images to list
+      if (generationId != _activeGenerationId) {
+        print('⚠️ Generation cancelled before adding images (ID mismatch)');
+        print('   Discarding all images from outdated generation');
+        return;
+      }
+
       // Add images to the list
       generatedTechPackImages.addAll(manufacturingImages);
       generatedTechPackImages.addAll(technicalImages);
@@ -583,13 +608,20 @@ class TechPackDetailsController extends GetxController {
         'Generated ${generatedTechPackImages.length} tech pack images using: $approach',
       );
 
+      // GENERATION ID CHECK: Only show success message if this generation is still active
+      if (generationId != _activeGenerationId) {
+        print('⚠️ Generation ID mismatch - skipping success notification');
+        print('   Expected: $_activeGenerationId, Got: $generationId');
+        return; // Don't show success message if this generation was cancelled
+      }
+
       // Check if generation was cancelled during execution
       if (generationCancelled.value) {
         print('⚠️ Generation was cancelled - skipping success notification');
         return; // Don't show success message if cancelled
       }
 
-      // Validate and provide feedback ONLY if not cancelled
+      // Validate and provide feedback ONLY if not cancelled and generation is still active
       if (generatedTechPackImages.length >= 2) {
         print(
           '✅ Both manufacturing and detailed technical images generated successfully',
@@ -618,15 +650,30 @@ class TechPackDetailsController extends GetxController {
       print('=== TECH PACK GENERATION ERROR ===');
       print('Error: $e');
 
-      Get.snackbar(
-        _l10n.tpdError,
-        _l10n.tpdFailedToGenerateTechPack(e.toString()),
-        snackPosition: SnackPosition.TOP,
-        backgroundColor: Colors.red,
-        colorText: Colors.white,
-      );
+      // Only show error snackbar if this generation is still active
+      if (generationId == _activeGenerationId) {
+        Get.snackbar(
+          _l10n.tpdError,
+          _l10n.tpdFailedToGenerateTechPack(e.toString()),
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+        );
+      } else {
+        print('⚠️ Generation ID mismatch - skipping error notification');
+        print('   Expected: $_activeGenerationId, Got: $generationId');
+      }
     } finally {
-      isGeneratingTechPack.value = false;
+      // CRITICAL: Only reset flags if this generation is still the active one
+      // This prevents cancelled generations from interfering with new generations
+      if (generationId == _activeGenerationId) {
+        isGeneratingTechPack.value = false;
+        _isGenerationInFlight = false;
+        print('🏁 Generation $generationId completed, flags reset');
+      } else {
+        print('⚠️ Generation $generationId outdated, skipping flag reset');
+        print('   Active generation is: $_activeGenerationId');
+      }
     }
   }
 
@@ -729,6 +776,19 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> checkSubscriptionAndGenerate() async {
+    // IN-FLIGHT GUARD: Prevent multiple concurrent generations
+    if (_isGenerationInFlight) {
+      Get.snackbar(
+        _l10n.tpdProcessing,
+        'Tech pack generation already in progress. Please wait...',
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+      );
+      return;
+    }
+
     // Check subscription before generating final techpack (with monthly reset check)
     bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
       'techpack',
@@ -740,6 +800,14 @@ class TechPackDetailsController extends GetxController {
       return;
     }
 
+    // Set in-flight flag to prevent concurrent generations
+    _isGenerationInFlight = true;
+
+    // Generate unique ID for this generation
+    _activeGenerationId = DateTime.now().millisecondsSinceEpoch.toString();
+    final currentGenerationId = _activeGenerationId!;
+    print('🆔 New generation started with ID: $currentGenerationId');
+
     // CRITICAL: Increment counter IMMEDIATELY before generation starts
     // This ensures the counter is updated even if user navigates away
     await _subscriptionService.incrementTechpackUsage();
@@ -749,7 +817,8 @@ class TechPackDetailsController extends GetxController {
     generationCancelled.value = false;
 
     // Start generation (don't await - runs in background)
-    generateTechPackImages();
+    // Pass generation ID to track this specific generation
+    generateTechPackImages(currentGenerationId);
 
     // Navigate to ready screen
     Get.toNamed('/tech_pack_ready_screen');
@@ -1033,12 +1102,20 @@ class TechPackDetailsController extends GetxController {
         );
 
         // After successful purchase, follow the same flow as manual generate
+        // Set in-flight flag to prevent concurrent generations
+        _isGenerationInFlight = true;
+
+        // Generate unique ID for this generation
+        _activeGenerationId = DateTime.now().millisecondsSinceEpoch.toString();
+        final currentGenerationId = _activeGenerationId!;
+        print('🆔 New generation started (add-on purchase) with ID: $currentGenerationId');
+
         // CRITICAL: Increment counter IMMEDIATELY before generation starts
         await _subscriptionService.incrementTechpackUsage();
         print('✅ Tech pack usage incremented BEFORE generation (after add-on purchase)');
 
         generationCancelled.value = false; // Reset cancellation flag
-        generateTechPackImages(); // Start generation (non-awaited)
+        generateTechPackImages(currentGenerationId); // Start generation with ID
         Get.toNamed('/tech_pack_ready_screen'); // Navigate
       } else {
         Get.snackbar(
@@ -1097,8 +1174,14 @@ class TechPackDetailsController extends GetxController {
   // Cancel ongoing generation
   void cancelGeneration() {
     if (isGeneratingTechPack.value) {
+      // Invalidate current generation ID to discard any in-flight results
+      _activeGenerationId = null;
+      print('🚫 Generation ID invalidated: $_activeGenerationId');
+
+      // Reset flags and clear images
       generationCancelled.value = true;
       isGeneratingTechPack.value = false;
+      _isGenerationInFlight = false;
       generatedTechPackImages.clear();
       print('🚫 Tech pack generation cancelled by user');
     }
