@@ -3092,6 +3092,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Erreur réseau. Veuillez vérifier votre connexion et réessayer.';
 
   @override
+  String get noInternetConnection => 'Aucune Connexion Internet';
+
+  @override
+  String get noInternetConnectionMessage =>
+      'Veuillez vérifier votre connexion internet et réessayer.';
+
+  @override
   String get googleReauthCancelled =>
       'La connexion Google a été annulée. Suppression du compte annulée.';
 

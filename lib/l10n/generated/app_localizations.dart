@@ -5600,6 +5600,18 @@ abstract class AppLocalizations {
   /// **'Network error. Please check your connection and try again.'**
   String get networkError;
 
+  /// No internet connection title
+  ///
+  /// In en, this message translates to:
+  /// **'No Internet Connection'**
+  String get noInternetConnection;
+
+  /// No internet connection message
+  ///
+  /// In en, this message translates to:
+  /// **'Please check your internet connection and try again.'**
+  String get noInternetConnectionMessage;
+
   /// Google re-authentication cancelled message
   ///
   /// In en, this message translates to:

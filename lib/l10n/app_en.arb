@@ -3681,6 +3681,14 @@
   "@networkError": {
     "description": "Network error message"
   },
+  "noInternetConnection": "No Internet Connection",
+  "@noInternetConnection": {
+    "description": "No internet connection title"
+  },
+  "noInternetConnectionMessage": "Please check your internet connection and try again.",
+  "@noInternetConnectionMessage": {
+    "description": "No internet connection message"
+  },
   "googleReauthCancelled": "Google sign-in was cancelled. Account deletion aborted.",
   "@googleReauthCancelled": {
     "description": "Google re-authentication cancelled message"

@@ -10,6 +10,7 @@ import '../../../Data/Models/user_subscription.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
+import '../../../services/internet_connectivity_checker.dart';
 import '../Views/Widgets/techpack_limit_dialog.dart';
 
 class TechPackDetailsController extends GetxController {
@@ -776,6 +777,25 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> checkSubscriptionAndGenerate() async {
+    // INTERNET CHECK: Verify internet connection before generation (mobile only)
+    final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
+    if (!hasInternet) {
+      Get.snackbar(
+        _l10n.noInternetConnection,
+        _l10n.noInternetConnectionMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        icon: Icon(
+          Icons.wifi_off_rounded,
+          color: Colors.white,
+          size: 28.sp,
+        ),
+      );
+      return;
+    }
+
     // IN-FLIGHT GUARD: Prevent multiple concurrent generations
     if (_isGenerationInFlight) {
       Get.snackbar(

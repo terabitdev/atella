@@ -3036,6 +3036,13 @@ class AppLocalizationsEn extends AppLocalizations {
       'Network error. Please check your connection and try again.';
 
   @override
+  String get noInternetConnection => 'No Internet Connection';
+
+  @override
+  String get noInternetConnectionMessage =>
+      'Please check your internet connection and try again.';
+
+  @override
   String get googleReauthCancelled =>
       'Google sign-in was cancelled. Account deletion aborted.';
 

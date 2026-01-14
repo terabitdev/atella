@@ -1389,6 +1389,8 @@
   "@networkError": {
     "description": "Network error message"
   },
+  "noInternetConnection": "Aucune Connexion Internet",
+  "noInternetConnectionMessage": "Veuillez vérifier votre connexion internet et réessayer.",
   "googleReauthCancelled": "La connexion Google a été annulée. Suppression du compte annulée.",
   "@googleReauthCancelled": {
     "description": "Google re-authentication cancelled message"

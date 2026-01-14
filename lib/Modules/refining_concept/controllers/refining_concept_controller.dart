@@ -10,9 +10,11 @@ import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/services/localization/refining_concept_localization_service.dart';
+import 'package:atella/services/internet_connectivity_checker.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class RefiningConceptController extends GetxController {
@@ -1623,6 +1625,26 @@ class RefiningConceptController extends GetxController {
 
   // Method to proceed directly to design generation (skipping Final Details)
   void proceedToDesignGeneration() async {
+    // INTERNET CHECK: Verify internet connection before generation (mobile only)
+    final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
+    if (!hasInternet) {
+      final l10n = AppLocalizations.of(Get.context!)!;
+      Get.snackbar(
+        l10n.noInternetConnection,
+        l10n.noInternetConnectionMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(seconds: 3),
+        icon: Icon(
+          Icons.wifi_off_rounded,
+          color: Colors.white,
+          size: 28.sp,
+        ),
+      );
+      return;
+    }
+
     // Ensure Creative Brief data is saved (if controller still exists)
     if (Get.isRegistered<CreativeBriefController>()) {
       final creativeBriefController = Get.find<CreativeBriefController>();
