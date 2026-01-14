@@ -2346,6 +2346,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tprGoBack => 'Go Back';
 
   @override
+  String get tprGenerationInProgress =>
+      'Tech pack generation already in progress. Please wait...';
+
+  @override
   String get tprGetManufacturerSuggestions => 'Get Manufacturer Suggestions';
 
   @override

@@ -780,7 +780,7 @@ class TechPackDetailsController extends GetxController {
     if (_isGenerationInFlight) {
       Get.snackbar(
         _l10n.tpdProcessing,
-        'Tech pack generation already in progress. Please wait...',
+        _l10n.tprGenerationInProgress,
         backgroundColor: Colors.orange,
         colorText: Colors.white,
         snackPosition: SnackPosition.TOP,

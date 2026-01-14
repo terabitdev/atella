@@ -2382,6 +2382,10 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tprGoBack => 'Revenir';
 
   @override
+  String get tprGenerationInProgress =>
+      'La génération du dossier technique est déjà en cours. Veuillez patienter...';
+
+  @override
   String get tprGetManufacturerSuggestions =>
       'Obtenir des Suggestions de Fabricants';
 

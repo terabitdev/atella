@@ -4394,6 +4394,12 @@ abstract class AppLocalizations {
   /// **'Go Back'**
   String get tprGoBack;
 
+  /// Message shown when user tries to generate while generation is already in progress
+  ///
+  /// In en, this message translates to:
+  /// **'Tech pack generation already in progress. Please wait...'**
+  String get tprGenerationInProgress;
+
   /// Get manufacturer suggestions button text
   ///
   /// In en, this message translates to:

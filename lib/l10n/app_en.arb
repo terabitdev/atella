@@ -2769,6 +2769,10 @@
   "@tprGoBack": {
     "description": "Button to go back and cancel generation"
   },
+  "tprGenerationInProgress": "Tech pack generation already in progress. Please wait...",
+  "@tprGenerationInProgress": {
+    "description": "Message shown when user tries to generate while generation is already in progress"
+  },
   "tprGetManufacturerSuggestions": "Get Manufacturer Suggestions",
   "@tprGetManufacturerSuggestions": {
     "description": "Get manufacturer suggestions button text"
