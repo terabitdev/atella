@@ -24,10 +24,14 @@ class GlobalHeader extends StatelessWidget {
         children: [
           GestureDetector(
             onTap: onBack ?? () => Get.back(),
-            child: Icon(
-              Icons.arrow_back_ios_new,
-              size: 20.sp,
-              color: Colors.black,
+            behavior: HitTestBehavior.opaque,
+            child: Padding(
+              padding: EdgeInsets.all(8.w),
+              child: Icon(
+                Icons.arrow_back_ios_new,
+                size: 20.sp,
+                color: Colors.black,
+              ),
             ),
           ),
           SizedBox(width: 16.w),

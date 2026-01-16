@@ -294,8 +294,8 @@ class TechPackReadyScreen extends StatelessWidget {
                   GestureDetector(
                     onTap: () async {
                       final canGoBack = await detailsController.handleBackNavigation();
-                      if (canGoBack) {
-                        Get.back();
+                      if (canGoBack && context.mounted) {
+                        Navigator.of(context).pop();
                       }
                     },
                     child: Icon(

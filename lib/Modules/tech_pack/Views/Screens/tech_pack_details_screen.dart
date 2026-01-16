@@ -26,8 +26,8 @@ class TechPackDetailsScreen extends StatelessWidget {
       canPop: false,
       onPopInvokedWithResult: (bool didPop, dynamic result) async {
         if (didPop) return;
-        // Show warning dialog if generating, otherwise go back
-        final canGoBack = await controller.handleBackNavigation();
+        // Allow back navigation without dialog on tech pack details screen
+        final canGoBack = await controller.handleBackNavigation(shouldShowDialog: false);
         if (canGoBack && context.mounted) {
           Navigator.of(context).pop();
         }
@@ -44,10 +44,10 @@ class TechPackDetailsScreen extends StatelessWidget {
                 GlobalHeader(
                   title: l10n.tpdFinalDesignValidated,
                   onBack: () async {
-                    // Show warning dialog if generating, otherwise go back
-                    final canGoBack = await controller.handleBackNavigation();
-                    if (canGoBack) {
-                      Get.back();
+                    // Allow back navigation without dialog on tech pack details screen
+                    final canGoBack = await controller.handleBackNavigation(shouldShowDialog: false);
+                    if (canGoBack && context.mounted) {
+                      Navigator.of(context).pop();
                     }
                   },
                 ),

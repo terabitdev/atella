@@ -1208,15 +1208,25 @@ class TechPackDetailsController extends GetxController {
   }
 
   // Check if user wants to navigate back during generation
-  Future<bool> handleBackNavigation() async {
+  // shouldShowDialog: if false, allows navigation without showing confirmation dialog
+  Future<bool> handleBackNavigation({bool shouldShowDialog = true}) async {
     if (!isGeneratingTechPack.value) {
       return true; // Allow navigation if not generating
     }
 
+    // If shouldShowDialog is false, allow navigation without confirmation
+    if (!shouldShowDialog) {
+      return true;
+    }
+
     // Show warning dialog with app design
     final l10n = AppLocalizations.of(Get.context!)!;
-    final result = await Get.dialog<bool>(
-      Dialog(
+    final context = Get.context!;
+
+    final result = await showDialog<bool?>(
+      context: context,
+      barrierDismissible: false,
+      builder: (BuildContext dialogContext) => Dialog(
         backgroundColor: Colors.white,
         shape: RoundedRectangleBorder(
           borderRadius: BorderRadius.circular(16.r),
@@ -1274,7 +1284,7 @@ class TechPackDetailsController extends GetxController {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () => Get.back(result: false),
+                      onPressed: () => Navigator.of(dialogContext).pop(false),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
@@ -1295,7 +1305,7 @@ class TechPackDetailsController extends GetxController {
                   SizedBox(width: 12.w),
                   Expanded(
                     child: ElevatedButton(
-                      onPressed: () => Get.back(result: true),
+                      onPressed: () => Navigator.of(dialogContext).pop(true),
                       style: ElevatedButton.styleFrom(
                         backgroundColor: const Color(0xFFE53935),
                         shape: RoundedRectangleBorder(
@@ -1320,7 +1330,6 @@ class TechPackDetailsController extends GetxController {
           ),
         ),
       ),
-      barrierDismissible: false,
     );
 
     if (result == true) {
