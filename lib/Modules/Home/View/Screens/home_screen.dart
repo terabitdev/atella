@@ -23,7 +23,9 @@ class HomeScreen extends StatefulWidget {
 
 class _HomeScreenState extends State<HomeScreen> {
   late final HomeController controller;
-  
+  late final ScrollController _scrollController;
+  bool _isSearchBarPinned = false;
+
   @override
   void initState() {
     super.initState();
@@ -38,6 +40,10 @@ class _HomeScreenState extends State<HomeScreen> {
     controller = Get.put(HomeController(), permanent: true);
     print('✅ Created new HomeController');
 
+    // Initialize scroll controller
+    _scrollController = ScrollController();
+    _scrollController.addListener(_onScroll);
+
     // Refresh data if coming back from another screen
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final args = Get.arguments;
@@ -46,9 +52,27 @@ class _HomeScreenState extends State<HomeScreen> {
       }
     });
   }
-  
+
+  void _onScroll() {
+    // Calculate the threshold: when search bar should pin (logo + welcome text + spacing)
+    // 20 (top padding) + 60 (logo height) + 40 (spacing) + 18 (text height approx) + 60 (spacing) = ~198
+    final double threshold = 170.h;
+
+    if (_scrollController.offset >= threshold && !_isSearchBarPinned) {
+      setState(() {
+        _isSearchBarPinned = true;
+      });
+    } else if (_scrollController.offset < threshold && _isSearchBarPinned) {
+      setState(() {
+        _isSearchBarPinned = false;
+      });
+    }
+  }
+
   @override
   void dispose() {
+    _scrollController.removeListener(_onScroll);
+    _scrollController.dispose();
     // Don't dispose the controller since it's permanent
     super.dispose();
   }
@@ -61,9 +85,13 @@ class _HomeScreenState extends State<HomeScreen> {
       resizeToAvoidBottomInset: true,
       body: TapTrackingWrapper(
         screenName: 'HomeScreen',
-        child: SingleChildScrollView(
-        child: Column(
+        child: Stack(
           children: [
+            // Main scrollable content
+            SingleChildScrollView(
+              controller: _scrollController,
+              child: Column(
+                children: [
             // ---------- Stack for background ----------
             Stack(
               children: [
@@ -284,9 +312,52 @@ class _HomeScreenState extends State<HomeScreen> {
               }
               return SizedBox.shrink();
             }),
+                ],
+              ),
+            ),
+            // Pinned search bar overlay (appears when scrolled)
+            if (_isSearchBarPinned)
+              Positioned(
+                top: 0,
+                left: 0,
+                right: 0,
+                child: Container(
+                  decoration: const BoxDecoration(
+                    color: Colors.black,
+                    borderRadius: BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                  ),
+                  child: ClipRRect(
+                    borderRadius: const BorderRadius.only(
+                      bottomLeft: Radius.circular(30),
+                      bottomRight: Radius.circular(30),
+                    ),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        image: DecorationImage(
+                          image: AssetImage('assets/images/home_container.png'),
+                          fit: BoxFit.cover,
+                        ),
+                      ),
+                      padding: EdgeInsets.only(
+                        left: 24.w,
+                        right: 24.w,
+                        top: 40.h,
+                        bottom: 16.h,
+                      ),
+                      child: SearchWidget(
+                        controller: controller.searchController,
+                        onChanged: controller.onSearchChanged,
+                        onClear: controller.clearSearch,
+                      ),
+                    ),
+                  ),
+                ),
+              ),
           ],
         ),
-      ),
       ),
     );
   }
