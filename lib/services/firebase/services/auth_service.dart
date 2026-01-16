@@ -8,7 +8,11 @@ import 'package:atella/services/firebase/services/design_quota_service.dart';
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
-  final GoogleSignIn _googleSignIn = GoogleSignIn();
+  final GoogleSignIn _googleSignIn = GoogleSignIn(
+    // iOS client ID from GoogleService-Info.plist
+    // This ensures proper OAuth redirect handling on iOS
+    clientId: '1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com',
+  );
   final DesignQuotaService _quotaService = DesignQuotaService();
 
   Future<String?> signUp({
