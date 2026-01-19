@@ -212,8 +212,11 @@ class TechPackDetailsScreen extends StatelessWidget {
                                                 .isEmpty
                                             ? null
                                             : controller.measurementImagePath.value,
-                                        onEdit: controller.measurementImagePath.value.isNotEmpty 
+                                        onEdit: controller.measurementImagePath.value.isNotEmpty
                                             ? () => controller.openCameraForMeasurement()
+                                            : null,
+                                        onDelete: controller.measurementImagePath.value.isNotEmpty
+                                            ? () => controller.clearMeasurementImage()
                                             : null,
                                       )
                                     : const SizedBox.shrink()),
@@ -342,8 +345,11 @@ class TechPackDetailsScreen extends StatelessWidget {
                                       controller.labelImagePath.value.isEmpty
                                       ? null
                                       : controller.labelImagePath.value,
-                                  onEdit: controller.labelImagePath.value.isNotEmpty 
+                                  onEdit: controller.labelImagePath.value.isNotEmpty
                                       ? () => controller.openCameraForLabels()
+                                      : null,
+                                  onDelete: controller.labelImagePath.value.isNotEmpty
+                                      ? () => controller.clearLabelImage()
                                       : null,
                                 )),
                                 SizedBox(height: 10.h),

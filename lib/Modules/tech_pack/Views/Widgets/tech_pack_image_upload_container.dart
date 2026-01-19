@@ -9,12 +9,14 @@ class TechPackImageUploadContainer extends StatelessWidget {
   final VoidCallback onTap;
   final String? imagePath;
   final VoidCallback? onEdit;
+  final VoidCallback? onDelete;
 
   const TechPackImageUploadContainer({
     super.key,
     required this.onTap,
     this.imagePath,
     this.onEdit,
+    this.onDelete,
   }) ;
 
   @override
@@ -63,26 +65,53 @@ class TechPackImageUploadContainer extends StatelessWidget {
                         height: 120.h,
                       ),
                     ),
-                    if (onEdit != null)
-                      Positioned(
-                        top: 8.h,
-                        right: 8.w,
-                        child: GestureDetector(
-                          onTap: onEdit,
-                          child: Container(
-                            padding: EdgeInsets.all(6.w),
-                            decoration: BoxDecoration(
-                              color: Colors.black.withOpacity(0.7),
-                              borderRadius: BorderRadius.circular(20.r),
+                    // Action buttons (Edit and Delete)
+                    Positioned(
+                      top: 8.h,
+                      right: 8.w,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          // Delete button
+                          if (onDelete != null)
+                            GestureDetector(
+                              onTap: onDelete,
+                              child: Container(
+                                padding: EdgeInsets.all(6.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.red.withValues(alpha: 0.8),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Icon(
+                                  Icons.delete_outline,
+                                  color: Colors.white,
+                                  size: 16.sp,
+                                ),
+                              ),
                             ),
-                            child: Icon(
-                              Icons.edit,
-                              color: Colors.white,
-                              size: 16.sp,
+                          // Spacing between buttons
+                          if (onDelete != null && onEdit != null)
+                            SizedBox(width: 8.w),
+                          // Edit button
+                          if (onEdit != null)
+                            GestureDetector(
+                              onTap: onEdit,
+                              child: Container(
+                                padding: EdgeInsets.all(6.w),
+                                decoration: BoxDecoration(
+                                  color: Colors.black.withValues(alpha: 0.7),
+                                  borderRadius: BorderRadius.circular(20.r),
+                                ),
+                                child: Icon(
+                                  Icons.edit,
+                                  color: Colors.white,
+                                  size: 16.sp,
+                                ),
+                              ),
                             ),
-                          ),
-                        ),
+                        ],
                       ),
+                    ),
                   ],
                 ),
         ),

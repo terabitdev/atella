@@ -776,6 +776,40 @@ class TechPackDetailsController extends GetxController {
     }
   }
 
+  // Clear label image functionality
+  void clearLabelImage() {
+    labelImagePath.value = '';
+    // Reset the label text visibility when image is removed
+    if (labelsNeededController.text.trim().isEmpty) {
+      showLabelText.value = true;
+    }
+    // Reset the image upload visibility when image is removed
+    if (labelsNeededController.text.trim().isEmpty) {
+      showLabelImage.value = true;
+    } else {
+      showLabelImage.value = false;
+    }
+    // Re-check if labeling block is still complete
+    checkLabelingBlockComplete();
+  }
+
+  // Clear measurement image functionality
+  void clearMeasurementImage() {
+    measurementImagePath.value = '';
+    // Reset the measurement text visibility when image is removed
+    if (measurementChartController.text.trim().isEmpty) {
+      showMeasurementText.value = true;
+    }
+    // Reset the image upload visibility when image is removed
+    if (measurementChartController.text.trim().isEmpty) {
+      showMeasurementImage.value = true;
+    } else {
+      showMeasurementImage.value = false;
+    }
+    // Re-check if sizes block is still complete
+    checkSizesBlockComplete();
+  }
+
   Future<void> checkSubscriptionAndGenerate() async {
     // INTERNET CHECK: Verify internet connection before generation (mobile only)
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
