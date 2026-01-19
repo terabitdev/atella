@@ -481,23 +481,21 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (labelImage.isNotEmpty) {
       // User uploaded a logo reference image - show actual logo on garment
       logoInstruction =
-          'Show the logo/label from the reference image placed on the ${logoPlacement} area of the ${garmentType}. The logo should be clearly visible and properly scaled.';
+          'Show the logo/label from the reference image placed on the $logoPlacement area of the $garmentType. The logo should be clearly visible and properly scaled.';
 
       // If label text is also provided, show it in LABELS section (not on garment)
       if (labelsNeeded.isNotEmpty) {
         labelTextForSection = labelsNeeded;
       }
     } else if (labelsNeeded.isNotEmpty) {
-      // User provided ONLY label text (no custom image) - show generic placeholder logo on garment
-      logoInstruction =
-          'Show a generic placeholder logo icon (simple square or circle shape) on the ${logoPlacement} area of the ${garmentType}. DO NOT render any text on the garment itself.';
+      // User provided ONLY label text (no custom image) - do NOT show anything on garment
+      logoInstruction = '';  // No logo on garment - keep it clean
 
-      // Label text goes in LABELS section
+      // Label text goes in LABELS section only
       labelTextForSection = labelsNeeded;
     } else if (logoPlacement.isNotEmpty) {
-      // Only placement provided, show generic placeholder logo
-      logoInstruction =
-          'Show a generic placeholder logo icon (simple square or circle shape) on the ${logoPlacement} area.';
+      // Only placement provided, no logo, no text
+      logoInstruction = '';  // Keep garment clean
     }
 
     // Manufacturing prompt - conditional based on logo type
@@ -510,9 +508,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     String manufacturingPrompt;
 
     // Build LABELS section content
-    String labelsSection = '${logoPlacement} placement';
+    String labelsSection = '';
     if (labelTextForSection.isNotEmpty) {
-      labelsSection += ', Label text: "${labelTextForSection}"';
+      // Only show label text, not placement
+      labelsSection = labelTextForSection;
+    } else if (logoPlacement.isNotEmpty) {
+      // If no label text but placement exists, show placement
+      labelsSection = '$logoPlacement placement';
     }
 
     if (labelImage.isNotEmpty) {
@@ -521,12 +523,12 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       manufacturingPrompt =
           '''Professional fashion tech pack specification sheet for $garmentType. Clean organized grid layout with distinct sections: MATERIALS ($mainFabric, $secondaryMaterial written in proper text), COLORS ($primaryColor, $alternateColor, Pantone $pantone with color blocks), SIZES ($sizeRange measurement chart), TECHNICAL ($accessories, $stitching, $decorativeStitching the $garmentType is shown in $primaryColor), LABELS ($labelsSection), PACKAGING ($packagingType), PRODUCTION (Price $costPerPiece, ${quantity}units, $deliveryDate). White background, professional typography, complete layout visible. CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
     } else {
-      // TEXT logo or no logo - AI should render placeholder logo
+      // TEXT logo only or no logo - keep garment clean, show label text in LABELS section
       print(
-        '   ✅ Using FULL prompt (generic placeholder logo on garment, label text in LABELS section)',
+        '   ✅ Using clean garment prompt (no logo on garment, label text only in LABELS section)',
       );
       manufacturingPrompt =
-          '''Professional fashion tech pack specification sheet for $garmentType. Clean organized grid layout with distinct sections: MATERIALS ($mainFabric, $secondaryMaterial written in proper text), COLORS ($primaryColor, $alternateColor, Pantone $pantone with color blocks), SIZES ($sizeRange measurement chart), TECHNICAL ($accessories, $stitching, $decorativeStitching the $garmentType is shown in $primaryColor), LABELS ($labelsSection), PACKAGING ($packagingType), PRODUCTION (Price $costPerPiece, ${quantity}units, $deliveryDate). White background, professional typography, complete layout visible. $logoInstruction CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
+          '''Professional fashion tech pack specification sheet for $garmentType. Clean organized grid layout with distinct sections: MATERIALS ($mainFabric, $secondaryMaterial written in proper text), COLORS ($primaryColor, $alternateColor, Pantone $pantone with color blocks), SIZES ($sizeRange measurement chart), TECHNICAL ($accessories, $stitching, $decorativeStitching the $garmentType is shown in $primaryColor), LABELS ($labelsSection), PACKAGING ($packagingType), PRODUCTION (Price $costPerPiece, ${quantity}units, $deliveryDate). White background, professional typography, complete layout visible. CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
     }
     // Build technical flat prompt with correct logo behavior
     String technicalLogoInstruction = '';
@@ -535,12 +537,12 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       technicalLogoInstruction =
           '\n- Show the logo/label from reference image clearly marked on the $logoPlacement area with callout annotation.';
     } else if (labelsNeeded.isNotEmpty || logoPlacement.isNotEmpty) {
-      // User provided label text or just placement - show generic placeholder
+      // User provided label text or just placement - show highlighted area with "LOGO" text
       technicalLogoInstruction =
-          '\n- Show a generic placeholder logo icon (simple square or circle) on the $logoPlacement area with callout line indicating "Logo Placement: $logoPlacement".';
+          '\n- Mark the $logoPlacement area with a highlighted box or dashed outline containing the word "LOGO" in capital letters.';
       if (labelTextForSection.isNotEmpty) {
         technicalLogoInstruction +=
-            '\n- Add annotation near logo placement showing: "Label: $labelTextForSection"';
+            '\n- Add callout annotation near the logo area showing: "Label: $labelTextForSection"';
       }
     }
 
@@ -622,39 +624,36 @@ CRITICAL: Ensure all text, labels, and annotations are spelled correctly with no
 
     // Create label text for LABELS section
     String labelTextForSection = '';
-    String logoInstruction = '';
     String technicalLogoInstruction = '';
 
     if (labelImage.isNotEmpty) {
       // User uploaded logo image - show actual logo
-      logoInstruction = 'Show logo from reference image on $logoPlacement. ';
       technicalLogoInstruction =
           'Show logo from reference image on $logoPlacement with callout. ';
       if (labelsNeeded.isNotEmpty) {
         labelTextForSection = labelsNeeded;
       }
     } else if (labelsNeeded.isNotEmpty) {
-      // User provided label text only - show generic placeholder on garment
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
+      // User provided label text only - keep garment clean, show highlighted area on technical
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement with callout annotation "Label: $labelsNeeded". ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
       labelTextForSection = labelsNeeded;
     } else if (logoPlacement.isNotEmpty) {
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
     }
 
-    String labelsSection = '$logoPlacement placement';
+    String labelsSection = '';
     if (labelTextForSection.isNotEmpty) {
-      labelsSection += ', Label text: "$labelTextForSection"';
+      // Only show label text, not placement
+      labelsSection = labelTextForSection;
+    } else if (logoPlacement.isNotEmpty) {
+      labelsSection = '$logoPlacement placement';
     }
 
     return {
       'manufacturing_prompt':
-          'Professional fashion tech pack specification sheet for $garmentType. Organized sections: materials, colors with swatches, sizes chart, technical details, LABELS ($labelsSection), production info. Clean grid layout, white background. $logoInstruction',
+          'Professional fashion tech pack specification sheet for $garmentType. Organized sections: materials, colors with swatches, sizes chart, technical details, LABELS ($labelsSection), production info. Clean grid layout, white background.',
 
       'technical_flat_prompt':
           'Detailed technical flat drawing of $garmentType, large front view centered on white background. Black line art with comprehensive annotations: measurement arrows (A, B, C, D), seam allowances labeled, $accessories details, $stitching callouts, construction notes, dimension lines. ${technicalLogoInstruction}Professional fashion industry flat with detailed labeling. Complete drawing visible with wide margins.',
@@ -681,37 +680,33 @@ CRITICAL: Ensure all text, labels, and annotations are spelled correctly with no
 
     // Create label text for LABELS section
     String labelTextForSection = '';
-    String logoInstruction = '';
     String technicalLogoInstruction = '';
 
     if (labelImage.isNotEmpty) {
-      logoInstruction = 'Show logo from reference image on $logoPlacement. ';
       technicalLogoInstruction =
           'Show logo from reference image on $logoPlacement with callout. ';
       if (labelsNeeded.isNotEmpty) {
         labelTextForSection = labelsNeeded;
       }
     } else if (labelsNeeded.isNotEmpty) {
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement with callout annotation "Label: $labelsNeeded". ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
       labelTextForSection = labelsNeeded;
     } else if (logoPlacement.isNotEmpty) {
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
     }
 
-    String labelsSection = '$logoPlacement placement';
+    String labelsSection = '';
     if (labelTextForSection.isNotEmpty) {
-      labelsSection += ', Label text: "$labelTextForSection"';
+      labelsSection = labelTextForSection;
+    } else if (logoPlacement.isNotEmpty) {
+      labelsSection = '$logoPlacement placement';
     }
 
     return {
       'manufacturing_prompt':
-          'Complete fashion tech pack layout for $garmentType. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL ($accessories, $stitching), LABELS ($labelsSection), PACKAGING, PRODUCTION. Professional format, white background, all content within frame. $logoInstruction',
+          'Complete fashion tech pack layout for $garmentType. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL ($accessories, $stitching), LABELS ($labelsSection), PACKAGING, PRODUCTION. Professional format, white background, all content within frame.',
 
       'technical_flat_prompt':
           'Technical flat drawing sheet for $garmentType. Layout: Front view (upper left), back view (upper right), detail callouts (bottom). Black lines on white. Show: $features, $accessories, $stitching, $decorativeStitching. ${technicalLogoInstruction}Include: measurement points A-F with arrows, seam allowances, construction details, topstitching circles. Professional annotations. Complete sheet layout with 10% margin border.',
@@ -732,37 +727,33 @@ CRITICAL: Ensure all text, labels, and annotations are spelled correctly with no
 
     // Create label text for LABELS section
     String labelTextForSection = '';
-    String logoInstruction = '';
     String technicalLogoInstruction = '';
 
     if (labelImage.isNotEmpty) {
-      logoInstruction = 'Show logo from reference on $logoPlacement. ';
       technicalLogoInstruction =
           'Show logo from reference on $logoPlacement with callout. ';
       if (labelsNeeded.isNotEmpty) {
         labelTextForSection = labelsNeeded;
       }
     } else if (labelsNeeded.isNotEmpty) {
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement with annotation "Label: $labelsNeeded". ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add annotation "Label: $labelsNeeded". ';
       labelTextForSection = labelsNeeded;
     } else if (logoPlacement.isNotEmpty) {
-      logoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
       technicalLogoInstruction =
-          'Show generic placeholder logo icon on $logoPlacement. ';
+          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
     }
 
-    String labelsSection = '$logoPlacement placement';
+    String labelsSection = '';
     if (labelTextForSection.isNotEmpty) {
-      labelsSection += ', Label: "$labelTextForSection"';
+      labelsSection = labelTextForSection;
+    } else if (logoPlacement.isNotEmpty) {
+      labelsSection = '$logoPlacement placement';
     }
 
     return {
       'manufacturing_prompt':
-          'Fashion tech pack for $garmentType: materials, colors, sizes, LABELS ($labelsSection), production details. Professional layout, white background, organized sections. $logoInstruction',
+          'Fashion tech pack for $garmentType: materials, colors, sizes, LABELS ($labelsSection), production details. Professional layout, white background, organized sections.',
 
       'technical_flat_prompt':
           'Technical drawing $garmentType with detailed labels. Front view, black lines, measurement arrows, $accessories details, construction notes. ${technicalLogoInstruction}Complete drawing with margins.',
