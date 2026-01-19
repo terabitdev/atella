@@ -72,37 +72,18 @@ class TechPackReadyScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      // Logo overlay (top-right)
+                      // Logo overlay (bottom-right)
                       Positioned(
-                        top: 16.h,
+                        bottom: 16.h,
                         right: 16.w,
-                        child: Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.end,
-                          children: [
-                            // Logo image
-                            Image.file(
-                              File(logoImagePath),
-                              width: 30.w,
-                              height: 30.w,
-                              fit: BoxFit.contain,
-                              errorBuilder: (context, error, stackTrace) {
-                                return SizedBox.shrink();
-                              },
-                            ),
-                            // Logo placement text
-                            if (logoPlacement != null && logoPlacement.isNotEmpty) ...[
-                              SizedBox(height: 4.h),
-                              Text(
-                                AppLocalizations.of(Get.context!)!.tprLogoPlacement(logoPlacement),
-                                style: TextStyle(
-                                  fontSize: 10.sp,
-                                  color: Colors.black54,
-                                  backgroundColor: Colors.white70,
-                                ),
-                              ),
-                            ],
-                          ],
+                        child: Image.file(
+                          File(logoImagePath),
+                          width: 30.w,
+                          height: 30.w,
+                          fit: BoxFit.contain,
+                          errorBuilder: (context, error, stackTrace) {
+                            return SizedBox.shrink();
+                          },
                         ),
                       ),
                     ],
@@ -390,24 +371,12 @@ class TechPackReadyScreen extends StatelessWidget {
                                 ),
                               ),
 
-                              // Small Logo Reference Overlay (top-right)
+                              // Small Logo Reference Overlay (bottom-right)
                               if (controller.hasLabelImage)
                                 Positioned(
-                                  top: 8.h,
+                                  bottom: 8.h,
                                   right: 8.w,
-                                  child: Row(
-                                    children: [
-                                      Text(
-                                        l10n.tprLogoPlacement(controller.logoPlacement),
-                                        style: TextStyle(
-                                          fontSize: 10.sp,
-                                          color: Colors.black54,
-                                          backgroundColor:
-                                              Colors.white70,
-                                        ),
-                                      ),
-                                      SizedBox(width: 4.w),
-                                      Image.file(
+                                  child: Image.file(
                                     File(controller.labelImagePath),
                                     width: 30.w,
                                     height: 30.w,
@@ -415,8 +384,6 @@ class TechPackReadyScreen extends StatelessWidget {
                                     errorBuilder: (context, error, stackTrace) {
                                       return SizedBox.shrink();
                                     },
-                                  ),
-                                    ],
                                   ),
                                 ),
                             ],
