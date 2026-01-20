@@ -1992,6 +1992,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mfSearchCountryHint => 'Commencez à taper pour rechercher';
 
   @override
+  String get mfSearchManufacturer => 'Rechercher des fabricants par nom...';
+
+  @override
   String get mfAllCountries => 'Tous les Pays';
 
   @override

@@ -14,6 +14,10 @@ class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
   final RxInt tabIndex = 0.obs;
 
+  // Search functionality
+  final TextEditingController searchController = TextEditingController();
+  final RxString searchQuery = ''.obs;
+
   // Country name mappings for abbreviations and alternative spellings
   // Maps variations to a list of possible matches
   static const Map<String, List<String>> _countryNameMappings = {
@@ -316,6 +320,14 @@ class ManufacturerSuggestionController extends GetxController {
     _checkForPrefilter();
     loadRecommendedManufacturers();
     setupScrollListener();
+    _setupSearchListener();
+  }
+
+  void _setupSearchListener() {
+    searchController.addListener(() {
+      searchQuery.value = searchController.text;
+      _applySearch();
+    });
   }
 
   void _checkForPrefilter() {
@@ -358,11 +370,48 @@ class ManufacturerSuggestionController extends GetxController {
 
   @override
   void onClose() {
+    searchController.dispose();
     scrollController.dispose();
     _recommendedStreamController.close();
     _filteredStreamController.close();
     _loadingStreamController.close();
     super.onClose();
+  }
+
+  // Search functionality
+  void _applySearch() {
+    if (tabIndex.value == 0) {
+      // Recommended tab - filter displayed manufacturers
+      _filterRecommendedManufacturers();
+    } else {
+      // Custom tab - apply search along with other filters
+      loadFilteredManufacturers();
+    }
+  }
+
+  void _filterRecommendedManufacturers() {
+    final query = searchQuery.value.toLowerCase().trim();
+
+    if (query.isEmpty) {
+      // Reset to original paginated list
+      _currentPage = 0;
+      final endIndex = (_currentPage + 1) * _pageSize;
+      displayedManufacturers.value = allManufacturersCache.take(endIndex).toList();
+      hasMoreData = endIndex < allManufacturersCache.length;
+    } else {
+      // Filter by search query
+      final filtered = allManufacturersCache
+          .where((m) => m.companyName.toLowerCase().contains(query))
+          .toList();
+      displayedManufacturers.value = filtered;
+      hasMoreData = false; // Disable pagination when searching
+    }
+  }
+
+  void clearSearch() {
+    searchController.clear();
+    searchQuery.value = '';
+    _applySearch();
   }
 
   void setupScrollListener() {
@@ -476,6 +525,14 @@ class ManufacturerSuggestionController extends GetxController {
     }
 
     var filtered = allManufacturersCache.toList();
+
+    // Apply search filter first
+    final query = searchQuery.value.toLowerCase().trim();
+    if (query.isNotEmpty) {
+      filtered = filtered
+          .where((m) => m.companyName.toLowerCase().contains(query))
+          .toList();
+    }
 
     // Apply country filter with abbreviation and variation matching
     if (selectedCountryName.value != 'All Countries' &&

@@ -54,6 +54,53 @@ class RecommendedManufactureScreen extends StatelessWidget {
                     ),
                   ),
                   SegmentedTabSwitcher(controller: controller),
+
+                  // Search bar
+                  Padding(
+                    padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 12.h),
+                    child: Container(
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(12.r),
+                        border: Border.all(color: const Color(0xFFE0E0E0)),
+                      ),
+                      child: TextField(
+                        controller: controller.searchController,
+                        decoration: InputDecoration(
+                          hintText: l10n.mfSearchManufacturer,
+                          hintStyle: TextStyle(
+                            color: const Color(0xFF999999),
+                            fontSize: 15.sp,
+                          ),
+                          prefixIcon: Icon(
+                            Icons.search,
+                            color: const Color(0xFF666666),
+                            size: 22.w,
+                          ),
+                          suffixIcon: Obx(() => controller.searchQuery.value.isNotEmpty
+                              ? IconButton(
+                                  icon: Icon(
+                                    Icons.clear,
+                                    color: const Color(0xFF666666),
+                                    size: 20.w,
+                                  ),
+                                  onPressed: controller.clearSearch,
+                                )
+                              : const SizedBox.shrink()),
+                          border: InputBorder.none,
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 12.h,
+                          ),
+                        ),
+                        style: TextStyle(
+                          fontSize: 15.sp,
+                          color: Colors.black,
+                        ),
+                      ),
+                    ),
+                  ),
+
                   Expanded(
                     child: controller.tabIndex.value == 0
                         ? recommendedTab(controller, l10n)

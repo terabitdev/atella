@@ -1963,6 +1963,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mfSearchCountryHint => 'Start typing to search';
 
   @override
+  String get mfSearchManufacturer => 'Search manufacturers by name...';
+
+  @override
   String get mfAllCountries => 'All Countries';
 
   @override

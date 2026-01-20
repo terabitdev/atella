@@ -2256,6 +2256,10 @@
   "@mfSearchCountryHint": {
     "description": "Country search hint"
   },
+  "mfSearchManufacturer": "Search manufacturers by name...",
+  "@mfSearchManufacturer": {
+    "description": "Manufacturer search hint"
+  },
   "mfAllCountries": "All Countries",
   "@mfAllCountries": {
     "description": "All countries option"

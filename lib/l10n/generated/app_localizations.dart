@@ -3698,6 +3698,12 @@ abstract class AppLocalizations {
   /// **'Start typing to search'**
   String get mfSearchCountryHint;
 
+  /// Manufacturer search hint
+  ///
+  /// In en, this message translates to:
+  /// **'Search manufacturers by name...'**
+  String get mfSearchManufacturer;
+
   /// All countries option
   ///
   /// In en, this message translates to:
