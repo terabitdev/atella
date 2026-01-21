@@ -624,6 +624,8 @@
   "mfSearch": "Rechercher",
   "mfStartTypingToSearch": "Commencez à taper pour rechercher",
   "mfClearFilter": "Effacer le Filtre",
+  "mfShowAll": "Tout Afficher",
+  "mfNoSuggestedManufacturers": "Aucun fabricant suggéré trouvé",
   "mfNoManufacturersFound": "Aucun fabricant trouvé",
   "mfTryAdjustingFilters": "Essayez d'ajuster vos filtres",
   "mfManufacturersFound": "{count} fabricant{plural} trouvé{plural}",

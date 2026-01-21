@@ -49,6 +49,19 @@ Delivery: ${_detailsController.deliveryDateController.text}
   // Get manufacturer country preference
   String get manufacturerCountry => _detailsController.manufacturerCountryController.text;
 
+  // Get garment type from creative brief for product filtering
+  String get garmentType {
+    // Try to get from design data (creative brief) first
+    if (_detailsController.designData.isNotEmpty) {
+      final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
+      if (creativeBrief != null && creativeBrief['garmentType'] != null) {
+        final type = creativeBrief['garmentType'].toString();
+        return type;
+      }
+    }
+    return '';
+  }
+
   // Get logo/label reference image data
   String get labelImagePath => _detailsController.labelImagePath.value;
   String get logoPlacement => _detailsController.logoPlacementController.text;

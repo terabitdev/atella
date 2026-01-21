@@ -3728,6 +3728,18 @@ abstract class AppLocalizations {
   /// **'Clear Filter'**
   String get mfClearFilter;
 
+  /// Show all manufacturers button
+  ///
+  /// In en, this message translates to:
+  /// **'Show All'**
+  String get mfShowAll;
+
+  /// No manufacturers match the garment type
+  ///
+  /// In en, this message translates to:
+  /// **'No suggested manufacturers found'**
+  String get mfNoSuggestedManufacturers;
+
   /// Empty search results
   ///
   /// In en, this message translates to:

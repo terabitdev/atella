@@ -1978,6 +1978,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mfClearFilter => 'Clear Filter';
 
   @override
+  String get mfShowAll => 'Show All';
+
+  @override
+  String get mfNoSuggestedManufacturers => 'No suggested manufacturers found';
+
+  @override
   String get mfNoManufacturersFound => 'No manufacturers found';
 
   @override

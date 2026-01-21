@@ -183,7 +183,31 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
             ),
           ),
           SizedBox(height: 8.h),
-          SizedBox(height: 18.h),
+
+          // Show All button (only visible when product type filter is active)
+          Obx(() => controller.isProductTypeFiltered.value
+              ? Padding(
+                  padding: EdgeInsets.only(bottom: 12.h),
+                  child: OutlinedButton.icon(
+                    onPressed: controller.clearProductTypeFilter,
+                    icon: const Icon(Icons.clear, size: 18),
+                    label: Text(l10n.mfShowAll),
+                    style: OutlinedButton.styleFrom(
+                      foregroundColor: Colors.black,
+                      side: const BorderSide(color: Colors.black, width: 1),
+                      padding: EdgeInsets.symmetric(
+                        horizontal: 16.w,
+                        vertical: 10.h,
+                      ),
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(8.r),
+                      ),
+                    ),
+                  ),
+                )
+              : const SizedBox.shrink()),
+
+          SizedBox(height: 6.h),
           Builder(
             builder: (context) => Obx(() {
               final manufacturers = controller.displayedManufacturers;
@@ -257,18 +281,22 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
                 ),
               );
             } else if (manufacturers.isEmpty && !controller.isLoading.value) {
+              // Show different message based on whether product type filter is active
+              final isFiltered = controller.isProductTypeFiltered.value;
               return Center(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     Icon(
-                      Icons.inventory_2_outlined,
+                      isFiltered ? Icons.search_off : Icons.inventory_2_outlined,
                       size: 64.sp,
                       color: Colors.grey,
                     ),
                     SizedBox(height: 16.h),
                     Text(
-                      l10n.mfNoManufacturersAvailable,
+                      isFiltered
+                          ? l10n.mfNoSuggestedManufacturers
+                          : l10n.mfNoManufacturersAvailable,
                       style: TextStyle(fontSize: 16.sp, color: Colors.grey),
                     ),
                   ],

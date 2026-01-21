@@ -2007,6 +2007,12 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mfClearFilter => 'Effacer le Filtre';
 
   @override
+  String get mfShowAll => 'Tout Afficher';
+
+  @override
+  String get mfNoSuggestedManufacturers => 'Aucun fabricant suggéré trouvé';
+
+  @override
   String get mfNoManufacturersFound => 'Aucun fabricant trouvé';
 
   @override

@@ -18,6 +18,105 @@ class ManufacturerSuggestionController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
 
+  // Garment type to manufacturer product mapping
+  // Maps creative brief garment types (both English and French) to manufacturer product categories
+  static const Map<String, List<String>> _garmentTypeToProductMapping = {
+    // T-Shirts & Tank Tops
+    't-shirt': ['T-Shirts', 'Tops', 'Knitwear'],
+    'tank top': ['Tank Tops', 'Tops', 'Activewear'],
+    'crop top': ['Tops', 'Tank Tops', 'Activewear'],
+
+    // Shirts & Blouses
+    'shirt': ['Shirts', 'Tops', 'Blouses'],
+    'blouse': ['Blouses', 'Shirts', 'Tops'],
+
+    // Hoodies & Sweaters
+    'hoodie': ['Hoodies', 'Sweatshirts', 'Activewear', 'Sportswear'],
+    'sweater': ['Knitwear', 'Sweatshirts', 'Pullovers', 'Cardigans'],
+
+    // Jackets & Coats
+    'jacket': ['Jackets', 'Outwear', 'Outerwear'],
+    'coat': ['Outwear', 'Outerwear', 'Jackets'],
+    'vest': ['Outwear', 'Outerwear', 'Jackets'],
+    'trench coat': ['Outwear', 'Outerwear', 'Jackets', 'Luxury'],
+    'bomber jacket': ['Jackets', 'Outwear', 'Outerwear'],
+    'blazer': ['Jackets', 'Outwear', 'Outerwear', 'Luxury'],
+    'puffer jacket': ['Jackets', 'Outwear', 'Outerwear'],
+
+    // Pants & Bottoms
+    'pants': ['Trousers', 'Jeans', 'Denim', 'Bottoms'],
+    'jeans': ['Jeans', 'Denim', 'Trousers'],
+    'leggings': ['Leggings', 'Activewear', 'Sportswear', 'Trousers'],
+    'culottes': ['Trousers', 'Bottoms'],
+    'palazzo': ['Trousers', 'Bottoms'],
+    'joggers': ['Sweatpants', 'Activewear', 'Sportswear', 'Trousers'],
+    'shorts': ['Shorts', 'Activewear', 'Sportswear', 'Swimwear'],
+    'skirts': ['Skirts', 'Bottoms', 'Dresses'],
+
+    // Dresses
+    'casual dress': ['Dresses', 'Tops'],
+    'evening': ['Dresses', 'Luxury', 'Outwear'],
+    'cocktail dress': ['Dresses', 'Luxury'],
+    'gown': ['Dresses', 'Luxury'],
+    'maxi dress': ['Dresses'],
+    'midi dress': ['Dresses'],
+    'mini dress': ['Dresses'],
+
+    // Jumpsuits & Rompers
+    'jumpsuit': ['Dresses', 'Tops', 'Trousers'],
+    'romper': ['Dresses', 'Tops', 'Shorts'],
+    'playsuit': ['Dresses', 'Tops'],
+    'overalls': ['Denim', 'Trousers', 'Dresses'],
+
+    // Activewear & Swimwear
+    'tracksuit': ['Activewear', 'Sportswear', 'Sweatpants', 'Sweatshirts'],
+    'activewear': ['Activewear', 'Sportswear', 'Leggings', 'Sports Bra', 'Tank Tops'],
+    'swimwear': ['Swimwear', 'Activewear'],
+
+    // Accessories
+    'hat': ['Headwear', 'Caps', 'Accessories'],
+    'bag': ['Bags', 'Accessories'],
+    'scarf': ['Accessories'],
+    'gloves': ['Gloves', 'Accessories'],
+
+    // French translations
+    'débardeur': ['Tank Tops', 'Tops', 'Activewear'],
+    'haut court': ['Tops', 'Tank Tops', 'Activewear'],
+    'chemise': ['Shirts', 'Tops', 'Blouses'],
+    'chemisier': ['Blouses', 'Shirts', 'Tops'],
+    'sweat à capuche': ['Hoodies', 'Sweatshirts', 'Activewear', 'Sportswear'],
+    'pull': ['Knitwear', 'Sweatshirts', 'Pullovers', 'Cardigans'],
+    'veste': ['Jackets', 'Outwear', 'Outerwear'],
+    'manteau': ['Outwear', 'Outerwear', 'Jackets'],
+    'gilet': ['Outwear', 'Outerwear', 'Jackets'],
+    'trench': ['Outwear', 'Outerwear', 'Jackets', 'Luxury'],
+    'blouson aviateur': ['Jackets', 'Outwear', 'Outerwear'],
+    'doudoune': ['Jackets', 'Outwear', 'Outerwear'],
+    'pantalon': ['Trousers', 'Jeans', 'Denim', 'Bottoms'],
+    'jean': ['Jeans', 'Denim', 'Trousers'],
+    'legging': ['Leggings', 'Activewear', 'Sportswear', 'Trousers'],
+    'jogging': ['Sweatpants', 'Activewear', 'Sportswear', 'Trousers'],
+    'short': ['Shorts', 'Activewear', 'Sportswear', 'Swimwear'],
+    'jupe': ['Skirts', 'Bottoms', 'Dresses'],
+    'robe décontractée': ['Dresses', 'Tops'],
+    'soirée': ['Dresses', 'Luxury', 'Outwear'],
+    'robe de cocktail': ['Dresses', 'Luxury'],
+    'robe de soirée': ['Dresses', 'Luxury'],
+    'robe longue': ['Dresses'],
+    'robe midi': ['Dresses'],
+    'robe courte': ['Dresses'],
+    'combinaison': ['Dresses', 'Tops', 'Trousers'],
+    'combi-short': ['Dresses', 'Tops', 'Shorts'],
+    'salopette': ['Denim', 'Trousers', 'Dresses'],
+    'survêtement': ['Activewear', 'Sportswear', 'Sweatpants', 'Sweatshirts'],
+    'vêtements de sport': ['Activewear', 'Sportswear', 'Leggings', 'Sports Bra', 'Tank Tops'],
+    'maillot de bain': ['Swimwear', 'Activewear'],
+    'chapeau': ['Headwear', 'Caps', 'Accessories'],
+    'sac': ['Bags', 'Accessories'],
+    'écharpe': ['Accessories'],
+    'gants': ['Gloves', 'Accessories'],
+  };
+
   // Country name mappings for abbreviations and alternative spellings
   // Maps variations to a list of possible matches
   static const Map<String, List<String>> _countryNameMappings = {
@@ -313,6 +412,10 @@ class ManufacturerSuggestionController extends GetxController {
   final RxString selectedCertification = 'All Certifications'.obs;
   final RxList<String> availableCertifications = <String>[].obs;
 
+  // Product type filter for Recommended tab (automatic filtering based on garment type)
+  final RxString productTypeFilter = ''.obs;
+  final RxBool isProductTypeFiltered = false.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -331,8 +434,26 @@ class ManufacturerSuggestionController extends GetxController {
   }
 
   void _checkForPrefilter() {
-    // Check if manufacturer country was passed from tech pack details
     final arguments = Get.arguments as Map<String, dynamic>?;
+
+    debugPrint('🔧 _checkForPrefilter - Arguments: $arguments');
+
+    // Check for product type filter (for Recommended tab - automatic filtering)
+    if (arguments != null && arguments.containsKey('productType')) {
+      final productType = arguments['productType'] as String?;
+      debugPrint('🎯 Product type raw value: "$productType"');
+      if (productType != null && productType.isNotEmpty) {
+        productTypeFilter.value = productType;
+        isProductTypeFiltered.value = true;
+        debugPrint('✅ Product type filter activated: "$productType"');
+      } else {
+        debugPrint('⚠️ Product type is null or empty');
+      }
+    } else {
+      debugPrint('⚠️ No productType in arguments');
+    }
+
+    // Check if manufacturer country was passed from tech pack details
     if (arguments != null && arguments.containsKey('manufacturerCountry')) {
       final countryName = arguments['manufacturerCountry'] as String?;
       if (countryName != null && countryName.isNotEmpty) {
@@ -343,7 +464,7 @@ class ManufacturerSuggestionController extends GetxController {
         // Set country name immediately so UI shows it
         selectedCountryName.value = countryName;
 
-        print('Pre-filter detected: $countryName, switching to Custom tab');
+        debugPrint('Pre-filter detected: $countryName, switching to Custom tab');
       }
     }
   }
@@ -391,21 +512,117 @@ class ManufacturerSuggestionController extends GetxController {
 
   void _filterRecommendedManufacturers() {
     final query = searchQuery.value.toLowerCase().trim();
+    var sourceList = allManufacturersCache.toList();
+
+    // Apply product type filter first if active
+    if (isProductTypeFiltered.value && productTypeFilter.value.isNotEmpty) {
+      sourceList = _filterByProductType(sourceList, productTypeFilter.value);
+    }
 
     if (query.isEmpty) {
-      // Reset to original paginated list
+      // Reset to paginated list (with product type filter applied if active)
       _currentPage = 0;
       final endIndex = (_currentPage + 1) * _pageSize;
-      displayedManufacturers.value = allManufacturersCache.take(endIndex).toList();
-      hasMoreData = endIndex < allManufacturersCache.length;
+      displayedManufacturers.value = sourceList.take(endIndex).toList();
+      hasMoreData = endIndex < sourceList.length;
     } else {
       // Filter by search query
-      final filtered = allManufacturersCache
+      final filtered = sourceList
           .where((m) => m.companyName.toLowerCase().contains(query))
           .toList();
       displayedManufacturers.value = filtered;
       hasMoreData = false; // Disable pagination when searching
     }
+  }
+
+  /// Get matching manufacturer product types for a given garment type
+  /// Handles format "Category:GarmentType" and extracts only the garment type
+  List<String> _getMatchingProductTypes(String garmentType) {
+    // Extract garment type from "Category:GarmentType" format
+    String extractedType = garmentType.trim();
+
+    debugPrint('🎯 Raw garment type: "$garmentType"');
+
+    // Check if the garment type contains a colon (Category:Type format)
+    if (extractedType.contains(':')) {
+      // Split by colon and take the part after the colon
+      final parts = extractedType.split(':');
+      if (parts.length > 1) {
+        extractedType = parts[1].trim(); // Take the part after ":"
+        debugPrint('✂️ Extracted type after colon: "$extractedType"');
+      }
+    }
+
+    // Convert to lowercase for case-insensitive matching
+    final lowerGarmentType = extractedType.toLowerCase();
+    debugPrint('🔑 Looking up mapping for: "$lowerGarmentType"');
+
+    final result = _garmentTypeToProductMapping[lowerGarmentType] ?? [];
+
+    if (result.isEmpty) {
+      debugPrint('❌ No mapping found! Available keys: ${_garmentTypeToProductMapping.keys.take(5).toList()}...');
+    } else {
+      debugPrint('✅ Found mapping: $result');
+    }
+
+    return result;
+  }
+
+  /// Filter manufacturers by product type using the mapping
+  List<NewManufacturer> _filterByProductType(
+    List<NewManufacturer> manufacturers,
+    String garmentType,
+  ) {
+    final matchingProducts = _getMatchingProductTypes(garmentType);
+
+    debugPrint('🔍 Filtering by garment type: "$garmentType"');
+    debugPrint('📦 Matching products: $matchingProducts');
+
+    if (matchingProducts.isEmpty) {
+      // No mapping found - return all manufacturers
+      debugPrint('⚠️ No mapping found for garment type: "$garmentType"');
+      return manufacturers;
+    }
+
+    // Filter manufacturers whose products match any of the matching product types
+    final filtered = manufacturers.where((manufacturer) {
+      // Debug: Print first manufacturer's products to see the data
+      if (manufacturer == manufacturers.first) {
+        debugPrint('🏭 First manufacturer: ${manufacturer.companyName}');
+        debugPrint('   Products: ${manufacturer.products}');
+      }
+
+      final hasMatch = manufacturer.products.any((manufacturerProduct) {
+        final manufacturerProductLower = manufacturerProduct.toLowerCase().trim();
+
+        // Check if any matching product type matches this manufacturer's product
+        for (final matchingProduct in matchingProducts) {
+          final matchingProductLower = matchingProduct.toLowerCase().trim();
+
+          // Use partial/contains matching (case-insensitive)
+          if (manufacturerProductLower.contains(matchingProductLower) ||
+              matchingProductLower.contains(manufacturerProductLower)) {
+            debugPrint('   ✓ Match found: "$manufacturerProduct" matches "$matchingProduct"');
+            return true;
+          }
+        }
+        return false;
+      });
+
+      return hasMatch;
+    }).toList();
+
+    debugPrint('✅ Filtered ${filtered.length} manufacturers out of ${manufacturers.length} total');
+
+    // Show first few filtered manufacturers
+    if (filtered.isNotEmpty) {
+      debugPrint('📋 First filtered manufacturers:');
+      for (var i = 0; i < filtered.length && i < 3; i++) {
+        debugPrint('   - ${filtered[i].companyName}');
+      }
+    }
+
+    return filtered;
   }
 
   void clearSearch() {
@@ -451,12 +668,18 @@ class ManufacturerSuggestionController extends GetxController {
       // Cache all manufacturers
       allManufacturersCache.value = manufacturers;
 
+      // Apply product type filter if active
+      var displayList = manufacturers.toList();
+      if (isProductTypeFiltered.value && productTypeFilter.value.isNotEmpty) {
+        displayList = _filterByProductType(displayList, productTypeFilter.value);
+      }
+
       // Display first page
       _currentPage = 0;
       final endIndex = (_currentPage + 1) * _pageSize;
-      displayedManufacturers.value = manufacturers.take(endIndex).toList();
+      displayedManufacturers.value = displayList.take(endIndex).toList();
 
-      hasMoreData = endIndex < manufacturers.length;
+      hasMoreData = endIndex < displayList.length;
 
       // Pre-load ALL manufacturers for instant custom tab switching
       filteredManufacturers.assignAll(manufacturers);
@@ -496,15 +719,21 @@ class ManufacturerSuggestionController extends GetxController {
       final startIndex = _currentPage * _pageSize;
       final endIndex = startIndex + _pageSize;
 
-      if (startIndex < allManufacturersCache.length) {
-        final moreManufacturers = allManufacturersCache
+      // Apply product type filter to source list if active
+      var sourceList = allManufacturersCache.toList();
+      if (isProductTypeFiltered.value && productTypeFilter.value.isNotEmpty) {
+        sourceList = _filterByProductType(sourceList, productTypeFilter.value);
+      }
+
+      if (startIndex < sourceList.length) {
+        final moreManufacturers = sourceList
             .skip(startIndex)
             .take(_pageSize)
             .toList();
 
         if (moreManufacturers.isNotEmpty) {
           displayedManufacturers.addAll(moreManufacturers);
-          hasMoreData = endIndex < allManufacturersCache.length;
+          hasMoreData = endIndex < sourceList.length;
         } else {
           hasMoreData = false;
         }
@@ -512,7 +741,7 @@ class ManufacturerSuggestionController extends GetxController {
         hasMoreData = false;
       }
     } catch (e) {
-      print('Error loading more manufacturers: $e');
+      debugPrint('Error loading more manufacturers: $e');
     } finally {
       isLoadingMore.value = false;
     }
@@ -613,6 +842,13 @@ class ManufacturerSuggestionController extends GetxController {
     selectedProduct.value = 'All Products';
     selectedCertification.value = 'All Certifications';
     updateFilters();
+  }
+
+  /// Clear product type filter for Recommended tab (Show All button)
+  void clearProductTypeFilter() {
+    productTypeFilter.value = '';
+    isProductTypeFiltered.value = false;
+    _filterRecommendedManufacturers();
   }
 
   // Handle tab switching - instant, no processing

@@ -439,6 +439,7 @@ class TechPackReadyScreen extends StatelessWidget {
                           () => RecommendedManufactureScreen(),
                           arguments: {
                             'manufacturerCountry': controller.manufacturerCountry,
+                            'productType': controller.garmentType,
                           },
                         );
                       },

@@ -2276,6 +2276,14 @@
   "@mfClearFilter": {
     "description": "Clear filter button"
   },
+  "mfShowAll": "Show All",
+  "@mfShowAll": {
+    "description": "Show all manufacturers button"
+  },
+  "mfNoSuggestedManufacturers": "No suggested manufacturers found",
+  "@mfNoSuggestedManufacturers": {
+    "description": "No manufacturers match the garment type"
+  },
   "mfNoManufacturersFound": "No manufacturers found",
   "@mfNoManufacturersFound": {
     "description": "Empty search results"
