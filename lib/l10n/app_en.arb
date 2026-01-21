@@ -2889,6 +2889,26 @@
   "@tprTechPackDocument": {
     "description": "Tech pack document share text"
   },
+  "tprSavingDesign": "Saving Design",
+  "@tprSavingDesign": {
+    "description": "Saving design snackbar title"
+  },
+  "tprSavingDesignMessage": "Please wait while we finish saving your design...",
+  "@tprSavingDesignMessage": {
+    "description": "Saving design snackbar message"
+  },
+  "tprSaveFailed": "Save Failed",
+  "@tprSaveFailed": {
+    "description": "Save failed snackbar title"
+  },
+  "tprDesignSaveFailedMessage": "Failed to verify design save status. Please try again.",
+  "@tprDesignSaveFailedMessage": {
+    "description": "Design save failed error message"
+  },
+  "tprDesignSaveTimeoutMessage": "Design save is taking too long. Please try again.",
+  "@tprDesignSaveTimeoutMessage": {
+    "description": "Design save timeout error message"
+  },
   "vpManufacturerProfile": "Manufacturer Profile",
   "@vpManufacturerProfile": {
     "description": "Manufacturer profile title"

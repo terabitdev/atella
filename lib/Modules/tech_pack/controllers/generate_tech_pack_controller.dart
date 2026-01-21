@@ -39,6 +39,11 @@ class TechPackController extends GetxController {
   var hasError = false.obs;
   var selectedDesignIndex = (-1).obs; // Track selected design index
 
+  // Design save completion tracking
+  final RxBool isDesignSaveComplete = false.obs;
+  final RxString savedDesignUrl = ''.obs;
+  final RxString designSaveError = ''.obs;
+
   @override
   void onInit() {
     super.onInit();
@@ -341,6 +346,11 @@ class TechPackController extends GetxController {
     try {
       print('=== STARTING OPTIMIZED BACKGROUND SAVE ===');
 
+      // Reset completion flags
+      isDesignSaveComplete.value = false;
+      designSaveError.value = '';
+      savedDesignUrl.value = '';
+
       // Get questionnaire data
       Map<String, dynamic> questionnaireData = {
         'creativeBrief': _dataService.getCreativeBriefData(),
@@ -368,6 +378,10 @@ class TechPackController extends GetxController {
 
         print('✅ Edit mode: Updated existing design and saved new options');
 
+        // Mark design save as complete
+        isDesignSaveComplete.value = true;
+        savedDesignUrl.value = generatedImages[selectedDesignIndex.value];
+
         Get.snackbar(
           _l10n.tpSnackbarDesignUpdated,
           _l10n.tpSnackbarDesignUpdatedMessage,
@@ -389,6 +403,10 @@ class TechPackController extends GetxController {
 
         print('✅ New design: Saved successfully');
 
+        // Mark design save as complete
+        isDesignSaveComplete.value = true;
+        savedDesignUrl.value = generatedImages[selectedDesignIndex.value];
+
         Get.snackbar(
           _l10n.tpSnackbarDesignSaved,
           _l10n.tpSnackbarDesignSavedMessage,
@@ -406,6 +424,10 @@ class TechPackController extends GetxController {
     } catch (e) {
       print('=== OPTIMIZED BACKGROUND SAVE FAILED ===');
       print('Error: $e');
+
+      // Mark save as failed
+      isDesignSaveComplete.value = false;
+      designSaveError.value = e.toString();
 
       // Optional: Show error notification
       Get.snackbar(

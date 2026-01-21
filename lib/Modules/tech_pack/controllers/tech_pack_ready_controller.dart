@@ -1,5 +1,6 @@
 import 'package:get/get.dart';
 import 'tech_pack_details_controller.dart';
+import 'generate_tech_pack_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
 import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
@@ -159,6 +160,84 @@ Delivery: ${_detailsController.deliveryDateController.text}
     selectedCollection.value = collection;
   }
 
+  // CHECKPOINT: Wait for design save to complete before saving tech pack
+  Future<bool> _waitForDesignSaveCompletion() async {
+    // Check if TechPackController is registered
+    if (!Get.isRegistered<TechPackController>()) {
+      print('⚠️ TechPackController not registered, skipping design save check');
+      return true; // Allow to proceed if controller doesn't exist
+    }
+
+    final techPackController = Get.find<TechPackController>();
+
+    // If design is already saved, proceed immediately
+    if (techPackController.isDesignSaveComplete.value) {
+      print('✅ Design already saved, proceeding with tech pack save');
+      return true;
+    }
+
+    print('⏳ Design save in progress, waiting...');
+
+    // Show waiting snackbar
+    Get.snackbar(
+      _l10n.tprSavingDesign,
+      _l10n.tprSavingDesignMessage,
+      backgroundColor: Colors.black,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 10), // Will be dismissed when complete
+      showProgressIndicator: true,
+    );
+
+    // Poll for completion with 10-second timeout
+    const checkInterval = Duration(milliseconds: 500);
+    const timeout = Duration(seconds: 10);
+    final startTime = DateTime.now();
+
+    while (DateTime.now().difference(startTime) < timeout) {
+      // Check if save completed successfully
+      if (techPackController.isDesignSaveComplete.value) {
+        print('✅ Design save completed, proceeding with tech pack save');
+        Get.closeAllSnackbars(); // Dismiss waiting snackbar
+        return true;
+      }
+
+      // Check if save failed
+      if (techPackController.designSaveError.value.isNotEmpty) {
+        print('❌ Design save failed: ${techPackController.designSaveError.value}');
+        Get.closeAllSnackbars();
+
+        Get.snackbar(
+          _l10n.tprSaveFailed,
+          _l10n.tprDesignSaveFailedMessage,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+        );
+        return false;
+      }
+
+      // Wait before next check
+      await Future.delayed(checkInterval);
+    }
+
+    // Timeout reached
+    print('⏱️ Design save timeout reached');
+    Get.closeAllSnackbars();
+
+    Get.snackbar(
+      _l10n.tprSaveFailed,
+      _l10n.tprDesignSaveTimeoutMessage,
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 3),
+    );
+
+    return false;
+  }
+
   // Save tech pack images to Firebase with project and collection info
   Future<void> saveTechPackWithDetails(String projectName, String collectionName) async {
     if (!hasGeneratedImages) {
@@ -173,16 +252,23 @@ Delivery: ${_detailsController.deliveryDateController.text}
 
     try {
       isSaving.value = true;
-      
+
+      // CHECKPOINT: Wait for design save to complete before proceeding
+      final designSaveComplete = await _waitForDesignSaveCompletion();
+      if (!designSaveComplete) {
+        print('❌ Tech pack save aborted - design save incomplete');
+        return;
+      }
+
       // Check if we're in edit mode
       final isEditMode = _detailsController.isEditMode;
       final editingTechPack = _detailsController.editingTechPack;
 
       // Use existing tech pack ID in edit mode, or generate new one
-      final techPackId = isEditMode && editingTechPack != null 
-          ? editingTechPack.id 
+      final techPackId = isEditMode && editingTechPack != null
+          ? editingTechPack.id
           : DateTime.now().millisecondsSinceEpoch.toString();
-      
+
       // Get selected design image URL
       final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
       

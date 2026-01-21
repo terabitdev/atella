@@ -2468,6 +2468,24 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tprTechPackDocument => 'Document de Dossier Technique';
 
   @override
+  String get tprSavingDesign => 'Enregistrement du Design';
+
+  @override
+  String get tprSavingDesignMessage =>
+      'Veuillez patienter pendant que nous finalisons l\'enregistrement de votre design...';
+
+  @override
+  String get tprSaveFailed => 'Échec de l\'Enregistrement';
+
+  @override
+  String get tprDesignSaveFailedMessage =>
+      'Impossible de vérifier l\'état de l\'enregistrement du design. Veuillez réessayer.';
+
+  @override
+  String get tprDesignSaveTimeoutMessage =>
+      'L\'enregistrement du design prend trop de temps. Veuillez réessayer.';
+
+  @override
   String get vpManufacturerProfile => 'Profil du Fabricant';
 
   @override

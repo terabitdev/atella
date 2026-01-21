@@ -2428,6 +2428,24 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tprTechPackDocument => 'Tech Pack Document';
 
   @override
+  String get tprSavingDesign => 'Saving Design';
+
+  @override
+  String get tprSavingDesignMessage =>
+      'Please wait while we finish saving your design...';
+
+  @override
+  String get tprSaveFailed => 'Save Failed';
+
+  @override
+  String get tprDesignSaveFailedMessage =>
+      'Failed to verify design save status. Please try again.';
+
+  @override
+  String get tprDesignSaveTimeoutMessage =>
+      'Design save is taking too long. Please try again.';
+
+  @override
   String get vpManufacturerProfile => 'Manufacturer Profile';
 
   @override

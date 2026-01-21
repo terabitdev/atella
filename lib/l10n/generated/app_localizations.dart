@@ -4532,6 +4532,36 @@ abstract class AppLocalizations {
   /// **'Tech Pack Document'**
   String get tprTechPackDocument;
 
+  /// Saving design snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Saving Design'**
+  String get tprSavingDesign;
+
+  /// Saving design snackbar message
+  ///
+  /// In en, this message translates to:
+  /// **'Please wait while we finish saving your design...'**
+  String get tprSavingDesignMessage;
+
+  /// Save failed snackbar title
+  ///
+  /// In en, this message translates to:
+  /// **'Save Failed'**
+  String get tprSaveFailed;
+
+  /// Design save failed error message
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to verify design save status. Please try again.'**
+  String get tprDesignSaveFailedMessage;
+
+  /// Design save timeout error message
+  ///
+  /// In en, this message translates to:
+  /// **'Design save is taking too long. Please try again.'**
+  String get tprDesignSaveTimeoutMessage;
+
   /// Manufacturer profile title
   ///
   /// In en, this message translates to:
