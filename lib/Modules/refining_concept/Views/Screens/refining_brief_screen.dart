@@ -314,9 +314,15 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
       return const SizedBox.shrink();
     }
 
+    // Filter categories for special details question based on garment category
+    Map<String, List<String>> categoriesToShow = question.categories!;
+    if (question.id == 'specific_features') {
+      categoriesToShow = controller.getFilteredSpecialDetailsCategories(question.categories!);
+    }
+
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
-      children: question.categories!.entries.map((category) {
+      children: categoriesToShow.entries.map((category) {
         return _buildCategorySection(
           context: context,
           categoryName: category.key,

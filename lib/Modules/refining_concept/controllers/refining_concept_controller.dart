@@ -23,6 +23,18 @@ class RefiningConceptController extends GetxController {
   final DesignQuotaService _quotaService = DesignQuotaService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
+  // Mapping of garment categories to visible special detail categories
+  // Defines which special detail categories should be shown for each garment category
+  static const Map<String, List<String>> _categoryToSpecialDetailsMapping = {
+    'Tops': ['Necklines', 'Sleeves', 'Closures', 'Pockets', 'Finishes'],
+    'Bottoms': ['Closures', 'Pockets', 'Waist', 'Legs', 'Finishes'],
+    'Dresses': ['Necklines', 'Sleeves', 'Closures', 'Pockets', 'Waist', 'Finishes'],
+    'Jumpsuits': ['Necklines', 'Sleeves', 'Closures', 'Pockets', 'Waist', 'Legs', 'Finishes'],
+    'Outerwear': ['Necklines', 'Sleeves', 'Closures', 'Pockets', 'Finishes'],
+    'Sportswear': ['Necklines', 'Sleeves', 'Closures', 'Pockets', 'Waist', 'Legs', 'Finishes'],
+    'Accessories': ['Closures', 'Finishes'],
+  };
+
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
   bool get isEditMode => _isEditMode.value;
@@ -105,6 +117,72 @@ class RefiningConceptController extends GetxController {
   void collapseCategory(String categoryKey) {
     _expandedCategories[categoryKey] = false;
     update();
+  }
+
+  /// Get the garment category from creative brief data
+  /// Extracts the category part from "Category:GarmentType" format (e.g., "Tops:T-shirt" -> "Tops")
+  String _getGarmentCategoryFromCreativeBrief() {
+    try {
+      // Try to get creative brief controller if registered
+      if (Get.isRegistered<CreativeBriefController>()) {
+        final creativeBriefController = Get.find<CreativeBriefController>();
+        final answer = creativeBriefController.answers['garment_type'];
+
+        if (answer != null && answer.selectedOptions.isNotEmpty) {
+          final garmentType = answer.selectedOptions.first;
+
+          // Extract category from "Category:GarmentType" format
+          if (garmentType.contains(':')) {
+            final parts = garmentType.split(':');
+            if (parts.isNotEmpty) {
+              final category = parts[0].trim();
+              debugPrint('🎯 Extracted garment category: "$category" from "$garmentType"');
+              return category;
+            }
+          }
+        }
+      }
+    } catch (e) {
+      debugPrint('⚠️ Error getting garment category from creative brief: $e');
+    }
+
+    // Return empty string if no category found
+    return '';
+  }
+
+  /// Get filtered categories for special details question based on garment category
+  /// Returns only the categories that are relevant for the selected garment type
+  Map<String, List<String>> getFilteredSpecialDetailsCategories(
+    Map<String, List<String>> allCategories,
+  ) {
+    final garmentCategory = _getGarmentCategoryFromCreativeBrief();
+
+    // If no garment category found, return all categories (fallback)
+    if (garmentCategory.isEmpty) {
+      debugPrint('ℹ️ No garment category found, showing all special detail categories');
+      return allCategories;
+    }
+
+    // Get the allowed categories for this garment category
+    final allowedCategories = _categoryToSpecialDetailsMapping[garmentCategory];
+
+    if (allowedCategories == null || allowedCategories.isEmpty) {
+      debugPrint('⚠️ No mapping found for garment category: "$garmentCategory", showing all');
+      return allCategories;
+    }
+
+    // Filter the categories map to only include allowed categories
+    final filteredCategories = <String, List<String>>{};
+    for (final categoryName in allowedCategories) {
+      if (allCategories.containsKey(categoryName)) {
+        filteredCategories[categoryName] = allCategories[categoryName]!;
+      }
+    }
+
+    debugPrint('✅ Filtered special details for "$garmentCategory": ${filteredCategories.keys.toList()}');
+    debugPrint('   Hidden categories: ${allCategories.keys.where((k) => !filteredCategories.containsKey(k)).toList()}');
+
+    return filteredCategories;
   }
 
   // Questions data - chip questions only, no text type questions in this flow
