@@ -40,7 +40,7 @@ class TechPackReadyController extends GetxController {
     return '''
 Materials: ${_detailsController.mainFabricController.text}
 Colors: ${_detailsController.primaryColorController.text}
-Sizes: ${_detailsController.sizeRangeController.text}
+Sizes: ${_detailsController.selectedSizes.join(', ')}
 Quantity: ${_detailsController.quantityController.text}
 Target Cost: ${_detailsController.costPerPieceController.text}
 Delivery: ${_detailsController.deliveryDateController.text}
@@ -285,7 +285,7 @@ Delivery: ${_detailsController.deliveryDateController.text}
           'pantone': _detailsController.pantoneController.text,
         },
         'sizes': {
-          'sizeRange': _detailsController.sizeRangeController.text,
+          'sizeRange': _detailsController.selectedSizes.join(', '),
           'measurementChart': _detailsController.measurementChartController.text,
           'measurementImage': _detailsController.measurementImagePath.value,
         },

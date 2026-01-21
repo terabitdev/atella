@@ -8,8 +8,10 @@ import 'package:country_picker/country_picker.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 import '../Widgets/tech_pack_question_field.dart';
 import '../Widgets/tech_pack_image_upload_container.dart';
+import '../Widgets/size_checkbox_selector.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechPackDetailsScreen extends StatelessWidget {
@@ -165,13 +167,23 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   text: l10n.tpdSizesMeasurements,
                                 ),
                                 SizedBox(height: 10.h),
-                                TechPackQuestionField(
-                                  label: l10n.tpdSizeRangeLabel,
-                                  hint: l10n.tpdSizeRangeHint,
-                                  controller: controller.sizeRangeController,
-                                  onChanged: (_) =>
-                                      controller.checkSizesBlockComplete(),
+                                // Size Range - Checkbox Multi-Select
+                                Column(
+                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  children: [
+                                    Text(
+                                      l10n.tpdSizeRangeLabel,
+                                      style: tplTextStyle12400,
+                                    ),
+                                    SizedBox(height: 6.h),
+                                    SizeCheckboxSelector(
+                                      sizes: TechPackDetailsController.availableSizes,
+                                      selectedSizes: controller.selectedSizes,
+                                      onSizeToggle: controller.toggleSizeSelection,
+                                    ),
+                                  ],
                                 ),
+                                SizedBox(height: 10.h),
                                 Obx(() => controller.showMeasurementText.value
                                     ? TechPackQuestionField(
                                         label: l10n.tpdMeasurementChartLabel,
