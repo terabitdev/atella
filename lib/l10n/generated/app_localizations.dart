@@ -3740,6 +3740,18 @@ abstract class AppLocalizations {
   /// **'No suggested manufacturers found'**
   String get mfNoSuggestedManufacturers;
 
+  /// Count of recommended manufacturers based on filter
+  ///
+  /// In en, this message translates to:
+  /// **'Found {count} recommended manufacturer{plural} for you'**
+  String mfRecommendedForYou(int count, String plural);
+
+  /// Message when no manufacturers match the filter with action hint
+  ///
+  /// In en, this message translates to:
+  /// **'No recommended manufacturers found. Click Show All to view all manufacturers'**
+  String get mfNoRecommendedClickShowAll;
+
   /// Empty search results
   ///
   /// In en, this message translates to:

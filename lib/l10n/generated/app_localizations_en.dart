@@ -1984,6 +1984,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get mfNoSuggestedManufacturers => 'No suggested manufacturers found';
 
   @override
+  String mfRecommendedForYou(int count, String plural) {
+    return 'Found $count recommended manufacturer$plural for you';
+  }
+
+  @override
+  String get mfNoRecommendedClickShowAll =>
+      'No recommended manufacturers found. Click Show All to view all manufacturers';
+
+  @override
   String get mfNoManufacturersFound => 'No manufacturers found';
 
   @override

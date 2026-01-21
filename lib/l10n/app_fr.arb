@@ -626,6 +626,8 @@
   "mfClearFilter": "Effacer le Filtre",
   "mfShowAll": "Tout Afficher",
   "mfNoSuggestedManufacturers": "Aucun fabricant suggéré trouvé",
+  "mfRecommendedForYou": "Trouvé {count} fabricant{plural} recommandé{plural} pour vous",
+  "mfNoRecommendedClickShowAll": "Aucun fabricant recommandé trouvé. Cliquez sur Tout Afficher pour voir tous les fabricants",
   "mfNoManufacturersFound": "Aucun fabricant trouvé",
   "mfTryAdjustingFilters": "Essayez d'ajuster vos filtres",
   "mfManufacturersFound": "{count} fabricant{plural} trouvé{plural}",

@@ -175,12 +175,29 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
           Text(l10n.mfManufacturerSuggestions, style: mstTextTextStyle26700),
           SizedBox(height: 8.h),
           Obx(
-            () => Text(
-              controller.isLoading.value
-                  ? l10n.mfLoadingManufacturers
-                  : l10n.mfFoundManufacturers(controller.allManufacturersCache.length),
-              style: mstTextTextStyle184001,
-            ),
+            () {
+              if (controller.isLoading.value) {
+                return Text(
+                  l10n.mfLoadingManufacturers,
+                  style: mstTextTextStyle184001,
+                );
+              }
+
+              // Show different text based on filter state
+              if (controller.isProductTypeFiltered.value) {
+                final count = controller.totalFilteredCount.value; // Use total filtered count, not paginated count
+                final plural = count == 1 ? '' : 's';
+                return Text(
+                  l10n.mfRecommendedForYou(count, plural),
+                  style: mstTextTextStyle184001,
+                );
+              } else {
+                return Text(
+                  l10n.mfFoundManufacturers(controller.allManufacturersCache.length),
+                  style: mstTextTextStyle184001,
+                );
+              }
+            },
           ),
           SizedBox(height: 8.h),
 
@@ -295,10 +312,31 @@ Widget recommendedTab(ManufacturerSuggestionController controller, AppLocalizati
                     SizedBox(height: 16.h),
                     Text(
                       isFiltered
-                          ? l10n.mfNoSuggestedManufacturers
+                          ? l10n.mfNoRecommendedClickShowAll
                           : l10n.mfNoManufacturersAvailable,
                       style: TextStyle(fontSize: 16.sp, color: Colors.grey),
+                      textAlign: TextAlign.center,
                     ),
+                    if (isFiltered) ...[
+                      SizedBox(height: 16.h),
+                      // Optionally add the Show All button here too for convenience
+                      OutlinedButton.icon(
+                        onPressed: controller.clearProductTypeFilter,
+                        icon: const Icon(Icons.visibility, size: 18),
+                        label: Text(l10n.mfShowAll),
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          side: const BorderSide(color: Colors.black, width: 1),
+                          padding: EdgeInsets.symmetric(
+                            horizontal: 16.w,
+                            vertical: 10.h,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(8.r),
+                          ),
+                        ),
+                      ),
+                    ],
                   ],
                 ),
               );

@@ -2284,6 +2284,22 @@
   "@mfNoSuggestedManufacturers": {
     "description": "No manufacturers match the garment type"
   },
+  "mfRecommendedForYou": "Found {count} recommended manufacturer{plural} for you",
+  "@mfRecommendedForYou": {
+    "description": "Count of recommended manufacturers based on filter",
+    "placeholders": {
+      "count": {
+        "type": "int"
+      },
+      "plural": {
+        "type": "String"
+      }
+    }
+  },
+  "mfNoRecommendedClickShowAll": "No recommended manufacturers found. Click Show All to view all manufacturers",
+  "@mfNoRecommendedClickShowAll": {
+    "description": "Message when no manufacturers match the filter with action hint"
+  },
   "mfNoManufacturersFound": "No manufacturers found",
   "@mfNoManufacturersFound": {
     "description": "Empty search results"

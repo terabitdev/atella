@@ -415,6 +415,7 @@ class ManufacturerSuggestionController extends GetxController {
   // Product type filter for Recommended tab (automatic filtering based on garment type)
   final RxString productTypeFilter = ''.obs;
   final RxBool isProductTypeFiltered = false.obs;
+  final RxInt totalFilteredCount = 0.obs; // Total count of filtered manufacturers (not paginated)
 
   @override
   void onInit() {
@@ -517,6 +518,11 @@ class ManufacturerSuggestionController extends GetxController {
     // Apply product type filter first if active
     if (isProductTypeFiltered.value && productTypeFilter.value.isNotEmpty) {
       sourceList = _filterByProductType(sourceList, productTypeFilter.value);
+      // Store the total filtered count (before pagination)
+      totalFilteredCount.value = sourceList.length;
+    } else {
+      // Reset count when filter is not active
+      totalFilteredCount.value = 0;
     }
 
     if (query.isEmpty) {
@@ -672,6 +678,10 @@ class ManufacturerSuggestionController extends GetxController {
       var displayList = manufacturers.toList();
       if (isProductTypeFiltered.value && productTypeFilter.value.isNotEmpty) {
         displayList = _filterByProductType(displayList, productTypeFilter.value);
+        // Store the total filtered count (before pagination)
+        totalFilteredCount.value = displayList.length;
+      } else {
+        totalFilteredCount.value = 0;
       }
 
       // Display first page
@@ -848,6 +858,7 @@ class ManufacturerSuggestionController extends GetxController {
   void clearProductTypeFilter() {
     productTypeFilter.value = '';
     isProductTypeFiltered.value = false;
+    totalFilteredCount.value = 0; // Reset the filtered count
     _filterRecommendedManufacturers();
   }
 

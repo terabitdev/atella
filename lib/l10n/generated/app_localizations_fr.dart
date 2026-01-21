@@ -2013,6 +2013,15 @@ class AppLocalizationsFr extends AppLocalizations {
   String get mfNoSuggestedManufacturers => 'Aucun fabricant suggéré trouvé';
 
   @override
+  String mfRecommendedForYou(int count, String plural) {
+    return 'Trouvé $count fabricant$plural recommandé$plural pour vous';
+  }
+
+  @override
+  String get mfNoRecommendedClickShowAll =>
+      'Aucun fabricant recommandé trouvé. Cliquez sur Tout Afficher pour voir tous les fabricants';
+
+  @override
   String get mfNoManufacturersFound => 'Aucun fabricant trouvé';
 
   @override
