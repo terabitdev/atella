@@ -52,7 +52,7 @@ class DefaultFirebaseOptions {
 
   static const FirebaseOptions android = FirebaseOptions(
     apiKey: 'AIzaSyBA-Lam4AKlAzn2A52nvKnTJVs3nmqytDs',
-    appId: '1:1097482533368:android:181994ea31245a91dafe0d',
+    appId: '1:1097482533368:android:7e95a61f8dae0a4fdafe0d',
     messagingSenderId: '1097482533368',
     projectId: 'atelia-123',
     storageBucket: 'atelia-123.firebasestorage.app',

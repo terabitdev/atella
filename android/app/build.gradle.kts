@@ -16,7 +16,7 @@ plugins {
 }
 
 android {
-    namespace = "com.example.atella"
+    namespace = "com.company.atella"
     compileSdk = 36
     // ndkVersion = flutter.ndkVersion as String
 
@@ -26,12 +26,12 @@ android {
     }
 
     kotlinOptions {
-        jvmTarget = "11"
+        jvmTarget = JavaVersion.VERSION_11.toString()
     }
 
     defaultConfig {
         // TODO: Specify your own unique Application ID (https://developer.android.com/studio/build/application-id.html).
-        applicationId = "com.example.atella"
+        applicationId = "com.company.atella"
         // You can update the following values to match your application needs.
         // For more information, see: https://flutter.dev/to/review-gradle-config.
         minSdk = flutter.minSdkVersion
@@ -50,6 +50,12 @@ android {
                     storePassword = keystoreProperties["storePassword"] as String?
                 }
             }
+        }
+        getByName("debug") {
+            storeFile = file("${rootProject.projectDir}/app/debug.keystore")
+            storePassword = "android"
+            keyAlias = "androiddebugkey"
+            keyPassword = "android"
         }
     }
     buildTypes {

@@ -50,7 +50,7 @@ class CreateScreen extends StatelessWidget {
                     textAlign: TextAlign.center,
                     style: osTextStyle165002,
                   ),
-                  SizedBox(height: 50.h),
+                  SizedBox(height: 48.h),
                   RoundButton(
                     title: l10n.getStarted,
                     onTap: () {

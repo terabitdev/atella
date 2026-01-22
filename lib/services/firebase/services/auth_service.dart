@@ -11,7 +11,6 @@ class AuthService {
   final GoogleSignIn _googleSignIn = GoogleSignIn(
     // iOS client ID from GoogleService-Info.plist
     // This ensures proper OAuth redirect handling on iOS
-    clientId: '1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com',
   );
   final DesignQuotaService _quotaService = DesignQuotaService();
 
@@ -148,9 +147,13 @@ class AuthService {
         case 'unknown':
           // Firebase sometimes returns 'unknown' - check message to determine actual error
           final message = e.message?.toLowerCase() ?? '';
-          if (message.contains('password') && (message.contains('wrong') || message.contains('incorrect') || message.contains('invalid'))) {
+          if (message.contains('password') &&
+              (message.contains('wrong') ||
+                  message.contains('incorrect') ||
+                  message.contains('invalid'))) {
             return 'auth-invalid-credentials';
-          } else if (message.contains('user') && message.contains('not found')) {
+          } else if (message.contains('user') &&
+              message.contains('not found')) {
             return 'auth-invalid-credentials';
           } else if (message.contains('email') && message.contains('invalid')) {
             return 'auth-invalid-email';
@@ -259,7 +262,9 @@ class AuthService {
         if (user.email != null) {
           try {
             await _quotaService.getQuotaByEmail(user.email!);
-            debugPrint('✅ Email-based quota checked for Google user: ${user.email}');
+            debugPrint(
+              '✅ Email-based quota checked for Google user: ${user.email}',
+            );
           } catch (e) {
             debugPrint('⚠️ Error checking quota for Google user: $e');
             // Don't fail signin if quota check fails
@@ -285,7 +290,8 @@ class AuthService {
       }
     } catch (e) {
       debugPrint('Error during Google sign-in: $e');
-      if (e.toString().contains('sign_in_failed') || e.toString().contains('ApiException: 10')) {
+      if (e.toString().contains('sign_in_failed') ||
+          e.toString().contains('ApiException: 10')) {
         return 'auth-google-config-error';
       }
       return 'auth-google-generic-error';
@@ -307,7 +313,9 @@ class AuthService {
       final deleteService = DeleteAccountService();
 
       // Step 1: Re-authenticate user
-      final reauthSuccess = await deleteService.reauthenticateWithPassword(password);
+      final reauthSuccess = await deleteService.reauthenticateWithPassword(
+        password,
+      );
 
       if (!reauthSuccess) {
         return 'auth-reauthentication-failed';
@@ -321,7 +329,9 @@ class AuthService {
 
       return null; // Success
     } on FirebaseAuthException catch (e) {
-      debugPrint('Firebase Auth Error during deletion: ${e.code} - ${e.message}');
+      debugPrint(
+        'Firebase Auth Error during deletion: ${e.code} - ${e.message}',
+      );
 
       switch (e.code) {
         case 'wrong-password':
@@ -353,7 +363,8 @@ class AuthService {
         return 'auth-google-reauthentication-cancelled';
       }
 
-      final GoogleSignInAuthentication googleAuth = await googleUser.authentication;
+      final GoogleSignInAuthentication googleAuth =
+          await googleUser.authentication;
       final credential = GoogleAuthProvider.credential(
         accessToken: googleAuth.accessToken,
         idToken: googleAuth.idToken,
@@ -375,7 +386,9 @@ class AuthService {
 
       return null; // Success
     } on FirebaseAuthException catch (e) {
-      debugPrint('Firebase Auth Error during Google account deletion: ${e.code} - ${e.message}');
+      debugPrint(
+        'Firebase Auth Error during Google account deletion: ${e.code} - ${e.message}',
+      );
 
       switch (e.code) {
         case 'requires-recent-login':
@@ -398,6 +411,8 @@ class AuthService {
     final user = _auth.currentUser;
     if (user == null) return false;
 
-    return user.providerData.any((provider) => provider.providerId == 'google.com');
+    return user.providerData.any(
+      (provider) => provider.providerId == 'google.com',
+    );
   }
 }

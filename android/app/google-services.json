@@ -7,12 +7,72 @@
   "client": [
     {
       "client_info": {
+        "mobilesdk_app_id": "1:1097482533368:android:7e95a61f8dae0a4fdafe0d",
+        "android_client_info": {
+          "package_name": "com.company.atella"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "1097482533368-5iio27m0vp0osfjvtctf4ndok7pn6job.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.atella",
+            "certificate_hash": "ff015c8b9939a04f052e119f02ef5e514b177275"
+          }
+        },
+        {
+          "client_id": "1097482533368-74ni6res8bl2fktoal97dakr2fdffju0.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.atella",
+            "certificate_hash": "f17f1b7203f5a3dbd97103a8efb04f151b22a2b7"
+          }
+        },
+        {
+          "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBA-Lam4AKlAzn2A52nvKnTJVs3nmqytDs"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
+              "client_type": 3
+            },
+            {
+              "client_id": "1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22.apps.googleusercontent.com",
+              "client_type": 2,
+              "ios_info": {
+                "bundle_id": "com.example.atella"
+              }
+            }
+          ]
+        }
+      }
+    },
+    {
+      "client_info": {
         "mobilesdk_app_id": "1:1097482533368:android:181994ea31245a91dafe0d",
         "android_client_info": {
           "package_name": "com.example.atella"
         }
       },
       "oauth_client": [
+        {
+          "client_id": "1097482533368-33vjc0d7d6jka65mkhgbu064n8jvqlv7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.atella",
+            "certificate_hash": "ff015c8b9939a04f052e119f02ef5e514b177275"
+          }
+        },
         {
           "client_id": "1097482533368-3boqt2eg1ip45pn7sj878q5tedsvhhlm.apps.googleusercontent.com",
           "client_type": 1,
