@@ -475,6 +475,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final features = refinedConcept['features'] ?? 'standard collar';
 
     // Create logo instruction based on what user provided
+    // ignore: unused_local_variable
     String logoInstruction = '';
     String labelTextForSection = '';
 
@@ -489,13 +490,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       }
     } else if (labelsNeeded.isNotEmpty) {
       // User provided ONLY label text (no custom image) - do NOT show anything on garment
-      logoInstruction = '';  // No logo on garment - keep it clean
+      logoInstruction = ''; // No logo on garment - keep it clean
 
       // Label text goes in LABELS section only
       labelTextForSection = labelsNeeded;
     } else if (logoPlacement.isNotEmpty) {
       // Only placement provided, no logo, no text
-      logoInstruction = '';  // Keep garment clean
+      logoInstruction = ''; // Keep garment clean
     }
 
     // Manufacturing prompt - conditional based on logo type
