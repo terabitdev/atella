@@ -3,6 +3,7 @@ import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:url_launcher/url_launcher.dart';
 import '../../Controllers/subscribe_controller.dart';
 
 class SubscribeStudioPlan extends StatefulWidget {
@@ -431,6 +432,42 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                           );
                         }),
                         SizedBox(height: 16.h),
+
+                        // Subscribe on Web button
+                        InkWell(
+                          onTap: () async {
+                            final Uri webPaymentUrl = Uri.parse('https://yourwebsite.com/subscribe');
+                            if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
+                              Get.snackbar(
+                                'Error',
+                                'Could not open payment page',
+                                snackPosition: SnackPosition.BOTTOM,
+                                backgroundColor: Colors.red,
+                                colorText: Colors.white,
+                              );
+                            }
+                          },
+                          child: Container(
+                            height: 50.h,
+                            width: 375.w,
+                            decoration: BoxDecoration(
+                              border: Border.all(color: Colors.black, width: 2),
+                              borderRadius: BorderRadius.circular(10.r),
+                            ),
+                            child: Center(
+                              child: Text(
+                                'Subscribe on Web',
+                                style: TextStyle(
+                                  color: Colors.black,
+                                  fontSize: 16.sp,
+                                  fontWeight: FontWeight.w600,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                        SizedBox(height: 16.h),
+
                         RichText(
                           textAlign: TextAlign.center,
                           text: TextSpan(

@@ -62,6 +62,59 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
   }
 });
 
+// Helper function to find user by Stripe customer ID or email
+async function findUserByCustomerIdOrEmail(customerId: string): Promise<{ userId: string | null; userDoc: FirebaseFirestore.DocumentSnapshot | null }> {
+  try {
+    // First, try to find user by Stripe customer ID
+    let usersSnapshot = await db.collection('users')
+      .where('stripeCustomerId', '==', customerId)
+      .limit(1)
+      .get();
+
+    if (!usersSnapshot.empty) {
+      const userDoc = usersSnapshot.docs[0];
+      return { userId: userDoc.id, userDoc };
+    }
+
+    // If not found by customer ID, try to find by email from Stripe customer
+    console.log(`🔍 User not found by customer ID, fetching customer email from Stripe...`);
+    const customer = await stripe.customers.retrieve(customerId);
+
+    if ('deleted' in customer || !customer.email) {
+      console.log(`❌ Customer ${customerId} is deleted or has no email`);
+      return { userId: null, userDoc: null };
+    }
+
+    const email = customer.email.toLowerCase().trim();
+    console.log(`🔍 Searching for user with email: ${email}`);
+
+    usersSnapshot = await db.collection('users')
+      .where('email', '==', email)
+      .limit(1)
+      .get();
+
+    if (usersSnapshot.empty) {
+      console.log(`❌ No user found for email ${email}`);
+      return { userId: null, userDoc: null };
+    }
+
+    const userDoc = usersSnapshot.docs[0];
+    const userId = userDoc.id;
+
+    // Update the user's stripeCustomerId for future webhooks
+    await db.collection('users').doc(userId).update({
+      stripeCustomerId: customerId
+    });
+
+    console.log(`✅ User ${userId} found by email and stripeCustomerId updated`);
+    return { userId, userDoc };
+
+  } catch (error) {
+    console.error('❌ Error finding user:', error);
+    return { userId: null, userDoc: null };
+  }
+}
+
 // Subscription created
 async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
@@ -70,20 +123,16 @@ async function handleSubscriptionCreated(subscription: Stripe.Subscription) {
   const priceId = subscription.items.data[0].price.id;
   const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
   const currentPeriodStart = new Date(subscription.current_period_start * 1000);
-  
+
   try {
-    // Find user by Stripe customer ID
-    const usersSnapshot = await db.collection('users')
-      .where('stripeCustomerId', '==', customerId)
-      .get();
-    
-    if (usersSnapshot.empty) {
+    // Find user by Stripe customer ID or email
+    const { userId } = await findUserByCustomerIdOrEmail(customerId);
+
+    if (!userId) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-    
-    const userDoc = usersSnapshot.docs[0];
-    const userId = userDoc.id;
+
     const planName = getPlanNameFromPriceId(priceId);
 
     console.log(`📋 Subscription created - Price ID: ${priceId} → Plan: ${planName}`);
@@ -125,19 +174,16 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
   const priceId = subscription.items.data[0].price.id;
   const currentPeriodEnd = new Date(subscription.current_period_end * 1000);
   const currentPeriodStart = new Date(subscription.current_period_start * 1000);
-  
+
   try {
-    const usersSnapshot = await db.collection('users')
-      .where('stripeCustomerId', '==', customerId)
-      .get();
-    
-    if (usersSnapshot.empty) {
+    // Find user by Stripe customer ID or email
+    const { userId, userDoc } = await findUserByCustomerIdOrEmail(customerId);
+
+    if (!userId || !userDoc) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-    
-    const userDoc = usersSnapshot.docs[0];
-    const userId = userDoc.id;
+
     const planName = getPlanNameFromPriceId(priceId);
 
     console.log(`📋 Subscription updated - Price ID: ${priceId} → Plan: ${planName}`);
@@ -181,19 +227,15 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
 // Subscription deleted/canceled
 async function handleSubscriptionDeleted(subscription: Stripe.Subscription) {
   const customerId = subscription.customer as string;
-  
+
   try {
-    const usersSnapshot = await db.collection('users')
-      .where('stripeCustomerId', '==', customerId)
-      .get();
-    
-    if (usersSnapshot.empty) {
+    // Find user by Stripe customer ID or email
+    const { userId } = await findUserByCustomerIdOrEmail(customerId);
+
+    if (!userId) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-    
-    const userDoc = usersSnapshot.docs[0];
-    const userId = userDoc.id;
     
     await db.collection('users').doc(userId).update({
       subscriptionPlan: 'FREE',
@@ -221,17 +263,13 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
 
   try {
-    const usersSnapshot = await db.collection('users')
-      .where('stripeCustomerId', '==', customerId)
-      .get();
+    // Find user by Stripe customer ID or email
+    const { userId } = await findUserByCustomerIdOrEmail(customerId);
 
-    if (usersSnapshot.empty) {
+    if (!userId) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-
-    const userDoc = usersSnapshot.docs[0];
-    const userId = userDoc.id;
 
     // Update payment status
     const updateData: any = {
@@ -280,19 +318,15 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
 // Payment failed
 async function handlePaymentFailed(invoice: Stripe.Invoice) {
   const customerId = invoice.customer as string;
-  
+
   try {
-    const usersSnapshot = await db.collection('users')
-      .where('stripeCustomerId', '==', customerId)
-      .get();
-    
-    if (usersSnapshot.empty) {
+    // Find user by Stripe customer ID or email
+    const { userId } = await findUserByCustomerIdOrEmail(customerId);
+
+    if (!userId) {
       console.log(`❌ No user found for customer ${customerId}`);
       return;
     }
-    
-    const userDoc = usersSnapshot.docs[0];
-    const userId = userDoc.id;
     
     await db.collection('users').doc(userId).update({
       lastPaymentStatus: 'failed',
@@ -325,3 +359,60 @@ function getPlanNameFromPriceId(priceId: string): string {
       return 'FREE';
   }
 }
+
+// HTTP Cloud Function to check if user exists by email (for website payment flow)
+export const checkUserExists = functions.https.onRequest(async (req, res) => {
+  // Enable CORS for all origins (you can restrict this to your website domain)
+  res.set('Access-Control-Allow-Origin', '*');
+  res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
+  res.set('Access-Control-Allow-Headers', 'Content-Type');
+
+  // Handle preflight OPTIONS request
+  if (req.method === 'OPTIONS') {
+    res.status(204).send('');
+    return;
+  }
+
+  // Only allow POST requests
+  if (req.method !== 'POST') {
+    res.status(405).json({ error: 'Method not allowed' });
+    return;
+  }
+
+  const { email } = req.body;
+
+  // Validate email parameter
+  if (!email || typeof email !== 'string') {
+    res.status(400).json({ error: 'Missing or invalid email parameter' });
+    return;
+  }
+
+  try {
+    console.log(`🔍 Checking if user exists for email: ${email}`);
+
+    // Query Firestore for user with this email
+    const usersSnapshot = await db.collection('users')
+      .where('email', '==', email.toLowerCase().trim())
+      .limit(1)
+      .get();
+
+    if (usersSnapshot.empty) {
+      console.log(`❌ No user found for email: ${email}`);
+      res.json({ exists: false });
+      return;
+    }
+
+    const userDoc = usersSnapshot.docs[0];
+    const userId = userDoc.id;
+
+    console.log(`✅ User found: ${userId} for email: ${email}`);
+    res.json({
+      exists: true,
+      userId: userId
+    });
+
+  } catch (error) {
+    console.error('❌ Error checking user existence:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
