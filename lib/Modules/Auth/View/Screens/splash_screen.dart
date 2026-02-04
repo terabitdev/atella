@@ -1,4 +1,3 @@
-import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/services/firebase/services/splash_services.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -21,28 +20,13 @@ class _SplashScreenState extends State<SplashScreen> {
 
   @override
   Widget build(BuildContext context) {
-      return Scaffold(
-      body: Container(
-        width: double.infinity,
-        height: double.infinity,
-        color: Colors.white,
-        child: SafeArea(
-          child: Center(
-            // 👈 Center the Row vertically and horizontally
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                Image.asset(logo, width: 34.w, height: 54.h),
-                SizedBox(width: 12.w), // 👈 Space between logo and text
-                // Text('Atella', style: SSTextStyle42900),
-                Image.asset(
-                  'assets/images/title.png',
-                  width: 160.w, // Adjust width as needed
-                  height: 48.h, // Adjust height as needed
-                ),
-              ],
-            ),
-          ),
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Center(
+        child: Image.asset(
+          'assets/images/app_icon.png',
+          width: 150.w,
+          height: 150.h,
         ),
       ),
     );
