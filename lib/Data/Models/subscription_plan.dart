@@ -59,9 +59,9 @@ class SubscriptionPlan {
     price: 19.99,
     yearlyPrice: 199.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZmB0j1hBhcavLizS6xZ0', // Monthly Stripe price ID
+    stripePriceId: 'price_1SokjDB0j1hBhcavV5F0hkvX', // Monthly Stripe price ID
     stripeYearlyPriceId:
-        'price_1SrIZcB0j1hBhcaveKKfhFDc', // Yearly Stripe price ID
+        'price_1Sokk3B0j1hBhcavbpjVtnGv', // Yearly Stripe price ID
     features: [
       '5 AI design generations per month',
       '2 techpacks per month',
@@ -82,7 +82,7 @@ class SubscriptionPlan {
     price: 199.99,
     yearlyPrice: 199.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZcB0j1hBhcaveKKfhFDc', // Yearly Stripe price ID
+    stripePriceId: 'price_1Sokk3B0j1hBhcavbpjVtnGv', // Yearly Stripe price ID
     features: [
       '5 AI design generations per month',
       '2 techpacks per month',
@@ -103,9 +103,9 @@ class SubscriptionPlan {
     price: 49.99,
     yearlyPrice: 499.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZgB0j1hBhcavcgFGjJFy', // Monthly Stripe price ID
+    stripePriceId: 'price_1SoklQB0j1hBhcavYA4erwqY', // Monthly Stripe price ID
     stripeYearlyPriceId:
-        'price_1SrIZVB0j1hBhcavd3DPsClC', // Yearly Stripe price ID
+        'price_1SokkxB0j1hBhcaviwspqhPv', // Yearly Stripe price ID
     features: [
       '12 AI design generations per month',
       '6 techpacks per month',
@@ -126,7 +126,7 @@ class SubscriptionPlan {
     price: 499.99,
     yearlyPrice: 499.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZVB0j1hBhcavd3DPsClC', // Yearly Stripe price ID
+    stripePriceId: 'price_1SokkxB0j1hBhcaviwspqhPv', // Yearly Stripe price ID
     features: [
       '12 AI design generations per month',
       '6 techpacks per month',
@@ -147,9 +147,9 @@ class SubscriptionPlan {
     price: 99.99,
     yearlyPrice: 999.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZQB0j1hBhcavuPe13RH2', // Monthly Stripe price ID
+    stripePriceId: 'price_1SokmOB0j1hBhcavZWbByj8F', // Monthly Stripe price ID
     stripeYearlyPriceId:
-        'price_1SrIZLB0j1hBhcavy3NJMTzh', // Yearly Stripe price ID
+        'price_1SokmqB0j1hBhcavGcXmnQEk', // Yearly Stripe price ID
     features: [
       '25 AI design generations per month',
       '10 techpacks per month',
@@ -171,7 +171,7 @@ class SubscriptionPlan {
     price: 999.99,
     yearlyPrice: 999.99,
     currency: 'EUR',
-    stripePriceId: 'price_1SrIZLB0j1hBhcavy3NJMTzh', // Yearly Stripe price ID
+    stripePriceId: 'price_1SokmqB0j1hBhcavGcXmnQEk', // Yearly Stripe price ID
     features: [
       '25 AI design generations per month',
       '10 techpacks per month',
