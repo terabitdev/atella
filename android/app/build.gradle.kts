@@ -81,3 +81,8 @@ android {
 flutter {
     source = "../.."
 }
+
+dependencies {
+    // Google Play Billing library for in-app purchases
+    implementation("com.android.billingclient:billing:7.1.1")
+}

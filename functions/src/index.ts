@@ -1,7 +1,8 @@
-import * as functions from 'firebase-functions/v1';
+import { onRequest } from 'firebase-functions/v2/https';
 import * as admin from 'firebase-admin';
 import Stripe from 'stripe';
 
+// Upgraded to 2nd Gen Functions - 2026-02-10
 // Initialize Firebase Admin
 admin.initializeApp();
 const db = admin.firestore();
@@ -15,22 +16,29 @@ const stripe = new Stripe(stripeSecretKey, {
   apiVersion: '2023-10-16',
 });
 
-// Stripe webhook Cloud Function (1st Gen)
-export const stripeWebhook = functions.https.onRequest(async (req, res) => {
-  const sig = req.headers['stripe-signature'] as string;
-  const webhookSecret = stripeWebhookSecretKey;
-  
-  let event: Stripe.Event;
-  
-  try {
-    // Use req.rawBody for signature verification (not req.body)
-    event = stripe.webhooks.constructEvent(req.rawBody, sig, webhookSecret);
-    console.log('✅ WEBHOOK: Signature verified successfully');
-  } catch (err: any) {
-    console.error(`❌ WEBHOOK: Signature verification failed.`, err.message);
-    res.status(400).send(`Webhook Error: ${err.message}`);
-    return;
-  }
+// Stripe webhook Cloud Function (2nd Gen)
+export const stripeWebhook = onRequest(
+  {
+    serviceAccount: 'atella-87@atelia-123.iam.gserviceaccount.com',
+    cors: true,
+    region: 'us-central1',
+  },
+  async (req, res) => {
+    const sig = req.headers['stripe-signature'] as string;
+    const webhookSecret = stripeWebhookSecretKey;
+
+    let event: Stripe.Event;
+
+    try {
+      // Get raw body for signature verification (v2 uses req.rawBody)
+      const rawBody = (req as any).rawBody || req.body;
+      event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
+      console.log('✅ WEBHOOK: Signature verified successfully');
+    } catch (err: any) {
+      console.error(`❌ WEBHOOK: Signature verification failed.`, err.message);
+      res.status(400).send(`Webhook Error: ${err.message}`);
+      return;
+    }
   
   console.log(`✅ Received webhook: ${event.type}`);
   
@@ -55,7 +63,7 @@ export const stripeWebhook = functions.https.onRequest(async (req, res) => {
         console.log(`🤷‍♀️ Unhandled event type: ${event.type}`);
     }
     
-    res.json({received: true});
+    res.json({ received: true });
   } catch (error) {
     console.error('Error processing webhook:', error);
     res.status(500).send('Webhook processing failed');
@@ -360,18 +368,19 @@ function getPlanNameFromPriceId(priceId: string): string {
   }
 }
 
-// HTTP Cloud Function to verify user for payment (checks existence and subscription status)
-export const verifyUserForPayment = functions.https.onRequest(async (req, res) => {
-  // Enable CORS for all origins (you can restrict this to your website domain)
-  res.set('Access-Control-Allow-Origin', '*');
-  res.set('Access-Control-Allow-Methods', 'POST, OPTIONS');
-  res.set('Access-Control-Allow-Headers', 'Content-Type');
-
-  // Handle preflight OPTIONS request
-  if (req.method === 'OPTIONS') {
-    res.status(204).send('');
-    return;
-  }
+// HTTP Cloud Function to verify user for payment (2nd Gen)
+export const verifyUserForPayment = onRequest(
+  {
+    serviceAccount: 'atella-87@atelia-123.iam.gserviceaccount.com',
+    cors: true,
+    region: 'us-central1',
+  },
+  async (req, res) => {
+    // Handle preflight OPTIONS request (CORS already enabled in options)
+    if (req.method === 'OPTIONS') {
+      res.status(204).send('');
+      return;
+    }
 
   // Only allow POST requests
   if (req.method !== 'POST') {

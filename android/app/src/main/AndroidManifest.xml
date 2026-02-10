@@ -3,6 +3,8 @@
     <uses-permission android:name="android.permission.CAMERA"/>
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
     <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" android:maxSdkVersion="32"/>
+    <!-- Google Play Billing permission for in-app purchases -->
+    <uses-permission android:name="com.android.vending.BILLING" />
     <application
         android:label="Atelia"
         android:name="${applicationName}"
