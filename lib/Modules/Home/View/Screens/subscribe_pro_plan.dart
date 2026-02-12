@@ -325,6 +325,9 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
 
                           return Column(
                             children: [
+                              // COMMENTED OUT: In-app subscribe button removed - Users subscribe via website
+                              // Subscribe functionality now exclusively at https://atelia.app/
+                              /*
                               // Main action button
                               InkWell(
                                 onTap:
@@ -380,6 +383,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                   ),
                                 ),
                               ),
+                              */
 
                               // Cancel subscription button for current PRO users
                               if (isExactCurrentPlan) ...[
@@ -436,7 +440,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                         // Subscribe on Web button
                         InkWell(
                           onTap: () async {
-                            final Uri webPaymentUrl = Uri.parse('https://yourwebsite.com/subscribe');
+                            final Uri webPaymentUrl = Uri.parse('https://atelia.app/');
                             if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
                               Get.snackbar(
                                 'Error',

@@ -153,6 +153,10 @@ class SubscribeController extends GetxController {
     }
   }
 
+  // COMMENTED OUT: In-app subscription flow removed - Users now subscribe via website
+  // Subscriptions are handled exclusively through https://atelia.app/
+  // This code is preserved for potential future use
+  /*
   Future<void> subscribeToPlan(SubscriptionPlan plan) async {
     if (plan.type == SubscriptionPlanType.FREE) {
       // Free plan doesn't need payment
@@ -168,14 +172,14 @@ class SubscribeController extends GetxController {
 
     print('Setting loading to true for plan: ${plan.name}');
     isLoading.value = true;
-    
+
     try {
       // Add a small delay to ensure loading state is visible
       await Future.delayed(Duration(milliseconds: 500));
-      
+
       print('Calling stripe service for plan: ${plan.name}');
       bool success = await _stripeService.createSubscriptionPaymentSheet(plan);
-      
+
       if (success) {
         print('✅ Subscription successful! Plan: ${plan.displayName}');
         print('📍 Return route: $returnRoute');
@@ -200,22 +204,22 @@ class SubscribeController extends GetxController {
             icon: Icon(Icons.check_circle, color: Colors.white),
           );
         }
-        
+
         await loadCurrentSubscription();
-        
+
         // Wait a moment for the subscription to be processed
         await Future.delayed(Duration(milliseconds: 500));
-        
+
         // Navigate back to the original screen if specified
         if (returnRoute != null) {
           print('📍 Starting navigation back to: $returnRoute');
-          
+
           if (returnRoute == '/tech_pack_details_screen') {
             print('📍 Navigating back to tech pack details...');
-            
+
             // Use a more reliable navigation approach
             Get.until((route) => route.settings.name == '/tech_pack_details_screen');
-            
+
             // Show success message after a short delay
             Future.delayed(Duration(milliseconds: 500), () {
               final l10n = AppLocalizations.of(Get.context!)!;
@@ -229,16 +233,16 @@ class SubscribeController extends GetxController {
                 icon: Icon(Icons.check_circle, color: Colors.white),
               );
             });
-            
+
           } else if (returnRoute == '/generate_tech_pack_screen') {
             print('📍 Navigating back to generate screen...');
-            
+
             Get.until((route) => route.settings.name == '/generate_tech_pack_screen');
-            
+
             Future.delayed(Duration(milliseconds: 1000), () {
               SubscriptionCallbackService().executeSubscriptionSuccessCallback();
             });
-            
+
           } else {
             // Default fallback
             print('📍 Using fallback navigation to: $returnRoute');
@@ -275,6 +279,7 @@ class SubscribeController extends GetxController {
       isLoading.value = false;
     }
   }
+  */
 
   Future<void> cancelSubscription({String? reason}) async {
     final currentPlan = currentSubscription.value?.subscriptionPlan ?? '';

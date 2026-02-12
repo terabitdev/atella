@@ -280,6 +280,9 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                           
                           return Column(
                             children: [
+                              // COMMENTED OUT: In-app subscribe button removed - Users subscribe via website
+                              // Subscribe functionality now exclusively at https://atelia.app/
+                              /*
                               // Main action button
                               InkWell(
                                 onTap: (controller.isLoading.value || isExactCurrentPlan || hasOppositeBillingPeriod || hasOtherSubscription) ? null : () {
@@ -319,6 +322,7 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                   ),
                                 ),
                               ),
+                              */
 
                               // Cancel subscription button for current Starter users
                               if (isExactCurrentPlan) ...[
@@ -364,7 +368,7 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                         // Subscribe on Web button
                         InkWell(
                           onTap: () async {
-                            final Uri webPaymentUrl = Uri.parse('https://yourwebsite.com/subscribe');
+                            final Uri webPaymentUrl = Uri.parse('https://atelia.app/');
                             if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
                               Get.snackbar(
                                 'Error',

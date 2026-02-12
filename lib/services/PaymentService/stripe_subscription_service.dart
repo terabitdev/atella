@@ -83,6 +83,10 @@ class StripeSubscriptionService {
     return null;
   }
 
+  // COMMENTED OUT: In-app subscription payment removed - Users now subscribe via website
+  // Subscriptions are now handled exclusively through https://atelia.app/
+  // This code is preserved for potential future use
+  /*
   // Create payment sheet for subscription
   Future<bool> createSubscriptionPaymentSheet(SubscriptionPlan plan) async {
     print(
@@ -235,6 +239,7 @@ class StripeSubscriptionService {
     }
     return false;
   }
+  */
 
   // Get ephemeral key for customer
   Future<String> _getEphemeralKey(String customerId) async {
@@ -708,6 +713,8 @@ class StripeSubscriptionService {
     return canGenerate;
   }
 
+  // TEMPORARILY UNCOMMENTED: Stripe add-on purchases active until RevenueCat implementation
+  // TODO: Replace with RevenueCat for add-on purchases after implementation
   // Purchase extra techpacks (one-time payment)
   Future<bool> purchaseExtraTechpacks(int count, double price) async {
     try {
@@ -777,6 +784,8 @@ class StripeSubscriptionService {
     return false;
   }
 
+  // TEMPORARILY UNCOMMENTED: Stripe add-on purchases active until RevenueCat implementation
+  // TODO: Replace with RevenueCat for add-on purchases after implementation
   // Purchase extra designs (one-time payment)
   Future<bool> purchaseExtraDesigns() async {
     try {
