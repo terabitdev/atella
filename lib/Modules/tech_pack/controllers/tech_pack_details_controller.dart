@@ -9,6 +9,7 @@ import '../../../Data/Models/tech_pack_model.dart';
 import '../../../Data/Models/user_subscription.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
+import '../../../services/PaymentService/revenuecat_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
 import '../../../services/internet_connectivity_checker.dart';
 import '../Views/Widgets/techpack_limit_dialog.dart';
@@ -17,6 +18,7 @@ class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _subscriptionService =
       StripeSubscriptionService();
+  final RevenueCatService _revenueCatService = RevenueCatService();
 
   // Helper to get localization
   AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
@@ -1175,7 +1177,8 @@ class TechPackDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
 
-      bool success = await _subscriptionService.purchaseExtraTechpacks(
+      // Use RevenueCat for add-on purchases (replaced Stripe)
+      bool success = await _revenueCatService.purchaseExtraTechpacks(
         count,
         price,
       );

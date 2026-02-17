@@ -78,68 +78,102 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                 color: Colors.grey[200],
                                 borderRadius: BorderRadius.circular(8.r),
                               ),
-                              child: Obx(() => IntrinsicHeight(
-                                child: Row(
-                                  children: [
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (controller.isYearlyBilling.value) {
-                                            controller.toggleBillingPeriod();
-                                          }
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
-                                          decoration: BoxDecoration(
-                                            color: !controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(6.r),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              l10n.monthly,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: !controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.2,
+                              child: Obx(
+                                () => IntrinsicHeight(
+                                  child: Row(
+                                    children: [
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (controller
+                                                .isYearlyBilling
+                                                .value) {
+                                              controller.toggleBillingPeriod();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 10.h,
+                                              horizontal: 6.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  !controller
+                                                      .isYearlyBilling
+                                                      .value
+                                                  ? Colors.black
+                                                  : Colors.transparent,
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                l10n.monthly,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color:
+                                                      !controller
+                                                          .isYearlyBilling
+                                                          .value
+                                                      ? Colors.white
+                                                      : Colors.grey[600],
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  height: 1.2,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                    Expanded(
-                                      child: GestureDetector(
-                                        onTap: () {
-                                          if (!controller.isYearlyBilling.value) {
-                                            controller.toggleBillingPeriod();
-                                          }
-                                        },
-                                        child: Container(
-                                          padding: EdgeInsets.symmetric(vertical: 10.h, horizontal: 6.w),
-                                          decoration: BoxDecoration(
-                                            color: controller.isYearlyBilling.value ? Colors.black : Colors.transparent,
-                                            borderRadius: BorderRadius.circular(6.r),
-                                          ),
-                                          child: Center(
-                                            child: Text(
-                                              l10n.yearlySavePercent,
-                                              textAlign: TextAlign.center,
-                                              style: TextStyle(
-                                                color: controller.isYearlyBilling.value ? Colors.white : Colors.grey[600],
-                                                fontSize: 13.sp,
-                                                fontWeight: FontWeight.w600,
-                                                height: 1.2,
+                                      Expanded(
+                                        child: GestureDetector(
+                                          onTap: () {
+                                            if (!controller
+                                                .isYearlyBilling
+                                                .value) {
+                                              controller.toggleBillingPeriod();
+                                            }
+                                          },
+                                          child: Container(
+                                            padding: EdgeInsets.symmetric(
+                                              vertical: 10.h,
+                                              horizontal: 6.w,
+                                            ),
+                                            decoration: BoxDecoration(
+                                              color:
+                                                  controller
+                                                      .isYearlyBilling
+                                                      .value
+                                                  ? Colors.black
+                                                  : Colors.transparent,
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
+                                            ),
+                                            child: Center(
+                                              child: Text(
+                                                l10n.yearlySavePercent,
+                                                textAlign: TextAlign.center,
+                                                style: TextStyle(
+                                                  color:
+                                                      controller
+                                                          .isYearlyBilling
+                                                          .value
+                                                      ? Colors.white
+                                                      : Colors.grey[600],
+                                                  fontSize: 13.sp,
+                                                  fontWeight: FontWeight.w600,
+                                                  height: 1.2,
+                                                ),
                                               ),
                                             ),
                                           ),
                                         ),
                                       ),
-                                    ),
-                                  ],
+                                    ],
+                                  ),
                                 ),
-                              )),
+                              ),
                             ),
                             SizedBox(height: 16.h),
                             // Plan Header Container
@@ -155,14 +189,17 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                 children: [
                                   Expanded(
                                     child: Column(
-                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
                                       children: [
-                                        Obx(() => Text(
-                                          controller.isYearlyBilling.value
-                                              ? l10n.starterYearlyPrice
-                                              : l10n.starterMonthlyPrice,
-                                          style: sfpsTitleTextTextStyle18600,
-                                        )),
+                                        Obx(
+                                          () => Text(
+                                            controller.isYearlyBilling.value
+                                                ? l10n.starterYearlyPrice
+                                                : l10n.starterMonthlyPrice,
+                                            style: sfpsTitleTextTextStyle18600,
+                                          ),
+                                        ),
                                         SizedBox(height: 4.h),
                                         Text(
                                           l10n.featuresInclude,
@@ -171,22 +208,33 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                         SizedBox(height: 15.h),
                                         // Display current usage counters for Starter plan
                                         Obx(() {
-                                          final subscription = controller.currentSubscription.value;
+                                          final subscription = controller
+                                              .currentSubscription
+                                              .value;
                                           if (subscription != null &&
-                                              (subscription.subscriptionPlan == 'STARTER' ||
-                                               subscription.subscriptionPlan == 'STARTER_YEARLY')) {
+                                              (subscription.subscriptionPlan ==
+                                                      'STARTER' ||
+                                                  subscription
+                                                          .subscriptionPlan ==
+                                                      'STARTER_YEARLY')) {
                                             return Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // Design usage counter
                                                 Text(
                                                   l10n.designsUsed(
-                                                    subscription.designsUsedCount,
-                                                    subscription.designsTotalCount,
+                                                    subscription
+                                                        .designsUsedCount,
+                                                    subscription
+                                                        .designsTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingDesigns > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingDesigns >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -196,12 +244,17 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                                                 // Techpack usage counter
                                                 Text(
                                                   l10n.techpacksUsed(
-                                                    subscription.techpacksUsedCount,
-                                                    subscription.techpacksTotalCount,
+                                                    subscription
+                                                        .techpacksUsedCount,
+                                                    subscription
+                                                        .techpacksTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingTechpacks > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingTechpacks >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -236,48 +289,51 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                               ),
                             ),
                             SizedBox(height: 24.h),
-                            
+
                             // Features List
-                            Obx(() => Column(
-                              children: [
-                                _buildFeatureItem(l10n.starterDesignLimit),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem(controller.isYearlyBilling.value
-                                  ? l10n.techpacksPerMonthYearly(2, 24)
-                                  : l10n.techpacksPerMonth(2)),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem(l10n.customPdfExport),
-                                SizedBox(height: 16.h),
-                                _buildFeatureItem(l10n.accessToManufacturers),
-                              ],
-                            )),
+                            Obx(
+                              () => Column(
+                                children: [
+                                  _buildFeatureItem(l10n.starterDesignLimit),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(
+                                    controller.isYearlyBilling.value
+                                        ? l10n.techpacksPerMonthYearly(2, 24)
+                                        : l10n.techpacksPerMonth(2),
+                                  ),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(l10n.customPdfExport),
+                                  SizedBox(height: 16.h),
+                                  _buildFeatureItem(l10n.accessToManufacturers),
+                                ],
+                              ),
+                            ),
                             SizedBox(height: 40.h),
                           ],
                         ),
                       ),
                     ),
-                    
+
                     // Bottom Section with Button and Terms
                     Column(
                       children: [
-                       Obx(() {
-                          final currentPlan = controller.currentSubscription.value?.subscriptionPlan;
+                        Obx(() {
+                          final currentPlan = controller
+                              .currentSubscription
+                              .value
+                              ?.subscriptionPlan;
                           final isYearly = controller.isYearlyBilling.value;
 
                           // Check EXACT match based on selected tab
-                          final expectedPlan = isYearly ? 'STARTER_YEARLY' : 'STARTER';
+                          final expectedPlan = isYearly
+                              ? 'STARTER_YEARLY'
+                              : 'STARTER';
                           bool isExactCurrentPlan = currentPlan == expectedPlan;
 
                           // Check if user has the opposite billing period for same tier
-                          bool hasOppositeBillingPeriod = (isYearly && currentPlan == 'STARTER') ||
-                                                          (!isYearly && currentPlan == 'STARTER_YEARLY');
 
                           // Check if user has any other active subscription (PRO plans)
-                          bool hasOtherSubscription = currentPlan != null &&
-                                                      currentPlan != 'FREE' &&
-                                                      !isExactCurrentPlan &&
-                                                      !hasOppositeBillingPeriod;
-                          
+
                           return Column(
                             children: [
                               // COMMENTED OUT: In-app subscribe button removed - Users subscribe via website
@@ -328,18 +384,29 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                               if (isExactCurrentPlan) ...[
                                 SizedBox(height: 16.h),
                                 InkWell(
-                                  onTap: controller.isCancellingSubscription.value ? null : () {
-                                    _showCancelConfirmationDialog();
-                                  },
+                                  onTap:
+                                      controller.isCancellingSubscription.value
+                                      ? null
+                                      : () {
+                                          _showCancelConfirmationDialog();
+                                        },
                                   child: Container(
                                     height: 50.h,
                                     width: 375.w,
                                     decoration: BoxDecoration(
-                                      color: controller.isCancellingSubscription.value ? Colors.grey[400] : Colors.red,
+                                      color:
+                                          controller
+                                              .isCancellingSubscription
+                                              .value
+                                          ? Colors.grey[400]
+                                          : Colors.red,
                                       borderRadius: BorderRadius.circular(10.r),
                                     ),
                                     child: Center(
-                                      child: controller.isCancellingSubscription.value
+                                      child:
+                                          controller
+                                              .isCancellingSubscription
+                                              .value
                                           ? SizedBox(
                                               height: 20.h,
                                               width: 20.w,
@@ -368,8 +435,13 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                         // Subscribe on Web button
                         InkWell(
                           onTap: () async {
-                            final Uri webPaymentUrl = Uri.parse('https://atelia.app/');
-                            if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
+                            final Uri webPaymentUrl = Uri.parse(
+                              'https://atelia.app/',
+                            );
+                            if (!await launchUrl(
+                              webPaymentUrl,
+                              mode: LaunchMode.externalApplication,
+                            )) {
                               Get.snackbar(
                                 'Error',
                                 'Could not open payment page',
@@ -409,14 +481,20 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                               height: 1.4,
                             ),
                             children: [
-                              TextSpan(text: l10n.termsAgreement, style: ssTitleTextTextStyle124006),
+                              TextSpan(
+                                text: l10n.termsAgreement,
+                                style: ssTitleTextTextStyle124006,
+                              ),
                               TextSpan(
                                 text: l10n.termsOfService,
                                 style: ssTitleTextTextStyle124006.copyWith(
                                   fontWeight: FontWeight.bold,
                                 ),
                               ),
-                              TextSpan(text: l10n.and, style: ssTitleTextTextStyle124006),
+                              TextSpan(
+                                text: l10n.and,
+                                style: ssTitleTextTextStyle124006,
+                              ),
                               TextSpan(
                                 text: l10n.privacyPolicy,
                                 style: ssTitleTextTextStyle124006.copyWith(
@@ -451,19 +529,10 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
             color: Colors.black,
             shape: BoxShape.circle,
           ),
-          child: Icon(
-            Icons.check,
-            color: Colors.white,
-            size: 14.sp,
-          ),
+          child: Icon(Icons.check, color: Colors.white, size: 14.sp),
         ),
         SizedBox(width: 12.w),
-        Expanded(
-          child: Text(
-            feature,
-            style: sfpsTitleTextTextStyle14500,
-          ),
-        ),
+        Expanded(child: Text(feature, style: sfpsTitleTextTextStyle14500)),
       ],
     );
   }
@@ -490,7 +559,10 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
           final localizedReasons = _getLocalizedReasons(l10n);
 
           return AlertDialog(
-            title: Text(l10n.cancelSubscriptionTitle, style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black)),
+            title: Text(
+              l10n.cancelSubscriptionTitle,
+              style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.black),
+            ),
             content: SingleChildScrollView(
               child: Column(
                 mainAxisSize: MainAxisSize.min,
@@ -498,17 +570,27 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                 children: [
                   Text(
                     l10n.cancelSubscriptionMessage,
-                    style: ssTitleTextTextStyle14400.copyWith(color: Colors.black),
+                    style: ssTitleTextTextStyle14400.copyWith(
+                      color: Colors.black,
+                    ),
                   ),
                   SizedBox(height: 16),
-                  ...localizedReasons.map((reason) => RadioListTile<String>(
-                    title: Text(reason, style: ssTitleTextTextStyle14400.copyWith(color: Colors.black)),
-                    value: reason,
-                    groupValue: selectedReason,
-                    onChanged: (value) => setState(() => selectedReason = value),
-                    contentPadding: EdgeInsets.zero,
-                    dense: true,
-                  )),
+                  ...localizedReasons.map(
+                    (reason) => RadioListTile<String>(
+                      title: Text(
+                        reason,
+                        style: ssTitleTextTextStyle14400.copyWith(
+                          color: Colors.black,
+                        ),
+                      ),
+                      value: reason,
+                      groupValue: selectedReason,
+                      onChanged: (value) =>
+                          setState(() => selectedReason = value),
+                      contentPadding: EdgeInsets.zero,
+                      dense: true,
+                    ),
+                  ),
                   if (selectedReason == l10n.other)
                     Padding(
                       padding: EdgeInsets.only(top: 8),
@@ -517,7 +599,10 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                         decoration: InputDecoration(
                           hintText: l10n.pleaseSpecify,
                           border: OutlineInputBorder(),
-                          contentPadding: EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+                          contentPadding: EdgeInsets.symmetric(
+                            horizontal: 12,
+                            vertical: 8,
+                          ),
                         ),
                       ),
                     ),
@@ -527,18 +612,32 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
             actions: [
               TextButton(
                 onPressed: () => Get.back(),
-                child: Text(l10n.keepSubscription, style: ssTitleTextTextStyle14400.copyWith(color: Colors.black, fontWeight: FontWeight.bold)),
+                child: Text(
+                  l10n.keepSubscription,
+                  style: ssTitleTextTextStyle14400.copyWith(
+                    color: Colors.black,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
               TextButton(
                 onPressed: () {
                   final reason = selectedReason == l10n.other
-                      ? otherReasonController.text.isNotEmpty ? otherReasonController.text : l10n.other
+                      ? otherReasonController.text.isNotEmpty
+                            ? otherReasonController.text
+                            : l10n.other
                       : selectedReason;
                   Get.back();
                   controller.cancelSubscription(reason: reason);
                 },
                 style: TextButton.styleFrom(foregroundColor: Colors.red),
-                child: Text(l10n.cancelSubscription, style: ssTitleTextTextStyle14400.copyWith(color: Colors.red, fontWeight: FontWeight.bold)),
+                child: Text(
+                  l10n.cancelSubscription,
+                  style: ssTitleTextTextStyle14400.copyWith(
+                    color: Colors.red,
+                    fontWeight: FontWeight.bold,
+                  ),
+                ),
               ),
             ],
           );

@@ -103,9 +103,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                                       .value
                                                   ? Colors.black
                                                   : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(
-                                                6.r,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
                                             ),
                                             child: Center(
                                               child: Text(
@@ -143,12 +142,13 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                             ),
                                             decoration: BoxDecoration(
                                               color:
-                                                  controller.isYearlyBilling.value
+                                                  controller
+                                                      .isYearlyBilling
+                                                      .value
                                                   ? Colors.black
                                                   : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(
-                                                6.r,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
                                             ),
                                             child: Center(
                                               child: Text(
@@ -206,22 +206,33 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                         SizedBox(height: 15.h),
                                         // Display current usage counters for Pro plan
                                         Obx(() {
-                                          final subscription = controller.currentSubscription.value;
+                                          final subscription = controller
+                                              .currentSubscription
+                                              .value;
                                           if (subscription != null &&
-                                              (subscription.subscriptionPlan == 'PRO' ||
-                                               subscription.subscriptionPlan == 'PRO_YEARLY')) {
+                                              (subscription.subscriptionPlan ==
+                                                      'PRO' ||
+                                                  subscription
+                                                          .subscriptionPlan ==
+                                                      'PRO_YEARLY')) {
                                             return Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // Design usage counter
                                                 Text(
                                                   l10n.designsUsed(
-                                                    subscription.designsUsedCount,
-                                                    subscription.designsTotalCount,
+                                                    subscription
+                                                        .designsUsedCount,
+                                                    subscription
+                                                        .designsTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingDesigns > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingDesigns >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -231,12 +242,17 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                                                 // Techpack usage counter
                                                 Text(
                                                   l10n.techpacksUsed(
-                                                    subscription.techpacksUsedCount,
-                                                    subscription.techpacksTotalCount,
+                                                    subscription
+                                                        .techpacksUsedCount,
+                                                    subscription
+                                                        .techpacksTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingTechpacks > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingTechpacks >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -313,15 +329,8 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                           bool isExactCurrentPlan = currentPlan == expectedPlan;
 
                           // Check if user has the opposite billing period for same tier
-                          bool hasOppositeBillingPeriod =
-                              (isYearly && currentPlan == 'PRO') ||
-                              (!isYearly && currentPlan == 'PRO_YEARLY');
 
                           // Check if user has any other active subscription (strict rule)
-                          bool hasOtherSubscription = currentPlan != null &&
-                                                      currentPlan != 'FREE' &&
-                                                      !isExactCurrentPlan &&
-                                                      !hasOppositeBillingPeriod;
 
                           return Column(
                             children: [
@@ -440,8 +449,13 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                         // Subscribe on Web button
                         InkWell(
                           onTap: () async {
-                            final Uri webPaymentUrl = Uri.parse('https://atelia.app/');
-                            if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
+                            final Uri webPaymentUrl = Uri.parse(
+                              'https://atelia.app/',
+                            );
+                            if (!await launchUrl(
+                              webPaymentUrl,
+                              mode: LaunchMode.externalApplication,
+                            )) {
                               Get.snackbar(
                                 'Error',
                                 'Could not open payment page',

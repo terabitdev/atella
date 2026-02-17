@@ -30,6 +30,22 @@
           }
         },
         {
+          "client_id": "1097482533368-b0587ie081sg88467s4rcr9kl2tqvhu7.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.atella",
+            "certificate_hash": "ce7e52ae1c9031330e47e004adac0395c31eef4f"
+          }
+        },
+        {
+          "client_id": "1097482533368-ooiqf3lj9tntev59m5n1b3563tkddaaf.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.company.atella",
+            "certificate_hash": "fe5040c3310451bcc2785654f2477f8f3209d7a2"
+          }
+        },
+        {
           "client_id": "1097482533368-da8armvdct0jt8q4s3q2qqd9itjdvq5l.apps.googleusercontent.com",
           "client_type": 3
         }
@@ -79,6 +95,14 @@
           "android_info": {
             "package_name": "com.example.atella",
             "certificate_hash": "bb170fb852459741fd97096a1c7c236ff0d47263"
+          }
+        },
+        {
+          "client_id": "1097482533368-c73b4a0uk7tapocbqkgjtah9b473b8ck.apps.googleusercontent.com",
+          "client_type": 1,
+          "android_info": {
+            "package_name": "com.example.atella",
+            "certificate_hash": "ce7e52ae1c9031330e47e004adac0395c31eef4f"
           }
         },
         {
