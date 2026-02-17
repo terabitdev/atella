@@ -867,6 +867,10 @@
   "@successfullySignedInWithGoogle": {
     "description": "Google sign in success message"
   },
+  "successfullySignedInWithApple": "Successfully signed in with Apple",
+  "@successfullySignedInWithApple": {
+    "description": "Apple sign in success message"
+  },
   "userRegisteredSuccessfully": "User registered successfully",
   "@userRegisteredSuccessfully": {
     "description": "Signup success message"
@@ -3404,6 +3408,14 @@
   "@authGoogleGenericError": {
     "description": "Generic Google sign-in error"
   },
+  "authAppleSignInCancelled": "Apple sign-in was cancelled.",
+  "@authAppleSignInCancelled": {
+    "description": "Apple sign-in cancelled by user"
+  },
+  "authAppleSignInFailed": "Apple sign-in failed. Please try again.",
+  "@authAppleSignInFailed": {
+    "description": "Apple sign-in failed error"
+  },
   "authInvalidCredentials": "Incorrect email or password. Please try again.",
   "@authInvalidCredentials": {
     "description": "Error when login credentials are invalid (user not found or wrong password)"
@@ -3740,6 +3752,18 @@
   "googleReauthCancelled": "Google sign-in was cancelled. Account deletion aborted.",
   "@googleReauthCancelled": {
     "description": "Google re-authentication cancelled message"
+  },
+  "appleReauthCancelled": "Apple sign-in was cancelled. Account deletion aborted.",
+  "@appleReauthCancelled": {
+    "description": "Apple re-authentication cancelled message"
+  },
+  "confirmWithApple": "Confirm with Apple",
+  "@confirmWithApple": {
+    "description": "Confirm with Apple button text"
+  },
+  "signInWithAppleToConfirm": "Please sign in with Apple to confirm account deletion:",
+  "@signInWithAppleToConfirm": {
+    "description": "Apple re-authentication prompt for account deletion"
   },
   "deletingAccount": "Deleting account...",
   "@deletingAccount": {

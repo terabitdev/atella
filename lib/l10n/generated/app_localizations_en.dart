@@ -558,6 +558,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Successfully signed in with Google';
 
   @override
+  String get successfullySignedInWithApple =>
+      'Successfully signed in with Apple';
+
+  @override
   String get userRegisteredSuccessfully => 'User registered successfully';
 
   @override
@@ -2797,6 +2801,12 @@ class AppLocalizationsEn extends AppLocalizations {
       'An error occurred during Google sign-in. Please try again.';
 
   @override
+  String get authAppleSignInCancelled => 'Apple sign-in was cancelled.';
+
+  @override
+  String get authAppleSignInFailed => 'Apple sign-in failed. Please try again.';
+
+  @override
   String get authInvalidCredentials =>
       'Incorrect email or password. Please try again.';
 
@@ -3081,6 +3091,17 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get googleReauthCancelled =>
       'Google sign-in was cancelled. Account deletion aborted.';
+
+  @override
+  String get appleReauthCancelled =>
+      'Apple sign-in was cancelled. Account deletion aborted.';
+
+  @override
+  String get confirmWithApple => 'Confirm with Apple';
+
+  @override
+  String get signInWithAppleToConfirm =>
+      'Please sign in with Apple to confirm account deletion:';
 
   @override
   String get deletingAccount => 'Deleting account...';

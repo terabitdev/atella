@@ -1,4 +1,7 @@
+import 'dart:io';
+
 import 'package:atella/Modules/Auth/Controllers/login_controller.dart';
+import 'package:atella/Modules/Auth/View/Widgets/apple_signin_button.dart';
 import 'package:atella/Modules/Auth/View/Widgets/auth_header.dart';
 import 'package:atella/Modules/Auth/View/Widgets/google_signin_button.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
@@ -117,6 +120,20 @@ class LoginScreen extends StatelessWidget {
                     loading: controller.isGoogleLoading.value,
                   ),
                 ),
+                if (Platform.isIOS) ...[
+                  SizedBox(height: 12.h),
+                  Obx(
+                    () => AppleRoundButton(
+                      title: l10n.continueWithApple,
+                      onTap: controller.isAppleLoading.value
+                          ? () {}
+                          : () {
+                              controller.loginWithApple();
+                            },
+                      loading: controller.isAppleLoading.value,
+                    ),
+                  ),
+                ],
                 SizedBox(height: 80.h),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,

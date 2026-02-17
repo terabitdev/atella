@@ -11,6 +11,7 @@ class LoginController extends GetxController {
 
   var isLoading = false.obs;
   var isGoogleLoading = false.obs;
+  var isAppleLoading = false.obs;
   var emailError = ''.obs;
   var passwordError = ''.obs;
 
@@ -133,6 +134,47 @@ class LoginController extends GetxController {
     }
   }
 
+  Future<void> loginWithApple() async {
+    isAppleLoading.value = true;
+    final result = await _authService.signInWithApple();
+    isAppleLoading.value = false;
+
+    if (result == null) {
+      // Identify user for PostHog
+      final user = _authService.currentUser;
+      if (user != null) {
+        PostHogAnalyticsService().identifyUser(
+          userId: user.uid,
+          email: user.email,
+          name: user.displayName,
+        );
+      }
+      // Track Apple login event
+      PostHogAnalyticsService().trackUserLoggedIn(method: 'apple');
+
+      final l10n = AppLocalizations.of(Get.context!)!;
+      Get.snackbar(
+        l10n.success,
+        l10n.successfullySignedInWithApple,
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+      );
+      Get.offAllNamed('/nav_bar');
+    } else if (result != 'auth-apple-sign-in-cancelled') {
+      final l10n = AppLocalizations.of(Get.context!)!;
+      final errorMessage = _getLocalizedError(result, l10n);
+      Get.snackbar(
+        l10n.error,
+        errorMessage,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
+      );
+    }
+  }
+
   String _getLocalizedError(String errorCode, AppLocalizations l10n) {
     switch (errorCode) {
       case 'auth-invalid-credentials':
@@ -157,6 +199,10 @@ class LoginController extends GetxController {
         return l10n.authGoogleConfigError;
       case 'auth-google-generic-error':
         return l10n.authGoogleGenericError;
+      case 'auth-apple-sign-in-cancelled':
+        return l10n.authAppleSignInCancelled;
+      case 'auth-apple-sign-in-failed':
+        return l10n.authAppleSignInFailed;
       case 'auth-generic-error':
         return l10n.authGenericError;
       default:

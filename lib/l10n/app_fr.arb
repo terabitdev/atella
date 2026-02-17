@@ -184,6 +184,7 @@
   "passwordsDoNotMatch": "Les mots de passe ne correspondent pas",
   "userSuccessfullyLoggedIn": "Utilisateur connecté avec succès",
   "successfullySignedInWithGoogle": "Connexion réussie avec Google",
+  "successfullySignedInWithApple": "Connexion réussie avec Apple",
   "userRegisteredSuccessfully": "Utilisateur enregistré avec succès",
   "userAlreadyExistsWithEmail": "Un utilisateur existe déjà avec cet e-mail",
   "verificationLinkSent": "Lien de vérification envoyé",
@@ -1074,6 +1075,14 @@
   "@authGoogleGenericError": {
     "description": "Generic Google sign-in error"
   },
+  "authAppleSignInCancelled": "La connexion Apple a été annulée.",
+  "@authAppleSignInCancelled": {
+    "description": "Apple sign-in cancelled by user"
+  },
+  "authAppleSignInFailed": "La connexion Apple a échoué. Veuillez réessayer.",
+  "@authAppleSignInFailed": {
+    "description": "Apple sign-in failed error"
+  },
   "authInvalidCredentials": "Email ou mot de passe incorrect. Veuillez réessayer.",
   "@authInvalidCredentials": {
     "description": "Error when login credentials are invalid (user not found or wrong password)"
@@ -1403,6 +1412,18 @@
   "noInternetConnectionMessage": "Veuillez vérifier votre connexion internet et réessayer.",
   "googleReauthCancelled": "La connexion Google a été annulée. Suppression du compte annulée.",
   "@googleReauthCancelled": {
+    "description": "Google re-authentication cancelled message"
+  },
+  "appleReauthCancelled": "La connexion Apple a été annulée. Suppression du compte annulée.",
+  "@appleReauthCancelled": {
+    "description": "Apple re-authentication cancelled message"
+  },
+  "confirmWithApple": "Confirmer avec Apple",
+  "@confirmWithApple": {
+    "description": "Confirm with Apple button text"
+  },
+  "signInWithAppleToConfirm": "Veuillez vous connecter avec Apple pour confirmer la suppression du compte :",
+  "@signInWithAppleToConfirm": {
     "description": "Google re-authentication cancelled message"
   },
   "deletingAccount": "Suppression du compte...",

@@ -1106,6 +1106,12 @@ abstract class AppLocalizations {
   /// **'Successfully signed in with Google'**
   String get successfullySignedInWithGoogle;
 
+  /// Apple sign in success message
+  ///
+  /// In en, this message translates to:
+  /// **'Successfully signed in with Apple'**
+  String get successfullySignedInWithApple;
+
   /// Signup success message
   ///
   /// In en, this message translates to:
@@ -5186,6 +5192,18 @@ abstract class AppLocalizations {
   /// **'An error occurred during Google sign-in. Please try again.'**
   String get authGoogleGenericError;
 
+  /// Apple sign-in cancelled by user
+  ///
+  /// In en, this message translates to:
+  /// **'Apple sign-in was cancelled.'**
+  String get authAppleSignInCancelled;
+
+  /// Apple sign-in failed error
+  ///
+  /// In en, this message translates to:
+  /// **'Apple sign-in failed. Please try again.'**
+  String get authAppleSignInFailed;
+
   /// Error when login credentials are invalid (user not found or wrong password)
   ///
   /// In en, this message translates to:
@@ -5677,6 +5695,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Google sign-in was cancelled. Account deletion aborted.'**
   String get googleReauthCancelled;
+
+  /// Apple re-authentication cancelled message
+  ///
+  /// In en, this message translates to:
+  /// **'Apple sign-in was cancelled. Account deletion aborted.'**
+  String get appleReauthCancelled;
+
+  /// Confirm with Apple button text
+  ///
+  /// In en, this message translates to:
+  /// **'Confirm with Apple'**
+  String get confirmWithApple;
+
+  /// Apple re-authentication prompt for account deletion
+  ///
+  /// In en, this message translates to:
+  /// **'Please sign in with Apple to confirm account deletion:'**
+  String get signInWithAppleToConfirm;
 
   /// Deleting account loading message
   ///

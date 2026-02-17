@@ -612,14 +612,14 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   void _confirmDeleteAccount(BuildContext context, AppLocalizations l10n) {
-    // Check if user is Google user
-    final isGoogleUser = controller.isGoogleUser();
-
-    if (isGoogleUser) {
+    if (controller.isGoogleUser()) {
       // Show Google confirmation dialog
       _showGoogleConfirmationDialog(context, l10n);
+    } else if (controller.isAppleUser()) {
+      // Show Apple confirmation dialog
+      _showAppleConfirmationDialog(context, l10n);
     } else {
-      // Navigate to password screen
+      // Navigate to password screen for email/password users
       Get.toNamed('/delete-account-password');
     }
   }
@@ -707,6 +707,140 @@ class _SettingScreenState extends State<SettingScreen> {
                                 )
                               : Text(
                                   l10n.continueWithGoogle,
+                                  textAlign: TextAlign.center,
+                                  style: TextStyle(
+                                    fontSize: 15.sp,
+                                    fontWeight: FontWeight.w600,
+                                  ),
+                                ),
+                        ),
+                      ),
+                    ),
+                    SizedBox(height: 12.h),
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        style: OutlinedButton.styleFrom(
+                          foregroundColor: Colors.black,
+                          side: BorderSide(color: Colors.grey.shade300),
+                          padding: EdgeInsets.symmetric(
+                            vertical: 16.h,
+                            horizontal: 20.w,
+                          ),
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                        ),
+                        onPressed: () {
+                          Navigator.of(dialogContext).pop();
+                        },
+                        child: Text(
+                          l10n.cancelDelete,
+                          textAlign: TextAlign.center,
+                          style: TextStyle(
+                            fontSize: 15.sp,
+                            fontWeight: FontWeight.w600,
+                          ),
+                        ),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+  }
+
+  void _showAppleConfirmationDialog(
+    BuildContext context,
+    AppLocalizations l10n,
+  ) {
+    showDialog(
+      context: context,
+      builder: (BuildContext dialogContext) {
+        return Dialog(
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Container(
+            padding: EdgeInsets.all(24.r),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(20.r),
+            ),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                // Apple Icon
+                Icon(
+                  Icons.apple,
+                  size: 48.sp,
+                  color: Colors.black,
+                ),
+                SizedBox(height: 20.h),
+
+                // Title
+                Text(
+                  l10n.confirmWithApple,
+                  style: TextStyle(
+                    fontSize: 20.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
+                ),
+                SizedBox(height: 12.h),
+
+                // Message
+                Text(
+                  l10n.signInWithAppleToConfirm,
+                  textAlign: TextAlign.center,
+                  style: TextStyle(
+                    fontSize: 14.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+                SizedBox(height: 24.h),
+
+                // Action Buttons
+                Column(
+                  children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: Obx(
+                        () => ElevatedButton(
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Colors.red,
+                            foregroundColor: Colors.white,
+                            padding: EdgeInsets.symmetric(
+                              vertical: 16.h,
+                              horizontal: 20.w,
+                            ),
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(12.r),
+                            ),
+                          ),
+                          onPressed: controller.isDeletingAccount.value
+                              ? null
+                              : () async {
+                                  await controller.deleteAccountWithApple();
+                                },
+                          child: controller.isDeletingAccount.value
+                              ? SizedBox(
+                                  width: 20.w,
+                                  height: 20.h,
+                                  child: CircularProgressIndicator(
+                                    strokeWidth: 2,
+                                    valueColor: AlwaysStoppedAnimation<Color>(
+                                      Colors.white,
+                                    ),
+                                  ),
+                                )
+                              : Text(
+                                  l10n.continueWithApple,
                                   textAlign: TextAlign.center,
                                   style: TextStyle(
                                     fontSize: 15.sp,

@@ -295,9 +295,73 @@ class ProfileController extends GetxController {
     }
   }
 
+  /// Delete account for Apple users
+  Future<void> deleteAccountWithApple() async {
+    try {
+      isDeletingAccount.value = true;
+      final l10n = AppLocalizations.of(Get.context!)!;
+
+      print('🗑️ Starting account deletion with Apple...');
+
+      // Call auth service to delete account
+      final errorCode = await _authService.deleteAccountWithApple();
+
+      if (errorCode == null) {
+        // Success
+        print('✅ Account deleted successfully');
+
+        // Clear all controllers
+        Get.deleteAll(force: true);
+
+        // Show success message
+        Get.snackbar(
+          l10n.accountDeleted,
+          l10n.accountDeletedSuccess,
+          snackPosition: SnackPosition.TOP,
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          duration: const Duration(seconds: 3),
+        );
+
+        // Navigate to login screen
+        Get.offAllNamed('/login');
+      } else {
+        // Handle error
+        print('❌ Account deletion failed: $errorCode');
+        // Close the dialog before showing error
+        if (Get.isDialogOpen ?? false) {
+          Get.back();
+        }
+        _handleDeleteAccountError(errorCode);
+      }
+    } catch (e) {
+      print('❌ Error during account deletion: $e');
+      final l10n = AppLocalizations.of(Get.context!)!;
+      // Close the dialog before showing error
+      if (Get.isDialogOpen ?? false) {
+        Get.back();
+      }
+      Get.snackbar(
+        l10n.error,
+        l10n.accountDeleteFailed,
+        snackPosition: SnackPosition.TOP,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        duration: const Duration(seconds: 3),
+      );
+    } finally {
+      isDeletingAccount.value = false;
+    }
+  }
+
   /// Check if current user is a Google user
   bool isGoogleUser() {
     return _authService.isGoogleUser();
+  }
+
+  /// Check if current user is an Apple user
+  bool isAppleUser() {
+    return _authService.isAppleUser();
   }
 
   /// Handle delete account errors
@@ -320,6 +384,9 @@ class ProfileController extends GetxController {
         break;
       case 'auth-google-reauthentication-cancelled':
         errorMessage = l10n.googleReauthCancelled;
+        break;
+      case 'auth-apple-reauthentication-cancelled':
+        errorMessage = l10n.appleReauthCancelled;
         break;
       case 'auth-delete-account-failed':
       default:

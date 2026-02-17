@@ -1,7 +1,12 @@
+import 'dart:convert';
+import 'dart:math';
+
+import 'package:crypto/crypto.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/foundation.dart';
 import 'package:google_sign_in/google_sign_in.dart';
+import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:atella/services/firebase/services/delete_account_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
 
@@ -298,6 +303,114 @@ class AuthService {
     }
   }
 
+  /// Generates a cryptographically secure random nonce
+  String _generateNonce([int length = 32]) {
+    const charset =
+        '0123456789ABCDEFGHIJKLMNOPQRSTUVXYZabcdefghijklmnopqrstuvwxyz-._';
+    final random = Random.secure();
+    return List.generate(length, (_) => charset[random.nextInt(charset.length)])
+        .join();
+  }
+
+  /// Returns the SHA256 hash of [input] as a hex string
+  String _sha256ofString(String input) {
+    final bytes = utf8.encode(input);
+    final digest = sha256.convert(bytes);
+    return digest.toString();
+  }
+
+  Future<String?> signInWithApple() async {
+    try {
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+  scopes: [
+    AppleIDAuthorizationScopes.email,
+    AppleIDAuthorizationScopes.fullName,
+  ],
+);
+
+final oauthCredential = OAuthProvider("apple.com").credential(
+  idToken: appleCredential.identityToken,
+  accessToken: appleCredential.authorizationCode,
+);
+
+
+      UserCredential userCredential = await _auth.signInWithCredential(
+        oauthCredential,
+      );
+      User? user = userCredential.user;
+
+      if (user != null) {
+        // Apple only provides name on first sign-in, so we must capture it
+        String displayName = user.displayName ?? '';
+        if (displayName.isEmpty &&
+            (appleCredential.givenName != null ||
+                appleCredential.familyName != null)) {
+          displayName =
+              '${appleCredential.givenName ?? ''} ${appleCredential.familyName ?? ''}'
+                  .trim();
+          await user.updateDisplayName(displayName);
+          await user.reload();
+        }
+
+        DocumentSnapshot userDoc =
+            await _firestore.collection('users').doc(user.uid).get();
+
+        if (!userDoc.exists) {
+          await _firestore.collection('users').doc(user.uid).set({
+            'uid': user.uid,
+            'name': displayName.isNotEmpty ? displayName : 'Apple User',
+            'email': user.email ?? appleCredential.email,
+            'createdAt': FieldValue.serverTimestamp(),
+            'subscriptionPlan': 'FREE',
+            'subscriptionStatus': 'active',
+            'stripeCustomerId': null,
+            'currentSubscriptionId': null,
+            'techpacksUsedThisMonth': 0,
+          });
+        }
+
+        // Check and initialize email-based quota
+        final email = user.email ?? appleCredential.email;
+        if (email != null) {
+          try {
+            await _quotaService.getQuotaByEmail(email);
+            debugPrint(
+              '✅ Email-based quota checked for Apple user: $email',
+            );
+          } catch (e) {
+            debugPrint('⚠️ Error checking quota for Apple user: $e');
+          }
+        }
+
+        return null; // Success
+      } else {
+        return 'auth-apple-sign-in-failed';
+      }
+    } on SignInWithAppleAuthorizationException catch (e) {
+      debugPrint('Apple Sign In Authorization Error: ${e.code} - ${e.message}');
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return 'auth-apple-sign-in-cancelled';
+      }
+      return 'auth-apple-sign-in-failed';
+    } on FirebaseAuthException catch (e) {
+      debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
+      switch (e.code) {
+        case 'user-disabled':
+          return 'auth-user-disabled';
+        case 'network-request-failed':
+          return 'auth-network-error';
+        default:
+          return 'auth-generic-error';
+      }
+    } catch (e) {
+      debugPrint('Error during Apple sign-in: $e');
+      return 'auth-apple-sign-in-failed';
+    }
+  }
+
   // Sign out the current user
   Future<void> signOut() async {
     await _auth.signOut();
@@ -406,6 +519,69 @@ class AuthService {
     }
   }
 
+  /// Delete user account for Apple sign-in users
+  Future<String?> deleteAccountWithApple() async {
+    try {
+      final deleteService = DeleteAccountService();
+
+      // Step 1: Re-authenticate with Apple
+      final rawNonce = _generateNonce();
+      final nonce = _sha256ofString(rawNonce);
+
+      final appleCredential = await SignInWithApple.getAppleIDCredential(
+        scopes: [
+          AppleIDAuthorizationScopes.email,
+          AppleIDAuthorizationScopes.fullName,
+        ],
+        nonce: nonce,
+      );
+
+      final oauthCredential = OAuthProvider('apple.com').credential(
+        idToken: appleCredential.identityToken,
+        rawNonce: rawNonce,
+      );
+
+      // Re-authenticate the user
+      final user = _auth.currentUser;
+      if (user == null) {
+        return 'auth-user-not-found';
+      }
+
+      await user.reauthenticateWithCredential(oauthCredential);
+
+      // Step 2: Delete all user data
+      await deleteService.deleteUserAccount();
+
+      return null; // Success
+    } on SignInWithAppleAuthorizationException catch (e) {
+      debugPrint(
+        'Apple re-auth error: ${e.code} - ${e.message}',
+      );
+      if (e.code == AuthorizationErrorCode.canceled) {
+        return 'auth-apple-reauthentication-cancelled';
+      }
+      return 'auth-delete-account-failed';
+    } on FirebaseAuthException catch (e) {
+      debugPrint(
+        'Firebase Auth Error during Apple account deletion: ${e.code} - ${e.message}',
+      );
+
+      switch (e.code) {
+        case 'requires-recent-login':
+          return 'auth-requires-recent-login';
+        case 'user-not-found':
+          return 'auth-user-not-found';
+        case 'network-request-failed':
+          return 'auth-network-error';
+        default:
+          return 'auth-delete-account-failed';
+      }
+    } catch (e) {
+      debugPrint('Error during Apple account deletion: $e');
+      return 'auth-delete-account-failed';
+    }
+  }
+
   /// Check if current user signed in with Google
   bool isGoogleUser() {
     final user = _auth.currentUser;
@@ -413,6 +589,16 @@ class AuthService {
 
     return user.providerData.any(
       (provider) => provider.providerId == 'google.com',
+    );
+  }
+
+  /// Check if current user signed in with Apple
+  bool isAppleUser() {
+    final user = _auth.currentUser;
+    if (user == null) return false;
+
+    return user.providerData.any(
+      (provider) => provider.providerId == 'apple.com',
     );
   }
 }

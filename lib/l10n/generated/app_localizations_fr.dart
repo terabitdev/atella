@@ -567,6 +567,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get successfullySignedInWithGoogle => 'Connexion réussie avec Google';
 
   @override
+  String get successfullySignedInWithApple => 'Connexion réussie avec Apple';
+
+  @override
   String get userRegisteredSuccessfully => 'Utilisateur enregistré avec succès';
 
   @override
@@ -2848,6 +2851,13 @@ class AppLocalizationsFr extends AppLocalizations {
       'Une erreur s\'est produite lors de la connexion Google. Veuillez réessayer.';
 
   @override
+  String get authAppleSignInCancelled => 'La connexion Apple a été annulée.';
+
+  @override
+  String get authAppleSignInFailed =>
+      'La connexion Apple a échoué. Veuillez réessayer.';
+
+  @override
   String get authInvalidCredentials =>
       'Email ou mot de passe incorrect. Veuillez réessayer.';
 
@@ -3137,6 +3147,17 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get googleReauthCancelled =>
       'La connexion Google a été annulée. Suppression du compte annulée.';
+
+  @override
+  String get appleReauthCancelled =>
+      'La connexion Apple a été annulée. Suppression du compte annulée.';
+
+  @override
+  String get confirmWithApple => 'Confirmer avec Apple';
+
+  @override
+  String get signInWithAppleToConfirm =>
+      'Veuillez vous connecter avec Apple pour confirmer la suppression du compte :';
 
   @override
   String get deletingAccount => 'Suppression du compte...';
