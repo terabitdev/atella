@@ -103,9 +103,8 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                                                       .value
                                                   ? Colors.black
                                                   : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(
-                                                6.r,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
                                             ),
                                             child: Center(
                                               child: Text(
@@ -143,12 +142,13 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                                             ),
                                             decoration: BoxDecoration(
                                               color:
-                                                  controller.isYearlyBilling.value
+                                                  controller
+                                                      .isYearlyBilling
+                                                      .value
                                                   ? Colors.black
                                                   : Colors.transparent,
-                                              borderRadius: BorderRadius.circular(
-                                                6.r,
-                                              ),
+                                              borderRadius:
+                                                  BorderRadius.circular(6.r),
                                             ),
                                             child: Center(
                                               child: Text(
@@ -206,22 +206,33 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                                         SizedBox(height: 15.h),
                                         // Display current usage counters for Studio plan
                                         Obx(() {
-                                          final subscription = controller.currentSubscription.value;
+                                          final subscription = controller
+                                              .currentSubscription
+                                              .value;
                                           if (subscription != null &&
-                                              (subscription.subscriptionPlan == 'STUDIO' ||
-                                               subscription.subscriptionPlan == 'STUDIO_YEARLY')) {
+                                              (subscription.subscriptionPlan ==
+                                                      'STUDIO' ||
+                                                  subscription
+                                                          .subscriptionPlan ==
+                                                      'STUDIO_YEARLY')) {
                                             return Column(
-                                              crossAxisAlignment: CrossAxisAlignment.start,
+                                              crossAxisAlignment:
+                                                  CrossAxisAlignment.start,
                                               children: [
                                                 // Design usage counter
                                                 Text(
                                                   l10n.designsUsed(
-                                                    subscription.designsUsedCount,
-                                                    subscription.designsTotalCount,
+                                                    subscription
+                                                        .designsUsedCount,
+                                                    subscription
+                                                        .designsTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingDesigns > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingDesigns >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -231,12 +242,17 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                                                 // Techpack usage counter
                                                 Text(
                                                   l10n.techpacksUsed(
-                                                    subscription.techpacksUsedCount,
-                                                    subscription.techpacksTotalCount,
+                                                    subscription
+                                                        .techpacksUsedCount,
+                                                    subscription
+                                                        .techpacksTotalCount,
                                                   ),
                                                   style: TextStyle(
                                                     fontSize: 14.sp,
-                                                    color: subscription.remainingTechpacks > 0
+                                                    color:
+                                                        subscription
+                                                                .remainingTechpacks >
+                                                            0
                                                         ? Colors.white
                                                         : Colors.red[300],
                                                     fontWeight: FontWeight.w600,
@@ -276,7 +292,9 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                             Obx(
                               () => Column(
                                 children: [
-                                  _buildFeatureItem(l10n.studioFeatureAiDesignLimit),
+                                  _buildFeatureItem(
+                                    l10n.studioFeatureAiDesignLimit,
+                                  ),
                                   SizedBox(height: 16.h),
                                   _buildFeatureItem(
                                     controller.isYearlyBilling.value
@@ -309,19 +327,14 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                           final isYearly = controller.isYearlyBilling.value;
 
                           // Check EXACT match based on selected tab
-                          final expectedPlan = isYearly ? 'STUDIO_YEARLY' : 'STUDIO';
+                          final expectedPlan = isYearly
+                              ? 'STUDIO_YEARLY'
+                              : 'STUDIO';
                           bool isExactCurrentPlan = currentPlan == expectedPlan;
 
                           // Check if user has the opposite billing period for same tier
-                          bool hasOppositeBillingPeriod =
-                              (isYearly && currentPlan == 'STUDIO') ||
-                              (!isYearly && currentPlan == 'STUDIO_YEARLY');
 
                           // Check if user has any other active subscription (strict rule)
-                          bool hasOtherSubscription = currentPlan != null &&
-                                                      currentPlan != 'FREE' &&
-                                                      !isExactCurrentPlan &&
-                                                      !hasOppositeBillingPeriod;
 
                           return Column(
                             children: [
@@ -440,8 +453,13 @@ class _SubscribeStudioPlanState extends State<SubscribeStudioPlan> {
                         // Subscribe on Web button
                         InkWell(
                           onTap: () async {
-                            final Uri webPaymentUrl = Uri.parse('https://atelia.app/');
-                            if (!await launchUrl(webPaymentUrl, mode: LaunchMode.externalApplication)) {
+                            final Uri webPaymentUrl = Uri.parse(
+                              'https://atelia.app/',
+                            );
+                            if (!await launchUrl(
+                              webPaymentUrl,
+                              mode: LaunchMode.externalApplication,
+                            )) {
                               Get.snackbar(
                                 'Error',
                                 'Could not open payment page',

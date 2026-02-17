@@ -30,12 +30,6 @@ class RevenueCatService {
   static const String _techpackAddonsPackageId = 'techpack_addons';
 
   // Product IDs
-  static const String _designAddonsProductAndroid =
-      'atelia_design_addons_playstore';
-  static const String _designAddonsProductIos = 'atelia_design_addons_ios';
-  static const String _techpackAddonsProductAndroid =
-      'atelia_techpack_addons_playstore';
-  static const String _techpackAddonsProductIos = 'atelia_techpack_addons_ios';
 
   /// Initialize RevenueCat SDK
   /// Call this in main.dart after Firebase initialization
@@ -114,23 +108,25 @@ class RevenueCatService {
       for (var entry in offerings.all.entries) {
         print('   Offering: ${entry.key}');
         for (var pkg in entry.value.availablePackages) {
-          print('      Package: ${pkg.identifier} (${pkg.storeProduct.identifier})');
+          print(
+            '      Package: ${pkg.identifier} (${pkg.storeProduct.identifier})',
+          );
         }
       }
 
       // Fetch the design addons offering
-      Offering? designOffering =
-          offerings.getOffering(_designAddonsOfferingId);
+      Offering? designOffering = offerings.getOffering(_designAddonsOfferingId);
 
       if (designOffering == null) {
-        print(
-            '❌ Design addons offering not found: $_designAddonsOfferingId');
+        print('❌ Design addons offering not found: $_designAddonsOfferingId');
         print('💡 TIP: Check RevenueCat dashboard offering identifier');
         return false;
       }
 
       print('✅ Found offering: ${designOffering.identifier}');
-      print('📦 Available packages in offering: ${designOffering.availablePackages.map((p) => p.identifier).toList()}');
+      print(
+        '📦 Available packages in offering: ${designOffering.availablePackages.map((p) => p.identifier).toList()}',
+      );
 
       // Get the package - try to find it by identifier
       Package? designPackage;
@@ -141,14 +137,19 @@ class RevenueCatService {
           .firstOrNull;
 
       // If not found, try to get the first package
-      if (designPackage == null && designOffering.availablePackages.isNotEmpty) {
-        print('⚠️ Package "$_designAddonsPackageId" not found, using first available package');
+      if (designPackage == null &&
+          designOffering.availablePackages.isNotEmpty) {
+        print(
+          '⚠️ Package "$_designAddonsPackageId" not found, using first available package',
+        );
         designPackage = designOffering.availablePackages.first;
       }
 
       if (designPackage == null) {
         print('❌ No packages found in offering: $_designAddonsOfferingId');
-        print('💡 TIP: Check RevenueCat dashboard - ensure products are attached to offering');
+        print(
+          '💡 TIP: Check RevenueCat dashboard - ensure products are attached to offering',
+        );
         return false;
       }
 
@@ -161,8 +162,7 @@ class RevenueCatService {
       CustomerInfo customerInfo = result.customerInfo;
 
       print('✅ Purchase successful!');
-      print(
-          '📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
+      print('📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
 
       // CRITICAL: Update Firestore - Same logic as Stripe
       // Each purchase = +1 to extraDesignsPurchased (which gives 5 designs)
@@ -207,7 +207,8 @@ class RevenueCatService {
       // If you need multiple counts, create separate products in RevenueCat
       if (count != 1) {
         print(
-            '⚠️ Warning: Only single techpack purchase supported. Requested: $count, processing: 1');
+          '⚠️ Warning: Only single techpack purchase supported. Requested: $count, processing: 1',
+        );
       }
 
       print('🛒 Starting RevenueCat purchase: Extra Techpacks');
@@ -218,18 +219,22 @@ class RevenueCatService {
       print('📦 Current offering: ${offerings.current?.identifier}');
 
       // Fetch the techpack addons offering
-      Offering? techpackOffering =
-          offerings.getOffering(_techpackAddonsOfferingId);
+      Offering? techpackOffering = offerings.getOffering(
+        _techpackAddonsOfferingId,
+      );
 
       if (techpackOffering == null) {
         print(
-            '❌ Techpack addons offering not found: $_techpackAddonsOfferingId');
+          '❌ Techpack addons offering not found: $_techpackAddonsOfferingId',
+        );
         print('💡 TIP: Check RevenueCat dashboard offering identifier');
         return false;
       }
 
       print('✅ Found offering: ${techpackOffering.identifier}');
-      print('📦 Available packages in offering: ${techpackOffering.availablePackages.map((p) => p.identifier).toList()}');
+      print(
+        '📦 Available packages in offering: ${techpackOffering.availablePackages.map((p) => p.identifier).toList()}',
+      );
 
       // Get the package - try to find it by identifier
       Package? techpackPackage;
@@ -240,14 +245,19 @@ class RevenueCatService {
           .firstOrNull;
 
       // If not found, try to get the first package
-      if (techpackPackage == null && techpackOffering.availablePackages.isNotEmpty) {
-        print('⚠️ Package "$_techpackAddonsPackageId" not found, using first available package');
+      if (techpackPackage == null &&
+          techpackOffering.availablePackages.isNotEmpty) {
+        print(
+          '⚠️ Package "$_techpackAddonsPackageId" not found, using first available package',
+        );
         techpackPackage = techpackOffering.availablePackages.first;
       }
 
       if (techpackPackage == null) {
         print('❌ No packages found in offering: $_techpackAddonsOfferingId');
-        print('💡 TIP: Check RevenueCat dashboard - ensure products are attached to offering');
+        print(
+          '💡 TIP: Check RevenueCat dashboard - ensure products are attached to offering',
+        );
         return false;
       }
 
@@ -260,8 +270,7 @@ class RevenueCatService {
       CustomerInfo customerInfo = result.customerInfo;
 
       print('✅ Purchase successful!');
-      print(
-          '📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
+      print('📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
 
       // CRITICAL: Update Firestore - Same logic as Stripe
       // Each purchase = +1 to extraTechpacksPurchased (1 techpack per purchase)
@@ -297,8 +306,7 @@ class RevenueCatService {
       print('🔄 Restoring purchases...');
       CustomerInfo customerInfo = await Purchases.restorePurchases();
       print('✅ Purchases restored successfully');
-      print(
-          '📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
+      print('📋 Active entitlements: ${customerInfo.entitlements.active.keys}');
       return customerInfo;
     } catch (e) {
       print('❌ Error restoring purchases: $e');

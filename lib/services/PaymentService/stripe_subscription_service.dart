@@ -1,7 +1,4 @@
-import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
-import 'package:flutter/material.dart';
-import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:http/http.dart' as http;
@@ -40,48 +37,6 @@ class StripeSubscriptionService {
   }
 
   // Create or get Stripe customer
-  Future<String?> _createOrGetStripeCustomer(
-    String email,
-    String userId,
-  ) async {
-    try {
-      // Check if user already has a Stripe customer ID
-      DocumentSnapshot userDoc = await _firestore
-          .collection('users')
-          .doc(userId)
-          .get();
-      Map<String, dynamic>? userData = userDoc.data() as Map<String, dynamic>?;
-
-      if (userData != null && userData['stripeCustomerId'] != null) {
-        return userData['stripeCustomerId'];
-      }
-
-      // Create new Stripe customer
-      final response = await http.post(
-        Uri.parse('$_stripeApiUrl/customers'),
-        headers: {
-          'Authorization': 'Bearer $_stripeSecretKey',
-          'Content-Type': 'application/x-www-form-urlencoded',
-        },
-        body: {'email': email, 'metadata[firebase_uid]': userId},
-      );
-
-      if (response.statusCode == 200) {
-        final customerData = json.decode(response.body);
-        String customerId = customerData['id'];
-
-        // Save customer ID to Firebase
-        await _firestore.collection('users').doc(userId).update({
-          'stripeCustomerId': customerId,
-        });
-
-        return customerId;
-      }
-    } catch (e) {
-      print('Error creating Stripe customer: $e');
-    }
-    return null;
-  }
 
   // COMMENTED OUT: In-app subscription payment removed - Users now subscribe via website
   // Subscriptions are now handled exclusively through https://atelia.app/
@@ -242,23 +197,6 @@ class StripeSubscriptionService {
   */
 
   // Get ephemeral key for customer
-  Future<String> _getEphemeralKey(String customerId) async {
-    final response = await http.post(
-      Uri.parse('$_stripeApiUrl/ephemeral_keys'),
-      headers: {
-        'Authorization': 'Bearer $_stripeSecretKey',
-        'Stripe-Version': '2024-11-20.acacia',
-        'Content-Type': 'application/x-www-form-urlencoded',
-      },
-      body: {'customer': customerId},
-    );
-
-    if (response.statusCode == 200) {
-      final data = json.decode(response.body);
-      return data['secret'];
-    }
-    throw Exception('Failed to create ephemeral key');
-  }
 
   Future<bool> cancelSubscription() async {
     try {
@@ -560,9 +498,7 @@ class StripeSubscriptionService {
         print(
           '   Extras used: ${updatedSubscription.extraTechpacksUsed}/$extrasPurchased',
         );
-        print(
-          '   Plan: ${updatedSubscription.subscriptionPlan}',
-        );
+        print('   Plan: ${updatedSubscription.subscriptionPlan}');
         if (isYearly) {
           print(
             '   Yearly usage: ${updatedSubscription.techpacksUsedThisYear}',
@@ -591,7 +527,9 @@ class StripeSubscriptionService {
 
       // For FREE plan users, do nothing - email-based quota is handled in final_detail_controller
       if (subscription.subscriptionPlan == 'FREE') {
-        print('ℹ️ FREE plan user - design usage tracked via email-based quota service');
+        print(
+          'ℹ️ FREE plan user - design usage tracked via email-based quota service',
+        );
         return;
       }
 
@@ -614,7 +552,9 @@ class StripeSubscriptionService {
       print('🔍 DESIGN BEFORE INCREMENT:');
       print('   Base limit: $baseLimit');
       print('   Designs generated: $currentDesignUsage');
-      print('   Extra packs purchased: $extrasPurchased (${extrasPurchased * 5} designs)');
+      print(
+        '   Extra packs purchased: $extrasPurchased (${extrasPurchased * 5} designs)',
+      );
       print('   Extras used: $currentExtraUsage');
 
       // Determine if this generation will use base quota or extras
@@ -654,9 +594,7 @@ class StripeSubscriptionService {
         print(
           '   Extras used: ${updatedSubscription.extraDesignsUsed}/${extrasPurchased * 5}',
         );
-        print(
-          '   Plan: ${updatedSubscription.subscriptionPlan}',
-        );
+        print('   Plan: ${updatedSubscription.subscriptionPlan}');
 
         // Check if all add-ons are fully consumed and reset if needed
         await _checkAndResetFullyConsumedAddons(user.uid, updatedSubscription);
@@ -929,7 +867,6 @@ class StripeSubscriptionService {
     }
   }
 
-
   // Enhanced method that checks reset before checking premium features
   Future<bool> canUsePremiumFeatureWithReset(String feature) async {
     // First check and handle monthly reset
@@ -1093,44 +1030,6 @@ class StripeSubscriptionService {
       print('✅ User reverted to FREE plan successfully');
     } catch (e) {
       print('❌ Error reverting user to FREE plan: $e');
-    }
-  }
-
-  /// Extra safeguard: Validate and cleanup failed subscription
-  /// This method is called in the finally block to catch edge cases
-  Future<void> _validateAndCleanupFailedSubscription(
-    String userId,
-    String subscriptionId,
-  ) async {
-    try {
-      // Short delay to allow any pending operations to complete
-      await Future.delayed(const Duration(milliseconds: 500));
-
-      // Check Stripe subscription status
-      bool isValid = await _validateStripeSubscriptionStatus(subscriptionId);
-
-      if (!isValid) {
-        print('⚠️ SAFEGUARD: Subscription is not valid, cleaning up...');
-
-        // Check if this subscription ID is still in Firebase
-        DocumentSnapshot userDoc = await _firestore
-            .collection('users')
-            .doc(userId)
-            .get();
-        Map<String, dynamic>? userData =
-            userDoc.data() as Map<String, dynamic>?;
-
-        if (userData != null &&
-            userData['currentSubscriptionId'] == subscriptionId) {
-          await _revertToFreePlan(userId);
-          print('✅ SAFEGUARD: Successfully cleaned up failed subscription');
-        }
-      } else {
-        print('✅ SAFEGUARD: Subscription is valid, no cleanup needed');
-      }
-    } catch (e) {
-      print('❌ SAFEGUARD: Error during validation: $e');
-      // Don't throw - this is a safety check, shouldn't break the flow
     }
   }
 }
