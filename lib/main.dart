@@ -16,6 +16,7 @@ import 'services/firebase/firebase_options.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'services/PaymentService/subscription_manager_service.dart';
 import 'services/PaymentService/stripe_subscription_service.dart';
+import 'services/PaymentService/revenuecat_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
@@ -27,6 +28,10 @@ void main() async {
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
+
+  // Initialize RevenueCat for in-app purchases (add-ons)
+  await RevenueCatService().initialize();
+
   // Initialize subscription manager to check for monthly resets
   await SubscriptionManagerService().initialize();
 

@@ -713,9 +713,10 @@ class StripeSubscriptionService {
     return canGenerate;
   }
 
-  // TEMPORARILY UNCOMMENTED: Stripe add-on purchases active until RevenueCat implementation
-  // TODO: Replace with RevenueCat for add-on purchases after implementation
-  // Purchase extra techpacks (one-time payment)
+  // COMMENTED OUT: Stripe add-on purchases replaced with RevenueCat
+  // Now using RevenueCatService for add-on purchases
+  // This code is preserved for reference
+  /*
   Future<bool> purchaseExtraTechpacks(int count, double price) async {
     try {
       User? user = _auth.currentUser;
@@ -783,10 +784,12 @@ class StripeSubscriptionService {
     }
     return false;
   }
+  */
 
-  // TEMPORARILY UNCOMMENTED: Stripe add-on purchases active until RevenueCat implementation
-  // TODO: Replace with RevenueCat for add-on purchases after implementation
-  // Purchase extra designs (one-time payment)
+  // COMMENTED OUT: Stripe add-on purchases replaced with RevenueCat
+  // Now using RevenueCatService for add-on purchases
+  // This code is preserved for reference
+  /*
   Future<bool> purchaseExtraDesigns() async {
     try {
       User? user = _auth.currentUser;
@@ -851,6 +854,7 @@ class StripeSubscriptionService {
     }
     return false;
   }
+  */
 
   // Reset counts based on billing period (call this from a scheduled function)
   Future<void> resetMonthlyCounts(String userId) async {

@@ -8,6 +8,7 @@ import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/designservices/designs_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
@@ -20,6 +21,7 @@ class TechPackController extends GetxController {
   final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _subscriptionService =
       StripeSubscriptionService();
+  final RevenueCatService _revenueCatService = RevenueCatService();
 
   // Helper to get localization
   AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
@@ -620,7 +622,8 @@ class TechPackController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
 
-      bool success = await _subscriptionService.purchaseExtraTechpacks(
+      // Use RevenueCat for add-on purchases (replaced Stripe)
+      bool success = await _revenueCatService.purchaseExtraTechpacks(
         count,
         price,
       );

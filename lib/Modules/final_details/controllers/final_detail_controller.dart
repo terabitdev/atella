@@ -4,6 +4,7 @@ import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
@@ -17,6 +18,7 @@ import 'package:get/get.dart';
 class FinalDetailsController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
+  final RevenueCatService _revenueCatService = RevenueCatService();
   final DesignQuotaService _quotaService = DesignQuotaService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
   
@@ -585,7 +587,8 @@ class FinalDetailsController extends GetxController {
           final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
-          bool success = await _stripeService.purchaseExtraDesigns();
+          // Use RevenueCat for add-on purchases (replaced Stripe)
+          bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             Get.snackbar(
               titleText,
@@ -636,7 +639,8 @@ class FinalDetailsController extends GetxController {
           final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
 
           Get.back(); // Close dialog
-          bool success = await _stripeService.purchaseExtraDesigns();
+          // Use RevenueCat for add-on purchases (replaced Stripe)
+          bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             Get.snackbar(
               titleText,

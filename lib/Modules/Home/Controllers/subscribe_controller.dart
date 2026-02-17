@@ -7,7 +7,6 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
-import '../../../services/PaymentService/subscription_callback_service.dart';
 
 class SubscribeController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
