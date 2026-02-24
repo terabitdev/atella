@@ -3772,5 +3772,9 @@
   "couldNotOpenLink": "Could not open link",
   "@couldNotOpenLink": {
     "description": "Error message when a link cannot be opened"
+  },
+  "learnMore": "Learn More",
+  "@learnMore": {
+    "description": "Button label to learn more about a subscription plan"
   }
 }

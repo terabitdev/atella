@@ -3164,4 +3164,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get couldNotOpenLink => 'Impossible d\'ouvrir le lien';
+
+  @override
+  String get learnMore => 'En savoir plus';
 }

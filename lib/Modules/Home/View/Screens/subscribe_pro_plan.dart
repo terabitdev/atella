@@ -474,7 +474,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                             ),
                             child: Center(
                               child: Text(
-                                'Subscribe on Web',
+                                AppLocalizations.of(context)!.learnMore,
                                 style: TextStyle(
                                   color: Colors.black,
                                   fontSize: 16.sp,

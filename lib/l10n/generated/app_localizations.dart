@@ -5725,6 +5725,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Could not open link'**
   String get couldNotOpenLink;
+
+  /// Button label to learn more about a subscription plan
+  ///
+  /// In en, this message translates to:
+  /// **'Learn More'**
+  String get learnMore;
 }
 
 class _AppLocalizationsDelegate
