@@ -391,12 +391,14 @@ class _SettingScreenState extends State<SettingScreen> {
                       size: 24.sp,
                     ),
                     SizedBox(width: 12.w),
-                    Text(
-                      l10n.selectLanguage,
-                      style: TextStyle(
-                        fontSize: 20.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
+                    Expanded(
+                      child: Text(
+                        l10n.selectLanguage,
+                        style: TextStyle(
+                          fontSize: 20.sp,
+                          fontWeight: FontWeight.w700,
+                          color: Colors.black,
+                        ),
                       ),
                     ),
                   ],
