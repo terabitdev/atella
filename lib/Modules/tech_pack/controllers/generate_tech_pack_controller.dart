@@ -492,9 +492,8 @@ class TechPackController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: message,
         isPaidUser: isStarter,
-        onGetExtraTechpacks: () {
-          Get.back();
-          _purchaseExtraTechpacks(1, 5.99);
+        onGetExtraTechpacks: () async {
+          await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
           Get.back();
@@ -524,9 +523,8 @@ class TechPackController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
-        onGetExtraTechpacks: () {
-          Get.back();
-          _purchaseExtraTechpacks(1, 5.99);
+        onGetExtraTechpacks: () async {
+          await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
           Get.back();
@@ -565,14 +563,12 @@ class TechPackController extends GetxController {
         totalCount: totalCount,
         isDesign: false, // This is for techpacks
         isPaidUser: isPaidUser,
-        onGetExtraDesigns: () {
+        onGetExtraDesigns: () async {
           // Not used for techpacks, but required by widget
-          Get.back();
         },
         onGetExtraTechpacks: isPaidUser
-            ? () {
-                Get.back(); // Close dialog
-                _purchaseExtraTechpacks(1, 5.99); // Purchase 1 extra techpack
+            ? () async {
+                await _purchaseExtraTechpacks(1, 5.99);
               }
             : null,
         onUpgradePlan: () {
@@ -614,14 +610,6 @@ class TechPackController extends GetxController {
 
   Future<void> _purchaseExtraTechpacks(int count, double price) async {
     try {
-      Get.snackbar(
-        _l10n.tpdProcessing,
-        _l10n.tpdProcessingYourPurchase,
-        backgroundColor: Colors.black,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-
       // Use RevenueCat for add-on purchases (replaced Stripe)
       bool success = await _revenueCatService.purchaseExtraTechpacks(
         count,
@@ -629,17 +617,24 @@ class TechPackController extends GetxController {
       );
 
       if (success) {
-        Get.snackbar(
-          _l10n.tpdSuccessExclamation,
-          _l10n.tpdAdditionalTechPacksAdded(count.toString()),
-          backgroundColor: Colors.black,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(milliseconds: 1500),
-        );
+        if (selectedDesignIndex.value >= 0 &&
+            selectedDesignIndex.value < generatedImages.length) {
+          final arguments = <String, dynamic>{
+            'selectedDesignUrl': generatedImages[selectedDesignIndex.value],
+            'designPrompt': currentPrompt.value,
+            'designData': _dataService.getAllDesignData(),
+          };
 
-        // After successful purchase, allow user to continue
-        // User should click the button again to proceed
+          if (_isEditMode.value && _editingTechPack != null) {
+            arguments['editMode'] = true;
+            arguments['techPackModel'] = _editingTechPack;
+          }
+
+          PostHogAnalyticsService().trackTechPackStarted();
+          Get.back(); // Close the dialog
+          Get.toNamed('/tech_pack_details_screen', arguments: arguments);
+          _saveDesignsInBackground();
+        }
       } else {
         Get.snackbar(
           _l10n.tpdPurchaseFailed,

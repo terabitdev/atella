@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
-class TechpackLimitDialog extends StatelessWidget {
-  final VoidCallback onGetExtraTechpacks;
+class TechpackLimitDialog extends StatefulWidget {
+  final Future<void> Function() onGetExtraTechpacks;
   final VoidCallback onUpgradePlan;
   final VoidCallback onMaybeLater;
   final bool
@@ -23,6 +23,13 @@ class TechpackLimitDialog extends StatelessWidget {
   }) : super(key: key);
 
   @override
+  State<TechpackLimitDialog> createState() => _TechpackLimitDialogState();
+}
+
+class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
+  bool _isLoading = false;
+
+  @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
 
@@ -38,14 +45,14 @@ class TechpackLimitDialog extends StatelessWidget {
             SizedBox(height: 16.h),
             // Title
             Text(
-              title,
+              widget.title,
               style: ssTitleTextTextStyle186004,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
             // Message
             Text(
-              message,
+              widget.message,
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
@@ -54,11 +61,17 @@ class TechpackLimitDialog extends StatelessWidget {
             Column(
               children: [
                 // Get Extra Techpacks Button (only show for paid users)
-                if (isPaidUser) ...[
+                if (widget.isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onGetExtraTechpacks,
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() => _isLoading = true);
+                              await widget.onGetExtraTechpacks();
+                              if (mounted) setState(() => _isLoading = false);
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
@@ -70,15 +83,24 @@ class TechpackLimitDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: Text(
-                        l10n.tpDialogExtraTechpackOption,
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              l10n.tpDialogExtraTechpackOption,
+                              style: ssTitleTextTextStyle14400.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -87,7 +109,7 @@ class TechpackLimitDialog extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: onUpgradePlan,
+                    onPressed: widget.onUpgradePlan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -113,7 +135,7 @@ class TechpackLimitDialog extends StatelessWidget {
                 SizedBox(height: 12.h),
                 // Maybe Later Button
                 TextButton(
-                  onPressed: onMaybeLater,
+                  onPressed: widget.onMaybeLater,
                   child: Text(
                     l10n.tpMaybeLater,
                     style: ssTitleTextTextStyle14400.copyWith(

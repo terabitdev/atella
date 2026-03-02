@@ -3,15 +3,15 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
-class UsageWarningDialog extends StatelessWidget {
+class UsageWarningDialog extends StatefulWidget {
   final int usedCount;
   final int totalCount;
-  final VoidCallback onGetExtraDesigns;
+  final Future<void> Function() onGetExtraDesigns;
   final VoidCallback onUpgradePlan;
   final VoidCallback onContinue;
   final bool isDesign; // true for designs, false for techpacks
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
-  final VoidCallback? onGetExtraTechpacks; // Optional callback for purchasing extra techpacks
+  final Future<void> Function()? onGetExtraTechpacks; // Optional callback for purchasing extra techpacks
 
   const UsageWarningDialog({
     Key? key,
@@ -24,6 +24,13 @@ class UsageWarningDialog extends StatelessWidget {
     this.isPaidUser = false, // Default to false (FREE user)
     this.onGetExtraTechpacks, // Optional parameter for techpack purchases
   }) : super(key: key);
+
+  @override
+  State<UsageWarningDialog> createState() => _UsageWarningDialogState();
+}
+
+class _UsageWarningDialogState extends State<UsageWarningDialog> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -47,18 +54,18 @@ class UsageWarningDialog extends StatelessWidget {
             SizedBox(height: 16.h),
             // Title
             Text(
-              isDesign ? l10n.fdDialog80PercentTitle : l10n.tpDialog80PercentTitle,
+              widget.isDesign ? l10n.fdDialog80PercentTitle : l10n.tpDialog80PercentTitle,
               style: ssTitleTextTextStyle186004.copyWith(color: Colors.orange[800]),
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
             // Message (conditional based on user type)
             Text(
-              isDesign
-                ? (isPaidUser
-                    ? l10n.fdDialog80PercentMessage(usedCount, totalCount)
-                    : l10n.fdDialog80PercentMessageFree(usedCount, totalCount))
-                : l10n.tpDialog80PercentMessage(usedCount, totalCount),
+              widget.isDesign
+                ? (widget.isPaidUser
+                    ? l10n.fdDialog80PercentMessage(widget.usedCount, widget.totalCount)
+                    : l10n.fdDialog80PercentMessageFree(widget.usedCount, widget.totalCount))
+                : l10n.tpDialog80PercentMessage(widget.usedCount, widget.totalCount),
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
@@ -67,11 +74,17 @@ class UsageWarningDialog extends StatelessWidget {
             Column(
               children: [
                 // Get Extra Designs Button (only for paid users with designs)
-                if (isDesign && isPaidUser) ...[
+                if (widget.isDesign && widget.isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onGetExtraDesigns,
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() => _isLoading = true);
+                              await widget.onGetExtraDesigns();
+                              if (mounted) setState(() => _isLoading = false);
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
@@ -80,25 +93,40 @@ class UsageWarningDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: Text(
-                        l10n.fdDialogGetExtraDesigns,
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              l10n.fdDialogGetExtraDesigns,
+                              style: ssTitleTextTextStyle14400.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                     ),
                   ),
                   SizedBox(height: 12.h),
                 ],
                 // Get Extra Techpacks Button (only for paid users with techpacks)
-                if (!isDesign && isPaidUser && onGetExtraTechpacks != null) ...[
+                if (!widget.isDesign && widget.isPaidUser && widget.onGetExtraTechpacks != null) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onGetExtraTechpacks,
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() => _isLoading = true);
+                              await widget.onGetExtraTechpacks!();
+                              if (mounted) setState(() => _isLoading = false);
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
@@ -107,15 +135,24 @@ class UsageWarningDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: Text(
-                        l10n.tpDialogExtraTechpackOption,
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              l10n.tpDialogExtraTechpackOption,
+                              style: ssTitleTextTextStyle14400.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -124,7 +161,7 @@ class UsageWarningDialog extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: onUpgradePlan,
+                    onPressed: widget.onUpgradePlan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -135,7 +172,7 @@ class UsageWarningDialog extends StatelessWidget {
                     ),
                     child: Text(
                       l10n.fdDialogUpgradePlan,
-                      style:  ssTitleTextTextStyle14400.copyWith(
+                      style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -147,14 +184,14 @@ class UsageWarningDialog extends StatelessWidget {
                 SizedBox(height: 12.h),
                 // Continue Anyway Button
                 TextButton(
-                  onPressed: onContinue,
+                  onPressed: widget.onContinue,
                   child: Text(
-                    isDesign ? l10n.fdDialog80PercentContinue : l10n.tpDialog80PercentContinue,
+                    widget.isDesign ? l10n.fdDialog80PercentContinue : l10n.tpDialog80PercentContinue,
                     style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
-                      ),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ),
               ],

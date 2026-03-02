@@ -580,27 +580,10 @@ class FinalDetailsController extends GetxController {
         isDesign: true,
         isPaidUser: isPaidUser,
         onGetExtraDesigns: () async {
-          // Get localized strings before async operation
-          final context = Get.context;
-          final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.fdExtraDesignsAdded ?? 'Extra Designs Added!';
-          final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
-
-          Get.back(); // Close dialog
-          // Use RevenueCat for add-on purchases (replaced Stripe)
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
-            Get.snackbar(
-              titleText,
-              messageText,
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.black,
-              colorText: Colors.white,
-              duration: const Duration(milliseconds: 1500),
-            );
-            await Future.delayed(Duration(seconds: 2));
-            // Increment usage and proceed with generation
             await _stripeService.incrementDesignUsage();
+            Get.back(); // Close the dialog
             _proceedWithGeneration();
           }
         },
@@ -632,28 +615,10 @@ class FinalDetailsController extends GetxController {
       LimitExceededDialog(
         isPaidUser: isPaidUser,
         onGetExtraDesigns: () async {
-          // Get localized strings before async operation
-          final context = Get.context;
-          final l10n = context != null ? AppLocalizations.of(context) : null;
-          final titleText = l10n?.fdExtraDesignsAdded ?? 'Extra Designs Added!';
-          final messageText = l10n?.fdExtraDesignsAddedMessage ?? '5 extra designs have been added to your account.';
-
-          Get.back(); // Close dialog
-          // Use RevenueCat for add-on purchases (replaced Stripe)
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
-            Get.snackbar(
-              titleText,
-              messageText,
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.black,
-              colorText: Colors.white,
-              duration: const Duration(milliseconds: 1500),
-            );
-            await Future.delayed(Duration(seconds: 2));
-            // First increment the usage count since we now have extra designs
             await _stripeService.incrementDesignUsage();
-            // Then proceed with generation directly without checking again
+            Get.back(); // Close the dialog
             _proceedWithGeneration();
           }
         },

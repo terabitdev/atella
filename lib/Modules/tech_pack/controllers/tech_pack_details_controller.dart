@@ -1083,9 +1083,8 @@ class TechPackDetailsController extends GetxController {
             ? _l10n.tpStarterYearlyLimitReached
             : _l10n.tpStarterMonthlyLimitReached,
         isPaidUser: true,
-        onGetExtraTechpacks: () {
-          Get.back();
-          _purchaseExtraTechpacks(1, 5.99);
+        onGetExtraTechpacks: () async {
+          await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
           Get.back();
@@ -1116,9 +1115,8 @@ class TechPackDetailsController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
-        onGetExtraTechpacks: () {
-          Get.back();
-          _purchaseExtraTechpacks(1, 5.99);
+        onGetExtraTechpacks: () async {
+          await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
           Get.back();
@@ -1145,9 +1143,8 @@ class TechPackDetailsController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
-        onGetExtraTechpacks: () {
-          Get.back();
-          _purchaseExtraTechpacks(1, 5.99);
+        onGetExtraTechpacks: () async {
+          await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
           Get.back();
@@ -1169,14 +1166,6 @@ class TechPackDetailsController extends GetxController {
 
   Future<void> _purchaseExtraTechpacks(int count, double price) async {
     try {
-      Get.snackbar(
-        _l10n.tpdProcessing,
-        _l10n.tpdProcessingYourPurchase,
-        backgroundColor: Colors.black,
-        colorText: Colors.white,
-        snackPosition: SnackPosition.TOP,
-      );
-
       // Use RevenueCat for add-on purchases (replaced Stripe)
       bool success = await _revenueCatService.purchaseExtraTechpacks(
         count,
@@ -1184,15 +1173,6 @@ class TechPackDetailsController extends GetxController {
       );
 
       if (success) {
-        Get.snackbar(
-          _l10n.tpdSuccessExclamation,
-          _l10n.tpdAdditionalTechPacksAdded(count.toString()),
-          backgroundColor: Colors.black,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(milliseconds: 1500),
-        );
-
         // After successful purchase, follow the same flow as manual generate
         // Set in-flight flag to prevent concurrent generations
         _isGenerationInFlight = true;
@@ -1208,6 +1188,7 @@ class TechPackDetailsController extends GetxController {
 
         generationCancelled.value = false; // Reset cancellation flag
         generateTechPackImages(currentGenerationId); // Start generation with ID
+        Get.back(); // Close the dialog
         Get.toNamed('/tech_pack_ready_screen'); // Navigate
       } else {
         Get.snackbar(

@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
-class LimitExceededDialog extends StatelessWidget {
-  final VoidCallback onGetExtraDesigns;
+class LimitExceededDialog extends StatefulWidget {
+  final Future<void> Function() onGetExtraDesigns;
   final VoidCallback onUpgradePlan;
   final VoidCallback onMaybeLater;
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
@@ -16,6 +16,13 @@ class LimitExceededDialog extends StatelessWidget {
     required this.onMaybeLater,
     this.isPaidUser = false, // Default to false (FREE user)
   }) : super(key: key);
+
+  @override
+  State<LimitExceededDialog> createState() => _LimitExceededDialogState();
+}
+
+class _LimitExceededDialogState extends State<LimitExceededDialog> {
+  bool _isLoading = false;
 
   @override
   Widget build(BuildContext context) {
@@ -45,7 +52,7 @@ class LimitExceededDialog extends StatelessWidget {
             SizedBox(height: 12.h),
             // Message (conditional based on user type)
             Text(
-              isPaidUser ? l10n.fdDialogLimitMessage : l10n.fdDialogLimitMessageFree,
+              widget.isPaidUser ? l10n.fdDialogLimitMessage : l10n.fdDialogLimitMessageFree,
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
@@ -54,11 +61,17 @@ class LimitExceededDialog extends StatelessWidget {
             Column(
               children: [
                 // Get Extra Designs Button (only show for paid users)
-                if (isPaidUser) ...[
+                if (widget.isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
-                      onPressed: onGetExtraDesigns,
+                      onPressed: _isLoading
+                          ? null
+                          : () async {
+                              setState(() => _isLoading = true);
+                              await widget.onGetExtraDesigns();
+                              if (mounted) setState(() => _isLoading = false);
+                            },
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
@@ -67,15 +80,24 @@ class LimitExceededDialog extends StatelessWidget {
                           borderRadius: BorderRadius.circular(8.r),
                         ),
                       ),
-                      child: Text(
-                        l10n.fdDialogGetExtraDesigns,
-                        style: ssTitleTextTextStyle14400.copyWith(
-                          fontSize: 16.sp,
-                          fontWeight: FontWeight.w600,
-                          color: Colors.white,
-                        ),
-                        textAlign: TextAlign.center,
-                      ),
+                      child: _isLoading
+                          ? const SizedBox(
+                              width: 20,
+                              height: 20,
+                              child: CircularProgressIndicator(
+                                color: Colors.white,
+                                strokeWidth: 2.5,
+                              ),
+                            )
+                          : Text(
+                              l10n.fdDialogGetExtraDesigns,
+                              style: ssTitleTextTextStyle14400.copyWith(
+                                fontSize: 16.sp,
+                                fontWeight: FontWeight.w600,
+                                color: Colors.white,
+                              ),
+                              textAlign: TextAlign.center,
+                            ),
                     ),
                   ),
                   SizedBox(height: 12.h),
@@ -84,7 +106,7 @@ class LimitExceededDialog extends StatelessWidget {
                 SizedBox(
                   width: double.infinity,
                   child: ElevatedButton(
-                    onPressed: onUpgradePlan,
+                    onPressed: widget.onUpgradePlan,
                     style: ElevatedButton.styleFrom(
                       backgroundColor: Colors.black,
                       foregroundColor: Colors.white,
@@ -95,7 +117,7 @@ class LimitExceededDialog extends StatelessWidget {
                     ),
                     child: Text(
                       l10n.fdDialogUpgradePlan,
-                      style:  ssTitleTextTextStyle14400.copyWith(
+                      style: ssTitleTextTextStyle14400.copyWith(
                         fontSize: 16.sp,
                         fontWeight: FontWeight.w600,
                         color: Colors.white,
@@ -107,14 +129,14 @@ class LimitExceededDialog extends StatelessWidget {
                 SizedBox(height: 12.h),
                 // Maybe Later Button
                 TextButton(
-                  onPressed: onMaybeLater,
+                  onPressed: widget.onMaybeLater,
                   child: Text(
                     l10n.fdDialogMaybeLater,
                     style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.grey[600],
-                      ),
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.grey[600],
+                    ),
                   ),
                 ),
               ],
