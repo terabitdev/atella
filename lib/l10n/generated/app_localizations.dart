@@ -545,7 +545,7 @@ abstract class AppLocalizations {
   /// Subscription plan setting
   ///
   /// In en, this message translates to:
-  /// **'Subscription Plan'**
+  /// **'Premium Plans'**
   String get subscriptionPlan;
 
   /// Terms of use setting
@@ -587,7 +587,7 @@ abstract class AppLocalizations {
   /// Subscribe screen title
   ///
   /// In en, this message translates to:
-  /// **'Subscribe'**
+  /// **'Premium Plans'**
   String get subscribe;
 
   /// Choose plan title

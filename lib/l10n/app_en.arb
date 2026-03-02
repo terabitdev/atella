@@ -324,7 +324,7 @@
   "@personalInformation": {
     "description": "Personal information setting"
   },
-  "subscriptionPlan": "Subscription Plan",
+  "subscriptionPlan": "Premium Plans",
   "@subscriptionPlan": {
     "description": "Subscription plan setting"
   },
@@ -352,7 +352,7 @@
   "@updating": {
     "description": "Updating loading text"
   },
-  "subscribe": "Subscribe",
+  "subscribe": "Premium Plans",
   "@subscribe": {
     "description": "Subscribe screen title"
   },

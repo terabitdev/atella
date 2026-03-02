@@ -246,7 +246,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get personalInformation => 'Informations personnelles';
 
   @override
-  String get subscriptionPlan => 'Plan d\'abonnement';
+  String get subscriptionPlan => 'Plans Premium';
 
   @override
   String get termsOfUse => 'Conditions d\'utilisation';
@@ -268,7 +268,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get updating => 'Mise à jour...';
 
   @override
-  String get subscribe => 'S\'abonner';
+  String get subscribe => 'Plans Premium';
 
   @override
   String get chooseYourPlan => 'Choisissez votre plan';
