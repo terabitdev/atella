@@ -1502,7 +1502,13 @@ PODS:
     - FlutterMacOS
     - PostHog (< 4.0.0, >= 3.32.0)
   - PromisesObjC (2.4.0)
+  - purchases_flutter (9.12.0):
+    - Flutter
+    - PurchasesHybridCommon (= 17.36.0)
+  - PurchasesHybridCommon (17.36.0):
+    - RevenueCat (= 5.58.0)
   - RecaptchaInterop (101.0.0)
+  - RevenueCat (5.58.0)
   - SDWebImage (5.21.1):
     - SDWebImage/Core (= 5.21.1)
   - SDWebImage/Core (5.21.1)
@@ -1594,6 +1600,7 @@ DEPENDENCIES:
   - path_provider_foundation (from `.symlinks/plugins/path_provider_foundation/darwin`)
   - permission_handler_apple (from `.symlinks/plugins/permission_handler_apple/ios`)
   - posthog_flutter (from `.symlinks/plugins/posthog_flutter/ios`)
+  - purchases_flutter (from `.symlinks/plugins/purchases_flutter/ios`)
   - share_plus (from `.symlinks/plugins/share_plus/ios`)
   - shared_preferences_foundation (from `.symlinks/plugins/shared_preferences_foundation/darwin`)
   - sign_in_with_apple (from `.symlinks/plugins/sign_in_with_apple/ios`)
@@ -1638,7 +1645,9 @@ SPEC REPOS:
     - nanopb
     - PostHog
     - PromisesObjC
+    - PurchasesHybridCommon
     - RecaptchaInterop
+    - RevenueCat
     - SDWebImage
     - SDWebImageWebPCoder
     - SSZipArchive
@@ -1682,6 +1691,8 @@ EXTERNAL SOURCES:
     :path: ".symlinks/plugins/permission_handler_apple/ios"
   posthog_flutter:
     :path: ".symlinks/plugins/posthog_flutter/ios"
+  purchases_flutter:
+    :path: ".symlinks/plugins/purchases_flutter/ios"
   share_plus:
     :path: ".symlinks/plugins/share_plus/ios"
   shared_preferences_foundation:
@@ -1746,7 +1757,10 @@ SPEC CHECKSUMS:
   PostHog: 24a9af5451f9421af38bb93fd0c06624d2f8a55c
   posthog_flutter: 9535ac2d4ab65ccb9ace3886dcc0b3105198bad5
   PromisesObjC: f5707f49cb48b9636751c5b2e7d227e43fba9f47
+  purchases_flutter: 9d559f16095fbcdb7b4def4cbc60e4a9fbd0ee1b
+  PurchasesHybridCommon: 4767776bf65153d7a43f284439e7560c42d0c80a
   RecaptchaInterop: 11e0b637842dfb48308d242afc3f448062325aba
+  RevenueCat: 88bb4229115b2badcce0e5a97f3dd8cc952b38c8
   SDWebImage: f29024626962457f3470184232766516dee8dfea
   SDWebImageWebPCoder: e38c0a70396191361d60c092933e22c20d5b1380
   share_plus: 50da8cb520a8f0f65671c6c6a99b3617ed10a58a
@@ -1765,6 +1779,6 @@ SPEC CHECKSUMS:
   StripeUICore: 17a4f3adb81ae05ab885e1b353022a430176eab1
   url_launcher_ios: 694010445543906933d732453a59da0a173ae33d
 
-PODFILE CHECKSUM: 4ba7c1e16be8515fb8f7be902bf306faffb0be98
+PODFILE CHECKSUM: 2804fa047955d0923a8f32596aa77b979da25b63
 
 COCOAPODS: 1.16.2

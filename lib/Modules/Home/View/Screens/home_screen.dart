@@ -113,7 +113,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       'assets/images/home_container.png',
                       fit: BoxFit.cover,
                       width: double.infinity,
-                      height: 300.h,
+                      height: 280.h,
                     ),
                   ),
                 ),
@@ -123,7 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      SizedBox(height: 20.h),
+                      SizedBox(height: 30.h),
                       // Logo at top center
                       Center(
                         child: Image.asset(
@@ -138,13 +138,13 @@ class _HomeScreenState extends State<HomeScreen> {
                         l10n.welcomeToAtelia,
                         style: hTitleTextStyle18600,
                       ),
-                      SizedBox(height: 60.h),
+                      SizedBox(height: 20.h),
                       SearchWidget(
                         controller: controller.searchController,
                         onChanged: controller.onSearchChanged,
                         onClear: controller.clearSearch,
                       ),
-                      SizedBox(height: 32.h),
+                      SizedBox(height: 22.h),
                     ],
                   ),
                 ),

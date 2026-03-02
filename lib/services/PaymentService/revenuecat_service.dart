@@ -29,7 +29,15 @@ class RevenueCatService {
   static const String _designAddonsPackageId = 'design_addons';
   static const String _techpackAddonsPackageId = 'techpack_addons';
 
-  // Product IDs
+  // Product IDs (App Store Connect)
+  // NOTE: These must match EXACTLY with products created in App Store Connect
+  // Format: {bundle_id}.{product_name}
+  // These IDs are for reference and must be configured in:
+  // 1. App Store Connect (In-App Purchases section)
+  // 2. RevenueCat Dashboard (Products section)
+  // RevenueCat uses offerings/packages, but products must exist in App Store Connect
+  static const String _designAddonsProductId = 'atelia_design_addons_ios';
+  static const String _techpackAddonsProductId = 'atelia_techpack_addons_ios';
 
   /// Initialize RevenueCat SDK
   /// Call this in main.dart after Firebase initialization
