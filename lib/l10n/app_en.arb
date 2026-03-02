@@ -528,7 +528,7 @@
   "@cancelSubscriptionFirst": {
     "description": "Cancel current plan first message"
   },
-  "upgradePlan": "Upgrade Plan",
+  "upgradePlan": "Upgrade",
   "@upgradePlan": {
     "description": "Upgrade plan button"
   },
@@ -3773,7 +3773,7 @@
   "@couldNotOpenLink": {
     "description": "Error message when a link cannot be opened"
   },
-  "learnMore": "Learn More",
+  "learnMore": "Explore",
   "@learnMore": {
     "description": "Button label to learn more about a subscription plan"
   }

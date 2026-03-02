@@ -471,41 +471,6 @@ class _SubscribeStarterPlanState extends State<SubscribeStarterPlan> {
                           ),
                         ),
                         SizedBox(height: 16.h),
-
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12.sp,
-                              height: 1.4,
-                            ),
-                            children: [
-                              TextSpan(
-                                text: l10n.termsAgreement,
-                                style: ssTitleTextTextStyle124006,
-                              ),
-                              TextSpan(
-                                text: l10n.termsOfService,
-                                style: ssTitleTextTextStyle124006.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(
-                                text: l10n.and,
-                                style: ssTitleTextTextStyle124006,
-                              ),
-                              TextSpan(
-                                text: l10n.privacyPolicy,
-                                style: ssTitleTextTextStyle124006.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const TextSpan(text: "."),
-                            ],
-                          ),
-                        ),
-                        SizedBox(height: 16.h),
                       ],
                     ),
                   ],

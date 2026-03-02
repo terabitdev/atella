@@ -398,7 +398,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get cancelSubscriptionFirst => 'Annulez d\'abord le plan actuel';
 
   @override
-  String get upgradePlan => 'Mettre à niveau le plan';
+  String get upgradePlan => 'Mettre à niveau';
 
   @override
   String get cancelSubscription => 'Annuler l\'abonnement';
@@ -3166,5 +3166,5 @@ class AppLocalizationsFr extends AppLocalizations {
   String get couldNotOpenLink => 'Impossible d\'ouvrir le lien';
 
   @override
-  String get learnMore => 'En savoir plus';
+  String get learnMore => 'Explorer';
 }

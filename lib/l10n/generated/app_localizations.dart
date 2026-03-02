@@ -827,7 +827,7 @@ abstract class AppLocalizations {
   /// Upgrade plan button
   ///
   /// In en, this message translates to:
-  /// **'Upgrade Plan'**
+  /// **'Upgrade'**
   String get upgradePlan;
 
   /// Cancel subscription button
@@ -5729,7 +5729,7 @@ abstract class AppLocalizations {
   /// Button label to learn more about a subscription plan
   ///
   /// In en, this message translates to:
-  /// **'Learn More'**
+  /// **'Explore'**
   String get learnMore;
 }
 

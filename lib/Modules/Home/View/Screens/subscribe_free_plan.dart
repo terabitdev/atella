@@ -161,58 +161,16 @@ class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
                       ),
                     ),
                     
-                    // Bottom Section with Button and Terms
+                    // Bottom Section with Button
                     Column(
                       children: [
-                        // Upgrade message
-                        Container(
-                          width: double.infinity,
-                          padding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-                          margin: EdgeInsets.only(bottom: 16.h),
-                          decoration: BoxDecoration(
-                            borderRadius: BorderRadius.circular(12.r),
-                          ),
-                          child: Text(
-                            l10n.upgradeMessage,
-                            style: sfpsTitleTextTextStyle14500,
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
                         RoundButton(
                           title: l10n.upgradePlan,
                           onTap: () {
                             Navigator.of(context).pop();
                           },
-                          color: Colors.black, 
-                          isloading: false
-                        ),
-                        SizedBox(height: 16.h),
-                        RichText(
-                          textAlign: TextAlign.center,
-                          text: TextSpan(
-                            style: TextStyle(
-                              color: Colors.grey[600],
-                              fontSize: 12.sp,
-                              height: 1.4,
-                            ),
-                            children: [
-                              TextSpan(text: l10n.termsAgreement, style: ssTitleTextTextStyle124006),
-                              TextSpan(
-                                text: l10n.termsOfService,
-                                style: ssTitleTextTextStyle124006.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              TextSpan(text: l10n.and, style: ssTitleTextTextStyle124006),
-                              TextSpan(
-                                text: l10n.privacyPolicy,
-                                style: ssTitleTextTextStyle124006.copyWith(
-                                  fontWeight: FontWeight.bold,
-                                ),
-                              ),
-                              const TextSpan(text: "."),
-                            ],
-                          ),
+                          color: Colors.black,
+                          isloading: false,
                         ),
                         SizedBox(height: 16.h),
                       ],
