@@ -38,7 +38,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () => Navigator.of(context).pop(),
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
                       height: 40.h,
@@ -625,7 +625,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
             ),
             actions: [
               TextButton(
-                onPressed: () => Get.back(),
+                onPressed: () => Navigator.of(Get.overlayContext!).pop(),
                 child: Text(
                   l10n.keepSubscription,
                   style: ssTitleTextTextStyle14400.copyWith(
@@ -641,7 +641,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                             ? otherReasonController.text
                             : l10n.other
                       : selectedReason;
-                  Get.back();
+                  Navigator.of(Get.overlayContext!).pop();
                   controller.cancelSubscription(reason: reason);
                 },
                 style: TextButton.styleFrom(foregroundColor: Colors.red),

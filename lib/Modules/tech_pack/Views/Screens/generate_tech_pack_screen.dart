@@ -76,7 +76,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                   padding: const EdgeInsets.all(24.0),
                   child: GlobalHeader(
                     title: l10n.tpDesignAssistant,
-                    onBack: () => Get.back(),
+                    onBack: () => Navigator.of(context).pop(),
                   ),
                 ),
                 const SizedBox(height: 12),

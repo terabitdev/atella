@@ -1087,7 +1087,7 @@ class TechPackDetailsController extends GetxController {
           await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
-          Get.back();
+          Navigator.of(Get.overlayContext!).pop();
 
           // Set callback to refresh the UI state after subscription
           SubscriptionCallbackService().setOnSubscriptionSuccess(() {
@@ -1103,7 +1103,7 @@ class TechPackDetailsController extends GetxController {
             },
           );
         },
-        onMaybeLater: () => Get.back(),
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
@@ -1119,7 +1119,7 @@ class TechPackDetailsController extends GetxController {
           await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
-          Get.back();
+          Navigator.of(Get.overlayContext!).pop();
 
           // Navigate to subscription screen
           Get.toNamed(
@@ -1130,7 +1130,7 @@ class TechPackDetailsController extends GetxController {
             },
           );
         },
-        onMaybeLater: () => Get.back(),
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
@@ -1147,7 +1147,7 @@ class TechPackDetailsController extends GetxController {
           await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
-          Get.back();
+          Navigator.of(Get.overlayContext!).pop();
 
           // Navigate to subscription screen (Studio users can still see upgrade options)
           Get.toNamed(
@@ -1158,7 +1158,7 @@ class TechPackDetailsController extends GetxController {
             },
           );
         },
-        onMaybeLater: () => Get.back(),
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
@@ -1188,7 +1188,7 @@ class TechPackDetailsController extends GetxController {
 
         generationCancelled.value = false; // Reset cancellation flag
         generateTechPackImages(currentGenerationId); // Start generation with ID
-        Get.back(); // Close the dialog
+        Navigator.of(Get.overlayContext!).pop(); // Close the dialog
         Get.toNamed('/tech_pack_ready_screen'); // Navigate
       } else {
         Get.snackbar(

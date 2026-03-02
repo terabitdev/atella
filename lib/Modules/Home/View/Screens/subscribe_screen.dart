@@ -42,9 +42,8 @@ class _SubscribeScreenState extends State<SubscribeScreen> {
                 children: [
                   InkWell(
                     onTap: () {
-                      // Check if there's a route to go back to
-                      if (Get.previousRoute.isNotEmpty && Get.previousRoute != '/subscribe') {
-                        Get.back();
+                      if (Navigator.of(context).canPop()) {
+                        Navigator.of(context).pop();
                       } else {
                         // Go to Settings tab (index 4) in nav_bar
                         Get.offAllNamed('/nav_bar', arguments: {'initialIndex': 4});

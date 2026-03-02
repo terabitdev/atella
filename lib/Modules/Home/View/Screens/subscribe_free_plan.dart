@@ -38,7 +38,7 @@ class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
               child: Row(
                 children: [
                   InkWell(
-                    onTap: () => Get.back(),
+                    onTap: () => Navigator.of(context).pop(),
                     child: Image.asset(
                       'assets/images/Arrow_Left.png',
                       height: 40.h,
@@ -179,10 +179,10 @@ class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
                           ),
                         ),
                         RoundButton(
-                          title: l10n.upgradePlan, 
+                          title: l10n.upgradePlan,
                           onTap: () {
-                            Get.back();
-                          }, 
+                            Navigator.of(context).pop();
+                          },
                           color: Colors.black, 
                           isloading: false
                         ),

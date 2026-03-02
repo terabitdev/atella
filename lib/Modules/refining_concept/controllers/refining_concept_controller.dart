@@ -1451,7 +1451,7 @@ class RefiningConceptController extends GetxController {
   }
 
   void goBack() {
-    Get.back();
+    Navigator.of(Get.context!).pop();
   }
 
   // Method to jump to a specific question (for navigation)
@@ -1837,16 +1837,16 @@ class RefiningConceptController extends GetxController {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             await _stripeService.incrementDesignUsage();
-            Get.back(); // Close the dialog
+            Navigator.of(Get.overlayContext!).pop(); // Close the dialog
             _proceedWithGeneration();
           }
         },
         onUpgradePlan: () {
-          Get.back(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog
           Get.toNamed('/subscribe');
         },
         onContinue: () async {
-          Get.back(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog
           // Increment usage and proceed with generation
           await _stripeService.incrementDesignUsage();
           _proceedWithGeneration();
@@ -1873,16 +1873,16 @@ class RefiningConceptController extends GetxController {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             await _stripeService.incrementDesignUsage();
-            Get.back(); // Close the dialog
+            Navigator.of(Get.overlayContext!).pop(); // Close the dialog
             _proceedWithGeneration();
           }
         },
         onUpgradePlan: () {
-          Get.back(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog
           Get.toNamed('/subscribe');
         },
         onMaybeLater: () {
-          Get.back(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog
         },
       ),
       barrierDismissible: false,

@@ -496,7 +496,7 @@ class TechPackController extends GetxController {
           await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
-          Get.back();
+          Navigator.of(Get.overlayContext!).pop();
 
           // Set callback to refresh the UI state after subscription
           SubscriptionCallbackService().setOnSubscriptionSuccess(() {
@@ -511,7 +511,7 @@ class TechPackController extends GetxController {
             },
           );
         },
-        onMaybeLater: () => Get.back(),
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
@@ -527,7 +527,7 @@ class TechPackController extends GetxController {
           await _purchaseExtraTechpacks(1, 5.99);
         },
         onUpgradePlan: () {
-          Get.back();
+          Navigator.of(Get.overlayContext!).pop();
 
           // Navigate to subscription screen
           Get.toNamed(
@@ -538,7 +538,7 @@ class TechPackController extends GetxController {
             },
           );
         },
-        onMaybeLater: () => Get.back(),
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
@@ -572,7 +572,7 @@ class TechPackController extends GetxController {
               }
             : null,
         onUpgradePlan: () {
-          Get.back(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog
           // Navigate to subscription screen
           Get.toNamed(
             '/subscribe',
@@ -583,7 +583,7 @@ class TechPackController extends GetxController {
           );
         },
         onContinue: () {
-          Get.back(); // Close dialog and continue with techpack generation
+          Navigator.of(Get.overlayContext!).pop(); // Close dialog and continue with techpack generation
           // Continue with the selected design based on which method called this
           if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
             // Prepare arguments for tech pack details
@@ -631,7 +631,7 @@ class TechPackController extends GetxController {
           }
 
           PostHogAnalyticsService().trackTechPackStarted();
-          Get.back(); // Close the dialog
+          Navigator.of(Get.overlayContext!).pop(); // Close the dialog
           Get.toNamed('/tech_pack_details_screen', arguments: arguments);
           _saveDesignsInBackground();
         }
