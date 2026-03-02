@@ -23,7 +23,6 @@ class PrivacyPolicyScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: GlobalHeader(
                 title: l10n.privacyPolicy,
-                onBack: () => Get.back(),
               ),
             ),
 

@@ -42,7 +42,7 @@ class _DeleteAccountPasswordScreenState
               child: Row(
                 children: [
                   IconButton(
-                    onPressed: () => Get.back(),
+                    onPressed: () => Navigator.of(context).pop(),
                     icon: Icon(
                       Icons.arrow_back_ios,
                       color: Colors.white,
@@ -248,7 +248,7 @@ class _DeleteAccountPasswordScreenState
                               borderRadius: BorderRadius.circular(12.r),
                             ),
                           ),
-                          onPressed: () => Get.back(),
+                          onPressed: () => Navigator.of(context).pop(),
                           child: Text(
                             l10n.cancel,
                             style: TextStyle(

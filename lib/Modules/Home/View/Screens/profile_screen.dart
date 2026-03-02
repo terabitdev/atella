@@ -32,7 +32,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               // Header
-              GlobalHeader(title: l10n.editProfile, onBack: () => Get.back()),
+              GlobalHeader(title: l10n.editProfile),
 
               SizedBox(height: 40.h),
 

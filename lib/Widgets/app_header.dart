@@ -2,7 +2,6 @@
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:get/get.dart';
 
 class GlobalHeader extends StatelessWidget {
   final String title;
@@ -23,7 +22,7 @@ class GlobalHeader extends StatelessWidget {
       child: Row(
         children: [
           GestureDetector(
-            onTap: onBack ?? () => Get.back(),
+            onTap: onBack ?? () => Navigator.of(context).pop(),
             behavior: HitTestBehavior.opaque,
             child: Padding(
               padding: EdgeInsets.all(8.w),

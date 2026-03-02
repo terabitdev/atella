@@ -23,7 +23,6 @@ class TermsAndConditionsScreen extends StatelessWidget {
               padding: EdgeInsets.symmetric(horizontal: 24.w),
               child: GlobalHeader(
                 title: l10n.termsAndConditions,
-                onBack: () => Get.back(),
               ),
             ),
 

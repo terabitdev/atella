@@ -236,7 +236,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
       await _downloadAllImages(urlImages);
     } catch (e) {
       // Close dialog if open
-      if (Get.isDialogOpen!) Get.back();
+      if (Get.overlayContext != null && Navigator.of(Get.overlayContext!).canPop()) {
+        Navigator.of(Get.overlayContext!).pop();
+      }
 
       Get.snackbar(
         l10n.error,
@@ -313,7 +315,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       }
 
       // Close loading dialog
-      Get.back();
+      Navigator.of(Get.overlayContext!).pop();
 
       // Show result message
       if (downloadedFiles.isNotEmpty && failedDownloads.isEmpty) {
@@ -349,7 +351,9 @@ class _PreviewScreenState extends State<PreviewScreen> {
       }
     } catch (e) {
       // Close dialog if open
-      if (Get.isDialogOpen!) Get.back();
+      if (Get.overlayContext != null && Navigator.of(Get.overlayContext!).canPop()) {
+        Navigator.of(Get.overlayContext!).pop();
+      }
 
       Get.snackbar(
         l10n.error,

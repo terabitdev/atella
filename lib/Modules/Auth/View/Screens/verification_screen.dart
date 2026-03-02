@@ -30,7 +30,7 @@ class _VerificationScreenState extends State<VerificationScreen> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              GlobalHeader(title: l10n.verification, onBack: () => Get.back()),
+              GlobalHeader(title: l10n.verification),
               SizedBox(height: 32.h),
               // Description text
               Text(
