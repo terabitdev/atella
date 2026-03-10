@@ -17,6 +17,7 @@ import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_collection_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_design_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
+import 'package:atella/Modules/Home/View/Screens/subscription_detail_screen.dart';
 // SUBSCRIPTION SCREENS DISABLED — Apple compliance (no in-app payment UI)
 // import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
 // import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
@@ -140,6 +141,9 @@ class AppPages {
       name: AppRoutes.deleteAccountPassword,
       page: () => const DeleteAccountPasswordScreen(),
     ),
-    // Add more routes here
+    GetPage(
+      name: AppRoutes.subscriptionDetail,
+      page: () => const SubscriptionDetailScreen(),
+    ),
   ];
 }

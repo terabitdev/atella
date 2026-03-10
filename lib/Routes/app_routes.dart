@@ -32,4 +32,5 @@ class AppRoutes {
   static const String deleteAccountPassword = '/delete-account-password';
 
   static const String wordGenerator = '/word_generator';
+  static const String subscriptionDetail = '/subscription_detail';
 }

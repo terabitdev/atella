@@ -3124,4 +3124,64 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get gotIt => 'Got it';
+
+  @override
+  String get myPlan => 'My Plan';
+
+  @override
+  String get viewPlan => 'View Plan';
+
+  @override
+  String get subscriptionDetailTitle => 'My Subscription';
+
+  @override
+  String get planDetails => 'Plan Details';
+
+  @override
+  String get usageThisMonth => 'Usage This Month';
+
+  @override
+  String get billingMonthly => 'Monthly';
+
+  @override
+  String get billingYearly => 'Annual';
+
+  @override
+  String renewsOn(String date) {
+    return 'Renews on $date';
+  }
+
+  @override
+  String get designsLabel => 'Designs';
+
+  @override
+  String get techPacksLabel => 'Tech Packs';
+
+  @override
+  String get planNameStarter => 'Starter Plan';
+
+  @override
+  String get planNamePro => 'Pro Plan';
+
+  @override
+  String get planNameStudio => 'Studio Plan';
+
+  @override
+  String get cancelSubscriptionConfirm => 'Yes, Cancel';
+
+  @override
+  String get subscriptionCancelledSuccess =>
+      'Subscription cancelled successfully.';
+
+  @override
+  String get subscriptionCancelError =>
+      'Failed to cancel subscription. Please try again.';
+
+  @override
+  String get freePlan => 'Free Plan';
+
+  @override
+  String freeDesignsCounter(int used, int total) {
+    return '$used of $total designs';
+  }
 }

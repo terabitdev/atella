@@ -8,6 +8,12 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:atella/core/controllers/locale_controller.dart';
+import 'package:atella/Data/Models/user_subscription.dart';
+import 'package:atella/Routes/app_routes.dart';
+import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:lottie/lottie.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:atella/services/firebase/services/design_quota_service.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -23,6 +29,34 @@ class _SettingScreenState extends State<SettingScreen> {
     LocaleController(),
     permanent: true,
   );
+
+  late Future<_PlanData> _planDataFuture;
+
+  @override
+  void initState() {
+    super.initState();
+    _planDataFuture = _loadPlanData();
+  }
+
+  Future<_PlanData> _loadPlanData() async {
+    final sub = await StripeSubscriptionService().getCurrentUserSubscription();
+    if (sub == null || sub.subscriptionPlan == 'FREE') {
+      try {
+        final user = FirebaseAuth.instance.currentUser;
+        if (user?.email != null) {
+          final quota =
+              await DesignQuotaService().getQuotaByEmail(user!.email!);
+          return _PlanData(
+            subscription: sub,
+            freeDesignsUsed: quota['designsUsed'] as int? ?? 0,
+            freeDesignsLimit: quota['monthlyLimit'] as int? ?? 3,
+          );
+        }
+      } catch (_) {}
+    }
+    return _PlanData(subscription: sub);
+  }
+
   @override
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
@@ -112,19 +146,140 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
+                      // Plan status card — always shown, content varies by plan
+                      FutureBuilder<_PlanData>(
+                        future: _planDataFuture,
+                        builder: (context, snapshot) {
+                          // Loading state
+                          if (snapshot.connectionState ==
+                              ConnectionState.waiting) {
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 16.h),
+                              height: 64.h,
+                              decoration: BoxDecoration(
+                                color: Colors.grey.shade50,
+                                borderRadius: BorderRadius.circular(12.r),
+                                border:
+                                    Border.all(color: Colors.grey.shade200),
+                              ),
+                              child: Center(
+                                child: Lottie.asset(
+                                  'assets/lottie/Loading_dots.json',
+                                  width: 80.w,
+                                  height: 48.h,
+                                  fit: BoxFit.contain,
+                                ),
+                              ),
+                            );
+                          }
+
+                          final data = snapshot.data ??
+                              const _PlanData(freeDesignsLimit: 3);
+                          final sub = data.subscription;
+                          final isPaid = sub != null &&
+                              sub.subscriptionPlan != 'FREE' &&
+                              (sub.subscriptionStatus == 'active' ||
+                                  sub.subscriptionStatus == 'trialing');
+
+                          // Compute display strings
+                          final String planLabel;
+                          final String subLabel;
+                          if (isPaid) {
+                            final plan = sub.subscriptionPlan;
+                            planLabel = plan.startsWith('STUDIO')
+                                ? l10n.planNameStudio
+                                : plan.startsWith('PRO')
+                                    ? l10n.planNamePro
+                                    : plan.startsWith('STARTER')
+                                        ? l10n.planNameStarter
+                                        : plan;
+                            final isYearly = sub.billingPeriod == 'YEARLY' ||
+                                plan.contains('YEARLY');
+                            subLabel = isYearly
+                                ? l10n.billingYearly
+                                : l10n.billingMonthly;
+                          } else {
+                            planLabel = l10n.freePlan;
+                            subLabel = l10n.freeDesignsCounter(
+                              data.freeDesignsUsed,
+                              data.freeDesignsLimit,
+                            );
+                          }
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 16.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 14.h,
+                            ),
+                            decoration: BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(color: Colors.grey.shade200),
+                            ),
+                            child: Row(
+                              children: [
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    mainAxisSize: MainAxisSize.min,
+                                    children: [
+                                      Text(
+                                        planLabel,
+                                        style: TextStyle(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black,
+                                        ),
+                                      ),
+                                      SizedBox(height: 3.h),
+                                      Text(
+                                        subLabel,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w400,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                                if (isPaid)
+                                  GestureDetector(
+                                    onTap: () => Get.toNamed(
+                                        AppRoutes.subscriptionDetail),
+                                    child: Container(
+                                      padding: EdgeInsets.symmetric(
+                                        horizontal: 12.w,
+                                        vertical: 6.h,
+                                      ),
+                                      decoration: BoxDecoration(
+                                        color: Colors.black,
+                                        borderRadius:
+                                            BorderRadius.circular(20.r),
+                                      ),
+                                      child: Text(
+                                        l10n.viewPlan,
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w600,
+                                          color: Colors.white,
+                                        ),
+                                      ),
+                                    ),
+                                  ),
+                              ],
+                            ),
+                          );
+                        },
+                      ),
                       SettingCard(
                         title: l10n.personalInformation,
                         onTap: () {
                           Get.toNamed('/profile');
                         },
                       ),
-                      // DISABLED — Apple compliance (no in-app payment UI)
-                      // SettingCard(
-                      //   title: l10n.subscriptionPlan,
-                      //   onTap: () {
-                      //     Get.toNamed('/subscribe');
-                      //   },
-                      // ),
                       SettingCard(
                         title: l10n.termsAndConditions,
                         onTap: () {
@@ -890,4 +1045,16 @@ class _SettingScreenState extends State<SettingScreen> {
       },
     );
   }
+}
+
+class _PlanData {
+  final UserSubscription? subscription;
+  final int freeDesignsUsed;
+  final int freeDesignsLimit;
+
+  const _PlanData({
+    this.subscription,
+    this.freeDesignsUsed = 0,
+    this.freeDesignsLimit = 3,
+  });
 }

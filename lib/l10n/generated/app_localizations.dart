@@ -5755,6 +5755,114 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Got it'**
   String get gotIt;
+
+  /// Settings section header for the user's active subscription
+  ///
+  /// In en, this message translates to:
+  /// **'My Plan'**
+  String get myPlan;
+
+  /// Settings card label to open the subscription detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'View Plan'**
+  String get viewPlan;
+
+  /// Title of the subscription detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'My Subscription'**
+  String get subscriptionDetailTitle;
+
+  /// Section header on the subscription detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Plan Details'**
+  String get planDetails;
+
+  /// Section header for quota usage on the subscription detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'Usage This Month'**
+  String get usageThisMonth;
+
+  /// Badge label for monthly billing period
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly'**
+  String get billingMonthly;
+
+  /// Badge label for yearly billing period
+  ///
+  /// In en, this message translates to:
+  /// **'Annual'**
+  String get billingYearly;
+
+  /// Subscription renewal date label
+  ///
+  /// In en, this message translates to:
+  /// **'Renews on {date}'**
+  String renewsOn(String date);
+
+  /// Label for the designs usage counter
+  ///
+  /// In en, this message translates to:
+  /// **'Designs'**
+  String get designsLabel;
+
+  /// Label for the tech packs usage counter
+  ///
+  /// In en, this message translates to:
+  /// **'Tech Packs'**
+  String get techPacksLabel;
+
+  /// Display name for the Starter subscription plan
+  ///
+  /// In en, this message translates to:
+  /// **'Starter Plan'**
+  String get planNameStarter;
+
+  /// Display name for the Pro subscription plan
+  ///
+  /// In en, this message translates to:
+  /// **'Pro Plan'**
+  String get planNamePro;
+
+  /// Display name for the Studio subscription plan
+  ///
+  /// In en, this message translates to:
+  /// **'Studio Plan'**
+  String get planNameStudio;
+
+  /// Confirm button label in the cancel subscription dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, Cancel'**
+  String get cancelSubscriptionConfirm;
+
+  /// Snackbar message shown after a subscription is successfully cancelled
+  ///
+  /// In en, this message translates to:
+  /// **'Subscription cancelled successfully.'**
+  String get subscriptionCancelledSuccess;
+
+  /// Snackbar message shown when subscription cancellation fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to cancel subscription. Please try again.'**
+  String get subscriptionCancelError;
+
+  /// Label for the free subscription plan
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan'**
+  String get freePlan;
+
+  /// Shows how many free designs have been used vs total allowed
+  ///
+  /// In en, this message translates to:
+  /// **'{used} of {total} designs'**
+  String freeDesignsCounter(int used, int total);
 }
 
 class _AppLocalizationsDelegate

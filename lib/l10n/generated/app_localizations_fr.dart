@@ -3181,4 +3181,63 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get gotIt => 'Compris';
+
+  @override
+  String get myPlan => 'Mon abonnement';
+
+  @override
+  String get viewPlan => 'Voir l\'abonnement';
+
+  @override
+  String get subscriptionDetailTitle => 'Mon abonnement';
+
+  @override
+  String get planDetails => 'Détails du plan';
+
+  @override
+  String get usageThisMonth => 'Utilisation ce mois-ci';
+
+  @override
+  String get billingMonthly => 'Mensuel';
+
+  @override
+  String get billingYearly => 'Annuel';
+
+  @override
+  String renewsOn(String date) {
+    return 'Renouvellement le $date';
+  }
+
+  @override
+  String get designsLabel => 'Designs';
+
+  @override
+  String get techPacksLabel => 'Tech Packs';
+
+  @override
+  String get planNameStarter => 'Abonnement Starter';
+
+  @override
+  String get planNamePro => 'Abonnement Pro';
+
+  @override
+  String get planNameStudio => 'Abonnement Studio';
+
+  @override
+  String get cancelSubscriptionConfirm => 'Oui, annuler';
+
+  @override
+  String get subscriptionCancelledSuccess => 'Abonnement annulé avec succès.';
+
+  @override
+  String get subscriptionCancelError =>
+      'Impossible d\'annuler l\'abonnement. Veuillez réessayer.';
+
+  @override
+  String get freePlan => 'Plan Gratuit';
+
+  @override
+  String freeDesignsCounter(int used, int total) {
+    return '$used sur $total designs';
+  }
 }

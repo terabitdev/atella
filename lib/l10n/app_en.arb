@@ -3792,5 +3792,87 @@
   "gotIt": "Got it",
   "@gotIt": {
     "description": "Dismiss button label for informational dialogs"
+  },
+  "myPlan": "My Plan",
+  "@myPlan": {
+    "description": "Settings section header for the user's active subscription"
+  },
+  "viewPlan": "View Plan",
+  "@viewPlan": {
+    "description": "Settings card label to open the subscription detail screen"
+  },
+  "subscriptionDetailTitle": "My Subscription",
+  "@subscriptionDetailTitle": {
+    "description": "Title of the subscription detail screen"
+  },
+  "planDetails": "Plan Details",
+  "@planDetails": {
+    "description": "Section header on the subscription detail screen"
+  },
+  "usageThisMonth": "Usage This Month",
+  "@usageThisMonth": {
+    "description": "Section header for quota usage on the subscription detail screen"
+  },
+  "billingMonthly": "Monthly",
+  "@billingMonthly": {
+    "description": "Badge label for monthly billing period"
+  },
+  "billingYearly": "Annual",
+  "@billingYearly": {
+    "description": "Badge label for yearly billing period"
+  },
+  "renewsOn": "Renews on {date}",
+  "@renewsOn": {
+    "description": "Subscription renewal date label",
+    "placeholders": {
+      "date": {
+        "type": "String",
+        "description": "The formatted renewal date string"
+      }
+    }
+  },
+  "designsLabel": "Designs",
+  "@designsLabel": {
+    "description": "Label for the designs usage counter"
+  },
+  "techPacksLabel": "Tech Packs",
+  "@techPacksLabel": {
+    "description": "Label for the tech packs usage counter"
+  },
+  "planNameStarter": "Starter Plan",
+  "@planNameStarter": {
+    "description": "Display name for the Starter subscription plan"
+  },
+  "planNamePro": "Pro Plan",
+  "@planNamePro": {
+    "description": "Display name for the Pro subscription plan"
+  },
+  "planNameStudio": "Studio Plan",
+  "@planNameStudio": {
+    "description": "Display name for the Studio subscription plan"
+  },
+  "cancelSubscriptionConfirm": "Yes, Cancel",
+  "@cancelSubscriptionConfirm": {
+    "description": "Confirm button label in the cancel subscription dialog"
+  },
+  "subscriptionCancelledSuccess": "Subscription cancelled successfully.",
+  "@subscriptionCancelledSuccess": {
+    "description": "Snackbar message shown after a subscription is successfully cancelled"
+  },
+  "subscriptionCancelError": "Failed to cancel subscription. Please try again.",
+  "@subscriptionCancelError": {
+    "description": "Snackbar message shown when subscription cancellation fails"
+  },
+  "freePlan": "Free Plan",
+  "@freePlan": {
+    "description": "Label for the free subscription plan"
+  },
+  "freeDesignsCounter": "{used} of {total} designs",
+  "@freeDesignsCounter": {
+    "description": "Shows how many free designs have been used vs total allowed",
+    "placeholders": {
+      "used": { "type": "int" },
+      "total": { "type": "int" }
+    }
   }
 }
