@@ -25,9 +25,11 @@ class _ProfileScreenState extends State<ProfileScreen> {
   Widget build(BuildContext context) {
     final l10n = AppLocalizations.of(context)!;
     return Scaffold(
+      resizeToAvoidBottomInset: true,
       body: SafeArea(
-        child: Padding(
+        child: SingleChildScrollView(
           padding: EdgeInsets.symmetric(horizontal: 24.w),
+          keyboardDismissBehavior: ScrollViewKeyboardDismissBehavior.onDrag,
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
@@ -123,7 +125,7 @@ class _ProfileScreenState extends State<ProfileScreen> {
                 },
               ),
 
-              Spacer(),
+              SizedBox(height: 40.h),
               // Custom Update Button with Loading State
               Obx(
                 () => InkWell(
