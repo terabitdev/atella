@@ -3776,5 +3776,21 @@
   "learnMore": "Explore",
   "@learnMore": {
     "description": "Button label to learn more about a subscription plan"
+  },
+  "freeUserLimitTitle": "Monthly Limit Reached",
+  "@freeUserLimitTitle": {
+    "description": "Title for the free user monthly design limit dialog"
+  },
+  "freeUserLimitBody": "You've used all your free designs for this month.",
+  "@freeUserLimitBody": {
+    "description": "Body message for the free user monthly design limit dialog"
+  },
+  "freeUserLimitCta": "To continue creating, visit us at atelia.app",
+  "@freeUserLimitCta": {
+    "description": "Call to action in the free user monthly design limit dialog"
+  },
+  "gotIt": "Got it",
+  "@gotIt": {
+    "description": "Dismiss button label for informational dialogs"
   }
 }

@@ -1032,35 +1032,12 @@ class TechPackDetailsController extends GetxController {
               ),
             ),
           ),
-          ElevatedButton(
-            onPressed: () {
-              Get.back();
-
-              // Set callback to refresh the UI state after subscription
-              SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-                print('Subscription upgraded, TechPack UI refreshed');
-              });
-
-              // Navigate to subscription screen
-              Get.toNamed(
-                '/subscribe',
-                arguments: {
-                  'returnRoute': '/tech_pack_details_screen',
-                  'showSuccessMessage': true,
-                },
-              );
-            },
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.black,
-              padding: EdgeInsets.symmetric(horizontal: 16, vertical: 12),
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(24),
-              ),
-            ),
+          TextButton(
+            onPressed: () => Get.back(),
             child: Text(
-              _l10n.tpDialogUpgradeNow,
+              _l10n.freeUserLimitCta,
               style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.white,
+                color: Colors.black,
                 fontWeight: FontWeight.bold,
               ),
               textAlign: TextAlign.center,
@@ -1086,23 +1063,6 @@ class TechPackDetailsController extends GetxController {
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop();
-
-          // Set callback to refresh the UI state after subscription
-          SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-            print('Subscription upgraded, TechPack UI refreshed');
-          });
-
-          // Navigate to subscription screen
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/tech_pack_details_screen',
-              'showSuccessMessage': true,
-            },
-          );
-        },
         onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
@@ -1117,18 +1077,6 @@ class TechPackDetailsController extends GetxController {
         isPaidUser: true,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
-        },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop();
-
-          // Navigate to subscription screen
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/tech_pack_details_screen',
-              'showSuccessMessage': true,
-            },
-          );
         },
         onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
@@ -1145,18 +1093,6 @@ class TechPackDetailsController extends GetxController {
         isPaidUser: true,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
-        },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop();
-
-          // Navigate to subscription screen (Studio users can still see upgrade options)
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/tech_pack_details_screen',
-              'showSuccessMessage': true,
-            },
-          );
         },
         onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),

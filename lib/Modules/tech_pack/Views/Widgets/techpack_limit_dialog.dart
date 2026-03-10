@@ -5,22 +5,19 @@ import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechpackLimitDialog extends StatefulWidget {
   final Future<void> Function() onGetExtraTechpacks;
-  final VoidCallback onUpgradePlan;
   final VoidCallback onMaybeLater;
-  final bool
-  isPaidUser; // true for STARTER/PRO/STUDIO users, false for FREE users
+  final bool isPaidUser; // true for STARTER/PRO/STUDIO users, false for FREE users
   final String title;
   final String message;
 
   const TechpackLimitDialog({
-    Key? key,
+    super.key,
     required this.onGetExtraTechpacks,
-    required this.onUpgradePlan,
     required this.onMaybeLater,
     required this.title,
     required this.message,
     this.isPaidUser = false,
-  }) : super(key: key);
+  });
 
   @override
   State<TechpackLimitDialog> createState() => _TechpackLimitDialogState();
@@ -40,27 +37,33 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Alert Icon
             Icon(Icons.warning_amber_rounded, size: 60.h, color: Colors.red),
             SizedBox(height: 16.h),
-            // Title
             Text(
               widget.title,
               style: ssTitleTextTextStyle186004,
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
-            // Message
             Text(
               widget.message,
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 8.h),
+            // Website CTA
+            Text(
+              l10n.freeUserLimitCta,
+              style: ssTitleTextTextStyle144005.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 24.h),
-            // Buttons
             Column(
               children: [
-                // Get Extra Techpacks Button (only show for paid users)
+                // Get Extra Techpacks Button (only for paid users)
                 if (widget.isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
@@ -105,35 +108,6 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
                   ),
                   SizedBox(height: 12.h),
                 ],
-                // Upgrade Plan Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: widget.onUpgradePlan,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(
-                        vertical: 12.h,
-                        horizontal: 16.w,
-                      ),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.tpDialogUpgradeNow,
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                // Maybe Later Button
                 TextButton(
                   onPressed: widget.onMaybeLater,
                   child: Text(

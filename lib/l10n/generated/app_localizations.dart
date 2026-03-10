@@ -5731,6 +5731,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Explore'**
   String get learnMore;
+
+  /// Title for the free user monthly design limit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly Limit Reached'**
+  String get freeUserLimitTitle;
+
+  /// Body message for the free user monthly design limit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'You\'ve used all your free designs for this month.'**
+  String get freeUserLimitBody;
+
+  /// Call to action in the free user monthly design limit dialog
+  ///
+  /// In en, this message translates to:
+  /// **'To continue creating, visit us at atelia.app'**
+  String get freeUserLimitCta;
+
+  /// Dismiss button label for informational dialogs
+  ///
+  /// In en, this message translates to:
+  /// **'Got it'**
+  String get gotIt;
 }
 
 class _AppLocalizationsDelegate

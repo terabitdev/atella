@@ -495,22 +495,6 @@ class TechPackController extends GetxController {
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop();
-
-          // Set callback to refresh the UI state after subscription
-          SubscriptionCallbackService().setOnSubscriptionSuccess(() {
-            print('Subscription upgraded, UI refreshed');
-          });
-
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/generate_tech_pack',
-              'showSuccessMessage': true,
-            },
-          );
-        },
         onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
@@ -525,18 +509,6 @@ class TechPackController extends GetxController {
         isPaidUser: true,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
-        },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop();
-
-          // Navigate to subscription screen
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/generate_tech_pack',
-              'showSuccessMessage': true,
-            },
-          );
         },
         onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
@@ -571,19 +543,8 @@ class TechPackController extends GetxController {
                 await _purchaseExtraTechpacks(1, 5.99);
               }
             : null,
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          // Navigate to subscription screen
-          Get.toNamed(
-            '/subscribe',
-            arguments: {
-              'returnRoute': '/generate_tech_pack',
-              'showSuccessMessage': true,
-            },
-          );
-        },
         onContinue: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog and continue with techpack generation
+          Navigator.of(Get.overlayContext!).pop();
           // Continue with the selected design based on which method called this
           if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
             // Prepare arguments for tech pack details

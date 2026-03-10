@@ -587,13 +587,8 @@ class FinalDetailsController extends GetxController {
             _proceedWithGeneration();
           }
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          Get.toNamed('/subscribe');
-        },
         onContinue: () async {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          // Increment usage and proceed with generation
+          Navigator.of(Get.overlayContext!).pop();
           await _stripeService.incrementDesignUsage();
           _proceedWithGeneration();
         },
@@ -618,16 +613,12 @@ class FinalDetailsController extends GetxController {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             await _stripeService.incrementDesignUsage();
-            Navigator.of(Get.overlayContext!).pop(); // Close the dialog
+            Navigator.of(Get.overlayContext!).pop();
             _proceedWithGeneration();
           }
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          Get.toNamed('/subscribe');
-        },
         onMaybeLater: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop();
         },
       ),
       barrierDismissible: false,

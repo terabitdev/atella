@@ -7,6 +7,7 @@ import 'package:atella/Modules/creative_brief/controllers/creative_brief_control
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/free_limit_dialog.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
@@ -1841,13 +1842,8 @@ class RefiningConceptController extends GetxController {
             _proceedWithGeneration();
           }
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          Get.toNamed('/subscribe');
-        },
         onContinue: () async {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          // Increment usage and proceed with generation
+          Navigator.of(Get.overlayContext!).pop();
           await _stripeService.incrementDesignUsage();
           _proceedWithGeneration();
         },
@@ -1866,23 +1862,31 @@ class RefiningConceptController extends GetxController {
             subscription.subscriptionPlan.startsWith('PRO') ||
             subscription.subscriptionPlan.startsWith('STUDIO'));
 
+    // FREE users: show neutral dialog — no pricing or payment language
+    if (!isPaidUser) {
+      Get.dialog(
+        FreeUserLimitDialog(
+          onClose: () => Navigator.of(Get.overlayContext!).pop(),
+        ),
+        barrierDismissible: false,
+      );
+      return;
+    }
+
+    // Paid users who've exceeded their monthly limit
     Get.dialog(
       LimitExceededDialog(
-        isPaidUser: isPaidUser,
+        isPaidUser: true,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
             await _stripeService.incrementDesignUsage();
-            Navigator.of(Get.overlayContext!).pop(); // Close the dialog
+            Navigator.of(Get.overlayContext!).pop();
             _proceedWithGeneration();
           }
         },
-        onUpgradePlan: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
-          Get.toNamed('/subscribe');
-        },
         onMaybeLater: () {
-          Navigator.of(Get.overlayContext!).pop(); // Close dialog
+          Navigator.of(Get.overlayContext!).pop();
         },
       ),
       barrierDismissible: false,

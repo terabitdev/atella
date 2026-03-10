@@ -3111,4 +3111,17 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get learnMore => 'Explore';
+
+  @override
+  String get freeUserLimitTitle => 'Monthly Limit Reached';
+
+  @override
+  String get freeUserLimitBody =>
+      'You\'ve used all your free designs for this month.';
+
+  @override
+  String get freeUserLimitCta => 'To continue creating, visit us at atelia.app';
+
+  @override
+  String get gotIt => 'Got it';
 }

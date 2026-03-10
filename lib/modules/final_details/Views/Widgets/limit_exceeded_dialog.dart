@@ -5,17 +5,15 @@ import 'package:atella/l10n/generated/app_localizations.dart';
 
 class LimitExceededDialog extends StatefulWidget {
   final Future<void> Function() onGetExtraDesigns;
-  final VoidCallback onUpgradePlan;
   final VoidCallback onMaybeLater;
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
 
   const LimitExceededDialog({
-    Key? key,
+    super.key,
     required this.onGetExtraDesigns,
-    required this.onUpgradePlan,
     required this.onMaybeLater,
-    this.isPaidUser = false, // Default to false (FREE user)
-  }) : super(key: key);
+    this.isPaidUser = false,
+  });
 
   @override
   State<LimitExceededDialog> createState() => _LimitExceededDialogState();
@@ -37,30 +35,39 @@ class _LimitExceededDialogState extends State<LimitExceededDialog> {
         child: Column(
           mainAxisSize: MainAxisSize.min,
           children: [
-            // Alert Icon
             Icon(
               Icons.warning_amber_rounded,
               size: 60.h,
               color: Colors.red,
             ),
             SizedBox(height: 16.h),
-            // Title
             Text(
               l10n.fdDialogLimitExceeded,
               style: ssTitleTextTextStyle186004,
+              textAlign: TextAlign.center,
             ),
             SizedBox(height: 12.h),
-            // Message (conditional based on user type)
             Text(
-              widget.isPaidUser ? l10n.fdDialogLimitMessage : l10n.fdDialogLimitMessageFree,
+              widget.isPaidUser
+                  ? l10n.fdDialogLimitMessage
+                  : l10n.fdDialogLimitMessageFree,
               style: ssTitleTextTextStyle144005,
               textAlign: TextAlign.center,
             ),
+            SizedBox(height: 8.h),
+            // Website CTA
+            Text(
+              l10n.freeUserLimitCta,
+              style: ssTitleTextTextStyle144005.copyWith(
+                fontWeight: FontWeight.w600,
+                color: Colors.black,
+              ),
+              textAlign: TextAlign.center,
+            ),
             SizedBox(height: 24.h),
-            // Buttons
             Column(
               children: [
-                // Get Extra Designs Button (only show for paid users)
+                // Get Extra Designs Button (only for paid users)
                 if (widget.isPaidUser) ...[
                   SizedBox(
                     width: double.infinity,
@@ -75,7 +82,8 @@ class _LimitExceededDialogState extends State<LimitExceededDialog> {
                       style: ElevatedButton.styleFrom(
                         backgroundColor: Colors.black,
                         foregroundColor: Colors.white,
-                        padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
+                        padding: EdgeInsets.symmetric(
+                            vertical: 12.h, horizontal: 16.w),
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(8.r),
                         ),
@@ -102,32 +110,6 @@ class _LimitExceededDialogState extends State<LimitExceededDialog> {
                   ),
                   SizedBox(height: 12.h),
                 ],
-                // Upgrade Plan Button
-                SizedBox(
-                  width: double.infinity,
-                  child: ElevatedButton(
-                    onPressed: widget.onUpgradePlan,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.black,
-                      foregroundColor: Colors.white,
-                      padding: EdgeInsets.symmetric(vertical: 12.h, horizontal: 16.w),
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(8.r),
-                      ),
-                    ),
-                    child: Text(
-                      l10n.fdDialogUpgradePlan,
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w600,
-                        color: Colors.white,
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                // Maybe Later Button
                 TextButton(
                   onPressed: widget.onMaybeLater,
                   child: Text(

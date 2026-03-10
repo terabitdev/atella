@@ -1437,5 +1437,21 @@
   "learnMore": "Explorer",
   "@learnMore": {
     "description": "Button label to learn more about a subscription plan"
+  },
+  "freeUserLimitTitle": "Limite mensuelle atteinte",
+  "@freeUserLimitTitle": {
+    "description": "Title for the free user monthly design limit dialog"
+  },
+  "freeUserLimitBody": "Vous avez utilisé tous vos designs gratuits ce mois-ci.",
+  "@freeUserLimitBody": {
+    "description": "Body message for the free user monthly design limit dialog"
+  },
+  "freeUserLimitCta": "Pour continuer à créer, visitez-nous sur atelia.app",
+  "@freeUserLimitCta": {
+    "description": "Call to action in the free user monthly design limit dialog"
+  },
+  "gotIt": "Compris",
+  "@gotIt": {
+    "description": "Dismiss button label for informational dialogs"
   }
 }
