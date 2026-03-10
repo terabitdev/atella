@@ -118,12 +118,13 @@ class _SettingScreenState extends State<SettingScreen> {
                           Get.toNamed('/profile');
                         },
                       ),
-                      SettingCard(
-                        title: l10n.subscriptionPlan,
-                        onTap: () {
-                          Get.toNamed('/subscribe');
-                        },
-                      ),
+                      // DISABLED — Apple compliance (no in-app payment UI)
+                      // SettingCard(
+                      //   title: l10n.subscriptionPlan,
+                      //   onTap: () {
+                      //     Get.toNamed('/subscribe');
+                      //   },
+                      // ),
                       SettingCard(
                         title: l10n.termsAndConditions,
                         onTap: () {

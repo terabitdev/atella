@@ -1,3 +1,5 @@
+// DISABLED — Apple compliance (no in-app payment UI)
+/*
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -213,3 +215,4 @@ class _SubscribeFreePlanState extends State<SubscribeFreePlan> {
     );
   }
 }
+*/

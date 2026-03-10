@@ -17,15 +17,16 @@ import 'package:atella/Modules/Home/View/Screens/home_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_collection_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/my_design_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/profile_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
-import 'package:atella/Modules/Home/View/Screens/subscribe_studio_plan.dart';
+// SUBSCRIPTION SCREENS DISABLED — Apple compliance (no in-app payment UI)
+// import 'package:atella/Modules/Home/View/Screens/subscribe_free_plan.dart';
+// import 'package:atella/Modules/Home/View/Screens/subscribe_pro_plan.dart';
+// import 'package:atella/Modules/Home/View/Screens/subscribe_screen.dart';
+// import 'package:atella/Modules/Home/View/Screens/subscribe_starter_plan.dart';
+// import 'package:atella/Modules/Home/View/Screens/subscribe_studio_plan.dart';
 import 'package:atella/Modules/Home/View/Screens/terms_and_conditions_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/privacy_policy_screen.dart';
 import 'package:atella/Modules/Home/View/Screens/delete_account_password_screen.dart';
-import 'package:atella/Modules/Home/bindings/subscribe_binding.dart';
+// import 'package:atella/Modules/Home/bindings/subscribe_binding.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refine_concept_screen.dart';
 import 'package:atella/Modules/refining_concept/Views/Screens/refining_brief_screen.dart';
 import 'package:atella/Modules/refining_concept/bindings/refining_concept_binding.dart';
@@ -113,26 +114,26 @@ class AppPages {
       name: AppRoutes.viewprofileTechPack,
       page: () => const ViewProfileTechPackScreen(),
     ),
-    GetPage(
-      name: AppRoutes.subscribe,
-      page: () => const SubscribeScreen(),
-      binding: SubscribeBinding(),
-    ),
+    // GetPage(
+    //   name: AppRoutes.subscribe,
+    //   page: () => const SubscribeScreen(),
+    //   binding: SubscribeBinding(),
+    // ),
     GetPage(name: AppRoutes.myDesigns, page: () => const MyDesignScreen()),
     GetPage(
       name: AppRoutes.collections,
       page: () => const MyCollectionScreen(),
     ),
-    GetPage(
-      name: AppRoutes.subscribeFree,
-      page: () => const SubscribeFreePlan(),
-    ),
-    GetPage(
-      name: AppRoutes.subscribeStarter,
-      page: () => const SubscribeStarterPlan(),
-    ),
-    GetPage(name: AppRoutes.subscribePro, page: () => const SubscribeProPlan()),
-    GetPage(name: AppRoutes.subscribeStudio, page: () => const SubscribeStudioPlan()),
+    // GetPage(
+    //   name: AppRoutes.subscribeFree,
+    //   page: () => const SubscribeFreePlan(),
+    // ),
+    // GetPage(
+    //   name: AppRoutes.subscribeStarter,
+    //   page: () => const SubscribeStarterPlan(),
+    // ),
+    // GetPage(name: AppRoutes.subscribePro, page: () => const SubscribeProPlan()),
+    // GetPage(name: AppRoutes.subscribeStudio, page: () => const SubscribeStudioPlan()),
     GetPage(name: AppRoutes.terms, page: () => const TermsAndConditionsScreen()),
     GetPage(name: AppRoutes.privacy, page: () => const PrivacyPolicyScreen()),
     GetPage(
