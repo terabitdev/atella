@@ -3177,7 +3177,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get freeUserLimitCta =>
-      'Pour continuer à créer, visitez-nous sur atelia.app';
+      'Pour continuer à créer, visitez-nous sur www.atelia.app';
 
   @override
   String get gotIt => 'Compris';
@@ -3240,4 +3240,14 @@ class AppLocalizationsFr extends AppLocalizations {
   String freeDesignsCounter(int used, int total) {
     return '$used sur $total designs';
   }
+
+  @override
+  String get paidUserUpgradeCta => 'Prêt à upgrader? Visitez www.atelia.app';
+
+  @override
+  String get orDivider => 'OU';
+
+  @override
+  String get subscriptionDetailUpgradeHint =>
+      'Pour changer ou upgrader votre plan, visitez-nous sur www.atelia.app';
 }

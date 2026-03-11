@@ -205,6 +205,18 @@ class SubscriptionDetailScreen extends StatelessWidget {
 
                         SizedBox(height: 40.h),
 
+                        // ── Upgrade hint ────────────────────────────────
+                        Text(
+                          l10n.subscriptionDetailUpgradeHint,
+                          style: ssTitleTextTextStyle144005.copyWith(
+                            color: Colors.grey[600],
+                            fontSize: 13.sp,
+                          ),
+                          textAlign: TextAlign.center,
+                        ),
+
+                        SizedBox(height: 16.h),
+
                         // ── Cancel subscription button ──────────────────
                         SizedBox(
                           width: double.infinity,

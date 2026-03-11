@@ -5747,7 +5747,7 @@ abstract class AppLocalizations {
   /// Call to action in the free user monthly design limit dialog
   ///
   /// In en, this message translates to:
-  /// **'To continue creating, visit us at atelia.app'**
+  /// **'To continue creating, visit us at www.atelia.app'**
   String get freeUserLimitCta;
 
   /// Dismiss button label for informational dialogs
@@ -5863,6 +5863,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'{used} of {total} designs'**
   String freeDesignsCounter(int used, int total);
+
+  /// CTA shown to paid users who have hit their plan limit, pointing them to upgrade at the website
+  ///
+  /// In en, this message translates to:
+  /// **'Ready to upgrade? Visit www.atelia.app'**
+  String get paidUserUpgradeCta;
+
+  /// Divider word shown between two options
+  ///
+  /// In en, this message translates to:
+  /// **'OR'**
+  String get orDivider;
+
+  /// Hint shown above the cancel button on the subscription detail screen
+  ///
+  /// In en, this message translates to:
+  /// **'To change or upgrade your plan, visit us at www.atelia.app'**
+  String get subscriptionDetailUpgradeHint;
 }
 
 class _AppLocalizationsDelegate

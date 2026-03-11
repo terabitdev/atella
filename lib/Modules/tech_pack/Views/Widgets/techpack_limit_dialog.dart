@@ -51,9 +51,11 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
               textAlign: TextAlign.center,
             ),
             SizedBox(height: 8.h),
-            // Website CTA
+            // Website CTA — different text for paid vs free users
             Text(
-              l10n.freeUserLimitCta,
+              widget.isPaidUser
+                  ? l10n.paidUserUpgradeCta
+                  : l10n.freeUserLimitCta,
               style: ssTitleTextTextStyle144005.copyWith(
                 fontWeight: FontWeight.w600,
                 color: Colors.black,
@@ -65,6 +67,8 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
               children: [
                 // Get Extra Techpacks Button (only for paid users)
                 if (widget.isPaidUser) ...[
+                  const _OrDivider(),
+                  SizedBox(height: 12.h),
                   SizedBox(
                     width: double.infinity,
                     child: ElevatedButton(
@@ -124,6 +128,32 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
           ],
         ),
       ),
+    );
+  }
+}
+
+class _OrDivider extends StatelessWidget {
+  const _OrDivider();
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    return Row(
+      children: [
+        const Expanded(child: Divider(color: Colors.grey)),
+        Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 12),
+          child: Text(
+            l10n.orDivider,
+            style: TextStyle(
+              color: Colors.grey[500],
+              fontWeight: FontWeight.w600,
+              fontSize: 12,
+            ),
+          ),
+        ),
+        const Expanded(child: Divider(color: Colors.grey)),
+      ],
     );
   }
 }

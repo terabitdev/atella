@@ -1446,7 +1446,7 @@
   "@freeUserLimitBody": {
     "description": "Body message for the free user monthly design limit dialog"
   },
-  "freeUserLimitCta": "Pour continuer à créer, visitez-nous sur atelia.app",
+  "freeUserLimitCta": "Pour continuer à créer, visitez-nous sur www.atelia.app",
   "@freeUserLimitCta": {
     "description": "Call to action in the free user monthly design limit dialog"
   },
@@ -1535,5 +1535,17 @@
       "used": { "type": "int" },
       "total": { "type": "int" }
     }
+  },
+  "paidUserUpgradeCta": "Prêt à upgrader? Visitez www.atelia.app",
+  "@paidUserUpgradeCta": {
+    "description": "CTA shown to paid users who have hit their plan limit, pointing them to upgrade at the website"
+  },
+  "orDivider": "OU",
+  "@orDivider": {
+    "description": "Divider word shown between two options"
+  },
+  "subscriptionDetailUpgradeHint": "Pour changer ou upgrader votre plan, visitez-nous sur www.atelia.app",
+  "@subscriptionDetailUpgradeHint": {
+    "description": "Hint shown above the cancel button on the subscription detail screen"
   }
 }
