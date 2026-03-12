@@ -7,6 +7,7 @@ import 'package:atella/services/PaymentService/stripe_subscription_service.dart'
 import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/Modules/final_details/Views/Widgets/free_limit_dialog.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/limit_exceeded_dialog.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/services/localization/final_details_localization_service.dart';
@@ -452,15 +453,21 @@ class FinalDetailsController extends GetxController {
 
         // Check email-based quota (persists across account deletions)
         bool hasQuota = await _quotaService.hasRemainingQuota(user!.email!);
-        if (!hasQuota) {
-          _showLimitExceededDialog();
-          return;
-        }
-
-        // Increment email-based quota
-        try {
-          bool incrementSuccess = await _quotaService.incrementDesignUsage(user.email!);
-          if (!incrementSuccess) {
+        if (hasQuota) {
+          // Consume one email-based free design
+          try {
+            bool incrementSuccess = await _quotaService.incrementDesignUsage(user.email!);
+            if (!incrementSuccess) {
+              Get.snackbar(
+                'Error',
+                'Failed to track design usage. Please try again.',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
+          } catch (e) {
             Get.snackbar(
               'Error',
               'Failed to track design usage. Please try again.',
@@ -470,16 +477,14 @@ class FinalDetailsController extends GetxController {
             );
             return;
           }
-        } catch (e) {
-          print('❌ Failed to increment quota: $e');
-          Get.snackbar(
-            'Error',
-            'Failed to track design usage. Please try again.',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
+        } else {
+          // Email quota exhausted — check free add-on designs
+          if (subscription.hasFreeExtraDesigns) {
+            await _stripeService.incrementFreeExtraDesignUsage();
+          } else {
+            _showFreeUserLimitDialog();
+            return;
+          }
         }
       } else {
         // For paid plans - use existing stripe service logic
@@ -591,6 +596,24 @@ class FinalDetailsController extends GetxController {
           Navigator.of(Get.overlayContext!).pop();
           await _stripeService.incrementDesignUsage();
           _proceedWithGeneration();
+        },
+      ),
+      barrierDismissible: false,
+    );
+  }
+
+  // Show limit dialog for free users with option to purchase add-ons
+  void _showFreeUserLimitDialog() {
+    Get.dialog(
+      FreeUserLimitDialog(
+        onClose: () => Navigator.of(Get.overlayContext!).pop(),
+        onGetExtraDesigns: () async {
+          bool success = await _revenueCatService.purchaseFreeExtraDesigns();
+          if (success) {
+            Navigator.of(Get.overlayContext!).pop();
+            await _stripeService.incrementFreeExtraDesignUsage();
+            _proceedWithGeneration();
+          }
         },
       ),
       barrierDismissible: false,

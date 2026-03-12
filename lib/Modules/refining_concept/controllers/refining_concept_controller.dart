@@ -1765,17 +1765,23 @@ class RefiningConceptController extends GetxController {
 
         // Check email-based quota (persists across account deletions)
         bool hasQuota = await _quotaService.hasRemainingQuota(user!.email!);
-        if (!hasQuota) {
-          _showLimitExceededDialog();
-          return;
-        }
-
-        // Increment email-based quota
-        try {
-          bool incrementSuccess = await _quotaService.incrementDesignUsage(
-            user.email!,
-          );
-          if (!incrementSuccess) {
+        if (hasQuota) {
+          // Consume one email-based free design
+          try {
+            bool incrementSuccess = await _quotaService.incrementDesignUsage(
+              user.email!,
+            );
+            if (!incrementSuccess) {
+              Get.snackbar(
+                'Error',
+                'Failed to track design usage. Please try again.',
+                snackPosition: SnackPosition.TOP,
+                backgroundColor: Colors.red,
+                colorText: Colors.white,
+              );
+              return;
+            }
+          } catch (e) {
             Get.snackbar(
               'Error',
               'Failed to track design usage. Please try again.',
@@ -1785,16 +1791,14 @@ class RefiningConceptController extends GetxController {
             );
             return;
           }
-        } catch (e) {
-          print('❌ Failed to increment quota: $e');
-          Get.snackbar(
-            'Error',
-            'Failed to track design usage. Please try again.',
-            snackPosition: SnackPosition.TOP,
-            backgroundColor: Colors.red,
-            colorText: Colors.white,
-          );
-          return;
+        } else {
+          // Email quota exhausted — check free add-on designs
+          if (subscription.hasFreeExtraDesigns) {
+            await _stripeService.incrementFreeExtraDesignUsage();
+          } else {
+            _showLimitExceededDialog();
+            return;
+          }
         }
       } else {
         // For paid plans - use existing stripe service logic
@@ -1862,11 +1866,19 @@ class RefiningConceptController extends GetxController {
             subscription.subscriptionPlan.startsWith('PRO') ||
             subscription.subscriptionPlan.startsWith('STUDIO'));
 
-    // FREE users: show neutral dialog — no pricing or payment language
+    // FREE users: show dialog with option to buy add-on designs
     if (!isPaidUser) {
       Get.dialog(
         FreeUserLimitDialog(
           onClose: () => Navigator.of(Get.overlayContext!).pop(),
+          onGetExtraDesigns: () async {
+            bool success = await _revenueCatService.purchaseFreeExtraDesigns();
+            if (success) {
+              Navigator.of(Get.overlayContext!).pop();
+              await _stripeService.incrementFreeExtraDesignUsage();
+              _proceedWithGeneration();
+            }
+          },
         ),
         barrierDismissible: false,
       );

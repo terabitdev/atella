@@ -1794,6 +1794,10 @@
   "@fdDialogGetExtraDesigns": {
     "description": "Get extra designs button text"
   },
+  "fdDialogGetDesigns": "+5 Designs (€9.99)",
+  "@fdDialogGetDesigns": {
+    "description": "Buy button label for free users purchasing a design add-on (no 'extra' wording)"
+  },
   "fdDialogUpgradePlan": "Upgrade Plan",
   "@fdDialogUpgradePlan": {
     "description": "Upgrade plan button text"
@@ -2078,6 +2082,10 @@
   "@tpTechpackFeaturePremium": {
     "description": "Message shown to free users about techpack being premium"
   },
+  "tpFreeUserTechpackMessage": "You currently have no techpacks. See purchase options below.",
+  "@tpFreeUserTechpackMessage": {
+    "description": "Message shown to free users in the techpack limit dialog — does not imply it is premium-only"
+  },
   "tpProMonthlyLimitReached": "Your monthly techpack generation limit has been reached.",
   "@tpProMonthlyLimitReached": {
     "description": "Message shown to Pro users when monthly techpack limit reached"
@@ -2153,6 +2161,10 @@
   "tpDialogExtraTechpackOption": "Purchase extra +1 techpack (€5.99)",
   "@tpDialogExtraTechpackOption": {
     "description": "Extra techpack purchase option for Pro users"
+  },
+  "tpDialogGetTechpackOption": "+1 Techpack (€5.99)",
+  "@tpDialogGetTechpackOption": {
+    "description": "Buy button label for free users purchasing a techpack add-on (no 'extra' wording)"
   },
   "tpDialogFeatureCustomPDFExport": "Custom PDF export with your logo",
   "@tpDialogFeatureCustomPDFExport": {
@@ -3800,6 +3812,18 @@
   "viewPlan": "View Plan",
   "@viewPlan": {
     "description": "Settings card label to open the subscription detail screen"
+  },
+  "settingsFreePlan": "Free Plan",
+  "@settingsFreePlan": {
+    "description": "Plan label for free users in the settings card"
+  },
+  "settingsFreeMonthly": "Monthly free",
+  "@settingsFreeMonthly": {
+    "description": "Label for the free monthly allowance section in the settings card"
+  },
+  "settingsAddOns": "Add-ons",
+  "@settingsAddOns": {
+    "description": "Label for the add-ons section in the free user settings card"
   },
   "subscriptionDetailTitle": "My Subscription",
   "@subscriptionDetailTitle": {

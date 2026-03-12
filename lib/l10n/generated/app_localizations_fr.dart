@@ -1640,6 +1640,9 @@ class AppLocalizationsFr extends AppLocalizations {
       'Obtenir des Designs Supplémentaires (9,99€)';
 
   @override
+  String get fdDialogGetDesigns => '+5 Designs (9,99€)';
+
+  @override
   String get fdDialogUpgradePlan => 'Mettre à Niveau le Forfait';
 
   @override
@@ -1854,6 +1857,10 @@ class AppLocalizationsFr extends AppLocalizations {
       'La génération de dossiers techniques est une fonctionnalité premium.';
 
   @override
+  String get tpFreeUserTechpackMessage =>
+      'Vous n\'avez actuellement aucun dossier technique. Voir les options d\'achat ci-dessous.';
+
+  @override
   String get tpProMonthlyLimitReached =>
       'Votre limite mensuelle de génération de dossiers techniques a été atteinte.';
 
@@ -1909,6 +1916,9 @@ class AppLocalizationsFr extends AppLocalizations {
   @override
   String get tpDialogExtraTechpackOption =>
       'Achetez un pack technologique +1 supplémentaire (5,99 €)';
+
+  @override
+  String get tpDialogGetTechpackOption => '+1 Dossier technique (5,99 €)';
 
   @override
   String get tpDialogFeatureCustomPDFExport =>
@@ -3187,6 +3197,15 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get viewPlan => 'Voir l\'abonnement';
+
+  @override
+  String get settingsFreePlan => 'Forfait Gratuit';
+
+  @override
+  String get settingsFreeMonthly => 'Gratuit mensuel';
+
+  @override
+  String get settingsAddOns => 'Extensions';
 
   @override
   String get subscriptionDetailTitle => 'Mon abonnement';

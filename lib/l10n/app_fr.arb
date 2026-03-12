@@ -519,6 +519,7 @@
   "fdDialogLimitMessage": "Vous avez dépassé votre limite pour ce mois. Vous pouvez payer 9,99€ pour 5 designs supplémentaires ou mettre à niveau votre forfait.",
   "fdDialogLimitMessageFree": "Vous avez dépassé votre limite de forfait gratuit pour ce mois. Passez à Starter ou Pro pour continuer à créer des designs.",
   "fdDialogGetExtraDesigns": "Obtenir des Designs Supplémentaires (9,99€)",
+  "fdDialogGetDesigns": "+5 Designs (9,99€)",
   "fdDialogUpgradePlan": "Mettre à Niveau le Forfait",
   "fdDialogMaybeLater": "Peut-être Plus Tard",
   "fdDialog80PercentTitle": "Presque à Votre Limite !",
@@ -582,6 +583,7 @@
   "tpDialogPurchaseFor": "Acheter pour 9,99€",
   "tpDialogUpgradeInstead": "Mettre à Niveau à la Place",
   "tpTechpackFeaturePremium": "La génération de dossiers techniques est une fonctionnalité premium.",
+  "tpFreeUserTechpackMessage": "Vous n'avez actuellement aucun dossier technique. Voir les options d'achat ci-dessous.",
   "tpProMonthlyLimitReached": "Votre limite mensuelle de génération de dossiers techniques a été atteinte.",
   "tpStarterYearlyLimitReached": "Votre limite mensuelle de génération de dossiers techniques a été atteinte.",
   "tpStarterMonthlyLimitReached": "Votre limite mensuelle de génération de dossiers techniques a été atteinte.",
@@ -596,6 +598,7 @@
   "tpDialogRemainingTechpacksStudio": "Restant : {remaining}/10 ce mois-ci",
   "tpDialogProUpgradeOption": "Pro : 8 dossiers techniques/mois",
   "tpDialogExtraTechpackOption": "Achetez un pack technologique +1 supplémentaire (5,99 €)",
+  "tpDialogGetTechpackOption": "+1 Dossier technique (5,99 €)",
   "tpDialogFeatureCustomPDFExport": "Export PDF personnalisé avec votre logo",
   "tpDialogFeatureManufacturerAccess": "Accès à la liste des fabricants",
   "tpDialogFeatureUnlimited3D": "Visualisation 3D illimitée",
@@ -1462,6 +1465,9 @@
   "@viewPlan": {
     "description": "Settings card label to open the subscription detail screen"
   },
+  "settingsFreePlan": "Forfait Gratuit",
+  "settingsFreeMonthly": "Gratuit mensuel",
+  "settingsAddOns": "Extensions",
   "subscriptionDetailTitle": "Mon abonnement",
   "@subscriptionDetailTitle": {
     "description": "Title of the subscription detail screen"

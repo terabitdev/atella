@@ -244,9 +244,32 @@ class TechPackController extends GetxController {
   }
 
   void onContinueWithDesign(int selectedIndex) async {
-    // Check for 80% usage warning first
     final subscription = await _subscriptionService
         .getCurrentUserSubscription();
+
+    // FREE users — techpack access via purchased add-ons only
+    if (subscription?.subscriptionPlan == 'FREE') {
+      if (subscription!.hasFreeExtraTechpacks) {
+        // Has free add-on techpacks — navigate directly; usage incremented on generation
+        if (selectedIndex >= 0 && selectedIndex < generatedImages.length) {
+          final arguments = <String, dynamic>{
+            'selectedDesignUrl': generatedImages[selectedIndex],
+            'designPrompt': currentPrompt.value,
+            'designData': _dataService.getAllDesignData(),
+          };
+          if (_isEditMode.value && _editingTechPack != null) {
+            arguments['editMode'] = true;
+            arguments['techPackModel'] = _editingTechPack;
+          }
+          Get.toNamed('/tech_pack_details_screen', arguments: arguments);
+        }
+      } else {
+        _showUpgradeDialog();
+      }
+      return;
+    }
+
+    // Paid user — check for 80% usage warning first
     if (subscription != null && subscription.isTechpackUsageAt80Percent) {
       _show80PercentTechpackWarningDialog(subscription, selectedIndex);
       return;
@@ -258,7 +281,6 @@ class TechPackController extends GetxController {
     );
 
     if (!canGenerate) {
-      // Show upgrade prompt
       _showUpgradeDialog();
       return;
     }
@@ -303,9 +325,16 @@ class TechPackController extends GetxController {
       return;
     }
 
-    // Check for 80% usage warning first
     final subscription = await _subscriptionService
         .getCurrentUserSubscription();
+
+    // FREE users — delegate to onContinueWithDesign which handles the free path
+    if (subscription?.subscriptionPlan == 'FREE') {
+      onContinueWithDesign(selectedDesignIndex.value);
+      return;
+    }
+
+    // Paid user — check for 80% usage warning first
     if (subscription != null && subscription.isTechpackUsageAt80Percent) {
       _show80PercentTechpackWarningDialog(
         subscription,
@@ -320,24 +349,20 @@ class TechPackController extends GetxController {
     );
 
     if (!canGenerate) {
-      // Show upgrade prompt
       _showUpgradeDialog();
       return;
     }
 
     if (selectedDesignIndex.value >= 0 &&
         selectedDesignIndex.value < generatedImages.length) {
-      if (selectedDesignIndex.value >= 0 &&
-          selectedDesignIndex.value < generatedImages.length) {
-        // Track tech pack creation started
-        PostHogAnalyticsService().trackTechPackStarted();
+      // Track tech pack creation started
+      PostHogAnalyticsService().trackTechPackStarted();
 
-        // Navigate immediately - no waiting
-        onContinueWithDesign(selectedDesignIndex.value);
+      // Navigate immediately - no waiting
+      onContinueWithDesign(selectedDesignIndex.value);
 
-        // Save in background
-        _saveDesignsInBackground();
-      }
+      // Save in background
+      _saveDesignsInBackground();
     }
   }
 
@@ -478,20 +503,44 @@ class TechPackController extends GetxController {
       return;
     }
 
-    // For FREE and STARTER users, show limit dialog with upgrade option
-    final bool isStarter = currentPlan.startsWith('STARTER');
-    final bool isStarterYearly = currentPlan == 'STARTER_YEARLY';
-    final String message = currentPlan == 'FREE'
-        ? _l10n.tpTechpackFeaturePremium
-        : (isStarterYearly
-              ? _l10n.tpStarterYearlyLimitReached
-              : _l10n.tpStarterMonthlyLimitReached);
+    // FREE users — offer to buy free add-on techpacks
+    if (currentPlan == 'FREE') {
+      Get.dialog(
+        TechpackLimitDialog(
+          title: _l10n.tpProLimitDialogTitle,
+          message: _l10n.tpFreeUserTechpackMessage,
+          isPaidUser: false,
+          onGetExtraTechpacks: () async {
+            bool success =
+                await _revenueCatService.purchaseFreeExtraTechpacks(1, 5.99);
+            if (success) {
+              Navigator.of(Get.overlayContext!).pop();
+              if (selectedDesignIndex.value >= 0 &&
+                  selectedDesignIndex.value < generatedImages.length) {
+                Get.toNamed('/tech_pack_details_screen', arguments: {
+                  'selectedDesignUrl': generatedImages[selectedDesignIndex.value],
+                  'designPrompt': currentPrompt.value,
+                  'designData': _dataService.getAllDesignData(),
+                });
+              }
+            }
+          },
+          onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
+        ),
+        barrierDismissible: false,
+      );
+      return;
+    }
 
+    // STARTER users — offer paid add-on techpacks
+    final bool isStarterYearly = currentPlan == 'STARTER_YEARLY';
     Get.dialog(
       TechpackLimitDialog(
         title: _l10n.tpProLimitDialogTitle,
-        message: message,
-        isPaidUser: isStarter,
+        message: isStarterYearly
+            ? _l10n.tpStarterYearlyLimitReached
+            : _l10n.tpStarterMonthlyLimitReached,
+        isPaidUser: true,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },

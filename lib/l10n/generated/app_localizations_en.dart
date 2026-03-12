@@ -1615,6 +1615,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fdDialogGetExtraDesigns => 'Get Extra Designs (€9.99)';
 
   @override
+  String get fdDialogGetDesigns => '+5 Designs (€9.99)';
+
+  @override
   String get fdDialogUpgradePlan => 'Upgrade Plan';
 
   @override
@@ -1827,6 +1830,10 @@ class AppLocalizationsEn extends AppLocalizations {
       'Techpack generation is a premium feature.';
 
   @override
+  String get tpFreeUserTechpackMessage =>
+      'You currently have no techpacks. See purchase options below.';
+
+  @override
   String get tpProMonthlyLimitReached =>
       'Your monthly techpack generation limit has been reached.';
 
@@ -1882,6 +1889,9 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tpDialogExtraTechpackOption =>
       'Purchase extra +1 techpack (€5.99)';
+
+  @override
+  String get tpDialogGetTechpackOption => '+1 Techpack (€5.99)';
 
   @override
   String get tpDialogFeatureCustomPDFExport =>
@@ -3131,6 +3141,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get viewPlan => 'View Plan';
+
+  @override
+  String get settingsFreePlan => 'Free Plan';
+
+  @override
+  String get settingsFreeMonthly => 'Monthly free';
+
+  @override
+  String get settingsAddOns => 'Add-ons';
 
   @override
   String get subscriptionDetailTitle => 'My Subscription';

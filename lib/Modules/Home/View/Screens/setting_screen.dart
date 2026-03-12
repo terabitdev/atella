@@ -7,6 +7,7 @@ import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:lottie/lottie.dart';
 import 'package:atella/core/controllers/locale_controller.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/Routes/app_routes.dart';
@@ -129,83 +130,98 @@ class _SettingScreenState extends State<SettingScreen> {
                   child: Column(
                     mainAxisAlignment: MainAxisAlignment.start,
                     children: [
-                      // Plan card — only shown for active paid subscribers
+                      // Plan card — shown for all users
                       FutureBuilder<_PlanData>(
                         future: _planDataFuture,
                         builder: (context, snapshot) {
-                          // Loading or no data yet — show nothing
+                          final cardDecoration = BoxDecoration(
+                            color: Colors.grey.shade50,
+                            borderRadius: BorderRadius.circular(12.r),
+                            border: Border.all(color: Colors.grey.shade200),
+                          );
+
+                          // Loading — show card skeleton with Lottie
                           if (snapshot.connectionState ==
                               ConnectionState.waiting) {
-                            return const SizedBox.shrink();
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 16.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 14.h,
+                              ),
+                              decoration: cardDecoration,
+                              child: Center(
+                                child: Lottie.asset(
+                                  'assets/lottie/Loading_dots.json',
+                                  height: 32.h,
+                                ),
+                              ),
+                            );
                           }
 
                           final sub = snapshot.data?.subscription;
-                          final isPaid = sub != null &&
+                          final isPaid =
+                              sub != null &&
                               sub.subscriptionPlan != 'FREE' &&
                               (sub.subscriptionStatus == 'active' ||
                                   sub.subscriptionStatus == 'trialing');
 
-                          // Free users — show nothing
-                          if (!isPaid) return const SizedBox.shrink();
+                          if (isPaid) {
+                            // Paid user card — plan name + billing + View Plan
+                            final plan = sub.subscriptionPlan;
+                            final planLabel = plan.startsWith('STUDIO')
+                                ? l10n.planNameStudio
+                                : plan.startsWith('PRO')
+                                ? l10n.planNamePro
+                                : plan.startsWith('STARTER')
+                                ? l10n.planNameStarter
+                                : plan;
+                            final isYearly =
+                                sub.billingPeriod == 'YEARLY' ||
+                                plan.contains('YEARLY');
+                            final subLabel = isYearly
+                                ? l10n.billingYearly
+                                : l10n.billingMonthly;
 
-                          // Paid user — compute display strings
-                          final plan = sub.subscriptionPlan;
-                          final planLabel = plan.startsWith('STUDIO')
-                              ? l10n.planNameStudio
-                              : plan.startsWith('PRO')
-                                  ? l10n.planNamePro
-                                  : plan.startsWith('STARTER')
-                                      ? l10n.planNameStarter
-                                      : plan;
-                          final isYearly = sub.billingPeriod == 'YEARLY' ||
-                              plan.contains('YEARLY');
-                          final subLabel = isYearly
-                              ? l10n.billingYearly
-                              : l10n.billingMonthly;
-
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 16.h),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 14.h,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.grey.shade50,
-                              borderRadius: BorderRadius.circular(12.r),
-                              border: Border.all(color: Colors.grey.shade200),
-                            ),
-                            child: Row(
-                              children: [
-                                Expanded(
-                                  child: Column(
-                                    crossAxisAlignment:
-                                        CrossAxisAlignment.start,
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        planLabel,
-                                        style: TextStyle(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.black,
+                            return Container(
+                              margin: EdgeInsets.only(bottom: 16.h),
+                              padding: EdgeInsets.symmetric(
+                                horizontal: 16.w,
+                                vertical: 14.h,
+                              ),
+                              decoration: cardDecoration,
+                              child: Row(
+                                children: [
+                                  Expanded(
+                                    child: Column(
+                                      crossAxisAlignment:
+                                          CrossAxisAlignment.start,
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
+                                        Text(
+                                          planLabel,
+                                          style: TextStyle(
+                                            fontSize: 15.sp,
+                                            fontWeight: FontWeight.w700,
+                                            color: Colors.black,
+                                          ),
                                         ),
-                                      ),
-                                      SizedBox(height: 3.h),
-                                      Text(
-                                        subLabel,
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.grey.shade600,
+                                        SizedBox(height: 3.h),
+                                        Text(
+                                          subLabel,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w400,
+                                            color: Colors.grey.shade600,
+                                          ),
                                         ),
-                                      ),
-                                    ],
+                                      ],
+                                    ),
                                   ),
-                                ),
-                                if (isPaid)
                                   GestureDetector(
                                     onTap: () => Get.toNamed(
-                                        AppRoutes.subscriptionDetail),
+                                      AppRoutes.subscriptionDetail,
+                                    ),
                                     child: Container(
                                       padding: EdgeInsets.symmetric(
                                         horizontal: 12.w,
@@ -213,8 +229,9 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                       decoration: BoxDecoration(
                                         color: Colors.black,
-                                        borderRadius:
-                                            BorderRadius.circular(20.r),
+                                        borderRadius: BorderRadius.circular(
+                                          20.r,
+                                        ),
                                       ),
                                       child: Text(
                                         l10n.viewPlan,
@@ -226,6 +243,106 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                     ),
                                   ),
+                                ],
+                              ),
+                            );
+                          }
+
+                          // Free user card
+                          final freeUsed =
+                              sub?.freeDesignsGeneratedThisMonth ?? 0;
+                          final addonDesignsPurchased =
+                              sub?.freeExtraDesignsPurchased ?? 0;
+                          final addonDesignsUsed =
+                              sub?.freeExtraDesignsUsed ?? 0;
+                          final addonTechpacksPurchased =
+                              sub?.freeExtraTechpacksPurchased ?? 0;
+                          final addonTechpacksUsed =
+                              sub?.freeExtraTechpacksUsed ?? 0;
+                          final addonDesignsTotal = addonDesignsPurchased * 5;
+                          final addonTechpacksTotal = addonTechpacksPurchased;
+
+                          return Container(
+                            margin: EdgeInsets.only(bottom: 16.h),
+                            padding: EdgeInsets.symmetric(
+                              horizontal: 16.w,
+                              vertical: 14.h,
+                            ),
+                            decoration: cardDecoration,
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                // Free Plan + monthly designs on same row
+                                Row(
+                                  mainAxisAlignment:
+                                      MainAxisAlignment.spaceBetween,
+                                  children: [
+                                    Text(
+                                      l10n.settingsFreePlan,
+                                      style: TextStyle(
+                                        fontSize: 15.sp,
+                                        fontWeight: FontWeight.w700,
+                                        color: Colors.black,
+                                      ),
+                                    ),
+                                    Text(
+                                      '$freeUsed/3 Designs',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: FontWeight.w500,
+                                        color: Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                                SizedBox(height: 8.h),
+                                // Add-ons section
+                                Text(
+                                  l10n.settingsAddOns,
+                                  style: TextStyle(
+                                    fontSize: 11.sp,
+                                    fontWeight: FontWeight.w600,
+                                    color: Colors.grey.shade500,
+                                    letterSpacing: 0.4,
+                                  ),
+                                ),
+                                SizedBox(height: 4.h),
+                                Row(
+                                  children: [
+                                    // Design add-ons
+                                    Text(
+                                      addonDesignsPurchased > 0
+                                          ? '$addonDesignsUsed/$addonDesignsTotal Designs'
+                                          : '0 Designs',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: addonDesignsPurchased > 0
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        color: addonDesignsPurchased > 0
+                                            ? Colors.black
+                                            : Colors.grey.shade600,
+                                      ),
+                                    ),
+                                    SizedBox(width: 12.w),
+                                    // Techpack add-ons
+                                    Text(
+                                      addonTechpacksPurchased > 0
+                                          ? '$addonTechpacksUsed/$addonTechpacksTotal Techpacks'
+                                          : '0 Techpacks',
+                                      style: TextStyle(
+                                        fontSize: 12.sp,
+                                        fontWeight: addonTechpacksPurchased > 0
+                                            ? FontWeight.w600
+                                            : FontWeight.w400,
+                                        color: addonTechpacksPurchased > 0
+                                            ? Colors.black
+                                            : Colors.grey.shade600,
+                                      ),
+                                    ),
+                                  ],
+                                ),
                               ],
                             ),
                           );
@@ -890,11 +1007,7 @@ class _SettingScreenState extends State<SettingScreen> {
               mainAxisSize: MainAxisSize.min,
               children: [
                 // Apple Icon
-                Icon(
-                  Icons.apple,
-                  size: 48.sp,
-                  color: Colors.black,
-                ),
+                Icon(Icons.apple, size: 48.sp, color: Colors.black),
                 SizedBox(height: 20.h),
 
                 // Title

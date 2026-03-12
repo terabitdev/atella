@@ -3098,6 +3098,12 @@ abstract class AppLocalizations {
   /// **'Get Extra Designs (€9.99)'**
   String get fdDialogGetExtraDesigns;
 
+  /// Buy button label for free users purchasing a design add-on (no 'extra' wording)
+  ///
+  /// In en, this message translates to:
+  /// **'+5 Designs (€9.99)'**
+  String get fdDialogGetDesigns;
+
   /// Upgrade plan button text
   ///
   /// In en, this message translates to:
@@ -3476,6 +3482,12 @@ abstract class AppLocalizations {
   /// **'Techpack generation is a premium feature.'**
   String get tpTechpackFeaturePremium;
 
+  /// Message shown to free users in the techpack limit dialog — does not imply it is premium-only
+  ///
+  /// In en, this message translates to:
+  /// **'You currently have no techpacks. See purchase options below.'**
+  String get tpFreeUserTechpackMessage;
+
   /// Message shown to Pro users when monthly techpack limit reached
   ///
   /// In en, this message translates to:
@@ -3559,6 +3571,12 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Purchase extra +1 techpack (€5.99)'**
   String get tpDialogExtraTechpackOption;
+
+  /// Buy button label for free users purchasing a techpack add-on (no 'extra' wording)
+  ///
+  /// In en, this message translates to:
+  /// **'+1 Techpack (€5.99)'**
+  String get tpDialogGetTechpackOption;
 
   /// Feature description for custom PDF export
   ///
@@ -5767,6 +5785,24 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'View Plan'**
   String get viewPlan;
+
+  /// Plan label for free users in the settings card
+  ///
+  /// In en, this message translates to:
+  /// **'Free Plan'**
+  String get settingsFreePlan;
+
+  /// Label for the free monthly allowance section in the settings card
+  ///
+  /// In en, this message translates to:
+  /// **'Monthly free'**
+  String get settingsFreeMonthly;
+
+  /// Label for the add-ons section in the free user settings card
+  ///
+  /// In en, this message translates to:
+  /// **'Add-ons'**
+  String get settingsAddOns;
 
   /// Title of the subscription detail screen
   ///

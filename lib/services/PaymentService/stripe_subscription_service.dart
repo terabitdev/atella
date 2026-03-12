@@ -252,6 +252,10 @@ class StripeSubscriptionService {
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
           'extraTechpacksUsed': 0,
+          'freeExtraDesignsPurchased': 0,
+          'freeExtraDesignsUsed': 0,
+          'freeExtraTechpacksPurchased': 0,
+          'freeExtraTechpacksUsed': 0,
         });
         print(
           '✅ Firebase updated immediately. Webhook will also run as backup.',
@@ -273,6 +277,10 @@ class StripeSubscriptionService {
           'extraTechpacksPurchased': 0,
           'extraDesignsUsed': 0,
           'extraTechpacksUsed': 0,
+          'freeExtraDesignsPurchased': 0,
+          'freeExtraDesignsUsed': 0,
+          'freeExtraTechpacksPurchased': 0,
+          'freeExtraTechpacksUsed': 0,
         });
         print('✅ User subscription data cleaned up - user is now on FREE plan');
         return true;
@@ -601,6 +609,36 @@ class StripeSubscriptionService {
       }
     } catch (e) {
       print('❌ Error incrementing design usage: $e');
+    }
+  }
+
+  /// Increments freeExtraDesignsUsed for FREE users.
+  /// Does NOT touch designsGeneratedThisMonth.
+  Future<void> incrementFreeExtraDesignUsage() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+      await _firestore.collection('users').doc(user.uid).update({
+        'freeExtraDesignsUsed': FieldValue.increment(1),
+      });
+      print('✅ Free extra design usage incremented for user: ${user.uid}');
+    } catch (e) {
+      print('❌ Error incrementing free extra design usage: $e');
+    }
+  }
+
+  /// Increments freeExtraTechpacksUsed for FREE users.
+  /// Does NOT touch techpacksUsedThisMonth.
+  Future<void> incrementFreeExtraTechpackUsage() async {
+    try {
+      final user = _auth.currentUser;
+      if (user == null) return;
+      await _firestore.collection('users').doc(user.uid).update({
+        'freeExtraTechpacksUsed': FieldValue.increment(1),
+      });
+      print('✅ Free extra techpack usage incremented for user: ${user.uid}');
+    } catch (e) {
+      print('❌ Error incrementing free extra techpack usage: $e');
     }
   }
 
@@ -1024,6 +1062,10 @@ class StripeSubscriptionService {
         'extraTechpacksPurchased': 0,
         'extraDesignsUsed': 0,
         'extraTechpacksUsed': 0,
+        'freeExtraDesignsPurchased': 0,
+        'freeExtraDesignsUsed': 0,
+        'freeExtraTechpacksPurchased': 0,
+        'freeExtraTechpacksUsed': 0,
         'currentPeriodStart': null,
         'currentPeriodEnd': null,
       });

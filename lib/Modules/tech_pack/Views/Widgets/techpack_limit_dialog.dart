@@ -4,15 +4,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 class TechpackLimitDialog extends StatefulWidget {
-  final Future<void> Function() onGetExtraTechpacks;
+  /// If non-null, the "Get Extra Techpacks" buy button is shown.
+  /// Pass null to hide the button (e.g. when no purchase is available).
+  final Future<void> Function()? onGetExtraTechpacks;
   final VoidCallback onMaybeLater;
-  final bool isPaidUser; // true for STARTER/PRO/STUDIO users, false for FREE users
+  final bool isPaidUser; // controls CTA text (paid vs free wording)
   final String title;
   final String message;
 
   const TechpackLimitDialog({
     super.key,
-    required this.onGetExtraTechpacks,
+    this.onGetExtraTechpacks,
     required this.onMaybeLater,
     required this.title,
     required this.message,
@@ -65,8 +67,8 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
             SizedBox(height: 24.h),
             Column(
               children: [
-                // Get Extra Techpacks Button (only for paid users)
-                if (widget.isPaidUser) ...[
+                // Get Extra Techpacks Button — shown whenever a purchase callback is provided
+                if (widget.onGetExtraTechpacks != null) ...[
                   const _OrDivider(),
                   SizedBox(height: 12.h),
                   SizedBox(
@@ -76,7 +78,7 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
                           ? null
                           : () async {
                               setState(() => _isLoading = true);
-                              await widget.onGetExtraTechpacks();
+                              await widget.onGetExtraTechpacks!();
                               if (mounted) setState(() => _isLoading = false);
                             },
                       style: ElevatedButton.styleFrom(
@@ -100,7 +102,9 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
                               ),
                             )
                           : Text(
-                              l10n.tpDialogExtraTechpackOption,
+                              widget.isPaidUser
+                                  ? l10n.tpDialogExtraTechpackOption
+                                  : l10n.tpDialogGetTechpackOption,
                               style: ssTitleTextTextStyle14400.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,

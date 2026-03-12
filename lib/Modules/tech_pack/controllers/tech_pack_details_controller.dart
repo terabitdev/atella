@@ -1,4 +1,3 @@
-import 'package:atella/core/themes/app_fonts.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -880,15 +879,28 @@ class TechPackDetailsController extends GetxController {
       return;
     }
 
-    // Check subscription before generating final techpack (with monthly reset check)
-    bool canGenerate = await _subscriptionService.canUsePremiumFeatureWithReset(
-      'techpack',
-    );
+    // Check subscription / quota before generating
+    final subscription = await _subscriptionService.getCurrentUserSubscription();
 
-    if (!canGenerate) {
-      // Show upgrade prompt
-      _showUpgradeDialog();
-      return;
+    // FREE users — use free add-on techpacks
+    if (subscription?.subscriptionPlan == 'FREE') {
+      if (subscription!.hasFreeExtraTechpacks) {
+        // Consume one free add-on techpack
+        await _subscriptionService.incrementFreeExtraTechpackUsage();
+      } else {
+        _showUpgradeDialog();
+        return;
+      }
+    } else {
+      // Paid users — standard quota check
+      bool canGenerate = await _subscriptionService
+          .canUsePremiumFeatureWithReset('techpack');
+      if (!canGenerate) {
+        _showUpgradeDialog();
+        return;
+      }
+      // CRITICAL: Increment counter IMMEDIATELY before generation starts
+      await _subscriptionService.incrementTechpackUsage();
     }
 
     // Set in-flight flag to prevent concurrent generations
@@ -897,12 +909,6 @@ class TechPackDetailsController extends GetxController {
     // Generate unique ID for this generation
     _activeGenerationId = DateTime.now().millisecondsSinceEpoch.toString();
     final currentGenerationId = _activeGenerationId!;
-    print('🆔 New generation started with ID: $currentGenerationId');
-
-    // CRITICAL: Increment counter IMMEDIATELY before generation starts
-    // This ensures the counter is updated even if user navigates away
-    await _subscriptionService.incrementTechpackUsage();
-    print('✅ Tech pack usage incremented BEFORE generation');
 
     // Reset cancellation flag
     generationCancelled.value = false;
@@ -935,118 +941,52 @@ class TechPackDetailsController extends GetxController {
 
   void _showFreeUpgradeDialog(String currentPlan) {
     Get.dialog(
-      AlertDialog(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
-        title: Row(
-          children: [
-            Expanded(
-              child: Text(
-                _l10n.tpUpgradeRequired,
-                style: sfpsTitleTextTextStyle18600.copyWith(color: Colors.red),
-              ),
-            ),
-          ],
-        ),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              // Current plan info
-              Container(
-                width: double.infinity,
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  borderRadius: BorderRadius.circular(8),
-                  border: Border.all(color: Colors.grey.shade300),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            _l10n.tpDialogCurrentPlan(
-                              _getPlanDisplayName(currentPlan),
-                            ),
-                            style: ssTitleTextTextStyle14400.copyWith(
-                              fontSize: 12,
-                              color: Colors.black,
-                              fontWeight: FontWeight.bold,
-                            ),
-                            textAlign: TextAlign.center,
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-              SizedBox(height: 16),
-              Text(
-                _l10n.tpDialogTechpackPremiumRequired,
-                style: ssTitleTextTextStyle124003,
-                textAlign: TextAlign.center,
-              ),
-              SizedBox(height: 12),
-              Container(
-                padding: EdgeInsets.all(12),
-                decoration: BoxDecoration(
-                  color: Colors.white,
-                  border: Border.all(color: Colors.grey.shade300),
-                  borderRadius: BorderRadius.circular(8),
-                ),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(
-                      _l10n.tpDialogChoosePlan,
-                      style: ssTitleTextTextStyle14400.copyWith(
-                        fontSize: 16,
-                        fontWeight: FontWeight.bold,
-                        color: Colors.black,
-                      ),
-                    ),
-                    SizedBox(height: 8),
-                    _buildFeatureItem(_l10n.tpDialogStarterPlanOption),
-                    _buildFeatureItem(_l10n.tpDialogProPlanOption),
-                    _buildFeatureItem(_l10n.tpDialogFeatureProfessionalPDF),
-                    _buildFeatureItem(_l10n.tpDialogFeatureManufacturerDB),
-                    _buildFeatureItem(_l10n.tpDialogFeatureUnlimited3D),
-                  ],
-                ),
-              ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              _l10n.tpMaybeLater,
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-            ),
-          ),
-          TextButton(
-            onPressed: () => Get.back(),
-            child: Text(
-              _l10n.freeUserLimitCta,
-              style: ssTitleTextTextStyle14400.copyWith(
-                color: Colors.black,
-                fontWeight: FontWeight.bold,
-              ),
-              textAlign: TextAlign.center,
-            ),
-          ),
-        ],
+      TechpackLimitDialog(
+        title: _l10n.tpUpgradeRequired,
+        message: _l10n.tpFreeUserTechpackMessage,
+        isPaidUser: false,
+        onGetExtraTechpacks: () async {
+          await _purchaseFreeExtraTechpacks(1, 5.99);
+        },
+        onMaybeLater: () => Navigator.of(Get.overlayContext!).pop(),
       ),
       barrierDismissible: false,
     );
+  }
+
+  Future<void> _purchaseFreeExtraTechpacks(int count, double price) async {
+    try {
+      bool success = await _revenueCatService.purchaseFreeExtraTechpacks(
+        count,
+        price,
+      );
+      if (success) {
+        _isGenerationInFlight = true;
+        _activeGenerationId = DateTime.now().millisecondsSinceEpoch.toString();
+        final currentGenerationId = _activeGenerationId!;
+        await _subscriptionService.incrementFreeExtraTechpackUsage();
+        generationCancelled.value = false;
+        generateTechPackImages(currentGenerationId);
+        Navigator.of(Get.overlayContext!).pop();
+        Get.toNamed('/tech_pack_ready_screen');
+      } else {
+        Get.snackbar(
+          _l10n.tpdPurchaseFailed,
+          _l10n.tpdUnableToProcessPurchase,
+          backgroundColor: Colors.red,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+        );
+      }
+    } catch (e) {
+      Get.snackbar(
+        _l10n.tpdError,
+        _l10n.tpdPurchaseError(e.toString()),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+      );
+    }
   }
 
   void _showStarterLimitDialog(UserSubscription? subscription) {
@@ -1144,40 +1084,6 @@ class TechPackDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
       );
     }
-  }
-
-  String _getPlanDisplayName(String plan) {
-    switch (plan) {
-      case 'FREE':
-        return 'Free';
-      case 'STARTER':
-        return 'Starter (€19.99/month)';
-      case 'STARTER_YEARLY':
-        return 'Starter (€199.99/year)';
-      case 'PRO':
-        return 'Pro (€49.99/month)';
-      case 'PRO_YEARLY':
-        return 'Pro (€499.99/year)';
-      case 'STUDIO':
-        return 'Studio (€99.99/month)';
-      case 'STUDIO_YEARLY':
-        return 'Studio (€999.99/year)';
-      default:
-        return 'Free';
-    }
-  }
-
-  Widget _buildFeatureItem(String text) {
-    return Padding(
-      padding: EdgeInsets.only(bottom: 4),
-      child: Row(
-        children: [
-          Icon(Icons.check_circle, color: Colors.green, size: 16),
-          SizedBox(width: 8),
-          Expanded(child: Text(text, style: ssTitleTextTextStyle124003)),
-        ],
-      ),
-    );
   }
 
   // Cancel ongoing generation

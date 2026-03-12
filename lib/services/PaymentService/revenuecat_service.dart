@@ -307,6 +307,111 @@ class RevenueCatService {
     }
   }
 
+  /// Purchase Extra Designs for FREE users (same RevenueCat product, different Firestore field)
+  /// Updates freeExtraDesignsPurchased (not extraDesignsPurchased)
+  Future<bool> purchaseFreeExtraDesigns() async {
+    try {
+      User? user = _auth.currentUser;
+      if (user == null) {
+        print('❌ Cannot purchase: No authenticated user');
+        return false;
+      }
+
+      print('🛒 Starting RevenueCat purchase: Free Extra Designs');
+      Offerings offerings = await Purchases.getOfferings();
+      Offering? designOffering = offerings.getOffering(_designAddonsOfferingId);
+      if (designOffering == null) {
+        print('❌ Design addons offering not found');
+        return false;
+      }
+
+      Package? designPackage = designOffering.availablePackages
+              .where((p) => p.identifier == _designAddonsPackageId)
+              .firstOrNull ??
+          (designOffering.availablePackages.isNotEmpty
+              ? designOffering.availablePackages.first
+              : null);
+
+      if (designPackage == null) {
+        print('❌ No packages found in design addons offering');
+        return false;
+      }
+
+      // ignore: deprecated_member_use
+      await Purchases.purchasePackage(designPackage);
+
+      // Use set+merge so the field is created if it doesn't yet exist
+      await _firestore.collection('users').doc(user.uid).set({
+        'freeExtraDesignsPurchased': FieldValue.increment(1),
+      }, SetOptions(merge: true));
+
+      print('✅ Free extra designs purchased. User: ${user.uid}');
+      return true;
+    } on PlatformException catch (e) {
+      final errorCode = PurchasesErrorHelper.getErrorCode(e);
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        print('❌ RevenueCat error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('❌ Error purchasing free extra designs: $e');
+      return false;
+    }
+  }
+
+  /// Purchase Extra Techpacks for FREE users (same RevenueCat product, different Firestore field)
+  /// Updates freeExtraTechpacksPurchased (not extraTechpacksPurchased)
+  Future<bool> purchaseFreeExtraTechpacks(int count, double price) async {
+    try {
+      User? user = _auth.currentUser;
+      if (user == null) {
+        print('❌ Cannot purchase: No authenticated user');
+        return false;
+      }
+
+      print('🛒 Starting RevenueCat purchase: Free Extra Techpacks');
+      Offerings offerings = await Purchases.getOfferings();
+      Offering? techpackOffering =
+          offerings.getOffering(_techpackAddonsOfferingId);
+      if (techpackOffering == null) {
+        print('❌ Techpack addons offering not found');
+        return false;
+      }
+
+      Package? techpackPackage = techpackOffering.availablePackages
+              .where((p) => p.identifier == _techpackAddonsPackageId)
+              .firstOrNull ??
+          (techpackOffering.availablePackages.isNotEmpty
+              ? techpackOffering.availablePackages.first
+              : null);
+
+      if (techpackPackage == null) {
+        print('❌ No packages found in techpack addons offering');
+        return false;
+      }
+
+      // ignore: deprecated_member_use
+      await Purchases.purchasePackage(techpackPackage);
+
+      // Use set+merge so the field is created if it doesn't yet exist
+      await _firestore.collection('users').doc(user.uid).set({
+        'freeExtraTechpacksPurchased': FieldValue.increment(1),
+      }, SetOptions(merge: true));
+
+      print('✅ Free extra techpacks purchased. User: ${user.uid}');
+      return true;
+    } on PlatformException catch (e) {
+      final errorCode = PurchasesErrorHelper.getErrorCode(e);
+      if (errorCode != PurchasesErrorCode.purchaseCancelledError) {
+        print('❌ RevenueCat error: ${e.message}');
+      }
+      return false;
+    } catch (e) {
+      print('❌ Error purchasing free extra techpacks: $e');
+      return false;
+    }
+  }
+
   /// Restore purchases
   /// Useful for users who reinstalled the app or switched devices
   Future<CustomerInfo?> restorePurchases() async {

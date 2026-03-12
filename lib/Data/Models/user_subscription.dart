@@ -14,6 +14,11 @@ class UserSubscription {
   final int extraTechpacksPurchased;
   final int extraDesignsUsed; // Track how many add-on designs have been used
   final int extraTechpacksUsed; // Track how many add-on techpacks have been used
+  // FREE user add-ons — fields created in Firestore only on first purchase
+  final int freeExtraDesignsPurchased;
+  final int freeExtraDesignsUsed;
+  final int freeExtraTechpacksPurchased;
+  final int freeExtraTechpacksUsed;
   final DateTime? currentPeriodStart;
   final DateTime? currentPeriodEnd;
   final String billingPeriod; // 'MONTHLY' or 'YEARLY'
@@ -33,6 +38,10 @@ class UserSubscription {
     this.extraTechpacksPurchased = 0,
     this.extraDesignsUsed = 0,
     this.extraTechpacksUsed = 0,
+    this.freeExtraDesignsPurchased = 0,
+    this.freeExtraDesignsUsed = 0,
+    this.freeExtraTechpacksPurchased = 0,
+    this.freeExtraTechpacksUsed = 0,
     this.currentPeriodStart,
     this.currentPeriodEnd,
     this.billingPeriod = 'MONTHLY',
@@ -57,6 +66,10 @@ class UserSubscription {
       extraTechpacksPurchased: data['extraTechpacksPurchased'] ?? 0,
       extraDesignsUsed: data['extraDesignsUsed'] ?? 0,
       extraTechpacksUsed: data['extraTechpacksUsed'] ?? 0,
+      freeExtraDesignsPurchased: data['freeExtraDesignsPurchased'] ?? 0,
+      freeExtraDesignsUsed: data['freeExtraDesignsUsed'] ?? 0,
+      freeExtraTechpacksPurchased: data['freeExtraTechpacksPurchased'] ?? 0,
+      freeExtraTechpacksUsed: data['freeExtraTechpacksUsed'] ?? 0,
       currentPeriodStart: data['currentPeriodStart'] != null
           ? (data['currentPeriodStart'] as Timestamp).toDate()
           : null,
@@ -85,6 +98,10 @@ class UserSubscription {
       'extraTechpacksPurchased': extraTechpacksPurchased,
       'extraDesignsUsed': extraDesignsUsed,
       'extraTechpacksUsed': extraTechpacksUsed,
+      'freeExtraDesignsPurchased': freeExtraDesignsPurchased,
+      'freeExtraDesignsUsed': freeExtraDesignsUsed,
+      'freeExtraTechpacksPurchased': freeExtraTechpacksPurchased,
+      'freeExtraTechpacksUsed': freeExtraTechpacksUsed,
       'currentPeriodStart': currentPeriodStart != null
           ? Timestamp.fromDate(currentPeriodStart!)
           : null,
@@ -238,6 +255,15 @@ class UserSubscription {
     }
     return '$totalAllowedTechpacks';
   }
+
+  // Free user add-on computed properties
+  int get remainingFreeExtraDesigns =>
+      (freeExtraDesignsPurchased * 5) - freeExtraDesignsUsed;
+  bool get hasFreeExtraDesigns => remainingFreeExtraDesigns > 0;
+
+  int get remainingFreeExtraTechpacks =>
+      freeExtraTechpacksPurchased - freeExtraTechpacksUsed;
+  bool get hasFreeExtraTechpacks => remainingFreeExtraTechpacks > 0;
 
   // Check if user is at 80% usage threshold (for warning modals)
   // NOTE: This checks ONLY against base plan limit, NOT including add-ons
