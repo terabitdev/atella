@@ -32,6 +32,7 @@ class SubscriptionDetailScreen extends StatelessWidget {
                   child: Row(
                     children: [
                       GestureDetector(
+                        behavior: HitTestBehavior.opaque,
                         onTap: () => Get.back(),
                         child: Icon(
                           Icons.arrow_back_ios,
@@ -103,6 +104,7 @@ class SubscriptionDetailScreen extends StatelessWidget {
                 child: Row(
                   children: [
                     GestureDetector(
+                      behavior: HitTestBehavior.opaque,
                       onTap: () => Get.back(),
                       child: Icon(
                         Icons.arrow_back_ios,
