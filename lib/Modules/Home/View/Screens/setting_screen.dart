@@ -12,6 +12,7 @@ import 'package:atella/core/controllers/locale_controller.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
+import 'package:atella/services/firebase/services/design_quota_service.dart';
 
 class SettingScreen extends StatefulWidget {
   const SettingScreen({super.key});
@@ -38,7 +39,12 @@ class _SettingScreenState extends State<SettingScreen> {
 
   Future<_PlanData> _loadPlanData() async {
     final sub = await StripeSubscriptionService().getCurrentUserSubscription();
-    return _PlanData(subscription: sub);
+    int freeDesignsUsed = 0;
+    if (sub?.subscriptionPlan == 'FREE') {
+      final quota = await DesignQuotaService().getCurrentUserQuota();
+      freeDesignsUsed = (quota?['designsUsed'] as int?) ?? 0;
+    }
+    return _PlanData(subscription: sub, freeDesignsUsed: freeDesignsUsed);
   }
 
   @override
@@ -250,7 +256,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
                           // Free user card
                           final freeUsed =
-                              sub?.freeDesignsGeneratedThisMonth ?? 0;
+                              snapshot.data?.freeDesignsUsed ?? 0;
                           final addonDesignsPurchased =
                               sub?.freeExtraDesignsPurchased ?? 0;
                           final addonDesignsUsed =
@@ -1119,6 +1125,7 @@ class _SettingScreenState extends State<SettingScreen> {
 
 class _PlanData {
   final UserSubscription? subscription;
+  final int freeDesignsUsed;
 
-  const _PlanData({this.subscription});
+  const _PlanData({this.subscription, this.freeDesignsUsed = 0});
 }
