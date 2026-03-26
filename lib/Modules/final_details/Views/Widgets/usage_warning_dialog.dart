@@ -11,6 +11,11 @@ class UsageWarningDialog extends StatefulWidget {
   final bool isDesign; // true for designs, false for techpacks
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
   final Future<void> Function()? onGetExtraTechpacks;
+  /// On iOS, live localized price strings from RevenueCat (e.g. "$9.99").
+  /// When provided they override the hardcoded prices in the button labels.
+  /// Null on Android or when the fetch failed — falls back to localisation.
+  final String? designPriceString;
+  final String? techpackPriceString;
 
   const UsageWarningDialog({
     super.key,
@@ -21,6 +26,8 @@ class UsageWarningDialog extends StatefulWidget {
     this.isDesign = true,
     this.isPaidUser = false,
     this.onGetExtraTechpacks,
+    this.designPriceString,
+    this.techpackPriceString,
   });
 
   @override
@@ -118,13 +125,16 @@ class _UsageWarningDialogState extends State<UsageWarningDialog> {
                               ),
                             )
                           : Text(
-                              l10n.fdDialogGetExtraDesigns,
+                              widget.designPriceString != null
+                                  ? l10n.fdDialogGetExtraDesignsWithPrice(widget.designPriceString!)
+                                  : l10n.fdDialogGetExtraDesigns,
                               style: ssTitleTextTextStyle14400.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
+                              softWrap: true,
                             ),
                     ),
                   ),
@@ -165,13 +175,16 @@ class _UsageWarningDialogState extends State<UsageWarningDialog> {
                               ),
                             )
                           : Text(
-                              l10n.tpDialogExtraTechpackOption,
+                              widget.techpackPriceString != null
+                                  ? l10n.tpDialogExtraTechpackOptionWithPrice(widget.techpackPriceString!)
+                                  : l10n.tpDialogExtraTechpackOption,
                               style: ssTitleTextTextStyle14400.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
+                              softWrap: true,
                             ),
                     ),
                   ),

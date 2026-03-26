@@ -22,6 +22,10 @@ class FinalDetailsController extends GetxController {
   final RevenueCatService _revenueCatService = RevenueCatService();
   final DesignQuotaService _quotaService = DesignQuotaService();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+
+  // Live localized price string for the design add-on (iOS only).
+  // Null on Android or if the RevenueCat fetch failed — dialogs fall back to localisation.
+  String? _designPriceString;
   
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
@@ -111,6 +115,16 @@ class FinalDetailsController extends GetxController {
     _startTimeUpdater();
     _updateCurrentTime();
     _checkForEditMode();
+    _fetchAddonPrices();
+  }
+
+  Future<void> _fetchAddonPrices() async {
+    try {
+      final prices = await _revenueCatService.fetchAddonPriceStrings();
+      _designPriceString = prices.designPrice;
+    } catch (e) {
+      // _designPriceString stays null — dialogs fall back to localisation strings
+    }
   }
   
   void _checkForEditMode() {
@@ -584,6 +598,7 @@ class FinalDetailsController extends GetxController {
         totalCount: totalCount,
         isDesign: true,
         isPaidUser: isPaidUser,
+        designPriceString: _designPriceString,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
@@ -607,6 +622,7 @@ class FinalDetailsController extends GetxController {
     Get.dialog(
       FreeUserLimitDialog(
         onClose: () => Navigator.of(Get.overlayContext!).pop(),
+        designPriceString: _designPriceString,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseFreeExtraDesigns();
           if (success) {
@@ -632,6 +648,7 @@ class FinalDetailsController extends GetxController {
     Get.dialog(
       LimitExceededDialog(
         isPaidUser: isPaidUser,
+        designPriceString: _designPriceString,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {

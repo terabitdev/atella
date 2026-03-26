@@ -1792,11 +1792,29 @@
   },
   "fdDialogGetExtraDesigns": "Get Extra Designs (€9.99)",
   "@fdDialogGetExtraDesigns": {
-    "description": "Get extra designs button text"
+    "description": "Get extra designs button text (hardcoded price, Android fallback)"
+  },
+  "fdDialogGetExtraDesignsWithPrice": "Get Extra Designs ({price})",
+  "@fdDialogGetExtraDesignsWithPrice": {
+    "description": "Get extra designs button text with dynamic price (iOS)",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
   },
   "fdDialogGetDesigns": "+5 Designs (€9.99)",
   "@fdDialogGetDesigns": {
-    "description": "Buy button label for free users purchasing a design add-on (no 'extra' wording)"
+    "description": "Buy button label for free users purchasing a design add-on (hardcoded price, Android fallback)"
+  },
+  "fdDialogGetDesignsWithPrice": "+5 Designs ({price})",
+  "@fdDialogGetDesignsWithPrice": {
+    "description": "Buy button label for free users with dynamic price (iOS)",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
   },
   "fdDialogUpgradePlan": "Upgrade Plan",
   "@fdDialogUpgradePlan": {
@@ -2160,11 +2178,29 @@
   },
   "tpDialogExtraTechpackOption": "Purchase extra +1 techpack (€5.99)",
   "@tpDialogExtraTechpackOption": {
-    "description": "Extra techpack purchase option for Pro users"
+    "description": "Extra techpack purchase option for Pro users (hardcoded price, Android fallback)"
+  },
+  "tpDialogExtraTechpackOptionWithPrice": "Purchase extra +1 techpack ({price})",
+  "@tpDialogExtraTechpackOptionWithPrice": {
+    "description": "Extra techpack purchase option with dynamic price (iOS)",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
   },
   "tpDialogGetTechpackOption": "+1 Techpack (€5.99)",
   "@tpDialogGetTechpackOption": {
-    "description": "Buy button label for free users purchasing a techpack add-on (no 'extra' wording)"
+    "description": "Buy button label for free users purchasing a techpack add-on (hardcoded price, Android fallback)"
+  },
+  "tpDialogGetTechpackOptionWithPrice": "+1 Techpack ({price})",
+  "@tpDialogGetTechpackOptionWithPrice": {
+    "description": "Buy button label for free users with dynamic techpack price (iOS)",
+    "placeholders": {
+      "price": {
+        "type": "String"
+      }
+    }
   },
   "tpDialogFeatureCustomPDFExport": "Custom PDF export with your logo",
   "@tpDialogFeatureCustomPDFExport": {

@@ -1615,7 +1615,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get fdDialogGetExtraDesigns => 'Get Extra Designs (€9.99)';
 
   @override
+  String fdDialogGetExtraDesignsWithPrice(String price) {
+    return 'Get Extra Designs ($price)';
+  }
+
+  @override
   String get fdDialogGetDesigns => '+5 Designs (€9.99)';
+
+  @override
+  String fdDialogGetDesignsWithPrice(String price) {
+    return '+5 Designs ($price)';
+  }
 
   @override
   String get fdDialogUpgradePlan => 'Upgrade Plan';
@@ -1891,7 +1901,17 @@ class AppLocalizationsEn extends AppLocalizations {
       'Purchase extra +1 techpack (€5.99)';
 
   @override
+  String tpDialogExtraTechpackOptionWithPrice(String price) {
+    return 'Purchase extra +1 techpack ($price)';
+  }
+
+  @override
   String get tpDialogGetTechpackOption => '+1 Techpack (€5.99)';
+
+  @override
+  String tpDialogGetTechpackOptionWithPrice(String price) {
+    return '+1 Techpack ($price)';
+  }
 
   @override
   String get tpDialogFeatureCustomPDFExport =>

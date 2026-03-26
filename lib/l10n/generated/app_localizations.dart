@@ -3092,17 +3092,29 @@ abstract class AppLocalizations {
   /// **'You have exceeded your free plan limit for this month. Upgrade to Starter or Pro to continue creating designs.'**
   String get fdDialogLimitMessageFree;
 
-  /// Get extra designs button text
+  /// Get extra designs button text (hardcoded price, Android fallback)
   ///
   /// In en, this message translates to:
   /// **'Get Extra Designs (€9.99)'**
   String get fdDialogGetExtraDesigns;
 
-  /// Buy button label for free users purchasing a design add-on (no 'extra' wording)
+  /// Get extra designs button text with dynamic price (iOS)
+  ///
+  /// In en, this message translates to:
+  /// **'Get Extra Designs ({price})'**
+  String fdDialogGetExtraDesignsWithPrice(String price);
+
+  /// Buy button label for free users purchasing a design add-on (hardcoded price, Android fallback)
   ///
   /// In en, this message translates to:
   /// **'+5 Designs (€9.99)'**
   String get fdDialogGetDesigns;
+
+  /// Buy button label for free users with dynamic price (iOS)
+  ///
+  /// In en, this message translates to:
+  /// **'+5 Designs ({price})'**
+  String fdDialogGetDesignsWithPrice(String price);
 
   /// Upgrade plan button text
   ///
@@ -3566,17 +3578,29 @@ abstract class AppLocalizations {
   /// **'Pro: 8 techpacks/month'**
   String get tpDialogProUpgradeOption;
 
-  /// Extra techpack purchase option for Pro users
+  /// Extra techpack purchase option for Pro users (hardcoded price, Android fallback)
   ///
   /// In en, this message translates to:
   /// **'Purchase extra +1 techpack (€5.99)'**
   String get tpDialogExtraTechpackOption;
 
-  /// Buy button label for free users purchasing a techpack add-on (no 'extra' wording)
+  /// Extra techpack purchase option with dynamic price (iOS)
+  ///
+  /// In en, this message translates to:
+  /// **'Purchase extra +1 techpack ({price})'**
+  String tpDialogExtraTechpackOptionWithPrice(String price);
+
+  /// Buy button label for free users purchasing a techpack add-on (hardcoded price, Android fallback)
   ///
   /// In en, this message translates to:
   /// **'+1 Techpack (€5.99)'**
   String get tpDialogGetTechpackOption;
+
+  /// Buy button label for free users with dynamic techpack price (iOS)
+  ///
+  /// In en, this message translates to:
+  /// **'+1 Techpack ({price})'**
+  String tpDialogGetTechpackOptionWithPrice(String price);
 
   /// Feature description for custom PDF export
   ///

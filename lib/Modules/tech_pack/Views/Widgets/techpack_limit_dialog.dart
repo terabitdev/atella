@@ -11,6 +11,10 @@ class TechpackLimitDialog extends StatefulWidget {
   final bool isPaidUser; // controls CTA text (paid vs free wording)
   final String title;
   final String message;
+  /// On iOS, the live localized price string from RevenueCat (e.g. "$5.99").
+  /// When provided it overrides the hardcoded price in the button label.
+  /// Null on Android or when the fetch failed — falls back to localisation.
+  final String? techpackPriceString;
 
   const TechpackLimitDialog({
     super.key,
@@ -19,6 +23,7 @@ class TechpackLimitDialog extends StatefulWidget {
     required this.title,
     required this.message,
     this.isPaidUser = false,
+    this.techpackPriceString,
   });
 
   @override
@@ -103,14 +108,19 @@ class _TechpackLimitDialogState extends State<TechpackLimitDialog> {
                             )
                           : Text(
                               widget.isPaidUser
-                                  ? l10n.tpDialogExtraTechpackOption
-                                  : l10n.tpDialogGetTechpackOption,
+                                  ? (widget.techpackPriceString != null
+                                      ? l10n.tpDialogExtraTechpackOptionWithPrice(widget.techpackPriceString!)
+                                      : l10n.tpDialogExtraTechpackOption)
+                                  : (widget.techpackPriceString != null
+                                      ? l10n.tpDialogGetTechpackOptionWithPrice(widget.techpackPriceString!)
+                                      : l10n.tpDialogGetTechpackOption),
                               style: ssTitleTextTextStyle14400.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
+                              softWrap: true,
                             ),
                     ),
                   ),

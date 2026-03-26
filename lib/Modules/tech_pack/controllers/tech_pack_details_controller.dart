@@ -19,6 +19,10 @@ class TechPackDetailsController extends GetxController {
       StripeSubscriptionService();
   final RevenueCatService _revenueCatService = RevenueCatService();
 
+  // Live localized price string for the techpack add-on (iOS only).
+  // Null on Android or if the RevenueCat fetch failed — dialogs fall back to localisation.
+  String? _techpackPriceString;
+
   // Helper to get localization
   AppLocalizations get _l10n => AppLocalizations.of(Get.context!)!;
 
@@ -114,6 +118,16 @@ class TechPackDetailsController extends GetxController {
     super.onInit();
     _initializeWithArguments();
     _setupInputListeners();
+    _fetchAddonPrices();
+  }
+
+  Future<void> _fetchAddonPrices() async {
+    try {
+      final prices = await _revenueCatService.fetchAddonPriceStrings();
+      _techpackPriceString = prices.techpackPrice;
+    } catch (e) {
+      // _techpackPriceString stays null — dialogs fall back to localisation strings
+    }
   }
 
   void _setupInputListeners() {
@@ -945,6 +959,7 @@ class TechPackDetailsController extends GetxController {
         title: _l10n.tpUpgradeRequired,
         message: _l10n.tpFreeUserTechpackMessage,
         isPaidUser: false,
+        techpackPriceString: _techpackPriceString,
         onGetExtraTechpacks: () async {
           await _purchaseFreeExtraTechpacks(1, 5.99);
         },
@@ -1000,6 +1015,7 @@ class TechPackDetailsController extends GetxController {
             ? _l10n.tpStarterYearlyLimitReached
             : _l10n.tpStarterMonthlyLimitReached,
         isPaidUser: true,
+        techpackPriceString: _techpackPriceString,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },
@@ -1015,6 +1031,7 @@ class TechPackDetailsController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
+        techpackPriceString: _techpackPriceString,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },
@@ -1031,6 +1048,7 @@ class TechPackDetailsController extends GetxController {
         title: _l10n.tpProLimitDialogTitle,
         message: _l10n.tpProMonthlyLimitReached,
         isPaidUser: true,
+        techpackPriceString: _techpackPriceString,
         onGetExtraTechpacks: () async {
           await _purchaseExtraTechpacks(1, 5.99);
         },

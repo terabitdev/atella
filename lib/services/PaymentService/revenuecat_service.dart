@@ -95,6 +95,51 @@ class RevenueCatService {
     }
   }
 
+  /// Fetches the localized price strings for add-on products (iOS only).
+  /// Returns null values on Android or if the fetch fails, so callers can
+  /// fall back to their hardcoded localisation strings.
+  Future<({String? designPrice, String? techpackPrice})>
+      fetchAddonPriceStrings() async {
+    if (!Platform.isIOS) {
+      return (designPrice: null, techpackPrice: null);
+    }
+    try {
+      final offerings = await Purchases.getOfferings();
+
+      String? designPrice;
+      String? techpackPrice;
+
+      final designOffering = offerings.getOffering(_designAddonsOfferingId);
+      if (designOffering != null) {
+        final pkg = designOffering.availablePackages
+                .where((p) => p.identifier == _designAddonsPackageId)
+                .firstOrNull ??
+            (designOffering.availablePackages.isNotEmpty
+                ? designOffering.availablePackages.first
+                : null);
+        designPrice = pkg?.storeProduct.priceString;
+      }
+
+      final techpackOffering =
+          offerings.getOffering(_techpackAddonsOfferingId);
+      if (techpackOffering != null) {
+        final pkg = techpackOffering.availablePackages
+                .where((p) => p.identifier == _techpackAddonsPackageId)
+                .firstOrNull ??
+            (techpackOffering.availablePackages.isNotEmpty
+                ? techpackOffering.availablePackages.first
+                : null);
+        techpackPrice = pkg?.storeProduct.priceString;
+      }
+
+      print('💰 Fetched addon prices — design: $designPrice, techpack: $techpackPrice');
+      return (designPrice: designPrice, techpackPrice: techpackPrice);
+    } catch (e) {
+      print('❌ Error fetching addon price strings: $e');
+      return (designPrice: null, techpackPrice: null);
+    }
+  }
+
   /// Purchase Extra Designs (€9.99 = 5 designs)
   /// Replaces Stripe's purchaseExtraDesigns() function
   Future<bool> purchaseExtraDesigns() async {

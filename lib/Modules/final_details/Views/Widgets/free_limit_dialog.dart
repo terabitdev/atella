@@ -10,10 +10,16 @@ class FreeUserLimitDialog extends StatefulWidget {
   /// button. The callback should trigger the RevenueCat purchase flow.
   final Future<void> Function()? onGetExtraDesigns;
 
+  /// On iOS, the live localized price string from RevenueCat (e.g. "$9.99").
+  /// When provided it overrides the hardcoded price in the button label.
+  /// Null on Android or when the fetch failed — falls back to localisation.
+  final String? designPriceString;
+
   const FreeUserLimitDialog({
     super.key,
     required this.onClose,
     this.onGetExtraDesigns,
+    this.designPriceString,
   });
 
   @override
@@ -106,12 +112,16 @@ class _FreeUserLimitDialogState extends State<FreeUserLimitDialog> {
                               ),
                             )
                           : Text(
-                              l10n.fdDialogGetDesigns,
+                              widget.designPriceString != null
+                                  ? l10n.fdDialogGetDesignsWithPrice(widget.designPriceString!)
+                                  : l10n.fdDialogGetDesigns,
                               style: ssTitleTextTextStyle144005.copyWith(
                                 fontSize: 15.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
+                              textAlign: TextAlign.center,
+                              softWrap: true,
                             ),
                     ),
                   ),

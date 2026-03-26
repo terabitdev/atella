@@ -7,12 +7,17 @@ class LimitExceededDialog extends StatefulWidget {
   final Future<void> Function() onGetExtraDesigns;
   final VoidCallback onMaybeLater;
   final bool isPaidUser; // true for STARTER/PRO users, false for FREE users
+  /// On iOS, the live localized price string from RevenueCat (e.g. "$9.99").
+  /// When provided it overrides the hardcoded price in the button label.
+  /// Null on Android or when the fetch failed — falls back to localisation.
+  final String? designPriceString;
 
   const LimitExceededDialog({
     super.key,
     required this.onGetExtraDesigns,
     required this.onMaybeLater,
     this.isPaidUser = false,
+    this.designPriceString,
   });
 
   @override
@@ -102,13 +107,16 @@ class _LimitExceededDialogState extends State<LimitExceededDialog> {
                               ),
                             )
                           : Text(
-                              l10n.fdDialogGetExtraDesigns,
+                              widget.designPriceString != null
+                                  ? l10n.fdDialogGetExtraDesignsWithPrice(widget.designPriceString!)
+                                  : l10n.fdDialogGetExtraDesigns,
                               style: ssTitleTextTextStyle14400.copyWith(
                                 fontSize: 16.sp,
                                 fontWeight: FontWeight.w600,
                                 color: Colors.white,
                               ),
                               textAlign: TextAlign.center,
+                              softWrap: true,
                             ),
                     ),
                   ),

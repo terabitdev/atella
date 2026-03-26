@@ -24,6 +24,10 @@ class RefiningConceptController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
   final RevenueCatService _revenueCatService = RevenueCatService();
   final DesignQuotaService _quotaService = DesignQuotaService();
+
+  // Live localized price string for the design add-on (iOS only).
+  // Null on Android or if the RevenueCat fetch failed — dialogs fall back to localisation.
+  String? _designPriceString;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
   // Mapping of garment categories to visible special detail categories
@@ -310,6 +314,16 @@ class RefiningConceptController extends GetxController {
     _startTimeUpdater();
     _updateCurrentTime();
     _checkForEditMode();
+    _fetchAddonPrices();
+  }
+
+  Future<void> _fetchAddonPrices() async {
+    try {
+      final prices = await _revenueCatService.fetchAddonPriceStrings();
+      _designPriceString = prices.designPrice;
+    } catch (e) {
+      // _designPriceString stays null — dialogs fall back to localisation strings
+    }
   }
 
   void _checkForEditMode() {
@@ -1838,6 +1852,7 @@ class RefiningConceptController extends GetxController {
         totalCount: totalCount,
         isDesign: true,
         isPaidUser: isPaidUser,
+        designPriceString: _designPriceString,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
@@ -1871,6 +1886,7 @@ class RefiningConceptController extends GetxController {
       Get.dialog(
         FreeUserLimitDialog(
           onClose: () => Navigator.of(Get.overlayContext!).pop(),
+          designPriceString: _designPriceString,
           onGetExtraDesigns: () async {
             bool success = await _revenueCatService.purchaseFreeExtraDesigns();
             if (success) {
@@ -1889,6 +1905,7 @@ class RefiningConceptController extends GetxController {
     Get.dialog(
       LimitExceededDialog(
         isPaidUser: true,
+        designPriceString: _designPriceString,
         onGetExtraDesigns: () async {
           bool success = await _revenueCatService.purchaseExtraDesigns();
           if (success) {
