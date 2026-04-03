@@ -571,15 +571,15 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   ),
                                 ),
                                 SizedBox(height: 20.h),
-                                OutlineGenerateRoundButton(
+                                Obx(() => OutlineGenerateRoundButton(
                                   title: l10n.tpdGenerateTechPack,
                                   onTap: () {
                                     controller.checkSubscriptionAndGenerate();
                                   },
                                   color: AppColors.buttonColor,
-                                  loading: false,
+                                  loading: controller.isStartingGeneration.value,
                                   imagePath: generateTechPackIcon,
-                                ),
+                                )),
                               ],
                             ),
                           ),

@@ -44,6 +44,7 @@ class RefiningConceptController extends GetxController {
 
   // Edit mode tracking
   final RxBool _isEditMode = false.obs;
+  final RxBool isStartingGeneration = false.obs;
   bool get isEditMode => _isEditMode.value;
   TechPackModel? _editingTechPack;
   TechPackModel? get editingTechPack => _editingTechPack;
@@ -1721,6 +1722,7 @@ class RefiningConceptController extends GetxController {
 
   // Method to proceed directly to design generation (skipping Final Details)
   void proceedToDesignGeneration() async {
+    isStartingGeneration.value = true;
     // INTERNET CHECK: Verify internet connection before generation (mobile only)
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
     if (!hasInternet) {
@@ -1738,6 +1740,7 @@ class RefiningConceptController extends GetxController {
           size: 28.sp,
         ),
       );
+      isStartingGeneration.value = false;
       return;
     }
 
@@ -1775,6 +1778,7 @@ class RefiningConceptController extends GetxController {
             backgroundColor: Colors.red,
             colorText: Colors.white,
           );
+          isStartingGeneration.value = false;
           return;
         }
 
@@ -1794,6 +1798,7 @@ class RefiningConceptController extends GetxController {
                 backgroundColor: Colors.red,
                 colorText: Colors.white,
               );
+              isStartingGeneration.value = false;
               return;
             }
           } catch (e) {
@@ -1804,6 +1809,7 @@ class RefiningConceptController extends GetxController {
               backgroundColor: Colors.red,
               colorText: Colors.white,
             );
+            isStartingGeneration.value = false;
             return;
           }
         } else {
@@ -1812,6 +1818,7 @@ class RefiningConceptController extends GetxController {
             await _stripeService.incrementFreeExtraDesignUsage();
           } else {
             _showLimitExceededDialog();
+            isStartingGeneration.value = false;
             return;
           }
         }
@@ -1819,12 +1826,14 @@ class RefiningConceptController extends GetxController {
         // For paid plans - use existing stripe service logic
         if (subscription != null && subscription.isDesignUsageAt80Percent) {
           _show80PercentWarningDialog(subscription);
+          isStartingGeneration.value = false;
           return;
         }
 
         bool canGenerate = await _stripeService.canGenerateDesign();
         if (!canGenerate) {
           _showLimitExceededDialog();
+          isStartingGeneration.value = false;
           return;
         }
 
@@ -1938,15 +1947,6 @@ class RefiningConceptController extends GetxController {
 
     // Navigate to tech pack generation screen with edit mode data
     if (_isEditMode.value && _editingTechPack != null) {
-      Get.toNamed(
-        '/generate_tech_pack',
-        arguments: {
-          'editMode': true,
-          'techPackModel': _editingTechPack,
-          'forceRegenerate': true, // Add flag to force regeneration
-        },
-      );
-
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
@@ -1958,14 +1958,15 @@ class RefiningConceptController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
-    } else {
-      Get.toNamed(
+      await Get.toNamed(
         '/generate_tech_pack',
         arguments: {
-          'forceRegenerate': true, // Add flag to force regeneration
+          'editMode': true,
+          'techPackModel': _editingTechPack,
+          'forceRegenerate': true,
         },
       );
-
+    } else {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
       Get.snackbar(
@@ -1977,7 +1978,14 @@ class RefiningConceptController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
+      await Get.toNamed(
+        '/generate_tech_pack',
+        arguments: {
+          'forceRegenerate': true,
+        },
+      );
     }
+    isStartingGeneration.value = false;
   }
 
   // Save default/empty final details data when skipping Final Details screen

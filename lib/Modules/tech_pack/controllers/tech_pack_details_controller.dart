@@ -100,6 +100,7 @@ class TechPackDetailsController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Tech pack generation state
+  final RxBool isStartingGeneration = false.obs;
   final RxBool isGeneratingTechPack = false.obs;
   final RxBool generationCancelled = false.obs;
   final RxList<String> generatedTechPackImages = <String>[].obs;
@@ -876,6 +877,8 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> checkSubscriptionAndGenerate() async {
+    isStartingGeneration.value = true;
+
     // INTERNET CHECK: Verify internet connection before generation (mobile only)
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
     if (!hasInternet) {
@@ -892,6 +895,7 @@ class TechPackDetailsController extends GetxController {
           size: 28.sp,
         ),
       );
+      isStartingGeneration.value = false;
       return;
     }
 
@@ -905,6 +909,7 @@ class TechPackDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
       );
+      isStartingGeneration.value = false;
       return;
     }
 
@@ -918,6 +923,7 @@ class TechPackDetailsController extends GetxController {
         await _subscriptionService.incrementFreeExtraTechpackUsage();
       } else {
         _showUpgradeDialog();
+        isStartingGeneration.value = false;
         return;
       }
     } else {
@@ -926,6 +932,7 @@ class TechPackDetailsController extends GetxController {
           .canUsePremiumFeatureWithReset('techpack');
       if (!canGenerate) {
         _showUpgradeDialog();
+        isStartingGeneration.value = false;
         return;
       }
       // CRITICAL: Increment counter IMMEDIATELY before generation starts
@@ -950,8 +957,9 @@ class TechPackDetailsController extends GetxController {
     // Pass generation ID to track this specific generation
     generateTechPackImages(currentGenerationId);
 
-    // Navigate to ready screen
-    Get.toNamed('/tech_pack_ready_screen');
+    // Navigate to ready screen; await so we can reset the button loading state if user comes back
+    await Get.toNamed('/tech_pack_ready_screen');
+    isStartingGeneration.value = false;
   }
 
   void _showUpgradeDialog() async {

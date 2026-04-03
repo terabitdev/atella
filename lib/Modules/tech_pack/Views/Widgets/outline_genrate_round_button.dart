@@ -20,21 +20,22 @@ class OutlineGenerateRoundButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final effectiveColor = loading ? Colors.grey.shade400 : color;
     return InkWell(
-      onTap: onTap,
+      onTap: loading ? null : onTap,
       child: Container(
         height: 50.h,
         width: 375.w,
         decoration: BoxDecoration(
           borderRadius: BorderRadius.circular(10.r),
-          border: Border.all(color: color),
+          border: Border.all(color: effectiveColor),
         ),
         child: Center(
           child: loading
               ? SizedBox(
                   height: 24.h,
                   width: 24.h,
-                  child: const CircularProgressIndicator(color: Colors.white),
+                  child: CircularProgressIndicator(color: effectiveColor),
                 )
               : Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
