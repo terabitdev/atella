@@ -20,7 +20,27 @@ class GatheringBriefScreen extends StatelessWidget {
           SizedBox(
             height: 450.h,
             width: double.infinity,
-            child: Image.asset(chatbriefIcon, fit: BoxFit.cover),
+            child: Stack(
+              children: [
+                Image.asset(chatbriefIcon, fit: BoxFit.cover, width: double.infinity, height: double.infinity),
+                SafeArea(
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 16.w, top: 24.h),
+                    child: GestureDetector(
+                      onTap: () => Navigator.of(context).pop(),
+                      child: Container(
+                        padding: EdgeInsets.all(12.w),
+                        decoration: BoxDecoration(
+                          color: Colors.white,
+                          shape: BoxShape.circle,
+                        ),
+                        child: Icon(Icons.arrow_back_ios_new, size: 22.sp, color: Colors.black),
+                      ),
+                    ),
+                  ),
+                ),
+              ],
+            ),
           ),
           Expanded(
             child: Container(
