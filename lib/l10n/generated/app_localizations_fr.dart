@@ -673,7 +673,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get asYourExpertVirtualFashionDesigner =>
-      'En tant que votre styliste virtuel expert.';
+      'En tant que styliste virtuelle experte.';
 
   @override
   String get imHereToHelpCreateCustomGarment =>

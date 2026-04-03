@@ -42,9 +42,8 @@ class RefineConceptScreen extends StatelessWidget {
                   Text(
                     l10n.rcNowToHelpMeRefine,
                     textAlign: TextAlign.center,
-                    style: gsTextStyle16600,
+                    style: osTextStyle165002,
                   ),
-                  SizedBox(height: 18.h),
                   Text(
                     l10n.rcProposeThreeConceptOptions,
                     textAlign: TextAlign.center,
