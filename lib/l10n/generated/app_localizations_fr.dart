@@ -1410,6 +1410,9 @@ class AppLocalizationsFr extends AppLocalizations {
   String get rcOptionWrinkleFree => 'Anti-froissement';
 
   @override
+  String get rcOptionNo => 'Non';
+
+  @override
   String get rcOptionCustom => 'Personnalisé';
 
   @override

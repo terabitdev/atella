@@ -450,6 +450,7 @@
   "rcOptionUVProtection": "Protection UV",
   "rcOptionQuickDry": "Séchage rapide",
   "rcOptionWrinkleFree": "Anti-froissement",
+  "rcOptionNo": "Non",
   "rcOptionCustom": "Personnalisé",
   "today": "Aujourd'hui",
   "rcSnackbarRefiningComplete": "Affinage terminé !",

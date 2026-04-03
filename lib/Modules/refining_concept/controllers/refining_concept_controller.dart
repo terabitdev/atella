@@ -297,6 +297,7 @@ class RefiningConceptController extends GetxController {
           'Would you like to include any specific functionalities or values? 🧶',
       type: 'chips',
       options: [
+        'No',
         'Organic Fabric',
         'Locally Made',
         'Upcycled',

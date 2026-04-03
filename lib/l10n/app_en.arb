@@ -1516,6 +1516,7 @@
   "rcOptionUVProtection": "UV Protection",
   "rcOptionQuickDry": "Quick-Dry",
   "rcOptionWrinkleFree": "Wrinkle-Free",
+  "rcOptionNo": "No",
   "rcOptionCustom": "Custom",
   "today": "Today",
   "@today": {

@@ -2684,6 +2684,12 @@ abstract class AppLocalizations {
   /// **'Wrinkle-Free'**
   String get rcOptionWrinkleFree;
 
+  /// No description provided for @rcOptionNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get rcOptionNo;
+
   /// No description provided for @rcOptionCustom.
   ///
   /// In en, this message translates to:

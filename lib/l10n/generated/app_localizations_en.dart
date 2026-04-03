@@ -1389,6 +1389,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rcOptionWrinkleFree => 'Wrinkle-Free';
 
   @override
+  String get rcOptionNo => 'No';
+
+  @override
   String get rcOptionCustom => 'Custom';
 
   @override
