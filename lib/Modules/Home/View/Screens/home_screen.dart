@@ -167,7 +167,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               // Show empty state if no data and not searching
-              if (!controller.hasAnyData && controller.searchQuery.value.isEmpty) {
+              if (controller.allTechPacks.isEmpty && controller.searchQuery.value.isEmpty) {
                 return Padding(
                   padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 16.h),
                   child: HomeEmptyState(
@@ -177,7 +177,7 @@ class _HomeScreenState extends State<HomeScreen> {
               }
 
               // Show search empty state if searching with no results
-              if (!controller.hasDesigns && controller.searchQuery.value.isNotEmpty) {
+              if (controller.myDesigns.isEmpty && controller.searchQuery.value.isNotEmpty) {
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
                   child: SearchEmptyState(
@@ -197,7 +197,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(l10n.myDesigns, style: hsTitleTextTextStyle18800),
-                        if (controller.hasDesigns)
+                        if (controller.myDesigns.isNotEmpty)
                           GestureDetector(
                             onTap: () {
                               Get.toNamed('/my_designs');
@@ -241,7 +241,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // Collections Section  
             Obx(() {
               // Don't show collections section during loading or if no collections
-              if (controller.isLoading.value || !controller.hasCollections) {
+              if (controller.isLoading.value || controller.myCollections.isEmpty) {
                 return SizedBox.shrink();
               }
 
@@ -254,7 +254,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       mainAxisAlignment: MainAxisAlignment.spaceBetween,
                       children: [
                         Text(l10n.myCollections, style: hsTitleTextTextStyle18800),
-                        if (controller.hasCollections)
+                        if (controller.myCollections.isNotEmpty)
                           GestureDetector(
                             onTap: () {
                               Get.toNamed('/collections');
@@ -298,7 +298,7 @@ class _HomeScreenState extends State<HomeScreen> {
             // ------------- Start New Project Button --------------
             Obx(() {
               // Only show button if user has data (not on empty state)
-              if (controller.hasAnyData) {
+              if (controller.allTechPacks.isNotEmpty) {
                 return Padding(
                   padding: const EdgeInsets.all(20.0),
                   child: RoundButton(
