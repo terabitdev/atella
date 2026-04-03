@@ -169,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
               // Show empty state if no data and not searching
               if (!controller.hasAnyData && controller.searchQuery.value.isEmpty) {
                 return Padding(
-                  padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 16.h),
+                  padding: EdgeInsets.fromLTRB(24.w, 0, 24.w, 16.h),
                   child: HomeEmptyState(
                     onCreateProject: controller.startNewProject,
                   ),
