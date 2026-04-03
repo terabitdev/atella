@@ -3,7 +3,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-class AuthTextField extends StatelessWidget {
+class AuthTextField extends StatefulWidget {
   final String label;
   final TextEditingController controller;
   final bool isPassword;
@@ -16,18 +16,25 @@ class AuthTextField extends StatelessWidget {
   });
 
   @override
+  State<AuthTextField> createState() => _AuthTextFieldState();
+}
+
+class _AuthTextFieldState extends State<AuthTextField> {
+  bool _obscureText = true;
+
+  @override
   Widget build(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(label, style: authLableTextTextStyle14400),
+        Text(widget.label, style: authLableTextTextStyle14400),
         SizedBox(height: 6.h),
         TextField(
-          controller: controller,
-          obscureText: isPassword,
+          controller: widget.controller,
+          obscureText: widget.isPassword ? _obscureText : false,
           style: authLableTextTextStyle144001,
           decoration: InputDecoration(
-            hintText: label,
+            hintText: widget.label,
             hintStyle: authLableTextTextStyle144002,
             enabledBorder: OutlineInputBorder(
               borderRadius: BorderRadius.circular(6.r),
@@ -44,6 +51,20 @@ class AuthTextField extends StatelessWidget {
               vertical: 16.h,
               horizontal: 12.w,
             ),
+            suffixIcon: widget.isPassword
+                ? IconButton(
+                    icon: Icon(
+                      _obscureText ? Icons.visibility_off : Icons.visibility,
+                      color: Colors.black,
+                      size: 20.sp,
+                    ),
+                    onPressed: () {
+                      setState(() {
+                        _obscureText = !_obscureText;
+                      });
+                    },
+                  )
+                : null,
           ),
         ),
       ],
