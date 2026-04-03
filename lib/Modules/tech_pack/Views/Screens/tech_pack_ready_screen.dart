@@ -14,6 +14,7 @@ import 'dart:convert';
 import 'dart:io';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 import 'package:atella/Widgets/animated_dots_text.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_details_controller.dart';
@@ -204,32 +205,23 @@ class TechPackReadyScreen extends StatelessWidget {
               return Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  SizedBox(
-                    width: 70.w,
-                    height: 70.w,
-                    child: Stack(
-                      alignment: Alignment.center,
-                      children: [
-                        SizedBox(
-                          width: 70.w,
-                          height: 70.w,
-                          child: CircularProgressIndicator(
-                            value: progress,
-                            strokeWidth: 6,
-                            strokeCap: StrokeCap.round,
-                            backgroundColor: Colors.white,
-                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                          ),
-                        ),
-                        Text(
-                          '$percent%',
-                          style: GoogleFonts.inter(
-                            fontSize: 16.sp,
-                            fontWeight: FontWeight.w700,
-                            color: Colors.black,
-                          ),
-                        ),
-                      ],
+                  CircularPercentIndicator(
+                    radius: 45.0,
+                    lineWidth: 6.0,
+                    percent: progress,
+                    animation: true,
+                    animateFromLastPercent: true,
+                    animationDuration: 400,
+                    circularStrokeCap: CircularStrokeCap.round,
+                    progressColor: Colors.black,
+                    backgroundColor: Colors.white,
+                    center: Text(
+                      '$percent%',
+                      style: GoogleFonts.inter(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
                     ),
                   ),
                   SizedBox(height: 20.h),

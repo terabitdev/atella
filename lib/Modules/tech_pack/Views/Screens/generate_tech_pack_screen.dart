@@ -1,5 +1,6 @@
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
 import 'package:atella/Widgets/animated_dots_text.dart';
+import 'package:percent_indicator/percent_indicator.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -214,7 +215,6 @@ class GenerateTechPackScreen extends StatelessWidget {
   }
 
   Widget _buildDynamicLoadingCard(int index, AppLocalizations l10n) {
-    // Only show the first card with the progress indicator
     if (index != 0) return const SizedBox.shrink();
 
     return Container(
@@ -237,32 +237,23 @@ class GenerateTechPackScreen extends StatelessWidget {
           return Column(
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              SizedBox(
-                width: 70.w,
-                height: 70.w,
-                child: Stack(
-                  alignment: Alignment.center,
-                  children: [
-                    SizedBox(
-                      width: 70.w,
-                      height: 70.w,
-                      child: CircularProgressIndicator(
-                        value: progress,
-                        strokeWidth: 6,
-                        strokeCap: StrokeCap.round,
-                        backgroundColor: Colors.white,
-                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
-                      ),
-                    ),
-                    Text(
-                      '$percent%',
-                      style: GoogleFonts.inter(
-                        fontSize: 16.sp,
-                        fontWeight: FontWeight.w700,
-                        color: Colors.black,
-                      ),
-                    ),
-                  ],
+              CircularPercentIndicator(
+                radius: 45.0,
+                lineWidth: 6.0,
+                percent: progress,
+                animation: true,
+                animateFromLastPercent: true,
+                animationDuration: 400,
+                circularStrokeCap: CircularStrokeCap.round,
+                progressColor: Colors.black,
+                backgroundColor: Colors.white,
+                center: Text(
+                  '$percent%',
+                  style: GoogleFonts.inter(
+                    fontSize: 16.sp,
+                    fontWeight: FontWeight.w700,
+                    color: Colors.black,
+                  ),
                 ),
               ),
               SizedBox(height: 20.h),

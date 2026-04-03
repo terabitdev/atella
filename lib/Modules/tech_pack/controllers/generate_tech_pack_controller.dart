@@ -224,6 +224,7 @@ class TechPackController extends GetxController {
       await Future.delayed(const Duration(milliseconds: 300));
       generationStep.value = 4;
       generationProgress.value = 1.0;
+      await Future.delayed(const Duration(milliseconds: 600));
       generatedImages.value = base64Images;
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
 

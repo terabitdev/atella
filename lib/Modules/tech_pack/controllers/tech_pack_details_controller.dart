@@ -491,7 +491,7 @@ class TechPackDetailsController extends GetxController {
 
       isGeneratingTechPack.value = true;
       generatedTechPackImages.clear();
-      generationProgress.value = 0.0;
+      // Progress and step are already set to 0.1/1 before navigation — do not reset here
       generationStep.value = 1;
 
       // Check if cancelled before starting expensive operations
@@ -656,6 +656,7 @@ class TechPackDetailsController extends GetxController {
 
       generationStep.value = 4;
       generationProgress.value = 1.0;
+      await Future.delayed(const Duration(milliseconds: 600));
 
       // Add images to the list
       generatedTechPackImages.addAll(manufacturingImages);
