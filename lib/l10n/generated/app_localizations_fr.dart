@@ -2691,6 +2691,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tpgGenerating => 'Génération en cours';
 
   @override
+  String get tpgStepAnalyzing => 'Analyse';
+
+  @override
+  String get tpgStepDesigning => 'Conception';
+
+  @override
+  String get tpgStepRendering => 'Rendu';
+
+  @override
+  String get tpgStepFinishing => 'Finalisation';
+
+  @override
   String get tpgFailedToGenerate => 'Échec de la génération';
 
   @override

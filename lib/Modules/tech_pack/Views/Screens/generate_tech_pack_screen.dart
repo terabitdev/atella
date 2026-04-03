@@ -1,4 +1,5 @@
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
+import 'package:atella/Widgets/animated_dots_text.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -8,7 +9,6 @@ import 'package:get/get.dart';
 import 'package:atella/Widgets/app_header.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'dart:convert';
-import 'package:lottie/lottie.dart';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
@@ -214,6 +214,9 @@ class GenerateTechPackScreen extends StatelessWidget {
   }
 
   Widget _buildDynamicLoadingCard(int index, AppLocalizations l10n) {
+    // Only show the first card with the progress indicator
+    if (index != 0) return const SizedBox.shrink();
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       height: 280.h,
@@ -222,46 +225,58 @@ class GenerateTechPackScreen extends StatelessWidget {
         borderRadius: BorderRadius.circular(20.r),
       ),
       child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Design number
-            Text(
-              l10n.tpgDesignNumber((index + 1).toString()),
-              style: GoogleFonts.inter(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1A1A1A),
-              ),
-            ),
-            const SizedBox(height: 16),
+        child: Obx(() {
+          final progress = controller.generationProgress.value;
+          final step = controller.generationStep.value;
+          final stepLabels = [l10n.tpgStepAnalyzing, l10n.tpgStepDesigning, l10n.tpgStepRendering, l10n.tpgStepFinishing];
+          final stepLabel = step > 0 && step <= stepLabels.length
+              ? stepLabels[step - 1]
+              : stepLabels[0];
+          final percent = (progress * 100).toInt();
 
-            // Larger loading dots animation
-            Container(
-              width: 150.w,
-              height: 80.h,
-              child: Lottie.asset(
-                'assets/lottie/Loading_dots.json',
-                width: 150.w,
-                height: 80.h,
-                fit: BoxFit.contain,
-                repeat: true,
-                animate: true,
+          return Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              SizedBox(
+                width: 70.w,
+                height: 70.w,
+                child: Stack(
+                  alignment: Alignment.center,
+                  children: [
+                    SizedBox(
+                      width: 70.w,
+                      height: 70.w,
+                      child: CircularProgressIndicator(
+                        value: progress,
+                        strokeWidth: 6,
+                        strokeCap: StrokeCap.round,
+                        backgroundColor: Colors.white,
+                        valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                      ),
+                    ),
+                    Text(
+                      '$percent%',
+                      style: GoogleFonts.inter(
+                        fontSize: 16.sp,
+                        fontWeight: FontWeight.w700,
+                        color: Colors.black,
+                      ),
+                    ),
+                  ],
+                ),
               ),
-            ),
-            const SizedBox(height: 16),
-
-            // Simple "Generating" text
-            Text(
-              l10n.tpgGenerating,
-              style: GoogleFonts.inter(
-                fontSize: 14.sp,
-                color: const Color(0xFF666666),
-                fontWeight: FontWeight.w500,
+              SizedBox(height: 20.h),
+              AnimatedDotsText(
+                text: stepLabel,
+                style: GoogleFonts.inter(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF666666),
+                  fontWeight: FontWeight.w500,
+                ),
               ),
-            ),
-          ],
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

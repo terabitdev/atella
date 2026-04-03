@@ -2647,6 +2647,18 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tpgGenerating => 'Generating';
 
   @override
+  String get tpgStepAnalyzing => 'Analyzing';
+
+  @override
+  String get tpgStepDesigning => 'Designing';
+
+  @override
+  String get tpgStepRendering => 'Rendering';
+
+  @override
+  String get tpgStepFinishing => 'Finishing';
+
+  @override
   String get tpgFailedToGenerate => 'Failed to generate';
 
   @override

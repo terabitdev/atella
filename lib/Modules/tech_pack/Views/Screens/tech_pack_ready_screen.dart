@@ -13,8 +13,8 @@ import '../../controllers/tech_pack_ready_controller.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
+import 'package:atella/Widgets/animated_dots_text.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'package:lottie/lottie.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 
@@ -162,6 +162,8 @@ class TechPackReadyScreen extends StatelessWidget {
   }
 
   Widget _buildLoadingState(AppLocalizations l10n) {
+    final detailsController = Get.find<TechPackDetailsController>();
+
     return Column(
       children: [
         Text(
@@ -182,63 +184,69 @@ class TechPackReadyScreen extends StatelessWidget {
           ),
         ),
         SizedBox(height: 24.h),
-        _buildDynamicLoadingCard(l10n.tprTechPackDetails),
-        SizedBox(height: 16.h),
-        _buildDynamicLoadingCard(l10n.tprTechnicalFlatDrawing),
-      ],
-    );
-  }
+        Container(
+          width: double.infinity,
+          height: 280.h,
+          decoration: BoxDecoration(
+            color: const Color.fromRGBO(236, 239, 246, 1),
+            borderRadius: BorderRadius.circular(20.r),
+          ),
+          child: Center(
+            child: Obx(() {
+              final progress = detailsController.generationProgress.value;
+              final step = detailsController.generationStep.value;
+              final stepLabels = [l10n.tpgStepAnalyzing, l10n.tpgStepDesigning, l10n.tpgStepRendering, l10n.tpgStepFinishing];
+              final stepLabel = step > 0 && step <= stepLabels.length
+                  ? stepLabels[step - 1]
+                  : stepLabels[0];
+              final percent = (progress * 100).toInt();
 
-  Widget _buildDynamicLoadingCard(String title) {
-    return Container(
-      width: double.infinity,
-      height: 280.h,
-      decoration: BoxDecoration(
-        color: const Color.fromRGBO(236, 239, 246, 1),
-        borderRadius: BorderRadius.circular(20.r),
-      ),
-      child: Center(
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            // Title
-            Text(
-              title,
-              style: GoogleFonts.inter(
-                fontSize: 16.sp,
-                fontWeight: FontWeight.w600,
-                color: const Color(0xFF1A1A1A),
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Lottie loading animation
-            SizedBox(
-              width: 150.w,
-              height: 80.h,
-              child: Lottie.asset(
-                'assets/lottie/Loading_dots.json',
-                width: 150.w,
-                height: 80.h,
-                fit: BoxFit.contain,
-                repeat: true,
-                animate: true,
-              ),
-            ),
-            SizedBox(height: 16.h),
-
-            // Generating text
-            Text(
-              AppLocalizations.of(Get.context!)!.tprGenerating,
-              style: GoogleFonts.inter(
-                fontSize: 14.sp,
-                color: const Color(0xFF666666),
-                fontWeight: FontWeight.w500,
-              ),
-            ),
-          ],
+              return Column(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: [
+                  SizedBox(
+                    width: 70.w,
+                    height: 70.w,
+                    child: Stack(
+                      alignment: Alignment.center,
+                      children: [
+                        SizedBox(
+                          width: 70.w,
+                          height: 70.w,
+                          child: CircularProgressIndicator(
+                            value: progress,
+                            strokeWidth: 6,
+                            strokeCap: StrokeCap.round,
+                            backgroundColor: Colors.white,
+                            valueColor: AlwaysStoppedAnimation<Color>(Colors.black),
+                          ),
+                        ),
+                        Text(
+                          '$percent%',
+                          style: GoogleFonts.inter(
+                            fontSize: 16.sp,
+                            fontWeight: FontWeight.w700,
+                            color: Colors.black,
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  SizedBox(height: 20.h),
+                  AnimatedDotsText(
+                    text: stepLabel,
+                    style: GoogleFonts.inter(
+                      fontSize: 14.sp,
+                      color: const Color(0xFF666666),
+                      fontWeight: FontWeight.w500,
+                    ),
+                  ),
+                ],
+              );
+            }),
+          ),
         ),
-      ),
+      ],
     );
   }
 

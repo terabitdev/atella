@@ -4916,6 +4916,30 @@ abstract class AppLocalizations {
   /// **'Generating'**
   String get tpgGenerating;
 
+  /// Generation step 1 label
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing'**
+  String get tpgStepAnalyzing;
+
+  /// Generation step 2 label
+  ///
+  /// In en, this message translates to:
+  /// **'Designing'**
+  String get tpgStepDesigning;
+
+  /// Generation step 3 label
+  ///
+  /// In en, this message translates to:
+  /// **'Rendering'**
+  String get tpgStepRendering;
+
+  /// Generation step 4 label
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing'**
+  String get tpgStepFinishing;
+
   /// Failed to generate error message
   ///
   /// In en, this message translates to:

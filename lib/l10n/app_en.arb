@@ -3190,6 +3190,22 @@
   "@tpgGenerating": {
     "description": "Generating status text"
   },
+  "tpgStepAnalyzing": "Analyzing",
+  "@tpgStepAnalyzing": {
+    "description": "Generation step 1 label"
+  },
+  "tpgStepDesigning": "Designing",
+  "@tpgStepDesigning": {
+    "description": "Generation step 2 label"
+  },
+  "tpgStepRendering": "Rendering",
+  "@tpgStepRendering": {
+    "description": "Generation step 3 label"
+  },
+  "tpgStepFinishing": "Finishing",
+  "@tpgStepFinishing": {
+    "description": "Generation step 4 label"
+  },
   "tpgFailedToGenerate": "Failed to generate",
   "@tpgFailedToGenerate": {
     "description": "Failed to generate error message"
