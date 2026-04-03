@@ -73,7 +73,7 @@ class GenerateTechPackScreen extends StatelessWidget {
             Column(
               children: [
                 Padding(
-                  padding: const EdgeInsets.all(24.0),
+                  padding: const EdgeInsets.fromLTRB(24.0, 35.0, 24.0, 24.0),
                   child: GlobalHeader(
                     title: l10n.tpDesignAssistant,
                     onBack: () => Navigator.of(context).pop(),
