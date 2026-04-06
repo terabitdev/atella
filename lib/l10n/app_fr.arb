@@ -1469,7 +1469,7 @@
   "@viewPlan": {
     "description": "Settings card label to open the subscription detail screen"
   },
-  "settingsFreePlan": "Forfait Gratuit",
+  "settingsFreePlan": "Limite des modèles gratuits",
   "settingsFreeMonthly": "Gratuit mensuel",
   "settingsAddOns": "Extensions",
   "subscriptionDetailTitle": "Mon abonnement",
