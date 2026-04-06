@@ -2684,6 +2684,12 @@ abstract class AppLocalizations {
   /// **'Wrinkle-Free'**
   String get rcOptionWrinkleFree;
 
+  /// No description provided for @rcOptionNo.
+  ///
+  /// In en, this message translates to:
+  /// **'No'**
+  String get rcOptionNo;
+
   /// No description provided for @rcOptionCustom.
   ///
   /// In en, this message translates to:
@@ -4915,6 +4921,30 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Generating'**
   String get tpgGenerating;
+
+  /// Generation step 1 label
+  ///
+  /// In en, this message translates to:
+  /// **'Analyzing'**
+  String get tpgStepAnalyzing;
+
+  /// Generation step 2 label
+  ///
+  /// In en, this message translates to:
+  /// **'Designing'**
+  String get tpgStepDesigning;
+
+  /// Generation step 3 label
+  ///
+  /// In en, this message translates to:
+  /// **'Rendering'**
+  String get tpgStepRendering;
+
+  /// Generation step 4 label
+  ///
+  /// In en, this message translates to:
+  /// **'Finishing'**
+  String get tpgStepFinishing;
 
   /// Failed to generate error message
   ///

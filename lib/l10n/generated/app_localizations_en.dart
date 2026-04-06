@@ -1389,6 +1389,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get rcOptionWrinkleFree => 'Wrinkle-Free';
 
   @override
+  String get rcOptionNo => 'No';
+
+  @override
   String get rcOptionCustom => 'Custom';
 
   @override
@@ -2645,6 +2648,18 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpgGenerating => 'Generating';
+
+  @override
+  String get tpgStepAnalyzing => 'Analyzing';
+
+  @override
+  String get tpgStepDesigning => 'Designing';
+
+  @override
+  String get tpgStepRendering => 'Rendering';
+
+  @override
+  String get tpgStepFinishing => 'Finishing';
 
   @override
   String get tpgFailedToGenerate => 'Failed to generate';

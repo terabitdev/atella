@@ -45,6 +45,10 @@ class TechPackController extends GetxController {
   var hasError = false.obs;
   var selectedDesignIndex = (-1).obs; // Track selected design index
 
+  // Progress tracking (step: 0=idle, 1=generating prompt, 2=generating images)
+  var generationProgress = 0.0.obs;
+  var generationStep = 0.obs;
+
   // Design save completion tracking
   final RxBool isDesignSaveComplete = false.obs;
   final RxString savedDesignUrl = ''.obs;
@@ -149,6 +153,8 @@ class TechPackController extends GetxController {
       hasError.value = false;
       errorMessage.value = '';
       generatedImages.clear();
+      generationProgress.value = 0.0;
+      generationStep.value = 1;
 
       // Check if all questionnaire data is available
       if (!_dataService.isAllDataComplete()) {
@@ -164,10 +170,14 @@ class TechPackController extends GetxController {
 
       print('Generating visual prompt with OpenAI GPT-4...');
       // Generate visual prompt using OpenAI (without Final Details - skipped screen)
+      generationStep.value = 1;
+      generationProgress.value = 0.1;
       currentPrompt.value = await OpenAIService.generateVisualPrompt(
         creativeBrief: _dataService.getCreativeBriefData(),
         refinedConcept: _dataService.getRefinedConceptData(),
       );
+      generationStep.value = 2;
+      generationProgress.value = 0.5;
 
       print('Generated Visual Prompt: ${currentPrompt.value}');
 
@@ -209,6 +219,12 @@ class TechPackController extends GetxController {
         );
       }
 
+      generationStep.value = 3;
+      generationProgress.value = 0.75;
+      await Future.delayed(const Duration(milliseconds: 300));
+      generationStep.value = 4;
+      generationProgress.value = 1.0;
+      await Future.delayed(const Duration(milliseconds: 600));
       generatedImages.value = base64Images;
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
 

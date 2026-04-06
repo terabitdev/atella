@@ -757,14 +757,14 @@ class RefiningBriefScreen extends GetView<RefiningConceptController> {
   Widget _buildBottomButton(AppLocalizations l10n) {
     return Padding(
       padding: const EdgeInsets.all(24.0),
-      child: RoundButton(
+      child: Obx(() => RoundButton(
         title: l10n.rcGenerateDesign,
         onTap: () {
           controller.proceedToDesignGeneration();
         },
         color: AppColors.buttonColor,
-        isloading: false,
-      ),
+        isloading: controller.isStartingGeneration.value,
+      )),
     );
   }
 

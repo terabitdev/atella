@@ -96,9 +96,15 @@ class SignupController extends GetxController {
       // Success - Track signup event
       PostHogAnalyticsService().trackUserSignedUp(method: 'email');
 
-      // CRITICAL: Sign out the user immediately after signup
-      // This ensures they must login with their credentials on the login page
-      await _authService.signOut();
+      // Identify user for PostHog
+      final user = _authService.currentUser;
+      if (user != null) {
+        PostHogAnalyticsService().identifyUser(
+          userId: user.uid,
+          email: user.email,
+          name: user.displayName,
+        );
+      }
 
       Get.snackbar(
         l10n.success,
@@ -107,9 +113,9 @@ class SignupController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
-      FocusScope.of(Get.context!).unfocus(); // Unfocus text fields
-      await Future.delayed(const Duration(milliseconds: 300)); // Let UI settle
-      Get.offAllNamed('/login');
+      FocusScope.of(Get.context!).unfocus();
+      await Future.delayed(const Duration(milliseconds: 300));
+      Get.offAllNamed('/nav_bar');
     } else {
       debugPrint('Signup error code received: $result');
       final errorMessage = _getLocalizedError(result, l10n);

@@ -210,6 +210,8 @@ class RefiningConceptLocalizationService {
         return l10n.rcOptionPremium;
 
       // Functionality/Values options
+      case 'No':
+        return l10n.rcOptionNo;
       case 'Organic Fabric':
         return l10n.rcOptionOrganicFabric;
       case 'Locally Made':
@@ -309,6 +311,7 @@ class RefiningConceptLocalizationService {
     if (localizedOption == l10n.rcOptionPremium) return 'Premium';
 
     // Functionality/Values options
+    if (localizedOption == l10n.rcOptionNo) return 'No';
     if (localizedOption == l10n.rcOptionOrganicFabric) return 'Organic Fabric';
     if (localizedOption == l10n.rcOptionLocallyMade) return 'Locally Made';
     if (localizedOption == l10n.rcOptionUpcycled) return 'Upcycled';

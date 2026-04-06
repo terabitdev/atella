@@ -33,8 +33,8 @@ class EmptyStateWidget extends StatelessWidget {
           if (imagePath != null)
             Image.asset(
               imagePath!,
-              height: 200.h,
-              width: 180.w,
+              height: 170.h,
+              width: 155.w,
               fit: BoxFit.contain,
             ),
 

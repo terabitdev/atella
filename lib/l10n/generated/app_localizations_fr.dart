@@ -673,7 +673,7 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get asYourExpertVirtualFashionDesigner =>
-      'En tant que votre styliste virtuel expert.';
+      'En tant que styliste virtuelle experte.';
 
   @override
   String get imHereToHelpCreateCustomGarment =>
@@ -1408,6 +1408,9 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get rcOptionWrinkleFree => 'Anti-froissement';
+
+  @override
+  String get rcOptionNo => 'Non';
 
   @override
   String get rcOptionCustom => 'Personnalisé';
@@ -2689,6 +2692,18 @@ class AppLocalizationsFr extends AppLocalizations {
 
   @override
   String get tpgGenerating => 'Génération en cours';
+
+  @override
+  String get tpgStepAnalyzing => 'Analyse';
+
+  @override
+  String get tpgStepDesigning => 'Conception';
+
+  @override
+  String get tpgStepRendering => 'Rendu';
+
+  @override
+  String get tpgStepFinishing => 'Finalisation';
 
   @override
   String get tpgFailedToGenerate => 'Échec de la génération';

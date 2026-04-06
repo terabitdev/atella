@@ -100,9 +100,13 @@ class TechPackDetailsController extends GetxController {
   final ImagePicker _picker = ImagePicker();
 
   // Tech pack generation state
+  final RxBool isStartingGeneration = false.obs;
   final RxBool isGeneratingTechPack = false.obs;
   final RxBool generationCancelled = false.obs;
   final RxList<String> generatedTechPackImages = <String>[].obs;
+  // Progress tracking (step: 0=idle, 1=generating prompts, 2=manufacturing image, 3=technical drawing)
+  final RxDouble generationProgress = 0.0.obs;
+  final RxInt generationStep = 0.obs;
   final RxString selectedDesignImagePath = ''.obs;
   final RxString selectedDesignPrompt = ''.obs;
   Map<String, dynamic> designData = {};
@@ -488,6 +492,8 @@ class TechPackDetailsController extends GetxController {
 
       isGeneratingTechPack.value = true;
       generatedTechPackImages.clear();
+      // Progress and step are already set to 0.1/1 before navigation — do not reset here
+      generationStep.value = 1;
 
       // Check if cancelled before starting expensive operations
       if (generationCancelled.value) {
@@ -550,6 +556,9 @@ class TechPackDetailsController extends GetxController {
       print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
       print('Technical Prompt: ${prompts['technical_flat_prompt']}');
 
+      generationStep.value = 2;
+      generationProgress.value = 0.5;
+
       // Generate manufacturing layout image with reference images
       print(
         'Generating manufacturing layout image with ${referenceImages.length} reference images...',
@@ -583,6 +592,9 @@ class TechPackDetailsController extends GetxController {
         print('⚠️ Generation cancelled after manufacturing image');
         return;
       }
+
+      generationStep.value = 3;
+      generationProgress.value = 0.75;
 
       // Generate technical flat drawing with detailed approach and reference images
       print(
@@ -642,6 +654,10 @@ class TechPackDetailsController extends GetxController {
         print('   Discarding all images from outdated generation');
         return;
       }
+
+      generationStep.value = 4;
+      generationProgress.value = 1.0;
+      await Future.delayed(const Duration(milliseconds: 600));
 
       // Add images to the list
       generatedTechPackImages.addAll(manufacturingImages);
@@ -861,6 +877,8 @@ class TechPackDetailsController extends GetxController {
   }
 
   Future<void> checkSubscriptionAndGenerate() async {
+    isStartingGeneration.value = true;
+
     // INTERNET CHECK: Verify internet connection before generation (mobile only)
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
     if (!hasInternet) {
@@ -877,6 +895,7 @@ class TechPackDetailsController extends GetxController {
           size: 28.sp,
         ),
       );
+      isStartingGeneration.value = false;
       return;
     }
 
@@ -890,6 +909,7 @@ class TechPackDetailsController extends GetxController {
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
       );
+      isStartingGeneration.value = false;
       return;
     }
 
@@ -903,6 +923,7 @@ class TechPackDetailsController extends GetxController {
         await _subscriptionService.incrementFreeExtraTechpackUsage();
       } else {
         _showUpgradeDialog();
+        isStartingGeneration.value = false;
         return;
       }
     } else {
@@ -911,6 +932,7 @@ class TechPackDetailsController extends GetxController {
           .canUsePremiumFeatureWithReset('techpack');
       if (!canGenerate) {
         _showUpgradeDialog();
+        isStartingGeneration.value = false;
         return;
       }
       // CRITICAL: Increment counter IMMEDIATELY before generation starts
@@ -927,12 +949,17 @@ class TechPackDetailsController extends GetxController {
     // Reset cancellation flag
     generationCancelled.value = false;
 
+    // Set initial progress before navigation so screen shows 10% immediately
+    generationProgress.value = 0.1;
+    generationStep.value = 1;
+
     // Start generation (don't await - runs in background)
     // Pass generation ID to track this specific generation
     generateTechPackImages(currentGenerationId);
 
-    // Navigate to ready screen
-    Get.toNamed('/tech_pack_ready_screen');
+    // Navigate to ready screen; await so we can reset the button loading state if user comes back
+    await Get.toNamed('/tech_pack_ready_screen');
+    isStartingGeneration.value = false;
   }
 
   void _showUpgradeDialog() async {
@@ -981,6 +1008,8 @@ class TechPackDetailsController extends GetxController {
         final currentGenerationId = _activeGenerationId!;
         await _subscriptionService.incrementFreeExtraTechpackUsage();
         generationCancelled.value = false;
+        generationProgress.value = 0.1;
+        generationStep.value = 1;
         generateTechPackImages(currentGenerationId);
         Navigator.of(Get.overlayContext!).pop();
         Get.toNamed('/tech_pack_ready_screen');
@@ -1081,6 +1110,8 @@ class TechPackDetailsController extends GetxController {
         print('✅ Tech pack usage incremented BEFORE generation (after add-on purchase)');
 
         generationCancelled.value = false; // Reset cancellation flag
+        generationProgress.value = 0.1;
+        generationStep.value = 1;
         generateTechPackImages(currentGenerationId); // Start generation with ID
         Navigator.of(Get.overlayContext!).pop(); // Close the dialog
         Get.toNamed('/tech_pack_ready_screen'); // Navigate

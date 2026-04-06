@@ -795,29 +795,30 @@ class CreativeBriefScreen extends GetView<CreativeBriefController> {
             if (images.isEmpty) ...[
               SizedBox(height: 16.h),
               Center(
-                child: TextButton(
-                  onPressed: () {
+                child: GestureDetector(
+                  onTap: isAnswered ? null : () {
                     controller.skipInspirationQuestion();
                   },
-                  style: TextButton.styleFrom(
+                  child: Container(
                     padding: EdgeInsets.symmetric(
                       horizontal: 24.w,
                       vertical: 12.h,
                     ),
-                    shape: RoundedRectangleBorder(
+                    decoration: BoxDecoration(
+                      color: isAnswered ? AppColors.buttonColor : Colors.transparent,
                       borderRadius: BorderRadius.circular(20.r),
-                      side: BorderSide(
-                        color: const Color(0xFFE0E0E0),
+                      border: Border.all(
+                        color: isAnswered ? Colors.transparent : const Color(0xFFE0E0E0),
                         width: 1.5,
                       ),
                     ),
-                  ),
-                  child: Text(
-                    l10n.skipNoReferenceImages,
-                    style: TextStyle(
-                      fontSize: 14.sp,
-                      color: const Color(0xFF666666),
-                      fontWeight: FontWeight.w500,
+                    child: Text(
+                      l10n.skipNoReferenceImages,
+                      style: TextStyle(
+                        fontSize: 14.sp,
+                        color: isAnswered ? Colors.white : const Color(0xFF666666),
+                        fontWeight: FontWeight.w500,
+                      ),
                     ),
                   ),
                 ),
