@@ -30,8 +30,13 @@ export const stripeWebhook = onRequest(
     let event: Stripe.Event;
 
     try {
-      // Get raw body for signature verification (v2 uses req.rawBody)
-      const rawBody = (req as any).rawBody || req.body;
+      // Must use raw body buffer — never the parsed req.body object
+      const rawBody = (req as any).rawBody;
+      if (!rawBody) {
+        console.error('❌ WEBHOOK: rawBody is undefined — cannot verify signature');
+        res.status(400).send('Webhook Error: raw body not available');
+        return;
+      }
       event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
       console.log('✅ WEBHOOK: Signature verified successfully');
     } catch (err: any) {
@@ -215,12 +220,13 @@ async function handleSubscriptionUpdated(subscription: Stripe.Subscription) {
     };
     
     if (shouldResetTechpacks) {
+      updateData.designsGeneratedThisMonth = 0;
       if (isYearly) {
         updateData.techpacksUsedThisYear = 0;
-        updateData.techpacksUsedThisMonth = 0; // Keep monthly counter for designs
+        updateData.techpacksUsedThisMonth = 0;
       } else {
         updateData.techpacksUsedThisMonth = 0;
-        updateData.techpacksUsedThisYear = 0; // Initialize yearly counter
+        updateData.techpacksUsedThisYear = 0;
       }
     }
     
@@ -351,17 +357,17 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 // Helper function to map price IDs to plan names
 function getPlanNameFromPriceId(priceId: string): string {
   switch (priceId) {
-    case 'price_1SokjDB0j1hBhcavV5F0hkvX': // STARTER monthly
+    case 'price_1SrIZmB0j1hBhcavLizS6xZ0': // STARTER monthly
       return 'STARTER';
-    case 'price_1Sokk3B0j1hBhcavbpjVtnGv': // STARTER yearly
+    case 'price_1SrIZcB0j1hBhcaveKKfhFDc': // STARTER yearly
       return 'STARTER_YEARLY';
-    case 'price_1SoklQB0j1hBhcavYA4erwqY': // PRO monthly
+    case 'price_1SrIZgB0j1hBhcavcgFGjJFy': // PRO monthly
       return 'PRO';
-    case 'price_1SokkxB0j1hBhcaviwspqhPv': // PRO yearly
+    case 'price_1SrIZVB0j1hBhcavd3DPsClC': // PRO yearly
       return 'PRO_YEARLY';
-    case 'price_1SokmOB0j1hBhcavZWbByj8F': // STUDIO monthly
+    case 'price_1SrIZQB0j1hBhcavuPe13RH2': // STUDIO monthly
       return 'STUDIO';
-    case 'price_1SokmqB0j1hBhcavGcXmnQEk': // STUDIO yearly
+    case 'price_1SrIZLB0j1hBhcavy3NJMTzh': // STUDIO yearly
       return 'STUDIO_YEARLY';
     default:
       return 'FREE';
