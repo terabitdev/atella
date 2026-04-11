@@ -3234,7 +3234,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get viewPlan => 'Voir l\'abonnement';
 
   @override
-  String get settingsFreePlan => 'Forfait Gratuit';
+  String get settingsFreePlan => 'Limite des modèles gratuits';
 
   @override
   String get settingsFreeMonthly => 'Gratuit mensuel';

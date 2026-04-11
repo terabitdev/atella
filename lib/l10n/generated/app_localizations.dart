@@ -5843,7 +5843,7 @@ abstract class AppLocalizations {
   /// Plan label for free users in the settings card
   ///
   /// In en, this message translates to:
-  /// **'Free Plan'**
+  /// **'Free Design Limits'**
   String get settingsFreePlan;
 
   /// Label for the free monthly allowance section in the settings card

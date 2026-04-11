@@ -3178,7 +3178,7 @@ class AppLocalizationsEn extends AppLocalizations {
   String get viewPlan => 'View Plan';
 
   @override
-  String get settingsFreePlan => 'Free Plan';
+  String get settingsFreePlan => 'Free Design Limits';
 
   @override
   String get settingsFreeMonthly => 'Monthly free';

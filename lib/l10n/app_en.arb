@@ -3866,7 +3866,7 @@
   "@viewPlan": {
     "description": "Settings card label to open the subscription detail screen"
   },
-  "settingsFreePlan": "Free Plan",
+  "settingsFreePlan": "Free Design Limits",
   "@settingsFreePlan": {
     "description": "Plan label for free users in the settings card"
   },
