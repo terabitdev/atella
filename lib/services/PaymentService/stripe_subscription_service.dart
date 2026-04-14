@@ -963,11 +963,14 @@ class StripeSubscriptionService {
     }
   }
 
-  /// Validate subscription status from Stripe API
-  /// Returns true if subscription is active and paid, false otherwise
-  Future<bool> _validateStripeSubscriptionStatus(String subscriptionId) async {
+  /// Fetch subscription status string from Stripe API.
+  /// Returns the status string (e.g. 'active', 'incomplete') on success,
+  /// or null if Stripe is unreachable or returns an unexpected error.
+  /// Returns null (not false) on failure so callers can distinguish
+  /// "genuinely invalid" from "couldn't reach Stripe".
+  Future<String?> _getStripeSubscriptionStatus(String subscriptionId) async {
     try {
-      print('🔍 Validating Stripe subscription status: $subscriptionId');
+      print('🔍 Fetching Stripe subscription status: $subscriptionId');
 
       final response = await http.get(
         Uri.parse('$_stripeApiUrl/subscriptions/$subscriptionId'),
@@ -976,28 +979,27 @@ class StripeSubscriptionService {
 
       if (response.statusCode == 200) {
         final subscriptionData = json.decode(response.body);
-        final status = subscriptionData['status'];
-
+        final status = subscriptionData['status'] as String?;
         print('🔍 Stripe subscription status: $status');
-
-        // Valid statuses: 'active', 'trialing'
-        // Invalid statuses: 'incomplete', 'incomplete_expired', 'past_due', 'canceled', 'unpaid'
-        return status == 'active' || status == 'trialing';
+        return status;
       } else if (response.statusCode == 404) {
-        print('⚠️ Subscription not found in Stripe');
-        return false;
+        print('⚠️ Subscription not found in Stripe (404)');
+        return 'not_found';
       } else {
-        print('⚠️ Failed to validate subscription: ${response.statusCode}');
-        return false;
+        print('⚠️ Unexpected Stripe response: ${response.statusCode}');
+        return null; // Treat unexpected errors as unreachable — do not revert
       }
     } catch (e) {
-      print('❌ Error validating subscription status: $e');
-      return false;
+      print('❌ Network error fetching subscription status: $e');
+      return null; // Unreachable — do not revert
     }
   }
 
-  /// Validate and clean up incomplete/unpaid subscriptions on app launch
-  /// This fixes the issue where users close the app before completing payment
+  /// Validate and clean up incomplete/unpaid subscriptions on app launch.
+  /// ONLY reverts to FREE if Firestore shows status 'incomplete' AND Stripe
+  /// confirms the subscription is truly incomplete — never on network errors
+  /// or any other condition. Firestore is the source of truth for active/paid
+  /// subscriptions; only the Cloud Function webhook should downgrade those.
   Future<void> validateAndCleanupSubscription() async {
     User? user = _auth.currentUser;
     if (user == null) return;
@@ -1013,34 +1015,47 @@ class StripeSubscriptionService {
 
       if (userData == null) return;
 
-      String? subscriptionId = userData['currentSubscriptionId'];
       String subscriptionPlan = userData['subscriptionPlan'] ?? 'FREE';
+      String subscriptionStatus = userData['subscriptionStatus'] ?? '';
+      String? subscriptionId = userData['currentSubscriptionId'];
 
-      // If user has FREE plan, no validation needed
+      // If user is on FREE plan, nothing to validate
       if (subscriptionPlan == 'FREE') {
         print('✅ User is on FREE plan, no validation needed');
         return;
       }
 
-      // If user has a paid plan but no subscription ID, revert to FREE
+      // Only validate if Firestore status is 'incomplete' — meaning the user
+      // closed the app mid-payment. Active/paid subscriptions are managed
+      // exclusively by the Cloud Function webhook and must not be touched here.
+      if (subscriptionStatus != 'incomplete') {
+        print('✅ Subscription status is "$subscriptionStatus" — trusting Firestore, skipping validation');
+        return;
+      }
+
+      // No subscription ID with incomplete status — safe to revert
       if (subscriptionId == null || subscriptionId.isEmpty) {
-        print(
-          '⚠️ User has paid plan but no subscription ID, reverting to FREE',
-        );
+        print('⚠️ Incomplete subscription has no ID, reverting to FREE');
         await _revertToFreePlan(user.uid);
         return;
       }
 
-      // Validate subscription status from Stripe
-      bool isValid = await _validateStripeSubscriptionStatus(subscriptionId);
+      // Confirm with Stripe that the subscription is genuinely incomplete
+      // If there's any network error or Stripe is unreachable, do NOT revert
+      final stripeStatus = await _getStripeSubscriptionStatus(subscriptionId);
 
-      if (!isValid) {
-        print(
-          '❌ Subscription is not valid (incomplete/unpaid/cancelled), reverting to FREE',
-        );
+      if (stripeStatus == null) {
+        // Network error or Stripe unavailable — leave Firestore untouched
+        print('⚠️ Could not reach Stripe, skipping validation to protect user data');
+        return;
+      }
+
+      if (stripeStatus == 'incomplete' || stripeStatus == 'incomplete_expired') {
+        print('❌ Stripe confirms subscription is $stripeStatus, reverting to FREE');
         await _revertToFreePlan(user.uid);
       } else {
-        print('✅ Subscription is valid and active');
+        // Stripe says it's active/trialing/etc — Firestore status was stale, leave it
+        print('✅ Stripe subscription status is "$stripeStatus" — leaving Firestore untouched');
       }
     } catch (e) {
       print('❌ Error during subscription validation: $e');
