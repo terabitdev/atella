@@ -264,7 +264,7 @@ class TechPackReadyScreen extends StatelessWidget {
           screenName: 'TechPackReadyScreen',
           child: SafeArea(
             child: SingleChildScrollView(
-              padding: const EdgeInsets.symmetric(horizontal: 26, vertical: 26),
+              padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 26),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [

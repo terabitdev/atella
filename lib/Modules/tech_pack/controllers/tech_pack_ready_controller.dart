@@ -52,12 +52,12 @@ Delivery: ${_detailsController.deliveryDateController.text}
 
   // Get garment type from creative brief for product filtering
   String get garmentType {
-    // Try to get from design data (creative brief) first
     if (_detailsController.designData.isNotEmpty) {
       final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
       if (creativeBrief != null && creativeBrief['garmentType'] != null) {
-        final type = creativeBrief['garmentType'].toString();
-        return type;
+        final raw = creativeBrief['garmentType'].toString();
+        // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
+        return raw.contains(': ') ? raw.split(': ').last : raw;
       }
     }
     return '';
@@ -73,14 +73,16 @@ Delivery: ${_detailsController.deliveryDateController.text}
   String _getProjectName() {
     // Extract garment type for project name
     String garmentType = 'Fashion';
-    
+
     if (_detailsController.designData.isNotEmpty) {
       final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
       if (creativeBrief != null && creativeBrief['garmentType'] != null) {
-        garmentType = creativeBrief['garmentType'].toString();
+        final raw = creativeBrief['garmentType'].toString();
+        // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
+        garmentType = raw.contains(': ') ? raw.split(': ').last : raw;
       }
     }
-    
+
     return '$garmentType Tech Pack';
   }
 

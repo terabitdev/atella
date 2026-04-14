@@ -456,95 +456,118 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     required String selectedDesignPrompt,
   }) async {
     // Extract key information directly - no GPT-4 API call needed
-    final garmentType = creativeBrief['garmentType'] ?? 'jacket';
-    final primaryColor = techPackDetails['colors']?['primaryColor'] ?? 'blue';
-    final alternateColor =
-        techPackDetails['colors']?['alternateColorways'] ?? 'navy';
-    final pantone = techPackDetails['colors']?['pantone'] ?? '#0066CC';
-    final mainFabric = techPackDetails['materials']?['mainFabric'] ?? 'cotton';
-    final secondaryMaterial =
-        techPackDetails['materials']?['secondaryMaterials'] ??
-        'polyester lining';
-    final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? 'XS-XL';
-    final accessories =
-        techPackDetails['technical']?['accessories'] ?? 'zipper';
-    final stitching =
-        techPackDetails['technical']?['stitching'] ?? 'single stitch';
-    final decorativeStitching =
-        techPackDetails['technical']?['decorativeStitching'] ??
-        'contrast topstitch';
-    final logoPlacement =
-        techPackDetails['labeling']?['logoPlacement'] ?? 'chest';
+    final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
+    // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
+    final garmentType = rawGarmentType.contains(': ')
+        ? rawGarmentType.split(': ').last
+        : rawGarmentType;
+    final mainFabric = techPackDetails['materials']?['mainFabric'] ?? '';
+    final secondaryMaterial = techPackDetails['materials']?['secondaryMaterials'] ?? '';
+    final fabricProperties = techPackDetails['materials']?['fabricProperties'] ?? '';
+    final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
+    final measurementChart = techPackDetails['sizes']?['measurementChart'] ?? '';
+    final accessories = techPackDetails['technical']?['accessories'] ?? '';
+    final stitching = techPackDetails['technical']?['stitching'] ?? '';
+    final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? '';
+    final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
     final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
-    final packagingType =
-        techPackDetails['packaging']?['packagingType'] ?? 'polybag';
-    // final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? 'fold neatly';
-    final costPerPiece =
-        techPackDetails['production']?['costPerPiece'] ?? '\$25';
-    final quantity = techPackDetails['production']?['quantity'] ?? '100';
-    final deliveryDate =
-        techPackDetails['production']?['deliveryDate'] ?? 'TBD';
-    // final style = creativeBrief['style'] ?? 'casual';
-    final features = refinedConcept['features'] ?? 'standard collar';
-
-    // Create logo instruction based on what user provided
-    // ignore: unused_local_variable
-    String logoInstruction = '';
-    String labelTextForSection = '';
-
-    if (labelImage.isNotEmpty) {
-      // User uploaded a logo reference image - show actual logo on garment
-      logoInstruction =
-          'Show the logo/label from the reference image placed on the $logoPlacement area of the $garmentType. The logo should be clearly visible and properly scaled.';
-
-      // If label text is also provided, show it in LABELS section (not on garment)
-      if (labelsNeeded.isNotEmpty) {
-        labelTextForSection = labelsNeeded;
-      }
-    } else if (labelsNeeded.isNotEmpty) {
-      // User provided ONLY label text (no custom image) - do NOT show anything on garment
-      logoInstruction = ''; // No logo on garment - keep it clean
-
-      // Label text goes in LABELS section only
-      labelTextForSection = labelsNeeded;
-    } else if (logoPlacement.isNotEmpty) {
-      // Only placement provided, no logo, no text
-      logoInstruction = ''; // Keep garment clean
-    }
-
-    // Manufacturing prompt - conditional based on logo type
-    // If IMAGE logo uploaded: Simple prompt (logo will be shown as reference, not rendered)
-    // If TEXT logo provided: Full prompt (AI will render the text logo)
-    print('🎨 DEBUG: Determining manufacturing prompt type...');
+    final packagingType = techPackDetails['packaging']?['packagingType'] ?? '';
+    final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? '';
+    final inserts = techPackDetails['packaging']?['inserts'] ?? '';
+    final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '';
+    final quantity = techPackDetails['production']?['quantity'] ?? '';
+    final deliveryDate = techPackDetails['production']?['deliveryDate'] ?? '';
+    final manufacturerCountry = techPackDetails['manufacturers']?['country'] ?? '';
+    // Garment overview fields
+    final fit = (refinedConcept['silhouette'] ?? '').toString();
+    final gender = (creativeBrief['targetAudience'] ?? '').toString();
+    final season = (refinedConcept['season'] ?? '').toString();
+    final features = (refinedConcept['features'] ?? '').toString();
+    print('🎨 DEBUG: Building manufacturing prompt...');
     print('   📷 labelImage.isNotEmpty: ${labelImage.isNotEmpty}');
     print('   📝 labelsNeeded.isNotEmpty: ${labelsNeeded.isNotEmpty}');
 
-    String manufacturingPrompt;
-
-    // Build LABELS section content
-    String labelsSection = '';
-    if (labelTextForSection.isNotEmpty) {
-      // Only show label text, not placement
-      labelsSection = labelTextForSection;
-    } else if (logoPlacement.isNotEmpty) {
-      // If no label text but placement exists, show placement
-      labelsSection = '$logoPlacement placement';
+    // SIZES — grid table
+    String sizesSection = '';
+    if (sizeRange.isNotEmpty) {
+      sizesSection += 'Selected sizes: $sizeRange\n';
     }
-
-    if (labelImage.isNotEmpty) {
-      // IMAGE logo - Don't ask AI to render it (will be shown as reference)
-      print('   ✅ Using SIMPLE prompt (image logo - shown as reference)');
-      manufacturingPrompt =
-          '''Professional fashion tech pack specification sheet for $garmentType. Clean organized grid layout with distinct sections: MATERIALS ($mainFabric, $secondaryMaterial written in proper text), COLORS ($primaryColor, $alternateColor, Pantone $pantone with color blocks), SIZES ($sizeRange measurement chart), TECHNICAL ($accessories, $stitching, $decorativeStitching the $garmentType is shown in $primaryColor), LABELS ($labelsSection), PACKAGING ($packagingType), PRODUCTION (Price $costPerPiece, ${quantity}units, $deliveryDate). White background, professional typography, complete layout visible. CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
-    } else {
-      // TEXT logo only or no logo - keep garment clean, show label text in LABELS section
-      print(
-        '   ✅ Using clean garment prompt (no logo on garment, label text only in LABELS section)',
-      );
-      manufacturingPrompt =
-          '''Professional fashion tech pack specification sheet for $garmentType. Clean organized grid layout with distinct sections: MATERIALS ($mainFabric, $secondaryMaterial written in proper text), COLORS ($primaryColor, $alternateColor, Pantone $pantone with color blocks), SIZES ($sizeRange measurement chart), TECHNICAL ($accessories, $stitching, $decorativeStitching the $garmentType is shown in $primaryColor), LABELS ($labelsSection), PACKAGING ($packagingType), PRODUCTION (Price $costPerPiece, ${quantity}units, $deliveryDate). White background, professional typography, complete layout visible. CRITICAL: Ensure all text is spelled correctly with no spelling mistakes anywhere.''';
+    if (measurementChart.isNotEmpty) {
+      sizesSection += 'Measurement data: $measurementChart\n';
     }
+    sizesSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n';
+
+    // CONSTRUCTION DETAILS — include fabric here
+    String constructionSection = '';
+    if (mainFabric.isNotEmpty) constructionSection += '-- Fabric: $mainFabric\n';
+    if (secondaryMaterial.isNotEmpty) constructionSection += '-- Secondary material: $secondaryMaterial\n';
+    if (fabricProperties.isNotEmpty) constructionSection += '-- Fabric properties: $fabricProperties\n';
+    if (stitching.isNotEmpty) constructionSection += '-- Main seams: $stitching\n';
+    if (decorativeStitching.isNotEmpty) constructionSection += '-- Decorative stitching: $decorativeStitching\n';
+    if (accessories.isNotEmpty) constructionSection += '-- Accessories: $accessories\n';
+    constructionSection += '-- Seam allowance: 1 cm (all seams)\n';
+
+    // LABELING & BRANDING — appears only once, no QR code
+    String labelingSection = '';
+    if (labelsNeeded.isNotEmpty) labelingSection += '• Label text: $labelsNeeded\n';
+    if (logoPlacement.isNotEmpty) labelingSection += '• Logo placement: $logoPlacement\n';
+
+    String packagingSection = '';
+    if (packagingType.isNotEmpty) packagingSection += '• Packaging type: $packagingType\n';
+    if (foldingInstructions.isNotEmpty) packagingSection += '• Folding instructions: $foldingInstructions\n';
+    if (inserts.isNotEmpty) packagingSection += '• Inserts: $inserts\n';
+
+    String productionSection = '';
+    if (costPerPiece.isNotEmpty) productionSection += '• Cost per piece: $costPerPiece\n';
+    if (quantity.isNotEmpty) productionSection += '• Order quantity: $quantity units\n';
+    if (deliveryDate.isNotEmpty) productionSection += '• Delivery date: $deliveryDate\n';
+    if (manufacturerCountry.isNotEmpty) productionSection += '• Manufacturer country: $manufacturerCountry\n';
+
+    // Garment overview — 4 clean lines only
+    String garmentOverviewSection = '• Garment Type: $garmentType\n';
+    if (fit.isNotEmpty) garmentOverviewSection += '• Fit: $fit\n';
+    if (gender.isNotEmpty) garmentOverviewSection += '• Gender: $gender\n';
+    if (season.isNotEmpty) garmentOverviewSection += '• Season: $season\n';
+
+    final String garmentTitle = garmentType.toUpperCase();
+
+    final String manufacturingPrompt =
+        '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
+
+═══════════════════════════════════════════════
+TECH PACK — $garmentTitle
+═══════════════════════════════════════════════
+
+MANDATORY SECTIONS (render all of these exactly once, in this order):
+
+──────────────────────────────────────
+GARMENT OVERVIEW
+──────────────────────────────────────
+$garmentOverviewSection
+──────────────────────────────────────
+SIZES
+──────────────────────────────────────
+$sizesSection
+──────────────────────────────────────
+CONSTRUCTION DETAILS
+──────────────────────────────────────
+$constructionSection
+${labelingSection.isNotEmpty ? '──────────────────────────────────────\nLABELS & BRANDING\n──────────────────────────────────────\n$labelingSection' : ''}
+${packagingSection.isNotEmpty ? '──────────────────────────────────────\nPACKAGING\n──────────────────────────────────────\n$packagingSection' : ''}
+${productionSection.isNotEmpty ? '──────────────────────────────────────\nPRODUCTION DETAILS\n──────────────────────────────────────\n$productionSection' : ''}
+
+Style requirements:
+- White background, clean margins, professional fashion industry layout
+- Section headers in bold with divider lines
+- Bullet points for list items; bordered grid table for SIZES section
+- Each color entry has a solid filled square swatch box in the actual color to its left
+- IMPORTANT: Render each section EXACTLY ONCE — do not repeat any section header or content
+- All text clearly readable, professional sans-serif typography
+- Complete layout fully visible within image boundaries
+- CRITICAL: All text must be spelled correctly with zero spelling mistakes
+''';
+
     // Build technical flat prompt with correct logo behavior
     String technicalLogoInstruction = '';
     if (labelImage.isNotEmpty) {
@@ -555,9 +578,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       // User provided label text or just placement - show highlighted area with "LOGO" text
       technicalLogoInstruction =
           '\n- Mark the $logoPlacement area with a highlighted box or dashed outline containing the word "LOGO" in capital letters.';
-      if (labelTextForSection.isNotEmpty) {
+      if (labelsNeeded.isNotEmpty) {
         technicalLogoInstruction +=
-            '\n- Add callout annotation near the logo area showing: "Label: $labelTextForSection"';
+            '\n- Add callout annotation near the logo area showing: "Label: $labelsNeeded"';
       }
     }
 
