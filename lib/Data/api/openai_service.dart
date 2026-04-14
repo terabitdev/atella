@@ -107,7 +107,7 @@ class OpenAIService {
         request.headers['Authorization'] = 'Bearer $apiKey';
 
         // Add form fields
-        request.fields['model'] = 'gpt-image-1';
+        request.fields['model'] = 'gpt-image-1.5';
         request.fields['prompt'] = safePrompt;
         request.fields['size'] = size;
         request.fields['n'] = numberOfImages.toString();
@@ -136,7 +136,7 @@ class OpenAIService {
             'Authorization': 'Bearer $apiKey',
           },
           body: jsonEncode({
-            'model': 'gpt-image-1',
+            'model': 'gpt-image-1.5',
             'prompt': safePrompt,
             'n': numberOfImages,
             'size': size,
@@ -145,9 +145,13 @@ class OpenAIService {
       }
 
       print('OpenAI: Response status code: ${response.statusCode}');
+      print('OpenAI: Raw response body: ${response.body}');
 
       if (response.statusCode == 200) {
         print('OpenAI: Tech pack image generation successful!');
+        if (response.body.isEmpty) {
+          throw Exception('OpenAI returned empty response body');
+        }
         final data = jsonDecode(response.body);
         final List<dynamic> imageData = data['data'];
 
@@ -164,6 +168,9 @@ class OpenAIService {
         return base64Images;
       } else {
         print('OpenAI: Error response: ${response.body}');
+        if (response.body.isEmpty) {
+          throw Exception('OpenAI API Error: status ${response.statusCode}, empty response body');
+        }
         final errorData = jsonDecode(response.body);
         throw Exception('OpenAI API Error: ${errorData['error']['message']}');
       }
@@ -227,7 +234,7 @@ class OpenAIService {
         request.headers['Authorization'] = 'Bearer $apiKey';
 
         // Add form fields
-        request.fields['model'] = 'gpt-image-1';
+        request.fields['model'] = 'gpt-image-1.5';
         request.fields['prompt'] = safePrompt;
         request.fields['size'] = size;
         request.fields['n'] = numberOfImages.toString();
@@ -256,7 +263,7 @@ class OpenAIService {
             'Authorization': 'Bearer $apiKey',
           },
           body: jsonEncode({
-            'model': 'gpt-image-1',
+            'model': 'gpt-image-1.5',
             'prompt': safePrompt,
             'n': numberOfImages,
             'size': size,
@@ -264,10 +271,14 @@ class OpenAIService {
         );
       }
 
-      print('OpenAI: Response status code:  [32m${response.statusCode} [0m');
+      print('OpenAI: Response status code: ${response.statusCode}');
+      print('OpenAI: Raw response body: ${response.body}');
 
       if (response.statusCode == 200) {
         print('OpenAI: Image generation successful!');
+        if (response.body.isEmpty) {
+          throw Exception('OpenAI returned empty response body');
+        }
         final data = jsonDecode(response.body);
         final List<dynamic> imageData = data['data'];
 
@@ -283,6 +294,9 @@ class OpenAIService {
         return base64Images;
       } else {
         print('OpenAI: Error response: ${response.body}');
+        if (response.body.isEmpty) {
+          throw Exception('OpenAI API Error: status ${response.statusCode}, empty response body');
+        }
         final errorData = jsonDecode(response.body);
         throw Exception('OpenAI API Error: ${errorData['error']['message']}');
       }
