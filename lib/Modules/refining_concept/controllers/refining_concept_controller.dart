@@ -1958,7 +1958,8 @@ class RefiningConceptController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
-      await Get.toNamed(
+      isStartingGeneration.value = false;
+      Get.toNamed(
         '/generate_tech_pack',
         arguments: {
           'editMode': true,
@@ -1978,14 +1979,14 @@ class RefiningConceptController extends GetxController {
         colorText: Colors.white,
         duration: const Duration(milliseconds: 1500),
       );
-      await Get.toNamed(
+      isStartingGeneration.value = false;
+      Get.toNamed(
         '/generate_tech_pack',
         arguments: {
           'forceRegenerate': true,
         },
       );
     }
-    isStartingGeneration.value = false;
   }
 
   // Save default/empty final details data when skipping Final Details screen

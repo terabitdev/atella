@@ -957,9 +957,9 @@ class TechPackDetailsController extends GetxController {
     // Pass generation ID to track this specific generation
     generateTechPackImages(currentGenerationId);
 
-    // Navigate to ready screen; await so we can reset the button loading state if user comes back
-    await Get.toNamed('/tech_pack_ready_screen');
+    // Reset loading state before navigating so it's never stuck if user returns via push
     isStartingGeneration.value = false;
+    Get.toNamed('/tech_pack_ready_screen');
   }
 
   void _showUpgradeDialog() async {
