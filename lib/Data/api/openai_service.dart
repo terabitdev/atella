@@ -584,42 +584,52 @@ Style requirements:
     }
 
     final technicalFlatPrompt =
-        '''
-Professional technical flat drawing layout for $garmentType on a clean white background.
+        '''Technical flat drawing of a $garmentType. White background. Black line art only, no colors, no shading, no fill.
 
-Layout:
-- FRONT view (left) and BACK view (right) arranged horizontally with equal spacing and proper margins.
-- All views completely visible within image boundaries.
+LAYOUT:
+- Left half of image: FRONT VIEW of the $garmentType
+- Right half of image: BACK VIEW of the $garmentType
+- Leave generous empty margin space around each view specifically for measurement annotations
+- Both views fully visible, not cropped or cut off
 
-Style:
-- Black line art, precise vector quality, professional apparel technical drawing standard.
-- Crisp, uniform outlines with slightly thicker exterior contour.
-- Clear sans-serif font for all annotations and labels.
-- Measurement text fully visible and not cut off.
+DRAWING STYLE:
+- Clean precise black outlines, slightly thicker on exterior silhouette
+- Professional apparel technical drawing, vector-quality
+- No text, labels, or callouts drawn on or inside the garment itself
+- No shading, no color fills, black and white only
 
-Annotations & Measurements:
-- MANDATORY: ALL 10 measurements listed below MUST appear in the drawing. Do not skip any. Place them outside the garment outline with clear dimension arrows pointing to the correct part.
-- Every measurement MUST show a real numeric value in cm. Use standard industry values for a size M $garmentType. Do NOT leave any measurement blank, empty, or label-only.
-- Distribute measurements across both views to avoid crowding — place some on the FRONT view and some on the BACK view:
-  1. Shoulder width: (e.g. 38 cm) — on front or back
-  2. Chest width: (e.g. 48 cm) — on front
-  3. Front length: (e.g. 65 cm) — on front
-  4. Back length: (e.g. 67 cm) — on back
-  5. Sleeve length: (e.g. 60 cm) — on sleeve
-  6. Armhole depth: (e.g. 22 cm) — on front or back
-  7. Neck opening width: (e.g. 18 cm) — on front
-  8. Sleeve opening width: (e.g. 12 cm) — at cuff/sleeve hem
-  9. Cuff width: (e.g. 11 cm) — at cuff
-  10. Collar height: (e.g. 4 cm) — at collar
-- All dimension arrows must connect precisely to their measurement points with clean leader lines.$technicalLogoInstruction
+MEASUREMENTS — FRONT VIEW (annotate on the left half):
+Draw double-headed dimension arrows OUTSIDE the garment outline, each with a clear numeric cm value:
+  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top
+  • Chest width: 48 cm — horizontal arrow across the widest chest point
+  • Front length: 65 cm — vertical arrow along the left outer edge, top to hem
+  • Armhole depth: 22 cm — vertical arrow on the side from shoulder seam to underarm
+  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff
 
-Output:
-- White background, clean margins.
-- Fully annotated, measurement-rich technical flat drawing ready for inclusion in a production tech pack.
-- Black-and-white only, no shading or colors.
-- Complete sheet layout with 10% margin border
+MEASUREMENTS — BACK VIEW (annotate on the right half):
+Draw double-headed dimension arrows OUTSIDE the garment outline, each with a clear numeric cm value:
+  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam
+  • Back length: 67 cm — vertical arrow along the right outer edge, top to hem
+  • Collar height: 4 cm — vertical arrow at the collar stand
+  • Cuff width: 11 cm — horizontal arrow across the cuff opening
+  • Sleeve opening width: 12 cm — horizontal arrow at the sleeve hem/opening$technicalLogoInstruction
 
-CRITICAL: Ensure all text, labels, and annotations are spelled correctly with no spelling mistakes anywhere.
+MEASUREMENT SUMMARY TABLE — below the drawing:
+After both garment views, add a clean text summary at the bottom of the image listing all measurements in two columns:
+  Neck Opening: 18 cm        Shoulder Width: 38 cm
+  Chest Width: 48 cm         Back Length: 67 cm
+  Front Length: 65 cm        Collar Height: 4 cm
+  Armhole Depth: 22 cm       Cuff Width: 11 cm
+  Sleeve Length: 60 cm       Sleeve Opening: 12 cm
+
+RULES:
+- Every single measurement arrow MUST display its numeric cm value — no blank or missing values
+- Arrows must sit outside the garment, never overlapping the garment outline
+- Use small, clear, sans-serif font for all measurement text
+- Do not add any extra labels, callouts, or garment feature annotations beyond measurements
+- The measurement summary table at the bottom must include all 10 measurements
+
+CRITICAL: All text and numbers must be spelled and written correctly with no mistakes.
 ''';
 
     print('Manufacturing prompt (${manufacturingPrompt.length} chars)');
