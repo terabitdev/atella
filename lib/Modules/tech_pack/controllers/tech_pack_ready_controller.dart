@@ -56,8 +56,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
       final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
       if (creativeBrief != null && creativeBrief['garmentType'] != null) {
         final raw = creativeBrief['garmentType'].toString();
-        // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
-        return raw.contains(': ') ? raw.split(': ').last : raw;
+        // Strip category prefix: "Dresses:Cocktail dress" → "Cocktail dress"
+        return raw.contains(':') ? raw.split(':').last.trim() : raw;
       }
     }
     return '';
@@ -78,8 +78,8 @@ Delivery: ${_detailsController.deliveryDateController.text}
       final creativeBrief = _detailsController.designData['creativeBrief'] as Map<String, dynamic>?;
       if (creativeBrief != null && creativeBrief['garmentType'] != null) {
         final raw = creativeBrief['garmentType'].toString();
-        // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
-        garmentType = raw.contains(': ') ? raw.split(': ').last : raw;
+        // Strip category prefix: "Dresses:Cocktail dress" → "Cocktail dress"
+        garmentType = raw.contains(':') ? raw.split(':').last.trim() : raw;
       }
     }
 

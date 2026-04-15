@@ -457,9 +457,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
   }) async {
     // Extract key information directly - no GPT-4 API call needed
     final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
-    // Strip category prefix: "Dresses: Cocktail Dress" → "Cocktail Dress"
-    final garmentType = rawGarmentType.contains(': ')
-        ? rawGarmentType.split(': ').last
+    // Strip category prefix: "Dresses:Cocktail dress" → "Cocktail dress"
+    final garmentType = rawGarmentType.contains(':')
+        ? rawGarmentType.split(':').last.trim()
         : rawGarmentType;
     final mainFabric = techPackDetails['materials']?['mainFabric'] ?? '';
     final secondaryMaterial = techPackDetails['materials']?['secondaryMaterials'] ?? '';
