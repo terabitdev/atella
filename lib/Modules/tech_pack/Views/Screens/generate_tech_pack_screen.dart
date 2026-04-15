@@ -18,49 +18,6 @@ class GenerateTechPackScreen extends StatelessWidget {
 
   final controller = Get.put(TechPackController(), permanent: true);
 
-  void showImageDialog(BuildContext context, String base64Image) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 60.h),
-          child: Container(
-            width: double.infinity,
-            // Remove fixed height to prevent vertical cropping
-            constraints: BoxConstraints(
-              maxHeight: MediaQuery.of(context).size.height - 120.h,
-            ),
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.circular(36.r),
-            ),
-            padding: EdgeInsets.all(8.r),
-            child: ClipRRect(
-              borderRadius: BorderRadius.circular(28.r),
-              child: Image.memory(
-                base64Decode(base64Image),
-                fit: BoxFit.contain, // Show full image without cropping
-                errorBuilder: (context, error, stackTrace) {
-                  return Container(
-                    color: Colors.grey.shade200,
-                    child: Center(
-                      child: Icon(
-                        Icons.error_outline,
-                        size: 48.w,
-                        color: Colors.grey.shade400,
-                      ),
-                    ),
-                  );
-                },
-              ),
-            ),
-          ),
-        );
-      },
-    );
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -349,8 +306,17 @@ class GenerateTechPackScreen extends StatelessWidget {
       final isSelected = controller.selectedDesignIndex.value == index;
       return GestureDetector(
         onTap: () {
-          controller.selectDesign(index);
-          showImageDialog(context, base64Image);
+          Navigator.of(context).push(
+            MaterialPageRoute(
+              builder: (_) => _DesignGalleryViewer(
+                images: controller.generatedImages,
+                initialIndex: index,
+                onSelect: (selectedIndex) {
+                  controller.selectDesign(selectedIndex);
+                },
+              ),
+            ),
+          );
         },
         child: Container(
           margin: const EdgeInsets.only(bottom: 16),
@@ -529,6 +495,205 @@ class GenerateTechPackScreen extends StatelessWidget {
         }),
         SizedBox(height: 24.h),
       ],
+    );
+  }
+}
+
+// ─── Full-screen design gallery with zoom, dots, and Select button ───────────
+
+class _DesignGalleryViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+  final void Function(int selectedIndex) onSelect;
+
+  const _DesignGalleryViewer({
+    required this.images,
+    required this.initialIndex,
+    required this.onSelect,
+  });
+
+  @override
+  State<_DesignGalleryViewer> createState() => _DesignGalleryViewerState();
+}
+
+class _DesignGalleryViewerState extends State<_DesignGalleryViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+  bool _isZoomed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Swipeable + zoomable pages
+          PageView.builder(
+            controller: _pageController,
+            physics: _isZoomed
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
+            onPageChanged: (i) => setState(() => _currentIndex = i),
+            itemCount: widget.images.length,
+            itemBuilder: (context, i) {
+              return _ZoomableDesignImage(
+                base64Image: widget.images[i],
+                onZoomChanged: (zoomed) {
+                  if (_isZoomed != zoomed) {
+                    setState(() => _isZoomed = zoomed);
+                  }
+                },
+              );
+            },
+          ),
+
+          // Top bar: close (left) + Select (right)
+          SafeArea(
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 8),
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                children: [
+                  // Close button
+                  GestureDetector(
+                    onTap: () => Navigator.of(context).pop(),
+                    child: Container(
+                      padding: const EdgeInsets.all(6),
+                      decoration: const BoxDecoration(
+                        color: Colors.black54,
+                        shape: BoxShape.circle,
+                      ),
+                      child: const Icon(
+                        Icons.close,
+                        color: Colors.white,
+                        size: 22,
+                      ),
+                    ),
+                  ),
+
+                  // Select button
+                  GestureDetector(
+                    onTap: () {
+                      widget.onSelect(_currentIndex);
+                      Navigator.of(context).pop();
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(
+                        horizontal: 18,
+                        vertical: 8,
+                      ),
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.circular(20),
+                      ),
+                      child: const Text(
+                        'Select',
+                        style: TextStyle(
+                          color: Colors.black,
+                          fontWeight: FontWeight.w600,
+                          fontSize: 14,
+                        ),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ),
+
+          // Dot indicators — bottom centre
+          if (widget.images.length > 1)
+            Positioned(
+              bottom: 36,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(widget.images.length, (i) {
+                  final isActive = _currentIndex == i;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: isActive ? 20 : 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: isActive ? Colors.white : Colors.white38,
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ZoomableDesignImage extends StatefulWidget {
+  final String base64Image;
+  final ValueChanged<bool> onZoomChanged;
+
+  const _ZoomableDesignImage({
+    required this.base64Image,
+    required this.onZoomChanged,
+  });
+
+  @override
+  State<_ZoomableDesignImage> createState() => _ZoomableDesignImageState();
+}
+
+class _ZoomableDesignImageState extends State<_ZoomableDesignImage> {
+  final _transformationController = TransformationController();
+
+  @override
+  void initState() {
+    super.initState();
+    _transformationController.addListener(_onTransform);
+  }
+
+  void _onTransform() {
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    widget.onZoomChanged(scale > 1.01);
+  }
+
+  @override
+  void dispose() {
+    _transformationController.removeListener(_onTransform);
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InteractiveViewer(
+      transformationController: _transformationController,
+      minScale: 1.0,
+      maxScale: 5.0,
+      child: Center(
+        child: Image.memory(
+          base64Decode(widget.base64Image),
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.error_outline, color: Colors.white54, size: 48),
+            );
+          },
+        ),
+      ),
     );
   }
 }

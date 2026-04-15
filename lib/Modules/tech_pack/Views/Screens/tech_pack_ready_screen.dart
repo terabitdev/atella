@@ -18,7 +18,6 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_details_controller.dart';
-import 'package:easy_image_viewer/easy_image_viewer.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -44,16 +43,14 @@ class TechPackReadyScreen extends StatelessWidget {
     }
   }
 
-  void _showBothImagesViewer(BuildContext context, List<String> images) {
-    final multiImageProvider = MultiImageProvider(
-      images.map((img) => MemoryImage(base64Decode(img)) as ImageProvider).toList(),
-    );
-    showImageViewerPager(
-      context,
-      multiImageProvider,
-      swipeDismissible: true,
-      doubleTapZoomable: true,
-      immersive: true,
+  void _showImagesViewer(BuildContext context, List<String> images, int initialIndex) {
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => _TechPackGalleryViewer(
+          images: images,
+          initialIndex: initialIndex,
+        ),
+      ),
     );
   }
 
@@ -273,9 +270,10 @@ class TechPackReadyScreen extends StatelessWidget {
                       SizedBox(height: 16.h),
 
                       GestureDetector(
-                        onTap: () => _showBothImagesViewer(
+                        onTap: () => _showImagesViewer(
                           context,
                           controller.generatedImages,
+                          0,
                         ),
                         child: Container(
                           width: double.infinity,
@@ -294,9 +292,10 @@ class TechPackReadyScreen extends StatelessWidget {
 
                       // Second Image - Technical Flat Drawing with Logo Overlay
                       GestureDetector(
-                        onTap: () => _showBothImagesViewer(
+                        onTap: () => _showImagesViewer(
                           context,
                           controller.generatedImages,
+                          1,
                         ),
                         child: Container(
                           width: double.infinity,
@@ -405,6 +404,168 @@ class TechPackReadyScreen extends StatelessWidget {
               ),
             ),
           ),
+        ),
+      ),
+    );
+  }
+}
+
+// ─── Full-screen tech pack gallery with zoom + dot indicators ────────────────
+
+class _TechPackGalleryViewer extends StatefulWidget {
+  final List<String> images;
+  final int initialIndex;
+
+  const _TechPackGalleryViewer({
+    required this.images,
+    required this.initialIndex,
+  });
+
+  @override
+  State<_TechPackGalleryViewer> createState() => _TechPackGalleryViewerState();
+}
+
+class _TechPackGalleryViewerState extends State<_TechPackGalleryViewer> {
+  late PageController _pageController;
+  late int _currentIndex;
+  bool _isZoomed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Swipeable + zoomable pages
+          PageView.builder(
+            controller: _pageController,
+            physics: _isZoomed
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
+            onPageChanged: (i) => setState(() => _currentIndex = i),
+            itemCount: widget.images.length,
+            itemBuilder: (context, i) {
+              return _ZoomableTechPackImage(
+                base64Image: widget.images[i],
+                onZoomChanged: (zoomed) {
+                  if (_isZoomed != zoomed) {
+                    setState(() => _isZoomed = zoomed);
+                  }
+                },
+              );
+            },
+          ),
+
+          // Close button — top right
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  margin: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(6),
+                  decoration: const BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 22),
+                ),
+              ),
+            ),
+          ),
+
+          // Dot indicators — bottom centre
+          if (widget.images.length > 1)
+            Positioned(
+              bottom: 36,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(widget.images.length, (i) {
+                  final isActive = _currentIndex == i;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: isActive ? 20 : 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: isActive ? Colors.white : Colors.white38,
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ZoomableTechPackImage extends StatefulWidget {
+  final String base64Image;
+  final ValueChanged<bool> onZoomChanged;
+
+  const _ZoomableTechPackImage({
+    required this.base64Image,
+    required this.onZoomChanged,
+  });
+
+  @override
+  State<_ZoomableTechPackImage> createState() => _ZoomableTechPackImageState();
+}
+
+class _ZoomableTechPackImageState extends State<_ZoomableTechPackImage> {
+  final _transformationController = TransformationController();
+
+  @override
+  void initState() {
+    super.initState();
+    _transformationController.addListener(_onTransform);
+  }
+
+  void _onTransform() {
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    widget.onZoomChanged(scale > 1.01);
+  }
+
+  @override
+  void dispose() {
+    _transformationController.removeListener(_onTransform);
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InteractiveViewer(
+      transformationController: _transformationController,
+      minScale: 1.0,
+      maxScale: 5.0,
+      child: Center(
+        child: Image.memory(
+          base64Decode(widget.base64Image),
+          fit: BoxFit.contain,
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.error_outline, color: Colors.white54, size: 48),
+            );
+          },
         ),
       ),
     );
