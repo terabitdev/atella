@@ -18,6 +18,7 @@ import 'package:percent_indicator/percent_indicator.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_details_controller.dart';
+import 'package:easy_image_viewer/easy_image_viewer.dart';
 
 class TechPackReadyScreen extends StatelessWidget {
   const TechPackReadyScreen({super.key});
@@ -43,71 +44,16 @@ class TechPackReadyScreen extends StatelessWidget {
     }
   }
 
-  void _showImagePopup(BuildContext context, String base64Image, String title, {String? logoImagePath, String? logoPlacement}) {
-    showDialog(
-      context: context,
-      barrierDismissible: true,
-      builder: (context) {
-        return Dialog(
-          backgroundColor: Colors.transparent,
-          insetPadding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 60.h),
-          child: ClipRRect(
-            borderRadius: BorderRadius.circular(28.r),
-            child: logoImagePath != null && logoImagePath.isNotEmpty
-                ? Stack(
-                    children: [
-                      // Main image
-                      Image.memory(
-                        base64Decode(base64Image),
-                        fit: BoxFit.cover,
-                        errorBuilder: (context, error, stackTrace) {
-                          return Container(
-                            color: Colors.grey.shade200,
-                            child: Center(
-                              child: Icon(
-                                Icons.error_outline,
-                                size: 48.w,
-                                color: Colors.grey.shade400,
-                              ),
-                            ),
-                          );
-                        },
-                      ),
-                      // Logo overlay (top-left)
-                      Positioned(
-                        top: 16.h,
-                        left: 16.w,
-                        child: Image.file(
-                          File(logoImagePath),
-                          width: 30.w,
-                          height: 30.w,
-                          fit: BoxFit.contain,
-                          errorBuilder: (context, error, stackTrace) {
-                            return SizedBox.shrink();
-                          },
-                        ),
-                      ),
-                    ],
-                  )
-                : Image.memory(
-                    base64Decode(base64Image),
-                    fit: BoxFit.cover,
-                    errorBuilder: (context, error, stackTrace) {
-                      return Container(
-                        color: Colors.grey.shade200,
-                        child: Center(
-                          child: Icon(
-                            Icons.error_outline,
-                            size: 48.w,
-                            color: Colors.grey.shade400,
-                          ),
-                        ),
-                      );
-                    },
-                  ),
-          ),
-        );
-      },
+  void _showBothImagesViewer(BuildContext context, List<String> images) {
+    final multiImageProvider = MultiImageProvider(
+      images.map((img) => MemoryImage(base64Decode(img)) as ImageProvider).toList(),
+    );
+    showImageViewerPager(
+      context,
+      multiImageProvider,
+      swipeDismissible: true,
+      doubleTapZoomable: true,
+      immersive: true,
     );
   }
 
@@ -327,10 +273,9 @@ class TechPackReadyScreen extends StatelessWidget {
                       SizedBox(height: 16.h),
 
                       GestureDetector(
-                        onTap: () => _showImagePopup(
+                        onTap: () => _showBothImagesViewer(
                           context,
-                          controller.generatedImages[0],
-                          l10n.tprTechPackDetails,
+                          controller.generatedImages,
                         ),
                         child: Container(
                           width: double.infinity,
@@ -349,12 +294,9 @@ class TechPackReadyScreen extends StatelessWidget {
 
                       // Second Image - Technical Flat Drawing with Logo Overlay
                       GestureDetector(
-                        onTap: () => _showImagePopup(
+                        onTap: () => _showBothImagesViewer(
                           context,
-                          controller.generatedImages[1],
-                          l10n.tprTechnicalFlatDrawing,
-                          logoImagePath: controller.hasLabelImage ? controller.labelImagePath : null,
-                          logoPlacement: controller.logoPlacement.isNotEmpty ? controller.logoPlacement : null,
+                          controller.generatedImages,
                         ),
                         child: Container(
                           width: double.infinity,

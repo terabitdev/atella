@@ -480,42 +480,55 @@ class _PreviewScreenState extends State<PreviewScreen> {
                             itemBuilder: (context, index) {
                               final imageUrl = allImages[index];
 
-                              return Center(
-                                child: Container(
-                                  width: 0.85.sw,
-                                  decoration: BoxDecoration(
-                                    borderRadius: BorderRadius.circular(20),
-                                    color: Colors.grey.shade100,
-                                  ),
-                                  child: ClipRRect(
-                                    borderRadius: BorderRadius.circular(20),
-                                    child: Image.network(
-                                      imageUrl,
-                                      // Show full image without cropping for all images
-                                      fit: BoxFit.contain,
-                                      loadingBuilder:
-                                          (context, child, loadingProgress) {
-                                            if (loadingProgress == null)
-                                              return child;
-                                            return Center(
-                                              child: Lottie.asset(
-                                                'assets/lottie/Loading_dots.json',
-                                                width: 100.w,
-                                                height: 100.h,
-                                                fit: BoxFit.cover,
-                                              ),
-                                            );
-                                          },
-                                      errorBuilder:
-                                          (context, error, stackTrace) {
-                                            return Center(
-                                              child: Icon(
-                                                Icons.error_outline,
-                                                color: Colors.grey,
-                                                size: 48.sp,
-                                              ),
-                                            );
-                                          },
+                              return GestureDetector(
+                                behavior: HitTestBehavior.opaque,
+                                onTap: () {
+                                  Navigator.of(context).push(
+                                    MaterialPageRoute(
+                                      builder: (_) => _FullScreenGallery(
+                                        imageUrls: allImages,
+                                        initialIndex: index,
+                                      ),
+                                    ),
+                                  );
+                                },
+                                child: Center(
+                                  child: Container(
+                                    width: 0.85.sw,
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(20),
+                                      color: Colors.grey.shade100,
+                                    ),
+                                    child: ClipRRect(
+                                      borderRadius: BorderRadius.circular(20),
+                                      child: Image.network(
+                                        imageUrl,
+                                        fit: BoxFit.contain,
+                                        loadingBuilder:
+                                            (context, child, loadingProgress) {
+                                              if (loadingProgress == null) {
+                                                return child;
+                                              }
+                                              return Center(
+                                                child: Lottie.asset(
+                                                  'assets/lottie/Loading_dots.json',
+                                                  width: 100.w,
+                                                  height: 100.h,
+                                                  fit: BoxFit.cover,
+                                                ),
+                                              );
+                                            },
+                                        errorBuilder:
+                                            (context, error, stackTrace) {
+                                              return Center(
+                                                child: Icon(
+                                                  Icons.error_outline,
+                                                  color: Colors.grey,
+                                                  size: 48.sp,
+                                                ),
+                                              );
+                                            },
+                                      ),
                                     ),
                                   ),
                                 ),
@@ -534,17 +547,21 @@ class _PreviewScreenState extends State<PreviewScreen> {
                               mainAxisAlignment: MainAxisAlignment.center,
                               children: List.generate(
                                 allImages.length,
-                                (index) => Container(
-                                  width: 8.w,
-                                  height: 8.h,
-                                  margin: EdgeInsets.symmetric(horizontal: 4.w),
-                                  decoration: BoxDecoration(
-                                    shape: BoxShape.circle,
-                                    color: currentImageIndex.value == index
-                                        ? Colors.black
-                                        : Colors.grey.shade300,
-                                  ),
-                                ),
+                                (index) {
+                                  final isActive = currentImageIndex.value == index;
+                                  return AnimatedContainer(
+                                    duration: const Duration(milliseconds: 250),
+                                    width: isActive ? 20.w : 8.w,
+                                    height: 8.h,
+                                    margin: EdgeInsets.symmetric(horizontal: 3.w),
+                                    decoration: BoxDecoration(
+                                      borderRadius: BorderRadius.circular(4.r),
+                                      color: isActive
+                                          ? Colors.black
+                                          : Colors.grey.shade300,
+                                    ),
+                                  );
+                                },
                               ),
                             ),
                           ),
@@ -573,6 +590,176 @@ class _PreviewScreenState extends State<PreviewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Full-screen gallery with pinch-to-zoom + dot indicators ────────────────
+
+class _FullScreenGallery extends StatefulWidget {
+  final List<String> imageUrls;
+  final int initialIndex;
+
+  const _FullScreenGallery({
+    required this.imageUrls,
+    required this.initialIndex,
+  });
+
+  @override
+  State<_FullScreenGallery> createState() => _FullScreenGalleryState();
+}
+
+class _FullScreenGalleryState extends State<_FullScreenGallery> {
+  late PageController _pageController;
+  late int _currentIndex;
+  bool _isZoomed = false;
+
+  @override
+  void initState() {
+    super.initState();
+    _currentIndex = widget.initialIndex;
+    _pageController = PageController(initialPage: widget.initialIndex);
+  }
+
+  @override
+  void dispose() {
+    _pageController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      backgroundColor: Colors.black,
+      body: Stack(
+        children: [
+          // Swipeable + zoomable pages
+          PageView.builder(
+            controller: _pageController,
+            physics: _isZoomed
+                ? const NeverScrollableScrollPhysics()
+                : const BouncingScrollPhysics(),
+            onPageChanged: (i) => setState(() => _currentIndex = i),
+            itemCount: widget.imageUrls.length,
+            itemBuilder: (context, i) {
+              return _ZoomableImage(
+                imageUrl: widget.imageUrls[i],
+                onZoomChanged: (zoomed) {
+                  if (_isZoomed != zoomed) {
+                    setState(() => _isZoomed = zoomed);
+                  }
+                },
+              );
+            },
+          ),
+
+          // Close button – top right
+          SafeArea(
+            child: Align(
+              alignment: Alignment.topRight,
+              child: GestureDetector(
+                onTap: () => Navigator.of(context).pop(),
+                child: Container(
+                  margin: const EdgeInsets.all(12),
+                  padding: const EdgeInsets.all(6),
+                  decoration: BoxDecoration(
+                    color: Colors.black54,
+                    shape: BoxShape.circle,
+                  ),
+                  child: const Icon(Icons.close, color: Colors.white, size: 22),
+                ),
+              ),
+            ),
+          ),
+
+          // Dot indicators – bottom centre
+          if (widget.imageUrls.length > 1)
+            Positioned(
+              bottom: 36,
+              left: 0,
+              right: 0,
+              child: Row(
+                mainAxisAlignment: MainAxisAlignment.center,
+                children: List.generate(widget.imageUrls.length, (i) {
+                  final isActive = _currentIndex == i;
+                  return AnimatedContainer(
+                    duration: const Duration(milliseconds: 250),
+                    width: isActive ? 20 : 8,
+                    height: 8,
+                    margin: const EdgeInsets.symmetric(horizontal: 3),
+                    decoration: BoxDecoration(
+                      borderRadius: BorderRadius.circular(4),
+                      color: isActive ? Colors.white : Colors.white38,
+                    ),
+                  );
+                }),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+}
+
+class _ZoomableImage extends StatefulWidget {
+  final String imageUrl;
+  final ValueChanged<bool> onZoomChanged;
+
+  const _ZoomableImage({
+    required this.imageUrl,
+    required this.onZoomChanged,
+  });
+
+  @override
+  State<_ZoomableImage> createState() => _ZoomableImageState();
+}
+
+class _ZoomableImageState extends State<_ZoomableImage> {
+  final _transformationController = TransformationController();
+
+  @override
+  void initState() {
+    super.initState();
+    _transformationController.addListener(_onTransform);
+  }
+
+  void _onTransform() {
+    final scale = _transformationController.value.getMaxScaleOnAxis();
+    widget.onZoomChanged(scale > 1.01);
+  }
+
+  @override
+  void dispose() {
+    _transformationController.removeListener(_onTransform);
+    _transformationController.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return InteractiveViewer(
+      transformationController: _transformationController,
+      minScale: 1.0,
+      maxScale: 5.0,
+      child: Center(
+        child: Image.network(
+          widget.imageUrl,
+          fit: BoxFit.contain,
+          loadingBuilder: (context, child, loadingProgress) {
+            if (loadingProgress == null) {
+              return child;
+            }
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.white),
+            );
+          },
+          errorBuilder: (context, error, stackTrace) {
+            return const Center(
+              child: Icon(Icons.error_outline, color: Colors.white54, size: 48),
+            );
+          },
+        ),
       ),
     );
   }
