@@ -73,10 +73,10 @@ class TechPackReadyScreen extends StatelessWidget {
                           );
                         },
                       ),
-                      // Logo overlay (bottom-right)
+                      // Logo overlay (top-left)
                       Positioned(
-                        bottom: 16.h,
-                        right: 16.w,
+                        top: 16.h,
+                        left: 16.w,
                         child: Image.file(
                           File(logoImagePath),
                           width: 30.w,
@@ -371,11 +371,11 @@ class TechPackReadyScreen extends StatelessWidget {
                                 ),
                               ),
 
-                              // Small Logo Reference Overlay (bottom-right)
+                              // Small Logo Reference Overlay (top-left)
                               if (controller.hasLabelImage)
                                 Positioned(
-                                  bottom: 8.h,
-                                  right: 8.w,
+                                  top: 8.h,
+                                  left: 8.w,
                                   child: Image.file(
                                     File(controller.labelImagePath),
                                     width: 30.w,

@@ -555,6 +555,7 @@ Style requirements:
 - Section headers in bold with divider lines
 - Bullet points for list items; bordered grid table for SIZES section
 - Each color entry has a solid filled square swatch box in the actual color to its left
+- Below the garment views, render a horizontal row of solid filled colored square swatches representing the colors present in the garment — no heading, no label, no text, just the colored squares in a clean row
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
@@ -565,15 +566,18 @@ Style requirements:
     if (labelImage.isNotEmpty) {
       // User uploaded logo image - show actual logo on technical drawing
       technicalLogoInstruction =
-          '\n- Show the logo/label from reference image clearly marked on the $logoPlacement area with callout annotation.';
+          '\n- Show the logo/label from reference image clearly marked on the $logoPlacement area with a dashed outline box.'
+          '\n- Add two dimension arrows on the logo box: width arrow (e.g. 5 cm) horizontally across the top, height arrow (e.g. 3 cm) vertically on the side.';
     } else if (labelsNeeded.isNotEmpty || logoPlacement.isNotEmpty) {
       // User provided label text or just placement - show highlighted area with "LOGO" text
       technicalLogoInstruction =
-          '\n- Mark the $logoPlacement area with a highlighted box or dashed outline containing the word "LOGO" in capital letters.';
+          '\n- Mark the $logoPlacement area with a dashed outline box containing the word "LOGO" in capital letters.';
       if (labelsNeeded.isNotEmpty) {
         technicalLogoInstruction +=
-            '\n- Add callout annotation near the logo area showing: "Label: $labelsNeeded"';
+            '\n- Add a small callout label near the box showing: "$labelsNeeded"';
       }
+      technicalLogoInstruction +=
+          '\n- Add two dimension arrows on the logo box: width arrow (e.g. 5 cm) horizontally across the top, height arrow (e.g. 3 cm) vertically on the side.';
     }
 
     final technicalFlatPrompt =
