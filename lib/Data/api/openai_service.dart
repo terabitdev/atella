@@ -483,7 +483,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final fit = (refinedConcept['silhouette'] ?? '').toString();
     final gender = (creativeBrief['targetAudience'] ?? '').toString();
     final season = (refinedConcept['season'] ?? '').toString();
-    final features = (refinedConcept['features'] ?? '').toString();
     print('🎨 DEBUG: Building manufacturing prompt...');
     print('   📷 labelImage.isNotEmpty: ${labelImage.isNotEmpty}');
     print('   📝 labelsNeeded.isNotEmpty: ${labelsNeeded.isNotEmpty}');
@@ -599,34 +598,20 @@ Style:
 - Measurement text fully visible and not cut off.
 
 Annotations & Measurements:
-- Show $features construction, $accessories placement, $stitching details, $decorativeStitching.
-- If $features or $accessories are not provided, do NOT add any additional garment elements such as pockets, buttons, or zippers unless explicitly mentioned by the user.
-- Include dimension arrows with measurement text in centimeters (cm) for *all garment parts*:
-  - Shoulder width:
-  - Chest width:
-  - Front length:
-  - Back length:
-  - Sleeve length:
-  - Armhole depth:
-  - Pocket width:
-  - Pocket height:
-  - Cuff width:
-  - Collar height:
-  - Collar spread:
-  - Any other relevant measurements provided by the user
-- Seam allowances (1.3 cm) shown as dashed lines with labels.
-- Topstitching details shown in magnified circles, labeled with type (single, double) and stitch spacing in mm.
-- Reinforcement points labeled with callouts (e.g., bartack length and more: mm).
-- All arrows connect precisely to their measurement points.$technicalLogoInstruction
-
-Labeling Style:
-- Labels positioned clearly with leader lines (callout lines) avoiding overlaps.
-- Every major component of garment construction labeled in detail:
-  - Stitch types and spacing
-  - Fabric grainline
-  - Accessory dimensions and placement
-  - Functional openings (zippers, button plackets) with length
-- All text in cm or mm as appropriate.
+- MANDATORY: ALL 10 measurements listed below MUST appear in the drawing. Do not skip any. Place them outside the garment outline with clear dimension arrows pointing to the correct part.
+- Every measurement MUST show a real numeric value in cm. Use standard industry values for a size M $garmentType. Do NOT leave any measurement blank, empty, or label-only.
+- Distribute measurements across both views to avoid crowding — place some on the FRONT view and some on the BACK view:
+  1. Shoulder width: (e.g. 38 cm) — on front or back
+  2. Chest width: (e.g. 48 cm) — on front
+  3. Front length: (e.g. 65 cm) — on front
+  4. Back length: (e.g. 67 cm) — on back
+  5. Sleeve length: (e.g. 60 cm) — on sleeve
+  6. Armhole depth: (e.g. 22 cm) — on front or back
+  7. Neck opening width: (e.g. 18 cm) — on front
+  8. Sleeve opening width: (e.g. 12 cm) — at cuff/sleeve hem
+  9. Cuff width: (e.g. 11 cm) — at cuff
+  10. Collar height: (e.g. 4 cm) — at collar
+- All dimension arrows must connect precisely to their measurement points with clean leader lines.$technicalLogoInstruction
 
 Output:
 - White background, clean margins.
