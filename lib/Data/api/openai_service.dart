@@ -473,12 +473,10 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
     final packagingType = techPackDetails['packaging']?['packagingType'] ?? '';
-    final foldingInstructions = techPackDetails['packaging']?['foldingInstructions'] ?? '';
-    final inserts = techPackDetails['packaging']?['inserts'] ?? '';
+
     final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '';
     final quantity = techPackDetails['production']?['quantity'] ?? '';
     final deliveryDate = techPackDetails['production']?['deliveryDate'] ?? '';
-    final manufacturerCountry = techPackDetails['manufacturers']?['country'] ?? '';
     // Garment overview fields
     final fit = (refinedConcept['silhouette'] ?? '').toString();
     final gender = (creativeBrief['targetAudience'] ?? '').toString();
@@ -512,16 +510,11 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (labelsNeeded.isNotEmpty) labelingSection += '• Label text: $labelsNeeded\n';
     if (logoPlacement.isNotEmpty) labelingSection += '• Logo placement: $logoPlacement\n';
 
-    String packagingSection = '';
-    if (packagingType.isNotEmpty) packagingSection += '• Packaging type: $packagingType\n';
-    if (foldingInstructions.isNotEmpty) packagingSection += '• Folding instructions: $foldingInstructions\n';
-    if (inserts.isNotEmpty) packagingSection += '• Inserts: $inserts\n';
-
     String productionSection = '';
+    if (packagingType.isNotEmpty) productionSection += '• Packaging: $packagingType\n';
     if (costPerPiece.isNotEmpty) productionSection += '• Cost per piece: $costPerPiece\n';
     if (quantity.isNotEmpty) productionSection += '• Order quantity: $quantity units\n';
     if (deliveryDate.isNotEmpty) productionSection += '• Delivery date: $deliveryDate\n';
-    if (manufacturerCountry.isNotEmpty) productionSection += '• Manufacturer country: $manufacturerCountry\n';
 
     // Garment overview — 4 clean lines only
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
@@ -534,11 +527,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final String manufacturingPrompt =
         '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
 
+CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance.
+
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
 ═══════════════════════════════════════════════
 
-MANDATORY SECTIONS (render all of these exactly once, in this order):
+SECTIONS (render each exactly once, in this order):
 
 ──────────────────────────────────────
 GARMENT OVERVIEW
@@ -553,7 +548,6 @@ CONSTRUCTION DETAILS
 ──────────────────────────────────────
 $constructionSection
 ${labelingSection.isNotEmpty ? '──────────────────────────────────────\nLABELS & BRANDING\n──────────────────────────────────────\n$labelingSection' : ''}
-${packagingSection.isNotEmpty ? '──────────────────────────────────────\nPACKAGING\n──────────────────────────────────────\n$packagingSection' : ''}
 ${productionSection.isNotEmpty ? '──────────────────────────────────────\nPRODUCTION DETAILS\n──────────────────────────────────────\n$productionSection' : ''}
 
 Style requirements:
@@ -561,7 +555,6 @@ Style requirements:
 - Section headers in bold with divider lines
 - Bullet points for list items; bordered grid table for SIZES section
 - Each color entry has a solid filled square swatch box in the actual color to its left
-- IMPORTANT: Render each section EXACTLY ONCE — do not repeat any section header or content
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
