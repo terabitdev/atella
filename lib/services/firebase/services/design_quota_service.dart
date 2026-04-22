@@ -12,7 +12,7 @@ class DesignQuotaService {
   static const String _quotaCollection = 'design_quotas';
 
   /// Default monthly limit for free designs
-  static const int _defaultMonthlyLimit = 3;
+  static const int _defaultMonthlyLimit = 1;
 
   /// Get or create quota document for an email
   /// Returns the quota data including:

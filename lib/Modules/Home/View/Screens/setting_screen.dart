@@ -293,7 +293,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                       ),
                                     ),
                                     Text(
-                                      '$freeUsed/3 Designs',
+                                      '$freeUsed/1 Designs',
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w500,

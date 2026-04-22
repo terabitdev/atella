@@ -41,7 +41,7 @@ class SubscriptionPlan {
     currency: 'EUR',
     stripePriceId: '',
     features: [
-      '3 AI design generations per month',
+      '1 AI design generation per month',
       'No techpack generation - upgrade to access',
       'No PDF export - upgrade to access',
       'No factory access - upgrade to access',

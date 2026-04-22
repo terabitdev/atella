@@ -188,7 +188,7 @@ class UserSubscription {
   bool get canGenerateDesign {
     // For FREE users, check free design counter (separate from subscription)
     if (subscriptionPlan == 'FREE') {
-      int baseLimit = 3; // FREE users get 3 designs per month
+      int baseLimit = 1; // FREE users get 1 design per month
       return freeDesignsGeneratedThisMonth < baseLimit;
     }
 
@@ -210,7 +210,7 @@ class UserSubscription {
     if (subscriptionPlan.startsWith('STUDIO')) return 25;
     if (subscriptionPlan.startsWith('PRO')) return 12;
     if (subscriptionPlan.startsWith('STARTER')) return 5;
-    return 3; // FREE
+    return 1; // FREE
   }
 
   int getTotalAllowedDesigns() {
@@ -223,7 +223,7 @@ class UserSubscription {
   int get remainingDesigns {
     // For FREE users, use the free design counter
     if (subscriptionPlan == 'FREE') {
-      return 3 - freeDesignsGeneratedThisMonth;
+      return 1 - freeDesignsGeneratedThisMonth;
     }
     // For paid plans, use the regular counter
     return getTotalAllowedDesigns() - designsGeneratedThisMonth;
@@ -311,7 +311,7 @@ class UserSubscription {
   String get designCounterDisplay {
     // For FREE users, show free design count
     if (subscriptionPlan == 'FREE') {
-      return 'Designs used: $freeDesignsGeneratedThisMonth/3 this month';
+      return 'Designs used: $freeDesignsGeneratedThisMonth/1 this month';
     }
     // For paid plans, show regular count
     return 'Designs used: $designsGeneratedThisMonth/${getTotalAllowedDesigns()} this month';
