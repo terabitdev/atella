@@ -1,3 +1,4 @@
+import 'dart:io';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -50,6 +51,7 @@ class _HomeScreenState extends State<HomeScreen> {
       if (args != null && args['refresh'] == true) {
         controller.refreshData();
       }
+      _checkConnectivityOnce();
     });
   }
 
@@ -67,6 +69,30 @@ class _HomeScreenState extends State<HomeScreen> {
         _isSearchBarPinned = false;
       });
     }
+  }
+
+  Future<void> _checkConnectivityOnce() async {
+    try {
+      final result = await InternetAddress.lookup('google.com')
+          .timeout(const Duration(seconds: 5));
+      if (result.isEmpty || result.first.rawAddress.isEmpty) {
+        _showNoConnectionSnackbar();
+      }
+    } catch (_) {
+      _showNoConnectionSnackbar();
+    }
+  }
+
+  void _showNoConnectionSnackbar() {
+    Get.snackbar(
+      'No Internet Connection',
+      'Please check your connection and try again.',
+      backgroundColor: Colors.red,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.TOP,
+      duration: const Duration(seconds: 4),
+      margin: const EdgeInsets.all(12),
+    );
   }
 
   @override
