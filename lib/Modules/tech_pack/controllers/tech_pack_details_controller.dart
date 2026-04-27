@@ -73,16 +73,6 @@ class TechPackDetailsController extends GetxController {
   final RxBool showLabelImage = true.obs;
   final RxBool showLabelText = true.obs;
 
-  // Packaging & Shipping
-  final packagingTypeController = TextEditingController();
-  final foldingInstructionsController = TextEditingController();
-  final insertsController = TextEditingController();
-
-  // Production Details
-  final costPerPieceController = TextEditingController();
-  final quantityController = TextEditingController();
-  final deliveryDateController = TextEditingController();
-
   // Manufacturers
   final manufacturerCountryController = TextEditingController();
   final RxString selectedManufacturerCountry = ''.obs;
@@ -92,8 +82,6 @@ class TechPackDetailsController extends GetxController {
   final RxBool showSizesBlock = false.obs;
   final RxBool showTechnicalBlock = false.obs;
   final RxBool showLabelingBlock = false.obs;
-  final RxBool showPackagingBlock = false.obs;
-  final RxBool showProductionBlock = false.obs;
   final RxBool showManufacturersBlock = false.obs;
 
   // Image picker instance
@@ -321,20 +309,6 @@ class TechPackDetailsController extends GetxController {
     print('   Logo placement: ${logoPlacementController.text}');
     print('   Labels needed: ${labelsNeededController.text}');
 
-    // Packaging & Shipping
-    final packaging =
-        techPackDetails['packaging'] as Map<String, dynamic>? ?? {};
-    packagingTypeController.text = packaging['packagingType'] ?? '';
-    foldingInstructionsController.text = packaging['foldingInstructions'] ?? '';
-    insertsController.text = packaging['inserts'] ?? '';
-
-    // Production Details
-    final production =
-        techPackDetails['production'] as Map<String, dynamic>? ?? {};
-    costPerPieceController.text = production['costPerPiece'] ?? '';
-    quantityController.text = production['quantity'] ?? '';
-    deliveryDateController.text = production['deliveryDate'] ?? '';
-
     // Manufacturers
     final manufacturers =
         techPackDetails['manufacturers'] as Map<String, dynamic>? ?? {};
@@ -350,8 +324,6 @@ class TechPackDetailsController extends GetxController {
     showSizesBlock.value = true;
     showTechnicalBlock.value = true;
     showLabelingBlock.value = true;
-    showPackagingBlock.value = true;
-    showProductionBlock.value = true;
     showManufacturersBlock.value = true;
   }
 
@@ -397,22 +369,6 @@ class TechPackDetailsController extends GetxController {
         labelImagePath.value.isNotEmpty;
 
     if (logoPlacementController.text.isNotEmpty && hasLabelInput) {
-      showPackagingBlock.value = true;
-    }
-  }
-
-  void checkPackagingBlockComplete() {
-    if (packagingTypeController.text.isNotEmpty &&
-        foldingInstructionsController.text.isNotEmpty &&
-        insertsController.text.isNotEmpty) {
-      showProductionBlock.value = true;
-    }
-  }
-
-  void checkProductionBlockComplete() {
-    if (costPerPieceController.text.isNotEmpty &&
-        quantityController.text.isNotEmpty &&
-        deliveryDateController.text.isNotEmpty) {
       showManufacturersBlock.value = true;
     }
   }
@@ -1314,16 +1270,6 @@ class TechPackDetailsController extends GetxController {
         'labelImage': labelImagePath.value,
         'qrCode': qrCodeController.text,
       },
-      'packaging': {
-        'packagingType': packagingTypeController.text,
-        'foldingInstructions': foldingInstructionsController.text,
-        'inserts': insertsController.text,
-      },
-      'production': {
-        'costPerPiece': costPerPieceController.text,
-        'quantity': quantityController.text,
-        'deliveryDate': deliveryDateController.text,
-      },
       'manufacturers': {'country': manufacturerCountryController.text},
     };
   }
@@ -1344,12 +1290,6 @@ class TechPackDetailsController extends GetxController {
     logoPlacementController.dispose();
     labelsNeededController.dispose();
     qrCodeController.dispose();
-    packagingTypeController.dispose();
-    foldingInstructionsController.dispose();
-    insertsController.dispose();
-    costPerPieceController.dispose();
-    quantityController.dispose();
-    deliveryDateController.dispose();
     manufacturerCountryController.dispose();
     super.onClose();
   }

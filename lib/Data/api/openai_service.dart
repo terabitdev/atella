@@ -472,11 +472,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
     final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
-    final packagingType = techPackDetails['packaging']?['packagingType'] ?? '';
-
-    final costPerPiece = techPackDetails['production']?['costPerPiece'] ?? '';
-    final quantity = techPackDetails['production']?['quantity'] ?? '';
-    final deliveryDate = techPackDetails['production']?['deliveryDate'] ?? '';
     // Garment overview fields
     final fit = (refinedConcept['silhouette'] ?? '').toString();
     final gender = (creativeBrief['targetAudience'] ?? '').toString();
@@ -510,12 +505,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (labelsNeeded.isNotEmpty) labelingSection += '• Label text: $labelsNeeded\n';
     if (logoPlacement.isNotEmpty) labelingSection += '• Logo placement: $logoPlacement\n';
 
-    String productionSection = '';
-    if (packagingType.isNotEmpty) productionSection += '• Packaging: $packagingType\n';
-    if (costPerPiece.isNotEmpty) productionSection += '• Cost per piece: $costPerPiece\n';
-    if (quantity.isNotEmpty) productionSection += '• Order quantity: $quantity units\n';
-    if (deliveryDate.isNotEmpty) productionSection += '• Delivery date: $deliveryDate\n';
-
     // Garment overview — 4 clean lines only
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
     if (fit.isNotEmpty) garmentOverviewSection += '• Fit: $fit\n';
@@ -548,7 +537,6 @@ CONSTRUCTION DETAILS
 ──────────────────────────────────────
 $constructionSection
 ${labelingSection.isNotEmpty ? '──────────────────────────────────────\nLABELS & BRANDING\n──────────────────────────────────────\n$labelingSection' : ''}
-${productionSection.isNotEmpty ? '──────────────────────────────────────\nPRODUCTION DETAILS\n──────────────────────────────────────\n$productionSection' : ''}
 
 Style requirements:
 - White background, clean margins, professional fashion industry layout

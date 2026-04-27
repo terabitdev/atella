@@ -41,9 +41,6 @@ class TechPackReadyController extends GetxController {
 Materials: ${_detailsController.mainFabricController.text}
 Colors: ${_detailsController.primaryColorController.text}
 Sizes: ${_detailsController.selectedSizes.join(', ')}
-Quantity: ${_detailsController.quantityController.text}
-Target Cost: ${_detailsController.costPerPieceController.text}
-Delivery: ${_detailsController.deliveryDateController.text}
     ''';
   }
 
@@ -301,16 +298,6 @@ Delivery: ${_detailsController.deliveryDateController.text}
           'labelsNeeded': _detailsController.labelsNeededController.text,
           'labelImage': _detailsController.labelImagePath.value,
           'qrCode': _detailsController.qrCodeController.text,
-        },
-        'packaging': {
-          'packagingType': _detailsController.packagingTypeController.text,
-          'foldingInstructions': _detailsController.foldingInstructionsController.text,
-          'inserts': _detailsController.insertsController.text,
-        },
-        'production': {
-          'costPerPiece': _detailsController.costPerPieceController.text,
-          'quantity': _detailsController.quantityController.text,
-          'deliveryDate': _detailsController.deliveryDateController.text,
         },
         'manufacturers': {
           'country': _detailsController.manufacturerCountryController.text,
