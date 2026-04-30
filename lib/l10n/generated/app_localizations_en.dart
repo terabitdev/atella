@@ -2175,10 +2175,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get tpdMaterialsFabrics => 'Materials & Fabrics';
 
   @override
-  String get tpdMainFabricLabel => 'What is the main fabric used?';
+  String get tpdFabricCompositionLabel => 'What is the fabric composition?';
 
   @override
-  String get tpdMainFabricHint => 'Main Fabric: Organic cotton twill';
+  String get tpdFabricCompositionHint =>
+      'e.g. 100% Cotton, 80% Polyester 20% Elastane';
+
+  @override
+  String get tpdFabricWeightLabel => 'What is the fabric weight (GSM)?';
+
+  @override
+  String get tpdFabricWeightHint => 'e.g. 180';
 
   @override
   String get tpdSecondaryMaterialsLabel =>

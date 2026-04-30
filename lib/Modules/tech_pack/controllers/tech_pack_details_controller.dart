@@ -31,7 +31,8 @@ class TechPackDetailsController extends GetxController {
   bool get isEditMode => _isEditMode.value;
   TechPackModel? _editingTechPack;
   // Materials & Fabrics
-  final mainFabricController = TextEditingController();
+  final fabricCompositionController = TextEditingController();
+  final fabricWeightController = TextEditingController();
   final secondaryMaterialsController = TextEditingController();
   final fabricPropertiesController = TextEditingController();
 
@@ -256,7 +257,8 @@ class TechPackDetailsController extends GetxController {
     // Materials & Fabrics
     final materials =
         techPackDetails['materials'] as Map<String, dynamic>? ?? {};
-    mainFabricController.text = materials['mainFabric'] ?? '';
+    fabricCompositionController.text = materials['fabricComposition'] ?? '';
+    fabricWeightController.text = materials['fabricWeight'] ?? '';
     secondaryMaterialsController.text = materials['secondaryMaterials'] ?? '';
     fabricPropertiesController.text = materials['fabricProperties'] ?? '';
 
@@ -328,7 +330,8 @@ class TechPackDetailsController extends GetxController {
   }
 
   void checkMaterialsBlockComplete() {
-    if (mainFabricController.text.isNotEmpty &&
+    if (fabricCompositionController.text.isNotEmpty &&
+        fabricWeightController.text.isNotEmpty &&
         secondaryMaterialsController.text.isNotEmpty &&
         fabricPropertiesController.text.isNotEmpty) {
       showColorsBlock.value = true;
@@ -1245,7 +1248,8 @@ class TechPackDetailsController extends GetxController {
   Map<String, dynamic> _collectTechPackDetails() {
     return {
       'materials': {
-        'mainFabric': mainFabricController.text,
+        'fabricComposition': fabricCompositionController.text,
+        'fabricWeight': fabricWeightController.text,
         'secondaryMaterials': secondaryMaterialsController.text,
         'fabricProperties': fabricPropertiesController.text,
       },
@@ -1276,7 +1280,8 @@ class TechPackDetailsController extends GetxController {
 
   @override
   void onClose() {
-    mainFabricController.dispose();
+    fabricCompositionController.dispose();
+    fabricWeightController.dispose();
     secondaryMaterialsController.dispose();
     fabricPropertiesController.dispose();
     primaryColorController.dispose();

@@ -2203,10 +2203,18 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tpdMaterialsFabrics => 'Matériaux et Tissus';
 
   @override
-  String get tpdMainFabricLabel => 'Quel est le tissu principal utilisé ?';
+  String get tpdFabricCompositionLabel =>
+      'Quelle est la composition du tissu ?';
 
   @override
-  String get tpdMainFabricHint => 'Tissu Principal : Sergé de coton bio';
+  String get tpdFabricCompositionHint =>
+      'ex. 100% Coton, 80% Polyester 20% Élasthanne';
+
+  @override
+  String get tpdFabricWeightLabel => 'Quel est le grammage du tissu (GSM) ?';
+
+  @override
+  String get tpdFabricWeightHint => 'ex. 180';
 
   @override
   String get tpdSecondaryMaterialsLabel =>

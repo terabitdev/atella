@@ -4064,17 +4064,29 @@ abstract class AppLocalizations {
   /// **'Materials & Fabrics'**
   String get tpdMaterialsFabrics;
 
-  /// Main fabric question label
+  /// Fabric composition question label
   ///
   /// In en, this message translates to:
-  /// **'What is the main fabric used?'**
-  String get tpdMainFabricLabel;
+  /// **'What is the fabric composition?'**
+  String get tpdFabricCompositionLabel;
 
-  /// Main fabric hint text
+  /// Fabric composition hint text
   ///
   /// In en, this message translates to:
-  /// **'Main Fabric: Organic cotton twill'**
-  String get tpdMainFabricHint;
+  /// **'e.g. 100% Cotton, 80% Polyester 20% Elastane'**
+  String get tpdFabricCompositionHint;
+
+  /// Fabric weight GSM question label
+  ///
+  /// In en, this message translates to:
+  /// **'What is the fabric weight (GSM)?'**
+  String get tpdFabricWeightLabel;
+
+  /// Fabric weight GSM hint text
+  ///
+  /// In en, this message translates to:
+  /// **'e.g. 180'**
+  String get tpdFabricWeightHint;
 
   /// Secondary materials question label
   ///

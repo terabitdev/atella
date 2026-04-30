@@ -448,6 +448,90 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
+  static const Map<String, Map<String, String>> _fabricDefaults = {
+    // Cotton subcategories
+    'cotton': {'composition': '100% Cotton', 'type': 'Jersey', 'gsm': '180'},
+    'lightweight (poplin, voile)': {'composition': '100% Cotton', 'type': 'Poplin', 'gsm': '90'},
+    'poplin': {'composition': '100% Cotton', 'type': 'Poplin', 'gsm': '90'},
+    'voile': {'composition': '100% Cotton', 'type': 'Voile', 'gsm': '70'},
+    'medium (twill)': {'composition': '100% Cotton', 'type': 'Twill', 'gsm': '150'},
+    'twill': {'composition': '100% Cotton', 'type': 'Twill', 'gsm': '150'},
+    'heavy (denim, canvas)': {'composition': '100% Cotton', 'type': 'Denim', 'gsm': '320'},
+    'denim': {'composition': '100% Cotton', 'type': 'Denim', 'gsm': '320'},
+    'canvas': {'composition': '100% Cotton', 'type': 'Canvas', 'gsm': '350'},
+    // Wool
+    'wool': {'composition': '100% Wool', 'type': 'Woven', 'gsm': '300'},
+    'merino': {'composition': '100% Merino Wool', 'type': 'Fine Knit', 'gsm': '200'},
+    'cashmere': {'composition': '100% Cashmere', 'type': 'Fine Knit', 'gsm': '160'},
+    'tweed': {'composition': '100% Wool', 'type': 'Tweed', 'gsm': '400'},
+    'felt': {'composition': '100% Wool', 'type': 'Felt', 'gsm': '500'},
+    // Silk
+    'silk': {'composition': '100% Silk', 'type': 'Woven', 'gsm': '80'},
+    'satin': {'composition': '100% Silk', 'type': 'Satin', 'gsm': '90'},
+    'chiffon': {'composition': '100% Silk', 'type': 'Chiffon', 'gsm': '60'},
+    'organza': {'composition': '100% Silk', 'type': 'Organza', 'gsm': '50'},
+    // Linen
+    'linen': {'composition': '100% Linen', 'type': 'Plain Weave', 'gsm': '140'},
+    'plain': {'composition': '100% Linen', 'type': 'Plain Weave', 'gsm': '140'},
+    'textured': {'composition': '100% Linen', 'type': 'Textured Weave', 'gsm': '160'},
+    'blended': {'composition': '55% Linen 45% Cotton', 'type': 'Blended Weave', 'gsm': '150'},
+    // Synthetic
+    'polyester': {'composition': '100% Polyester', 'type': 'Woven', 'gsm': '120'},
+    'nylon': {'composition': '100% Nylon', 'type': 'Plain Weave', 'gsm': '100'},
+    'spandex': {'composition': '80% Polyester 20% Spandex', 'type': 'Stretch Woven', 'gsm': '180'},
+    'neoprene': {'composition': '100% Neoprene', 'type': 'Scuba', 'gsm': '380'},
+    // Eco
+    'organic cotton': {'composition': '100% Organic Cotton', 'type': 'Jersey', 'gsm': '180'},
+    'recycled polyester': {'composition': '100% Recycled Polyester', 'type': 'Woven', 'gsm': '120'},
+    'bamboo': {'composition': '70% Bamboo 30% Cotton', 'type': 'Jersey', 'gsm': '160'},
+    'hemp': {'composition': '100% Hemp', 'type': 'Plain Weave', 'gsm': '200'},
+    // Leather
+    'leather': {'composition': '100% Genuine Leather', 'type': 'Full Grain', 'gsm': '800'},
+    'faux leather': {'composition': '100% Faux Leather (PU)', 'type': 'Backed Fabric', 'gsm': '600'},
+    // Knitwear
+    'jersey': {'composition': '100% Cotton', 'type': 'Jersey', 'gsm': '180'},
+    'rib knit': {'composition': '95% Cotton 5% Elastane', 'type': 'Rib Knit', 'gsm': '220'},
+    'interlock': {'composition': '100% Cotton', 'type': 'Interlock', 'gsm': '200'},
+  };
+
+  static String _resolveFabricLine(String compositionInput, String weightInput, String creativeBriefFabric) {
+    final compositionKey = compositionInput.toLowerCase().trim();
+    // Strip any "Category:" prefix from creative brief fabric (e.g. "Knitwear:Jersey" → "jersey")
+    final fabricTypeKey = creativeBriefFabric.contains(':')
+        ? creativeBriefFabric.split(':').last.trim().toLowerCase()
+        : creativeBriefFabric.toLowerCase().trim();
+
+    // Look up defaults: try composition input first, then creative brief fabric type
+    final defaults = _fabricDefaults[compositionKey] ?? _fabricDefaults[fabricTypeKey];
+
+    // If composition already has %, treat as complete — only fill missing weight
+    if (compositionInput.contains('%')) {
+      final resolvedType = defaults?['type'] ?? fabricTypeKey;
+      final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
+      final resolvedGsm = rawGsm.isNotEmpty ? rawGsm : (defaults?['gsm'] ?? '180');
+      return resolvedType.isNotEmpty
+          ? '$compositionInput, $resolvedType, $resolvedGsm GSM'
+          : '$compositionInput, $resolvedGsm GSM';
+    }
+
+    // Simple fabric name — use full defaults
+    if (defaults != null) {
+      final resolvedComposition = defaults['composition']!;
+      final resolvedType = defaults['type']!;
+      final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
+      final resolvedGsm = rawGsm.isNotEmpty ? rawGsm : defaults['gsm']!;
+      return '$resolvedComposition, $resolvedType, $resolvedGsm GSM';
+    }
+
+    // Fallback: pass through whatever user entered
+    if (compositionInput.isNotEmpty) {
+      final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
+      return rawGsm.isNotEmpty ? '$compositionInput, $rawGsm GSM' : compositionInput;
+    }
+
+    return '';
+  }
+
   static Future<Map<String, String>> generateTechPackPrompts({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
@@ -461,7 +545,10 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final garmentType = rawGarmentType.contains(':')
         ? rawGarmentType.split(':').last.trim()
         : rawGarmentType;
-    final mainFabric = techPackDetails['materials']?['mainFabric'] ?? '';
+    final fabricComposition = techPackDetails['materials']?['fabricComposition'] ?? '';
+    final fabricWeight = techPackDetails['materials']?['fabricWeight'] ?? '';
+    final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
+    final resolvedFabric = _resolveFabricLine(fabricComposition, fabricWeight, creativeBriefFabric);
     final secondaryMaterial = techPackDetails['materials']?['secondaryMaterials'] ?? '';
     final fabricProperties = techPackDetails['materials']?['fabricProperties'] ?? '';
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
@@ -492,7 +579,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     // CONSTRUCTION DETAILS — include fabric here
     String constructionSection = '';
-    if (mainFabric.isNotEmpty) constructionSection += '-- Fabric: $mainFabric\n';
+    if (resolvedFabric.isNotEmpty) constructionSection += '-- Fabric: $resolvedFabric\n';
     if (secondaryMaterial.isNotEmpty) constructionSection += '-- Secondary material: $secondaryMaterial\n';
     if (fabricProperties.isNotEmpty) constructionSection += '-- Fabric properties: $fabricProperties\n';
     if (stitching.isNotEmpty) constructionSection += '-- Main seams: $stitching\n';

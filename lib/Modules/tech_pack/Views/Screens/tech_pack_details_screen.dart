@@ -71,9 +71,16 @@ class TechPackDetailsScreen extends StatelessWidget {
                     RoundedTagContainer(text: l10n.tpdMaterialsFabrics),
                     SizedBox(height: 10.h),
                     TechPackQuestionField(
-                      label: l10n.tpdMainFabricLabel,
-                      hint: l10n.tpdMainFabricHint,
-                      controller: controller.mainFabricController,
+                      label: l10n.tpdFabricCompositionLabel,
+                      hint: l10n.tpdFabricCompositionHint,
+                      controller: controller.fabricCompositionController,
+                      onChanged: (_) =>
+                          controller.checkMaterialsBlockComplete(),
+                    ),
+                    TechPackQuestionField(
+                      label: l10n.tpdFabricWeightLabel,
+                      hint: l10n.tpdFabricWeightHint,
+                      controller: controller.fabricWeightController,
                       onChanged: (_) =>
                           controller.checkMaterialsBlockComplete(),
                     ),

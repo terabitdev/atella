@@ -209,7 +209,8 @@ class EditDataService {
 
     return {
       'materials': {
-        'mainFabric': techPackDetails['materials']?['mainFabric'] ?? '',
+        'fabricComposition': techPackDetails['materials']?['fabricComposition'] ?? techPackDetails['materials']?['mainFabric'] ?? '',
+        'fabricWeight': techPackDetails['materials']?['fabricWeight'] ?? '',
         'secondaryMaterials': techPackDetails['materials']?['secondaryMaterials'] ?? '',
         'fabricProperties': techPackDetails['materials']?['fabricProperties'] ?? '',
       },

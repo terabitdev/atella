@@ -38,7 +38,7 @@ class TechPackReadyController extends GetxController {
   
   String get techPackSummary {
     return '''
-Materials: ${_detailsController.mainFabricController.text}
+Materials: ${_detailsController.fabricCompositionController.text} ${_detailsController.fabricWeightController.text.isNotEmpty ? '/ ${_detailsController.fabricWeightController.text} GSM' : ''}
 Colors: ${_detailsController.primaryColorController.text}
 Sizes: ${_detailsController.selectedSizes.join(', ')}
     ''';
@@ -274,7 +274,8 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       // Collect tech pack questionnaire data
       Map<String, dynamic> techPackQuestionnaireData = {
         'materials': {
-          'mainFabric': _detailsController.mainFabricController.text,
+          'fabricComposition': _detailsController.fabricCompositionController.text,
+          'fabricWeight': _detailsController.fabricWeightController.text,
           'secondaryMaterials': _detailsController.secondaryMaterialsController.text,
           'fabricProperties': _detailsController.fabricPropertiesController.text,
         },

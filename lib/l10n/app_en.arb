@@ -2569,13 +2569,21 @@
   "@tpdMaterialsFabrics": {
     "description": "Materials section title"
   },
-  "tpdMainFabricLabel": "What is the main fabric used?",
-  "@tpdMainFabricLabel": {
-    "description": "Main fabric question label"
+  "tpdFabricCompositionLabel": "What is the fabric composition?",
+  "@tpdFabricCompositionLabel": {
+    "description": "Fabric composition question label"
   },
-  "tpdMainFabricHint": "Main Fabric: Organic cotton twill",
-  "@tpdMainFabricHint": {
-    "description": "Main fabric hint text"
+  "tpdFabricCompositionHint": "e.g. 100% Cotton, 80% Polyester 20% Elastane",
+  "@tpdFabricCompositionHint": {
+    "description": "Fabric composition hint text"
+  },
+  "tpdFabricWeightLabel": "What is the fabric weight (GSM)?",
+  "@tpdFabricWeightLabel": {
+    "description": "Fabric weight GSM question label"
+  },
+  "tpdFabricWeightHint": "e.g. 180",
+  "@tpdFabricWeightHint": {
+    "description": "Fabric weight GSM hint text"
   },
   "tpdSecondaryMaterialsLabel": "Are there any secondary materials or linings?",
   "@tpdSecondaryMaterialsLabel": {
