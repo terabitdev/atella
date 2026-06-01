@@ -567,30 +567,34 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     print('   📷 labelImage.isNotEmpty: ${labelImage.isNotEmpty}');
     print('   📝 labelsNeeded.isNotEmpty: ${labelsNeeded.isNotEmpty}');
 
-    // SIZES — grid table
-    String sizesSection = '';
+    // MEASUREMENT TABLE — grid table
+    String measurementTableSection = '';
     if (sizeRange.isNotEmpty) {
-      sizesSection += 'Selected sizes: $sizeRange\n';
+      measurementTableSection += 'Selected sizes: $sizeRange\n';
     }
     if (measurementChart.isNotEmpty) {
-      sizesSection += 'Measurement data: $measurementChart\n';
+      measurementTableSection += 'Measurement data: $measurementChart\n';
     }
-    sizesSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n';
+    measurementTableSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n';
 
-    // CONSTRUCTION DETAILS — include fabric here
+    // CONSTRUCTION DETAILS — stitching and accessories only, no fabric fields
     String constructionSection = '';
-    if (resolvedFabric.isNotEmpty) constructionSection += '-- Fabric: $resolvedFabric\n';
-    if (secondaryMaterial.isNotEmpty) constructionSection += '-- Secondary material: $secondaryMaterial\n';
-    if (fabricProperties.isNotEmpty) constructionSection += '-- Fabric properties: $fabricProperties\n';
     if (stitching.isNotEmpty) constructionSection += '-- Main seams: $stitching\n';
     if (decorativeStitching.isNotEmpty) constructionSection += '-- Decorative stitching: $decorativeStitching\n';
     if (accessories.isNotEmpty) constructionSection += '-- Accessories: $accessories\n';
     constructionSection += '-- Seam allowance: 1 cm (all seams)\n';
 
-    // LABELING & BRANDING — appears only once, no QR code
-    String labelingSection = '';
-    if (labelsNeeded.isNotEmpty) labelingSection += '• Label text: $labelsNeeded\n';
-    if (logoPlacement.isNotEmpty) labelingSection += '• Logo placement: $logoPlacement\n';
+    // FABRIC — dedicated section
+    String fabricSection = '';
+    if (resolvedFabric.isNotEmpty) fabricSection += '-- Fabric: $resolvedFabric\n';
+    if (secondaryMaterial.isNotEmpty) fabricSection += '-- Secondary material: $secondaryMaterial\n';
+    if (fabricProperties.isNotEmpty) fabricSection += '-- Fabric properties: $fabricProperties\n';
+
+    // LOGO PLACEMENT — standalone section
+    String logoPlacementSection = '• Logo placement: $logoPlacement\n';
+
+    // LABELS — standalone section
+    String labelsSection = '• Labels: $labelsNeeded\n';
 
     // Garment overview — 4 clean lines only
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
@@ -603,37 +607,51 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final String manufacturingPrompt =
         '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
 
-CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance.
+CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 6 sections — no more, no fewer.
 
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
 ═══════════════════════════════════════════════
 
-SECTIONS (render each exactly once, in this order):
+GARMENT IMAGE (render at the top of the document, before all sections):
+- Show the garment exactly as it appears in the reference design image provided
+- The garment image must be clearly visible, proportional, and not cropped
+
+SECTIONS (render each exactly once, in this exact order, no additional sections allowed):
 
 ──────────────────────────────────────
-GARMENT OVERVIEW
+1. GARMENT OVERVIEW
 ──────────────────────────────────────
 $garmentOverviewSection
 ──────────────────────────────────────
-SIZES
+2. MEASUREMENT TABLE
 ──────────────────────────────────────
-$sizesSection
+$measurementTableSection
 ──────────────────────────────────────
-CONSTRUCTION DETAILS
+3. CONSTRUCTION DETAILS
 ──────────────────────────────────────
 $constructionSection
-${labelingSection.isNotEmpty ? '──────────────────────────────────────\nLABELS & BRANDING\n──────────────────────────────────────\n$labelingSection' : ''}
+──────────────────────────────────────
+4. FABRIC
+──────────────────────────────────────
+$fabricSection
+──────────────────────────────────────
+5. LOGO PLACEMENT
+──────────────────────────────────────
+$logoPlacementSection
+──────────────────────────────────────
+6. LABELS
+──────────────────────────────────────
+$labelsSection
 
 Style requirements:
 - White background, clean margins, professional fashion industry layout
 - Section headers in bold with divider lines
-- Bullet points for list items; bordered grid table for SIZES section
-- Each color entry has a solid filled square swatch box in the actual color to its left
-- Below the garment views, render a horizontal row of solid filled colored square swatches representing the colors present in the garment — no heading, no label, no text, just the colored squares in a clean row
+- Bullet points for list items; bordered grid table for MEASUREMENT TABLE section
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
+- CRITICAL: Do NOT add any sections beyond the 6 listed above
 ''';
 
     // Build technical flat prompt with correct logo behavior
