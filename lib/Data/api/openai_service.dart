@@ -532,6 +532,21 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return '';
   }
 
+  static String _resolveField(String value, String defaultValue) {
+    final trimmed = value.trim().toLowerCase();
+    if (trimmed.isEmpty ||
+        trimmed == 'no' ||
+        trimmed == 'none' ||
+        trimmed == 'n/a' ||
+        trimmed == 'na' ||
+        trimmed == 'not required' ||
+        trimmed == 'not applicable' ||
+        trimmed == '-') {
+      return defaultValue;
+    }
+    return value.trim();
+  }
+
   static Future<Map<String, String>> generateTechPackPrompts({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
@@ -545,19 +560,19 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final garmentType = rawGarmentType.contains(':')
         ? rawGarmentType.split(':').last.trim()
         : rawGarmentType;
-    final fabricComposition = techPackDetails['materials']?['fabricComposition'] ?? '';
-    final fabricWeight = techPackDetails['materials']?['fabricWeight'] ?? '';
+    final fabricComposition = _resolveField(techPackDetails['materials']?['fabricComposition'] ?? '', 'Standard fabric');
+    final fabricWeight = _resolveField(techPackDetails['materials']?['fabricWeight'] ?? '', '180 GSM');
     final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
     final resolvedFabric = _resolveFabricLine(fabricComposition, fabricWeight, creativeBriefFabric);
-    final secondaryMaterial = techPackDetails['materials']?['secondaryMaterials'] ?? '';
-    final fabricProperties = techPackDetails['materials']?['fabricProperties'] ?? '';
+    final secondaryMaterial = _resolveField(techPackDetails['materials']?['secondaryMaterials'] ?? '', 'No secondary material');
+    final fabricProperties = _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
     final measurementChart = techPackDetails['sizes']?['measurementChart'] ?? '';
-    final accessories = techPackDetails['technical']?['accessories'] ?? '';
-    final stitching = techPackDetails['technical']?['stitching'] ?? '';
-    final decorativeStitching = techPackDetails['technical']?['decorativeStitching'] ?? '';
-    final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
-    final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+    final accessories = _resolveField(techPackDetails['technical']?['accessories'] ?? '', 'Standard closures');
+    final stitching = _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Single needle stitch');
+    final decorativeStitching = _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'None');
+    final logoPlacement = _resolveField(techPackDetails['labeling']?['logoPlacement'] ?? '', 'Neck');
+    final labelsNeeded = _resolveField(techPackDetails['labeling']?['labelsNeeded'] ?? '', 'No Label');
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
     // Garment overview fields
     final fit = (refinedConcept['silhouette'] ?? '').toString();
@@ -613,8 +628,8 @@ CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. D
 TECH PACK — $garmentTitle
 ═══════════════════════════════════════════════
 
-GARMENT IMAGE (render at the top of the document, before all sections):
-- Show the garment exactly as it appears in the reference design image provided
+GARMENT IMAGE:
+- Include the garment as it appears in the reference design image provided
 - The garment image must be clearly visible, proportional, and not cropped
 
 SECTIONS (render each exactly once, in this exact order, no additional sections allowed):
