@@ -448,7 +448,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
-  static const Map<String, Map<String, String>> _fabricDefaults = {
+  static const Map<String, Map<String, String>> fabricDefaults = {
     // Cotton subcategories
     'cotton': {'composition': '100% Cotton', 'type': 'Jersey', 'gsm': '180'},
     'lightweight (poplin, voile)': {'composition': '100% Cotton', 'type': 'Poplin', 'gsm': '90'},
@@ -502,7 +502,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
         : creativeBriefFabric.toLowerCase().trim();
 
     // Look up defaults: try composition input first, then creative brief fabric type
-    final defaults = _fabricDefaults[compositionKey] ?? _fabricDefaults[fabricTypeKey];
+    final defaults = fabricDefaults[compositionKey] ?? fabricDefaults[fabricTypeKey];
 
     // If composition already has %, treat as complete — only fill missing weight
     if (compositionInput.contains('%')) {
@@ -530,6 +530,35 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
 
     return '';
+  }
+
+  static String _buildFabricLine(
+    String compositionInput,
+    String weightInput,
+    String creativeBriefFabric, {
+    required bool isIndustryComposition,
+    required bool isIndustryGSM,
+  }) {
+    final fabricKey = creativeBriefFabric.contains(':')
+        ? creativeBriefFabric.split(':').last.trim().toLowerCase()
+        : creativeBriefFabric.toLowerCase().trim();
+    final mapEntry = fabricDefaults[fabricKey] ?? fabricDefaults['cotton']!;
+    final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
+
+    if (isIndustryComposition && isIndustryGSM) {
+      // Both from map
+      return '${mapEntry['composition']}, ${mapEntry['type']}, ${mapEntry['gsm']} GSM';
+    } else if (isIndustryComposition && !isIndustryGSM) {
+      // Map composition, user GSM
+      final gsm = rawGsm.isNotEmpty ? rawGsm : mapEntry['gsm']!;
+      return '${mapEntry['composition']}, ${mapEntry['type']}, $gsm GSM';
+    } else if (!isIndustryComposition && isIndustryGSM) {
+      // User composition, map GSM
+      return '$compositionInput, ${mapEntry['gsm']} GSM';
+    } else {
+      // Both manual — use raw values, skip map entirely
+      return rawGsm.isNotEmpty ? '$compositionInput, $rawGsm GSM' : compositionInput;
+    }
   }
 
   static String _resolveField(String value, String defaultValue) {
@@ -563,7 +592,14 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final fabricComposition = _resolveField(techPackDetails['materials']?['fabricComposition'] ?? '', 'Standard fabric');
     final fabricWeight = _resolveField(techPackDetails['materials']?['fabricWeight'] ?? '', '180 GSM');
     final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
-    final resolvedFabric = _resolveFabricLine(fabricComposition, fabricWeight, creativeBriefFabric);
+    final bool isIndustryComposition = techPackDetails['materials']?['isIndustryStandardComposition'] == true;
+    final bool isIndustryGSM = techPackDetails['materials']?['isIndustryStandardGSM'] == true;
+
+    final String resolvedFabric = _buildFabricLine(
+      fabricComposition, fabricWeight, creativeBriefFabric,
+      isIndustryComposition: isIndustryComposition,
+      isIndustryGSM: isIndustryGSM,
+    );
     final secondaryMaterial = _resolveField(techPackDetails['materials']?['secondaryMaterials'] ?? '', 'No secondary material');
     final fabricProperties = _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';

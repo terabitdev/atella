@@ -8,6 +8,8 @@ class TechPackQuestionField extends StatelessWidget {
   final TextEditingController controller;
   final ValueChanged<String>? onChanged;
   final bool enabled;
+  final String? errorText;
+
   const TechPackQuestionField({
     super.key,
     required this.label,
@@ -15,10 +17,12 @@ class TechPackQuestionField extends StatelessWidget {
     required this.controller,
     this.onChanged,
     this.enabled = true,
+    this.errorText,
   });
 
   @override
   Widget build(BuildContext context) {
+    final hasError = errorText != null && errorText!.isNotEmpty;
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
@@ -32,17 +36,29 @@ class TechPackQuestionField extends StatelessWidget {
           decoration: InputDecoration(
             hintText: hint,
             filled: true,
-            fillColor: Color(0xFFE3E1FB),
+            fillColor: hasError ? const Color(0xFFFFE8E8) : const Color(0xFFE3E1FB),
             contentPadding: EdgeInsets.symmetric(
               vertical: 14.h,
               horizontal: 16.w,
             ),
             border: OutlineInputBorder(
               borderRadius: BorderRadius.circular(12.r),
-              borderSide: BorderSide.none,
+              borderSide: hasError
+                  ? const BorderSide(color: Colors.red, width: 1.5)
+                  : BorderSide.none,
+            ),
+            enabledBorder: OutlineInputBorder(
+              borderRadius: BorderRadius.circular(12.r),
+              borderSide: hasError
+                  ? const BorderSide(color: Colors.red, width: 1.5)
+                  : BorderSide.none,
             ),
           ),
         ),
+        if (hasError) ...[
+          SizedBox(height: 4.h),
+          Text(errorText!, style: TextStyle(color: Colors.red, fontSize: 11.sp)),
+        ],
         SizedBox(height: 14.h),
       ],
     );

@@ -36,10 +36,11 @@ class TechPackDetailsController extends GetxController {
   final secondaryMaterialsController = TextEditingController();
   final fabricPropertiesController = TextEditingController();
 
-  // Colors
-  final primaryColorController = TextEditingController();
-  final alternateColorwaysController = TextEditingController();
-  final pantoneController = TextEditingController();
+  // Industry standards checkboxes + validation errors
+  final RxBool useIndustryStandardComposition = false.obs;
+  final RxBool useIndustryStandardGSM = false.obs;
+  final RxString compositionError = ''.obs;
+  final RxString weightError = ''.obs;
 
   // Sizes & Measurements
   // Changed from TextEditingController to RxList for checkbox multi-select
@@ -79,7 +80,6 @@ class TechPackDetailsController extends GetxController {
   final RxString selectedManufacturerCountry = ''.obs;
 
   // Block visibility
-  final RxBool showColorsBlock = false.obs;
   final RxBool showSizesBlock = false.obs;
   final RxBool showTechnicalBlock = false.obs;
   final RxBool showLabelingBlock = false.obs;
@@ -262,12 +262,6 @@ class TechPackDetailsController extends GetxController {
     secondaryMaterialsController.text = materials['secondaryMaterials'] ?? '';
     fabricPropertiesController.text = materials['fabricProperties'] ?? '';
 
-    // Colors
-    final colors = techPackDetails['colors'] as Map<String, dynamic>? ?? {};
-    primaryColorController.text = colors['primaryColor'] ?? '';
-    alternateColorwaysController.text = colors['alternateColorways'] ?? '';
-    pantoneController.text = colors['pantone'] ?? '';
-
     // Sizes & Measurements
     final sizes = techPackDetails['sizes'] as Map<String, dynamic>? ?? {};
     // Load selected sizes from Firebase (stored as comma-separated string or list)
@@ -322,26 +316,103 @@ class TechPackDetailsController extends GetxController {
 
   void _showAllBlocks() {
     // In edit mode, show all blocks
-    showColorsBlock.value = true;
     showSizesBlock.value = true;
     showTechnicalBlock.value = true;
     showLabelingBlock.value = true;
     showManufacturersBlock.value = true;
   }
 
-  void checkMaterialsBlockComplete() {
-    if (fabricCompositionController.text.isNotEmpty &&
-        fabricWeightController.text.isNotEmpty &&
-        secondaryMaterialsController.text.isNotEmpty &&
-        fabricPropertiesController.text.isNotEmpty) {
-      showColorsBlock.value = true;
-    }
+  String _creativeBriefFabricKey() {
+    final raw = (designData['creativeBrief']?['fabrics'] ?? '').toString();
+    final key = raw.contains(':') ? raw.split(':').last.trim().toLowerCase() : raw.toLowerCase().trim();
+    return OpenAIService.fabricDefaults.containsKey(key) ? key : 'cotton';
   }
 
-  void checkColorsBlockComplete() {
-    if (primaryColorController.text.isNotEmpty &&
-        alternateColorwaysController.text.isNotEmpty &&
-        pantoneController.text.isNotEmpty) {
+  void toggleIndustryStandardComposition(bool value) {
+    useIndustryStandardComposition.value = value;
+    if (value) {
+      final defaults = OpenAIService.fabricDefaults[_creativeBriefFabricKey()]!;
+      fabricCompositionController.text = defaults['composition']!;
+      compositionError.value = '';
+    } else {
+      fabricCompositionController.clear();
+    }
+    checkMaterialsBlockComplete();
+  }
+
+  void toggleIndustryStandardGSM(bool value) {
+    useIndustryStandardGSM.value = value;
+    if (value) {
+      final defaults = OpenAIService.fabricDefaults[_creativeBriefFabricKey()]!;
+      fabricWeightController.text = defaults['gsm']!;
+      weightError.value = '';
+    } else {
+      fabricWeightController.clear();
+    }
+    checkMaterialsBlockComplete();
+  }
+
+  void _validateComposition() {
+    if (useIndustryStandardComposition.value) {
+      compositionError.value = '';
+      return;
+    }
+    final value = fabricCompositionController.text.trim();
+    if (value.isEmpty) {
+      compositionError.value = 'Fabric composition is required';
+      return;
+    }
+    if (value.contains('%')) {
+      final matches = RegExp(r'(\d+(?:\.\d+)?)\s*%').allMatches(value);
+      final total = matches.fold<double>(0, (s, m) => s + double.parse(m.group(1)!));
+      if ((total - 100).abs() > 2) {
+        compositionError.value = 'Percentages must add up to 100%';
+        return;
+      }
+    } else {
+      final lv = value.toLowerCase();
+      final known = OpenAIService.fabricDefaults.keys.any((k) => lv.contains(k) || k.contains(lv));
+      if (!known) {
+        compositionError.value = 'Enter a valid fabric or use % format (e.g. 80% Cotton 20% Polyester)';
+        return;
+      }
+    }
+    compositionError.value = '';
+  }
+
+  void _validateWeight() {
+    if (useIndustryStandardGSM.value) {
+      weightError.value = '';
+      return;
+    }
+    final value = fabricWeightController.text.trim();
+    if (value.isEmpty) {
+      weightError.value = 'Fabric weight is required';
+      return;
+    }
+    final num = double.tryParse(value.replaceAll(RegExp(r'[^0-9.]'), ''));
+    if (num == null) {
+      weightError.value = 'Enter a valid number (e.g. 180 or 180 GSM)';
+      return;
+    }
+    if (num < 30 || num > 1000) {
+      weightError.value = 'GSM must be between 30 and 1000';
+      return;
+    }
+    weightError.value = '';
+  }
+
+  void checkMaterialsBlockComplete() {
+    _validateComposition();
+    _validateWeight();
+    final compositionValid = compositionError.value.isEmpty &&
+        fabricCompositionController.text.isNotEmpty;
+    final weightValid = weightError.value.isEmpty &&
+        fabricWeightController.text.isNotEmpty;
+    if (compositionValid &&
+        weightValid &&
+        secondaryMaterialsController.text.isNotEmpty &&
+        fabricPropertiesController.text.isNotEmpty) {
       showSizesBlock.value = true;
     }
   }
@@ -1252,11 +1323,8 @@ class TechPackDetailsController extends GetxController {
         'fabricWeight': fabricWeightController.text,
         'secondaryMaterials': secondaryMaterialsController.text,
         'fabricProperties': fabricPropertiesController.text,
-      },
-      'colors': {
-        'primaryColor': primaryColorController.text,
-        'alternateColorways': alternateColorwaysController.text,
-        'pantone': pantoneController.text,
+        'isIndustryStandardComposition': useIndustryStandardComposition.value,
+        'isIndustryStandardGSM': useIndustryStandardGSM.value,
       },
       'sizes': {
         'sizeRange': selectedSizes.join(', '), // Store as comma-separated string
@@ -1284,9 +1352,6 @@ class TechPackDetailsController extends GetxController {
     fabricWeightController.dispose();
     secondaryMaterialsController.dispose();
     fabricPropertiesController.dispose();
-    primaryColorController.dispose();
-    alternateColorwaysController.dispose();
-    pantoneController.dispose();
     // selectedSizes is RxList, no need to dispose
     measurementChartController.dispose();
     accessoriesController.dispose();

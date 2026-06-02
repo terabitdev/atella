@@ -39,7 +39,6 @@ class TechPackReadyController extends GetxController {
   String get techPackSummary {
     return '''
 Materials: ${_detailsController.fabricCompositionController.text} ${_detailsController.fabricWeightController.text.isNotEmpty ? '/ ${_detailsController.fabricWeightController.text} GSM' : ''}
-Colors: ${_detailsController.primaryColorController.text}
 Sizes: ${_detailsController.selectedSizes.join(', ')}
     ''';
   }
@@ -278,11 +277,6 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
           'fabricWeight': _detailsController.fabricWeightController.text,
           'secondaryMaterials': _detailsController.secondaryMaterialsController.text,
           'fabricProperties': _detailsController.fabricPropertiesController.text,
-        },
-        'colors': {
-          'primaryColor': _detailsController.primaryColorController.text,
-          'alternateColorways': _detailsController.alternateColorwaysController.text,
-          'pantone': _detailsController.pantoneController.text,
         },
         'sizes': {
           'sizeRange': _detailsController.selectedSizes.join(', '),

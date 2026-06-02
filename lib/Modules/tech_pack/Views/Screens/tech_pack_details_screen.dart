@@ -70,20 +70,58 @@ class TechPackDetailsScreen extends StatelessWidget {
                   children: [
                     RoundedTagContainer(text: l10n.tpdMaterialsFabrics),
                     SizedBox(height: 10.h),
-                    TechPackQuestionField(
+                    Obx(() => TechPackQuestionField(
                       label: l10n.tpdFabricCompositionLabel,
                       hint: l10n.tpdFabricCompositionHint,
                       controller: controller.fabricCompositionController,
-                      onChanged: (_) =>
-                          controller.checkMaterialsBlockComplete(),
-                    ),
-                    TechPackQuestionField(
+                      enabled: !controller.useIndustryStandardComposition.value,
+                      errorText: controller.compositionError.value.isEmpty
+                          ? null
+                          : controller.compositionError.value,
+                      onChanged: (_) => controller.checkMaterialsBlockComplete(),
+                    )),
+                    Obx(() => Row(
+                      children: [
+                        Checkbox(
+                          value: controller.useIndustryStandardComposition.value,
+                          activeColor: AppColors.splashcolor,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          onChanged: (v) => controller.toggleIndustryStandardComposition(v ?? false),
+                        ),
+                        Text(
+                          'Use industry standard',
+                          style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                        ),
+                      ],
+                    )),
+                    SizedBox(height: 6.h),
+                    Obx(() => TechPackQuestionField(
                       label: l10n.tpdFabricWeightLabel,
                       hint: l10n.tpdFabricWeightHint,
                       controller: controller.fabricWeightController,
-                      onChanged: (_) =>
-                          controller.checkMaterialsBlockComplete(),
-                    ),
+                      enabled: !controller.useIndustryStandardGSM.value,
+                      errorText: controller.weightError.value.isEmpty
+                          ? null
+                          : controller.weightError.value,
+                      onChanged: (_) => controller.checkMaterialsBlockComplete(),
+                    )),
+                    Obx(() => Row(
+                      children: [
+                        Checkbox(
+                          value: controller.useIndustryStandardGSM.value,
+                          activeColor: AppColors.splashcolor,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          onChanged: (v) => controller.toggleIndustryStandardGSM(v ?? false),
+                        ),
+                        Text(
+                          'Use industry standard',
+                          style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                        ),
+                      ],
+                    )),
+                    SizedBox(height: 6.h),
                     TechPackQuestionField(
                       label: l10n.tpdSecondaryMaterialsLabel,
                       hint: l10n.tpdSecondaryMaterialsHint,
@@ -100,56 +138,6 @@ class TechPackDetailsScreen extends StatelessWidget {
                     ),
                   ],
                 ),
-              ),
-              // Colors Block
-              Obx(
-                () => controller.showColorsBlock.value
-                    ? Column(
-                        children: [
-                          SizedBox(height: 18.h),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 18,
-                              horizontal: 14,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(18.r),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RoundedTagContainer(text: l10n.tpdColors),
-                                SizedBox(height: 10.h),
-                                TechPackQuestionField(
-                                  label: l10n.tpdPrimaryColorLabel,
-                                  hint: l10n.tpdPrimaryColorHint,
-                                  controller: controller.primaryColorController,
-                                  onChanged: (_) =>
-                                      controller.checkColorsBlockComplete(),
-                                ),
-                                TechPackQuestionField(
-                                  label: l10n.tpdAlternateColorwaysLabel,
-                                  hint: l10n.tpdAlternateColorwaysHint,
-                                  controller:
-                                      controller.alternateColorwaysController,
-                                  onChanged: (_) =>
-                                      controller.checkColorsBlockComplete(),
-                                ),
-                                TechPackQuestionField(
-                                  label: l10n.tpdPantoneLabel,
-                                  hint: l10n.tpdPantoneHint,
-                                  controller: controller.pantoneController,
-                                  onChanged: (_) =>
-                                      controller.checkColorsBlockComplete(),
-                                ),
-                              ],
-                            ),
-                          ),
-                        ],
-                      )
-                    : const SizedBox.shrink(),
               ),
               // Sizes & Measurements Block
               Obx(
