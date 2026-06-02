@@ -605,11 +605,8 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (secondaryMaterial.isNotEmpty) fabricSection += '-- Secondary material: $secondaryMaterial\n';
     if (fabricProperties.isNotEmpty) fabricSection += '-- Fabric properties: $fabricProperties\n';
 
-    // LOGO PLACEMENT — standalone section
-    String logoPlacementSection = '• Logo placement: $logoPlacement\n';
-
-    // LABELS — standalone section
-    String labelsSection = '• Labels: $labelsNeeded\n';
+    // LOGO AND LABELS — combined section
+    String logoAndLabelsSection = '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
 
     // Garment overview — 4 clean lines only
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
@@ -622,7 +619,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final String manufacturingPrompt =
         '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
 
-CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 6 sections — no more, no fewer.
+CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 5 sections — no more, no fewer.
 
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
@@ -651,13 +648,9 @@ $constructionSection
 ──────────────────────────────────────
 $fabricSection
 ──────────────────────────────────────
-5. LOGO PLACEMENT
+5. LOGO AND LABELS
 ──────────────────────────────────────
-$logoPlacementSection
-──────────────────────────────────────
-6. LABELS
-──────────────────────────────────────
-$labelsSection
+$logoAndLabelsSection
 
 Style requirements:
 - White background, clean margins, professional fashion industry layout
@@ -666,7 +659,7 @@ Style requirements:
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
-- CRITICAL: Do NOT add any sections beyond the 6 listed above
+- CRITICAL: Do NOT add any sections beyond the 5 listed above
 ''';
 
     // Build technical flat prompt with correct logo behavior
