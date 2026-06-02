@@ -590,7 +590,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (measurementChart.isNotEmpty) {
       measurementTableSection += 'Measurement data: $measurementChart\n';
     }
-    measurementTableSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n';
+    measurementTableSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
+        'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
+        'Tolerance: ±1 cm for all measurements.\n';
 
     // CONSTRUCTION DETAILS — always 4 mandatory items
     final String constructionSection =
