@@ -662,23 +662,14 @@ Style requirements:
 - CRITICAL: Do NOT add any sections beyond the 5 listed above
 ''';
 
-    // Build technical flat prompt with correct logo behavior
-    String technicalLogoInstruction = '';
+    // Build technical flat prompt with logo specification
+    String technicalLogoInstruction;
     if (labelImage.isNotEmpty) {
-      // User uploaded logo image - show actual logo on technical drawing
       technicalLogoInstruction =
-          '\n- Show the logo/label from reference image clearly marked on the $logoPlacement area with a dashed outline box.'
-          '\n- Add two dimension arrows on the logo box: width arrow (e.g. 5 cm) horizontally across the top, height arrow (e.g. 3 cm) vertically on the side.';
-    } else if (labelsNeeded.isNotEmpty || logoPlacement.isNotEmpty) {
-      // User provided label text or just placement - show highlighted area with "LOGO" text
+          '\n- Logo: Dashed rectangle (5 cm W × 3 cm H), placed at $logoPlacement, 3 cm below neckline, centered on garment. Show actual logo from reference image inside the box. Add width (5 cm) and height (3 cm) dimension arrows outside the box.';
+    } else {
       technicalLogoInstruction =
-          '\n- Mark the $logoPlacement area with a dashed outline box containing the word "LOGO" in capital letters.';
-      if (labelsNeeded.isNotEmpty) {
-        technicalLogoInstruction +=
-            '\n- Add a small callout label near the box showing: "$labelsNeeded"';
-      }
-      technicalLogoInstruction +=
-          '\n- Add two dimension arrows on the logo box: width arrow (e.g. 5 cm) horizontally across the top, height arrow (e.g. 3 cm) vertically on the side.';
+          '\n- Logo: Dashed rectangle (5 cm W × 3 cm H), placed at $logoPlacement, 3 cm below neckline, centered on garment. Label inside box: "LOGO". Add width (5 cm) and height (3 cm) dimension arrows outside the box.';
     }
 
     final technicalFlatPrompt =
