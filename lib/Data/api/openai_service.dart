@@ -107,7 +107,7 @@ class OpenAIService {
         request.headers['Authorization'] = 'Bearer $apiKey';
 
         // Add form fields
-        request.fields['model'] = 'gpt-image-1.5';
+        request.fields['model'] = 'gpt-image-2';
         request.fields['prompt'] = safePrompt;
         request.fields['size'] = size;
         request.fields['n'] = numberOfImages.toString();
@@ -136,7 +136,7 @@ class OpenAIService {
             'Authorization': 'Bearer $apiKey',
           },
           body: jsonEncode({
-            'model': 'gpt-image-1.5',
+            'model': 'gpt-image-2',
             'prompt': safePrompt,
             'n': numberOfImages,
             'size': size,
@@ -234,7 +234,7 @@ class OpenAIService {
         request.headers['Authorization'] = 'Bearer $apiKey';
 
         // Add form fields
-        request.fields['model'] = 'gpt-image-1.5';
+        request.fields['model'] = 'gpt-image-2';
         request.fields['prompt'] = safePrompt;
         request.fields['size'] = size;
         request.fields['n'] = numberOfImages.toString();
@@ -263,7 +263,7 @@ class OpenAIService {
             'Authorization': 'Bearer $apiKey',
           },
           body: jsonEncode({
-            'model': 'gpt-image-1.5',
+            'model': 'gpt-image-2',
             'prompt': safePrompt,
             'n': numberOfImages,
             'size': size,
