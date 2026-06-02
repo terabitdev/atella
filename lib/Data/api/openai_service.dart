@@ -568,9 +568,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final fabricProperties = _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
     final measurementChart = techPackDetails['sizes']?['measurementChart'] ?? '';
-    final accessories = _resolveField(techPackDetails['technical']?['accessories'] ?? '', 'Standard closures');
-    final stitching = _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Single needle stitch');
-    final decorativeStitching = _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'None');
+    final stitching = _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Overlock stitch (4 threads)');
+    final decorativeStitching = _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'Single row, 1 mm spacing');
+    final accessories = _resolveField(techPackDetails['technical']?['accessories'] ?? '', 'Bartack at stress points');
     final logoPlacement = _resolveField(techPackDetails['labeling']?['logoPlacement'] ?? '', 'Neck');
     final labelsNeeded = _resolveField(techPackDetails['labeling']?['labelsNeeded'] ?? '', 'No Label');
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
@@ -592,12 +592,12 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
     measurementTableSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n';
 
-    // CONSTRUCTION DETAILS — stitching and accessories only, no fabric fields
-    String constructionSection = '';
-    if (stitching.isNotEmpty) constructionSection += '-- Main seams: $stitching\n';
-    if (decorativeStitching.isNotEmpty) constructionSection += '-- Decorative stitching: $decorativeStitching\n';
-    if (accessories.isNotEmpty) constructionSection += '-- Accessories: $accessories\n';
-    constructionSection += '-- Seam allowance: 1 cm (all seams)\n';
+    // CONSTRUCTION DETAILS — always 4 mandatory items
+    final String constructionSection =
+        '-- Stitch type: $stitching\n'
+        '-- Topstitch: $decorativeStitching\n'
+        '-- Reinforcements: $accessories\n'
+        '-- Seam allowance: 1 cm (all seams)\n';
 
     // FABRIC — dedicated section
     String fabricSection = '';
