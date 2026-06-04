@@ -700,14 +700,24 @@ Style requirements:
 - CRITICAL: Do NOT add any sections beyond the 5 listed above
 ''';
 
+    // Resolve logo placement — chest without explicit side defaults to left chest
+    final String resolvedLogoPlacement = () {
+      final lp = logoPlacement.toLowerCase();
+      if ((lp.contains('chest') || lp.contains('centre chest') || lp.contains('center chest')) &&
+          !lp.contains('left') && !lp.contains('right')) {
+        return 'left chest';
+      }
+      return logoPlacement;
+    }();
+
     // Build technical flat prompt with logo specification
     String technicalLogoInstruction;
     if (labelImage.isNotEmpty) {
       technicalLogoInstruction =
-          '\n- Logo: Dashed rectangle (5 cm W × 3 cm H), placed at $logoPlacement, 3 cm below neckline, centered on garment. Show actual logo from reference image inside the box. Add width (5 cm) and height (3 cm) dimension arrows outside the box.';
+          '\n- Logo: Draw on the FRONT VIEW (left half) only — dashed rectangle (5 cm W × 3 cm H), placed at $resolvedLogoPlacement, 3 cm below the front neckline. Show actual logo from reference image inside the box. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw the logo on the back view.';
     } else {
       technicalLogoInstruction =
-          '\n- Logo: Dashed rectangle (5 cm W × 3 cm H), placed at $logoPlacement, 3 cm below neckline, centered on garment. Label inside box: "LOGO". Add width (5 cm) and height (3 cm) dimension arrows outside the box.';
+          '\n- Logo: Draw on the FRONT VIEW (left half) only — dashed rectangle (5 cm W × 3 cm H), placed at $resolvedLogoPlacement, 3 cm below the front neckline. Label inside box: "LOGO". Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw the logo on the back view.';
     }
 
     final technicalFlatPrompt =
