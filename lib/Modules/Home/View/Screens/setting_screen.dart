@@ -281,17 +281,19 @@ class _SettingScreenState extends State<SettingScreen> {
                               children: [
                                 // Free Plan + monthly designs on same row
                                 Row(
-                                  mainAxisAlignment:
-                                      MainAxisAlignment.spaceBetween,
+                                  crossAxisAlignment: CrossAxisAlignment.start,
                                   children: [
-                                    Text(
-                                      l10n.settingsFreePlan,
-                                      style: TextStyle(
-                                        fontSize: 15.sp,
-                                        fontWeight: FontWeight.w700,
-                                        color: Colors.black,
+                                    Expanded(
+                                      child: Text(
+                                        l10n.settingsFreePlan,
+                                        style: TextStyle(
+                                          fontSize: 15.sp,
+                                          fontWeight: FontWeight.w700,
+                                          color: Colors.black,
+                                        ),
                                       ),
                                     ),
+                                    SizedBox(width: 8.w),
                                     Text(
                                       '$freeUsed/1 Designs',
                                       style: TextStyle(
