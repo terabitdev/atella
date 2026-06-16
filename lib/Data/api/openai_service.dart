@@ -576,12 +576,83 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return value.trim();
   }
 
+  static String _standardMeasurementRules(String measurementChart) {
+    String section = '';
+    if (measurementChart.isNotEmpty) {
+      section += 'Measurement data: $measurementChart\n';
+    }
+    section += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
+        'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
+        'Tolerance: ±1 cm for all measurements.\n';
+    return section;
+  }
+
+  /// Calls gpt-4o with the size chart image and returns extracted measurements as plain text.
+  /// Returns null if the image cannot be read or the API call fails.
+  static Future<String?> extractSizesFromChartImage(String imagePath) async {
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) return null;
+
+      final base64Image = await _convertImageToBase64(imagePath);
+      if (base64Image == null) return null;
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiKey',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4o',
+          'messages': [
+            {
+              'role': 'user',
+              'content': [
+                {
+                  'type': 'text',
+                  'text':
+                      'This is a garment size chart. Extract every measurement from it and return them as plain text only, in this exact format:\n'
+                      'Size | Measurement Name | Value\n'
+                      'Example:\nS | Chest | 36 cm\nM | Chest | 38 cm\n'
+                      'IMPORTANT: Preserve the exact units as shown in the chart (e.g. cm, inches, mm). Do NOT convert units. If the chart uses inches, keep inches. If it uses cm, keep cm.\n'
+                      'Return ONLY the extracted data rows, nothing else. No headings, no explanation.',
+                },
+                {
+                  'type': 'image_url',
+                  'image_url': {
+                    'url': 'data:image/jpeg;base64,$base64Image',
+                  },
+                },
+              ],
+            },
+          ],
+          'max_tokens': 600,
+        }),
+      );
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final extracted = data['choices'][0]['message']['content'] as String;
+        print('📐 Extracted measurements from chart:\n$extracted');
+        return extracted;
+      } else {
+        print('❌ gpt-4o chart extraction failed: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('❌ Error extracting sizes from chart image: $e');
+      return null;
+    }
+  }
+
   static Future<Map<String, String>> generateTechPackPrompts({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
     required Map<String, dynamic> finalDetails,
     required Map<String, dynamic> techPackDetails,
     required String selectedDesignPrompt,
+    String? measurementChartImagePath,
   }) async {
     // Extract key information directly - no GPT-4 API call needed
     final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
@@ -623,12 +694,22 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (sizeRange.isNotEmpty) {
       measurementTableSection += 'Selected sizes: $sizeRange\n';
     }
-    if (measurementChart.isNotEmpty) {
-      measurementTableSection += 'Measurement data: $measurementChart\n';
+
+    if (measurementChartImagePath != null && measurementChartImagePath.isNotEmpty) {
+      final extractedSizes = await extractSizesFromChartImage(measurementChartImagePath);
+      if (extractedSizes != null && extractedSizes.isNotEmpty) {
+        measurementTableSection +=
+            'IMPORTANT: Use ONLY the following measurements extracted from the user\'s size chart. '
+            'Do NOT apply standard industry grading rules or default values. '
+            'Preserve the exact units as provided (cm, inches, mm — do NOT convert):\n$extractedSizes\n'
+            'Render as a clean bordered grid table. Columns = each size. Rows = each measurement name from the chart.\n'
+            'Tolerance: ±1 unit for all measurements.\n';
+      } else {
+        measurementTableSection += _standardMeasurementRules(measurementChart);
+      }
+    } else {
+      measurementTableSection += _standardMeasurementRules(measurementChart);
     }
-    measurementTableSection += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
-        'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
-        'Tolerance: ±1 cm for all measurements.\n';
 
     // CONSTRUCTION DETAILS — always 4 mandatory items
     final String constructionSection =
@@ -659,13 +740,19 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
 CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 5 sections — no more, no fewer.
 
+IMAGE RULE — STRICTLY ENFORCE:
+- The ONLY image/visual element allowed in the entire document is the single garment design image shown at the top.
+- Do NOT include any fabric swatches, texture thumbnails, logo images, label images, garment cutouts, icons, or any other visual elements anywhere else in the document.
+- Sections 1 through 5 must contain TEXT ONLY. No images, no graphics, no illustrations of any kind within the sections.
+
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
 ═══════════════════════════════════════════════
 
 GARMENT IMAGE:
-- Include the garment as it appears in the reference design image provided
+- Show the garment exactly as it appears in the reference design image provided
 - The garment image must be clearly visible, proportional, and not cropped
+- This is the ONLY image in the entire document
 
 SECTIONS (render each exactly once, in this exact order, no additional sections allowed):
 
@@ -698,6 +785,7 @@ Style requirements:
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
 - CRITICAL: Do NOT add any sections beyond the 5 listed above
+- CRITICAL: Sections 1–5 are TEXT ONLY. Zero images or graphics inside any section.
 ''';
 
     // Resolve logo placement — chest without explicit side defaults to left chest
@@ -710,15 +798,9 @@ Style requirements:
       return logoPlacement;
     }();
 
-    // Build technical flat prompt with logo specification
-    String technicalLogoInstruction;
-    if (labelImage.isNotEmpty) {
-      technicalLogoInstruction =
-          '\n- Logo: Draw on the FRONT VIEW (left half) only — dashed rectangle (5 cm W × 3 cm H), placed at $resolvedLogoPlacement, 3 cm below the front neckline. Show actual logo from reference image inside the box. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw the logo on the back view.';
-    } else {
-      technicalLogoInstruction =
-          '\n- Logo: Draw on the FRONT VIEW (left half) only — dashed rectangle (5 cm W × 3 cm H), placed at $resolvedLogoPlacement, 3 cm below the front neckline. Label inside box: "LOGO". Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw the logo on the back view.';
-    }
+    // Technical flat always uses a plain dashed box labelled "LOGO" — never renders an actual image
+    final String technicalLogoInstruction =
+        '\n- Logo placeholder: Draw on the FRONT VIEW (left half) only — a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it in plain text. Place it at $resolvedLogoPlacement, 3 cm below the front neckline. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image, graphic, or artwork inside or near this box. Do NOT draw the logo placeholder on the back view.';
 
     final technicalFlatPrompt =
         '''Technical flat drawing of a $garmentType. White background. Black line art only, no colors, no shading, no fill.

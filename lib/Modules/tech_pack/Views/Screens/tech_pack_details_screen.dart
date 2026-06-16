@@ -179,61 +179,68 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   ],
                                 ),
                                 SizedBox(height: 10.h),
-                                Obx(() => controller.showMeasurementText.value
-                                    ? TechPackQuestionField(
-                                        label: l10n.tpdMeasurementChartLabel,
-                                        hint: l10n.tpdMeasurementChartHint,
-                                        controller:
-                                            controller.measurementChartController,
-                                        onChanged: (_) =>
-                                            controller.checkSizesBlockComplete(),
-                                      )
-                                    : const SizedBox.shrink()),
-                                Obx(() => (controller.showMeasurementText.value && controller.showMeasurementImage.value) ||
-                                           (!controller.showMeasurementText.value && !controller.showMeasurementImage.value)
+                                Text(
+                                  l10n.tpdMeasurementChartLabel,
+                                  style: tplTextStyle12400,
+                                ),
+                                SizedBox(height: 8.h),
+                                Obx(() => Row(
+                                  children: [
+                                    _ToggleButton(
+                                      label: 'Yes',
+                                      selected: controller.providingOwnChart.value,
+                                      onTap: () {
+                                        controller.providingOwnChart.value = true;
+                                      },
+                                    ),
+                                    SizedBox(width: 10.w),
+                                    _ToggleButton(
+                                      label: 'No',
+                                      selected: !controller.providingOwnChart.value,
+                                      onTap: () {
+                                        controller.providingOwnChart.value = false;
+                                        controller.clearMeasurementImage();
+                                        controller.measurementChartController.clear();
+                                      },
+                                    ),
+                                  ],
+                                )),
+                                Obx(() => controller.providingOwnChart.value
                                     ? Column(
+                                        crossAxisAlignment: CrossAxisAlignment.start,
                                         children: [
-                                          SizedBox(height: 10.h),
-                                          Center(
-                                            child: Text(
-                                              l10n.tpdOr,
-                                              style: TextStyle(
-                                                color: Colors.grey,
-                                                fontSize: 15.sp,
-                                              ),
-                                            ),
+                                          SizedBox(height: 12.h),
+                                          TechPackImageUploadContainer(
+                                            onTap: controller.openCameraForMeasurement,
+                                            imagePath: controller.measurementImagePath.value.isEmpty
+                                                ? null
+                                                : controller.measurementImagePath.value,
+                                            onEdit: controller.measurementImagePath.value.isNotEmpty
+                                                ? () => controller.openCameraForMeasurement()
+                                                : null,
+                                            onDelete: controller.measurementImagePath.value.isNotEmpty
+                                                ? () => controller.clearMeasurementImage()
+                                                : null,
                                           ),
                                           SizedBox(height: 10.h),
+                                          TechPackQuestionField(
+                                            label: 'Additional notes (optional)',
+                                            hint: 'e.g. sizes are in inches',
+                                            controller: controller.measurementChartController,
+                                            onChanged: (_) => controller.checkSizesBlockComplete(),
+                                          ),
                                         ],
                                       )
-                                    : const SizedBox.shrink()),
-                                Obx(() => controller.showMeasurementImage.value
-                                    ? TechPackImageUploadContainer(
-                                        onTap: () {
-                                          controller.openCameraForMeasurement();
-                                        },
-                                        imagePath:
-                                            controller
-                                                .measurementImagePath
-                                                .value
-                                                .isEmpty
-                                            ? null
-                                            : controller.measurementImagePath.value,
-                                        onEdit: controller.measurementImagePath.value.isNotEmpty
-                                            ? () => controller.openCameraForMeasurement()
-                                            : null,
-                                        onDelete: controller.measurementImagePath.value.isNotEmpty
-                                            ? () => controller.clearMeasurementImage()
-                                            : null,
-                                      )
-                                    : const SizedBox.shrink()),
-                                SizedBox(height: 10.h),
-                                TechPackQuestionField(
-                                  label: l10n.tpdAutogeneratedLabel,
-                                  hint: l10n.tpdAutogeneratedHint,
-                                  controller: controller.autogeneratedController,
-
-                                ),
+                                    : Padding(
+                                        padding: EdgeInsets.only(top: 8.h),
+                                        child: Text(
+                                          'AI will auto-generate standard measurements',
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            color: Colors.grey,
+                                          ),
+                                        ),
+                                      )),
                               ],
                             ),
                           ),
@@ -481,6 +488,43 @@ class TechPackDetailsScreen extends StatelessWidget {
               SizedBox(height: 30.h),
               ],
             ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ToggleButton extends StatelessWidget {
+  final String label;
+  final bool selected;
+  final VoidCallback onTap;
+
+  const _ToggleButton({
+    required this.label,
+    required this.selected,
+    required this.onTap,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onTap: onTap,
+      child: Container(
+        padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 8.h),
+        decoration: BoxDecoration(
+          color: selected ? Colors.black : Colors.transparent,
+          borderRadius: BorderRadius.circular(8.r),
+          border: Border.all(
+            color: selected ? Colors.black : Colors.grey.shade400,
+          ),
+        ),
+        child: Text(
+          label,
+          style: TextStyle(
+            fontSize: 13.sp,
+            fontWeight: FontWeight.w600,
+            color: selected ? Colors.white : Colors.grey.shade600,
           ),
         ),
       ),
