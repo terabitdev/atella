@@ -357,17 +357,23 @@ async function handlePaymentFailed(invoice: Stripe.Invoice) {
 // Helper function to map price IDs to plan names
 function getPlanNameFromPriceId(priceId: string): string {
   switch (priceId) {
-    case 'price_1SrIZmB0j1hBhcavLizS6xZ0': // STARTER monthly
+    case 'price_1SrIZmB0j1hBhcavLizS6xZ0':
+    case 'price_1SokjDB0j1hBhcavV5F0hkvX':
       return 'STARTER';
-    case 'price_1SrIZcB0j1hBhcaveKKfhFDc': // STARTER yearly
+    case 'price_1SrIZcB0j1hBhcaveKKfhFDc':
+    case 'price_1Sokk3B0j1hBhcavbpjVtnGv':
       return 'STARTER_YEARLY';
-    case 'price_1SrIZgB0j1hBhcavcgFGjJFy': // PRO monthly
+    case 'price_1SrIZgB0j1hBhcavcgFGjJFy':
+    case 'price_1SoklQB0j1hBhcavYA4erwqY':
       return 'PRO';
-    case 'price_1SrIZVB0j1hBhcavd3DPsClC': // PRO yearly
+    case 'price_1SrIZVB0j1hBhcavd3DPsClC':
+    case 'price_1SokkxB0j1hBhcaviwspqhPv':
       return 'PRO_YEARLY';
-    case 'price_1SrIZQB0j1hBhcavuPe13RH2': // STUDIO monthly
+    case 'price_1SrIZQB0j1hBhcavuPe13RH2':
+    case 'price_1SokmOB0j1hBhcavZWbByj8F':
       return 'STUDIO';
-    case 'price_1SrIZLB0j1hBhcavy3NJMTzh': // STUDIO yearly
+    case 'price_1SrIZLB0j1hBhcavy3NJMTzh':
+    case 'price_1SokmqB0j1hBhcavGcXmnQEk':
       return 'STUDIO_YEARLY';
     default:
       return 'FREE';
