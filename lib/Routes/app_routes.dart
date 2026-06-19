@@ -1,6 +1,13 @@
 class AppRoutes {
   static const String splash = '/splash';
   static const String onboarding = '/onboarding';
+  static const String onboardingBrand = '/onboarding_brand';
+  static const String onboardingGoals = '/onboarding_goals';
+  static const String onboardingProduction = '/onboarding_production';
+  static const String onboardingDiscovery = '/onboarding_discovery';
+  static const String onboardingExperience = '/onboarding_experience';
+  static const String onboardingFeatures = '/onboarding_features';
+  static const String onboardingBrandStart = '/onboarding_brand_start';
   static const String login = '/login';
   static const String signup = '/signup';
   static const String verification = '/verification';

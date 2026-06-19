@@ -3,6 +3,13 @@ import 'package:atella/Modules/Auth/Bindings/auth_bindings.dart';
 import 'package:atella/Modules/Auth/View/Screens/Signup_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/login_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/onboarding_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_brand_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_goals_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_discovery_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_experience_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_brand_start_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_features_screen.dart';
+import 'package:atella/Modules/Auth/View/Screens/onboarding_production_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/splash_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/verification_screen.dart';
 import 'package:atella/Modules/creative_brief/Bindings/creative_brief_binding.dart';
@@ -46,6 +53,13 @@ class AppPages {
   static final routes = [
     GetPage(name: AppRoutes.splash, page: () => const SplashScreen()),
     GetPage(name: AppRoutes.onboarding, page: () => const OnboardingScreen()),
+    GetPage(name: AppRoutes.onboardingBrand, page: () => const OnboardingBrandScreen()),
+    GetPage(name: AppRoutes.onboardingGoals, page: () => const OnboardingGoalsScreen()),
+    GetPage(name: AppRoutes.onboardingProduction, page: () => const OnboardingProductionScreen()),
+    GetPage(name: AppRoutes.onboardingDiscovery, page: () => const OnboardingDiscoveryScreen()),
+    GetPage(name: AppRoutes.onboardingExperience, page: () => const OnboardingExperienceScreen()),
+    GetPage(name: AppRoutes.onboardingFeatures, page: () => const OnboardingFeaturesScreen()),
+    GetPage(name: AppRoutes.onboardingBrandStart, page: () => const OnboardingBrandStartScreen()),
     GetPage(
       name: AppRoutes.login,
       page: () => LoginScreen(),

@@ -1,3 +1,4 @@
+import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -50,7 +51,7 @@ class OnboardingScreen extends StatelessWidget {
                   RoundButton(
                     title: l10n.joinNow,
                     onTap: () {
-                      Get.toNamed('/signup');
+                      Get.toNamed(AppRoutes.onboardingBrand);
                     },
                     color: AppColors.buttonColor,
                     isloading: false,
@@ -60,16 +61,11 @@ class OnboardingScreen extends StatelessWidget {
                     mainAxisAlignment: MainAxisAlignment.center,
                     children: [
                       Text("${l10n.alreadyJoined} ", style: osTextStyle165003),
-                      GestureDetector(
+                      InkWell(
                         onTap: () {
-                          // Navigate to sign-in
+                          Get.toNamed(AppRoutes.login);
                         },
-                        child: InkWell(
-                          onTap: () {
-                            Get.toNamed('/login');
-                          },
-                          child: Text(l10n.signIn, style: osTextStyle167004),
-                        ),
+                        child: Text(l10n.signIn, style: osTextStyle167004),
                       ),
                     ],
                   ),

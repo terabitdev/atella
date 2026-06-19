@@ -28,3 +28,31 @@ const String privacyPolicy = 'assets/images/Privacy Policy.svg';
 const String logout = 'assets/images/Log Out.svg';
 const String settings = 'assets/images/Settings.svg';
 const String settingsFill = 'assets/images/Settings Fill.svg';
+
+// Onboarding screen 1
+const String onboardingHeroImage = 'assets/images/onboarding_hero.png';
+const String onboardingEllipse = 'assets/images/onboarding_ellipse.svg';
+const String onboardingIconBrands = 'assets/images/onboarding_icon_brands.svg';
+const String onboardingIconCountries = 'assets/images/onboarding_icon_countries.svg';
+const String onboardingIconRating = 'assets/images/onboarding_icon_rating.svg';
+
+// Onboarding brand start screen
+const String onboardingBrandStartHero = 'assets/images/onboarding_brand_start_hero.png';
+const String onboardingBrandStartLogo = 'assets/images/onboarding_brand_start_logo.svg';
+
+// Onboarding features screen
+const String onboardingFeatureSprite = 'assets/images/onboarding_feature_sprite.png';
+
+// Onboarding discovery screen
+const String onboardingDiscInstagram = 'assets/images/onboarding_disc_instagram.svg';
+const String onboardingDiscTiktok = 'assets/images/onboarding_disc_tiktok.svg';
+const String onboardingDiscAppStore = 'assets/images/onboarding_disc_appstore.svg';
+const String onboardingDiscRecommendation = 'assets/images/onboarding_disc_recommendation.svg';
+const String onboardingDiscOther = 'assets/images/onboarding_disc_other.svg';
+
+// Onboarding goals screen
+const String onboardingGoalLaunch = 'assets/images/onboarding_goal_launch.svg';
+const String onboardingGoalEarn = 'assets/images/onboarding_goal_earn.svg';
+const String onboardingGoalExpress = 'assets/images/onboarding_goal_express.svg';
+const String onboardingGoalBuild = 'assets/images/onboarding_goal_build.svg';
+const String onboardingGoalCollection = 'assets/images/onboarding_goal_collection.svg';
