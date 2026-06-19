@@ -1,13 +1,15 @@
-import 'package:atella/Data/Models/tech_pack_model.dart';
+﻿import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:atella/core/utils/app_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:gal/gal.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
   final String version;
@@ -172,7 +174,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
     try {
       final images = allImages;
       if (images.isEmpty) {
-        Get.snackbar(
+        showAppSnackbar(
           l10n.info,
           l10n.noImagesAvailable,
           backgroundColor: Colors.orange,
@@ -188,7 +190,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
           .toList();
 
       if (urlImages.isEmpty) {
-        Get.snackbar(
+        showAppSnackbar(
           l10n.info,
           l10n.allImagesLocal,
           backgroundColor: Colors.blue,
@@ -240,7 +242,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         Navigator.of(Get.overlayContext!).pop();
       }
 
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.failedToDownloadImages(e.toString()),
         backgroundColor: Colors.red,
@@ -320,7 +322,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
       // Show result message
       if (downloadedFiles.isNotEmpty && failedDownloads.isEmpty) {
         // All downloads successful
-        Get.snackbar(
+        showAppSnackbar(
           l10n.success,
           l10n.imagesSavedToGallery(downloadedFiles.length),
           backgroundColor: Colors.black,
@@ -330,7 +332,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         );
       } else if (downloadedFiles.isNotEmpty && failedDownloads.isNotEmpty) {
         // Partial success
-        Get.snackbar(
+        showAppSnackbar(
           l10n.partialSuccess,
           l10n.partialDownloadSuccess(downloadedFiles.length, failedDownloads.length),
           backgroundColor: Colors.orange,
@@ -340,7 +342,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         );
       } else {
         // All failed
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           l10n.failedToSaveImages,
           backgroundColor: Colors.red,
@@ -355,7 +357,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
         Navigator.of(Get.overlayContext!).pop();
       }
 
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.downloadFailed(e.toString()),
         backgroundColor: Colors.red,

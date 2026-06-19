@@ -1,4 +1,4 @@
-import 'package:atella/Data/Models/subscription_plan.dart';
+﻿import 'package:atella/Data/Models/subscription_plan.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class SubscribeController extends GetxController {
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
   final DesignQuotaService _quotaService = DesignQuotaService();
@@ -100,7 +101,7 @@ class SubscribeController extends GetxController {
     } catch (e) {
       print('❌ Error loading subscription: $e');
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(l10n.error, l10n.failedToLoadSubscription,
+      showAppSnackbar(l10n.error, l10n.failedToLoadSubscription,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.red,
         colorText: Colors.white,
@@ -160,7 +161,7 @@ class SubscribeController extends GetxController {
     if (plan.type == SubscriptionPlanType.FREE) {
       // Free plan doesn't need payment
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(l10n.infoMessage, l10n.youAreOnFreePlan,
+      showAppSnackbar(l10n.infoMessage, l10n.youAreOnFreePlan,
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -193,7 +194,7 @@ class SubscribeController extends GetxController {
 
         if (showSuccessMessage) {
           final l10n = AppLocalizations.of(Get.context!)!;
-          Get.snackbar(
+          showAppSnackbar(
             l10n.subscriptionSuccessTitle,
             l10n.welcomeToPlan(plan.displayName),
             snackPosition: SnackPosition.TOP,
@@ -222,7 +223,7 @@ class SubscribeController extends GetxController {
             // Show success message after a short delay
             Future.delayed(Duration(milliseconds: 500), () {
               final l10n = AppLocalizations.of(Get.context!)!;
-              Get.snackbar(
+              showAppSnackbar(
                 l10n.subscriptionActive,
                 l10n.canNowGenerateTechpack,
                 snackPosition: SnackPosition.TOP,
@@ -253,7 +254,7 @@ class SubscribeController extends GetxController {
         }
       } else {
         final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           l10n.failedToCompleteSubscription,
           snackPosition: SnackPosition.TOP,
@@ -265,7 +266,7 @@ class SubscribeController extends GetxController {
     } catch (e) {
       print('Error in subscribeToPlan: $e');
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.anErrorOccurred(e.toString()),
         snackPosition: SnackPosition.TOP,
@@ -303,7 +304,7 @@ class SubscribeController extends GetxController {
         );
 
         final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
+        showAppSnackbar(
           l10n.success,
           l10n.subscriptionCancelledSuccessfully,
           snackPosition: SnackPosition.TOP,
@@ -313,7 +314,7 @@ class SubscribeController extends GetxController {
         );
       } else {
         final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           l10n.failedToCancelSubscription,
           snackPosition: SnackPosition.TOP,
@@ -324,7 +325,7 @@ class SubscribeController extends GetxController {
       }
     } catch (e) {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.anErrorOccurred(e.toString()),
         snackPosition: SnackPosition.TOP,

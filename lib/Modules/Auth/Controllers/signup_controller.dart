@@ -1,9 +1,10 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class SignupController extends GetxController {
   final nameController = TextEditingController();
   final emailController = TextEditingController();
@@ -106,7 +107,7 @@ class SignupController extends GetxController {
         );
       }
 
-      Get.snackbar(
+      showAppSnackbar(
         l10n.success,
         l10n.userRegisteredSuccessfully,
         backgroundColor: Colors.black,
@@ -129,7 +130,7 @@ class SignupController extends GetxController {
       } else if (result == 'auth-invalid-email') {
         emailError.value = errorMessage;
       } else {
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           errorMessage,
           backgroundColor: Colors.red,

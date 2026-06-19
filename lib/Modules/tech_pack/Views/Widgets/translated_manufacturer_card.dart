@@ -1,4 +1,4 @@
-import 'package:atella/Data/Models/translated_manufacturer_model.dart';
+﻿import 'package:atella/Data/Models/translated_manufacturer_model.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/manufacturer_suggestion_card.dart';
 import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -10,6 +10,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 /// Simple card wrapper for translated manufacturer data
 class TranslatedManufacturerCard extends StatelessWidget {
   final TranslatedManufacturer translatedManufacturer;
@@ -342,7 +343,7 @@ class TranslatedManufacturerSuggestionCard extends ManufacturerSuggestionCard {
                 value: manufacturer.email ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasEmail
                     ? () => _launchUrl(manufacturer.email!)
-                    : () => Get.snackbar(
+                    : () => showAppSnackbar(
                         l10n.mfError,
                         l10n.mfEmailNotAvailable,
                         duration: const Duration(milliseconds: 1500),
@@ -358,7 +359,7 @@ class TranslatedManufacturerSuggestionCard extends ManufacturerSuggestionCard {
                 value: manufacturer.website ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasWebsite
                     ? () => _launchUrl(manufacturer.website!)
-                    : () => Get.snackbar(
+                    : () => showAppSnackbar(
                         l10n.mfError,
                         l10n.mfWebsiteNotAvailable,
                         duration: const Duration(milliseconds: 1500),
@@ -550,7 +551,7 @@ class TranslatedManufacturerSuggestionCard extends ManufacturerSuggestionCard {
 
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.mfError,
         l10n.mfCouldNotOpenLink,
         duration: const Duration(milliseconds: 1500),

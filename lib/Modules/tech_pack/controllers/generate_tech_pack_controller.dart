@@ -1,4 +1,4 @@
-import 'package:flutter_dotenv/flutter_dotenv.dart';
+﻿import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:atella/Data/api/openai_service.dart';
@@ -15,6 +15,7 @@ import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.
 import 'package:atella/Modules/tech_pack/Views/Widgets/techpack_limit_dialog.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class TechPackController extends GetxController {
   final DesignDataService _dataService = DesignDataService.instance;
   final DesignsService _designsService = DesignsService();
@@ -439,7 +440,7 @@ class TechPackController extends GetxController {
         isDesignSaveComplete.value = true;
         savedDesignUrl.value = generatedImages[selectedDesignIndex.value];
 
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpSnackbarDesignUpdated,
           _l10n.tpSnackbarDesignUpdatedMessage,
           snackPosition: SnackPosition.TOP,
@@ -464,7 +465,7 @@ class TechPackController extends GetxController {
         isDesignSaveComplete.value = true;
         savedDesignUrl.value = generatedImages[selectedDesignIndex.value];
 
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpSnackbarDesignSaved,
           _l10n.tpSnackbarDesignSavedMessage,
           snackPosition: SnackPosition.TOP,
@@ -487,7 +488,7 @@ class TechPackController extends GetxController {
       designSaveError.value = e.toString();
 
       // Optional: Show error notification
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpSnackbarGenerationFailed,
         _l10n.tpSnackbarGenerationFailedMessage,
         snackPosition: SnackPosition.TOP,
@@ -680,7 +681,7 @@ class TechPackController extends GetxController {
           _saveDesignsInBackground();
         }
       } else {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdPurchaseFailed,
           _l10n.tpdUnableToProcessPurchase,
           backgroundColor: Colors.red,
@@ -689,7 +690,7 @@ class TechPackController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdPurchaseError(e.toString()),
         backgroundColor: Colors.red,

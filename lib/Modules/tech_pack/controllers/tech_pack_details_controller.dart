@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
@@ -13,6 +13,7 @@ import '../../../services/PaymentService/subscription_callback_service.dart';
 import '../../../services/internet_connectivity_checker.dart';
 import '../Views/Widgets/techpack_limit_dialog.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class TechPackDetailsController extends GetxController {
   final EditDataService _editDataService = EditDataService();
   final StripeSubscriptionService _subscriptionService =
@@ -204,7 +205,7 @@ class TechPackDetailsController extends GetxController {
           // Show all blocks in edit mode
           _showAllBlocks();
 
-          Get.snackbar(
+          showAppSnackbar(
             _l10n.tpdEditMode,
             _l10n.tpdLoadingExistingTechPack,
             backgroundColor: Colors.black,
@@ -216,7 +217,7 @@ class TechPackDetailsController extends GetxController {
       }
     } catch (e) {
       print('Error loading tech pack data: $e');
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdNotice,
         _l10n.tpdStartingWithEmptyForm,
         backgroundColor: Colors.black,
@@ -706,7 +707,7 @@ class TechPackDetailsController extends GetxController {
         print(
           '✅ Both manufacturing and detailed technical images generated successfully',
         );
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdSuccess,
           _l10n.tpdTechPackImagesGenerated,
           snackPosition: SnackPosition.TOP,
@@ -718,7 +719,7 @@ class TechPackDetailsController extends GetxController {
         print(
           '⚠️ Warning: Only ${generatedTechPackImages.length} images generated',
         );
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdPartialSuccess,
           _l10n.tpdSomeTechPackImagesGenerated,
           snackPosition: SnackPosition.TOP,
@@ -732,7 +733,7 @@ class TechPackDetailsController extends GetxController {
 
       // Only show error snackbar if this generation is still active
       if (generationId == _activeGenerationId) {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdError,
           _l10n.tpdFailedToGenerateTechPack(e.toString()),
           snackPosition: SnackPosition.TOP,
@@ -799,7 +800,7 @@ class TechPackDetailsController extends GetxController {
         checkSizesBlockComplete();
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
@@ -822,7 +823,7 @@ class TechPackDetailsController extends GetxController {
         checkSizesBlockComplete();
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
@@ -845,7 +846,7 @@ class TechPackDetailsController extends GetxController {
         checkLabelingBlockComplete();
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdFailedToPickImage(e.toString()),
         snackPosition: SnackPosition.TOP,
@@ -883,7 +884,7 @@ class TechPackDetailsController extends GetxController {
     // INTERNET CHECK: Verify internet connection before generation (mobile only)
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
     if (!hasInternet) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.noInternetConnection,
         _l10n.noInternetConnectionMessage,
         backgroundColor: Colors.red,
@@ -902,7 +903,7 @@ class TechPackDetailsController extends GetxController {
 
     // IN-FLIGHT GUARD: Prevent multiple concurrent generations
     if (_isGenerationInFlight) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdProcessing,
         _l10n.tprGenerationInProgress,
         backgroundColor: Colors.orange,
@@ -1015,7 +1016,7 @@ class TechPackDetailsController extends GetxController {
         Navigator.of(Get.overlayContext!).pop();
         Get.toNamed('/tech_pack_ready_screen');
       } else {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdPurchaseFailed,
           _l10n.tpdUnableToProcessPurchase,
           backgroundColor: Colors.red,
@@ -1024,7 +1025,7 @@ class TechPackDetailsController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdPurchaseError(e.toString()),
         backgroundColor: Colors.red,
@@ -1117,7 +1118,7 @@ class TechPackDetailsController extends GetxController {
         Navigator.of(Get.overlayContext!).pop(); // Close the dialog
         Get.toNamed('/tech_pack_ready_screen'); // Navigate
       } else {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tpdPurchaseFailed,
           _l10n.tpdUnableToProcessPurchase,
           backgroundColor: Colors.red,
@@ -1126,7 +1127,7 @@ class TechPackDetailsController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tpdError,
         _l10n.tpdPurchaseError(e.toString()),
         backgroundColor: Colors.red,

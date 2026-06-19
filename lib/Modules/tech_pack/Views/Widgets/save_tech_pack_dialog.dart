@@ -1,10 +1,11 @@
-import 'package:atella/core/themes/app_fonts.dart';
+﻿import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class SaveTechPackDialog extends StatelessWidget {
   final Function(String projectName, String collectionName) onSave;
 
@@ -169,7 +170,7 @@ class SaveTechPackDialog extends StatelessWidget {
                         if (controller.projectNameController.text
                             .trim()
                             .isEmpty) {
-                          Get.snackbar(
+                          showAppSnackbar(
                             l10n.tpwError,
                             l10n.tpwPleaseEnterProjectName,
                             backgroundColor: Colors.red,
@@ -285,7 +286,7 @@ class _AddCollectionDialogState extends State<AddCollectionDialog> {
               child: ElevatedButton(
                 onPressed: () {
                   if (_collectionController.text.trim().isEmpty) {
-                    Get.snackbar(
+                    showAppSnackbar(
                       l10n.tpwError,
                       l10n.tpwPleaseEnterCollectionName,
                       backgroundColor: Colors.red,

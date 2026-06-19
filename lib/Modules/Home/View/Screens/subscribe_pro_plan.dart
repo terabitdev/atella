@@ -1,4 +1,4 @@
-// DISABLED — Apple compliance (no in-app payment UI)
+﻿// DISABLED — Apple compliance (no in-app payment UI)
 /*
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -8,6 +8,7 @@ import 'package:get/get.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../Controllers/subscribe_controller.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class SubscribeProPlan extends StatefulWidget {
   const SubscribeProPlan({super.key});
 
@@ -458,7 +459,7 @@ class _SubscribeProPlanState extends State<SubscribeProPlan> {
                               webPaymentUrl,
                               mode: LaunchMode.externalApplication,
                             )) {
-                              Get.snackbar(
+                              showAppSnackbar(
                                 'Error',
                                 'Could not open payment page',
                                 snackPosition: SnackPosition.BOTTOM,

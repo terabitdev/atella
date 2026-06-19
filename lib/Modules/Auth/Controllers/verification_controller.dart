@@ -1,8 +1,9 @@
-import 'package:firebase_auth/firebase_auth.dart';
+﻿import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class VerificationController extends GetxController {
   final RxString selectedMethod = 'email'.obs;
   final RxString maskedEmail = '********@gmail.com'.obs;
@@ -22,7 +23,7 @@ class VerificationController extends GetxController {
         await FirebaseAuth.instance.sendPasswordResetEmail(email: email);
         // print('Sending email verification to: $email');
         Get.back(); // Close the verification screen
-        Get.snackbar(
+        showAppSnackbar(
           l10n.verificationLinkSent,
           l10n.passwordResetLinkSent(email),
           snackPosition: SnackPosition.TOP,
@@ -32,7 +33,7 @@ class VerificationController extends GetxController {
         );
       } catch (e) {
         // print('Failed to send verification link: $e');
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           l10n.failedToSendVerificationLink,
           snackPosition: SnackPosition.BOTTOM,

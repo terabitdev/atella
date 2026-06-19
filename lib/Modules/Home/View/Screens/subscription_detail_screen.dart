@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Home/Controllers/subscription_detail_controller.dart';
+﻿import 'package:atella/Modules/Home/Controllers/subscription_detail_controller.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:lottie/lottie.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class SubscriptionDetailScreen extends StatelessWidget {
   const SubscriptionDetailScreen({super.key});
 
@@ -364,7 +365,7 @@ class SubscriptionDetailScreen extends StatelessWidget {
                   final success =
                       await controller.cancelSubscription(reason: reason);
                   if (success) {
-                    Get.snackbar(
+                    showAppSnackbar(
                       '',
                       l10n.subscriptionCancelledSuccess,
                       snackPosition: SnackPosition.TOP,
@@ -374,7 +375,7 @@ class SubscriptionDetailScreen extends StatelessWidget {
                     );
                     Get.back();
                   } else {
-                    Get.snackbar(
+                    showAppSnackbar(
                       '',
                       l10n.subscriptionCancelError,
                       snackPosition: SnackPosition.TOP,

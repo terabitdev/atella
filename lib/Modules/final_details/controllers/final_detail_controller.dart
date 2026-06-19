@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
@@ -16,6 +16,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class FinalDetailsController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
@@ -455,7 +456,7 @@ class FinalDetailsController extends GetxController {
       if (subscription != null && subscription.subscriptionPlan == 'FREE') {
         final user = _auth.currentUser;
         if (user?.email == null) {
-          Get.snackbar(
+          showAppSnackbar(
             'Error',
             'Unable to verify user email',
             snackPosition: SnackPosition.TOP,
@@ -472,7 +473,7 @@ class FinalDetailsController extends GetxController {
           try {
             bool incrementSuccess = await _quotaService.incrementDesignUsage(user.email!);
             if (!incrementSuccess) {
-              Get.snackbar(
+              showAppSnackbar(
                 'Error',
                 'Failed to track design usage. Please try again.',
                 snackPosition: SnackPosition.TOP,
@@ -482,7 +483,7 @@ class FinalDetailsController extends GetxController {
               return;
             }
           } catch (e) {
-            Get.snackbar(
+            showAppSnackbar(
               'Error',
               'Failed to track design usage. Please try again.',
               snackPosition: SnackPosition.TOP,
@@ -557,7 +558,7 @@ class FinalDetailsController extends GetxController {
       
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
-      Get.snackbar(
+      showAppSnackbar(
         l10n?.fdRegeneratingDesigns ?? 'Regenerating Designs!',
         l10n?.fdRegeneratingDesignsMessage ?? 'Creating 3 new designs based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
@@ -572,7 +573,7 @@ class FinalDetailsController extends GetxController {
 
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
-      Get.snackbar(
+      showAppSnackbar(
         l10n?.fdGeneratingDesigns ?? 'Generating Designs!',
         l10n?.fdGeneratingDesignsMessage ?? 'Creating 3 unique designs based on your preferences...',
         snackPosition: SnackPosition.TOP,

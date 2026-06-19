@@ -1,4 +1,4 @@
-import 'package:atella/l10n/generated/app_localizations.dart';
+﻿import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/gestures.dart';
 import 'package:get/get.dart';
@@ -6,6 +6,7 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../Widgets/app_header.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class TermsAndConditionsScreen extends StatelessWidget {
   const TermsAndConditionsScreen({super.key});
 
@@ -262,7 +263,7 @@ class TermsAndConditionsScreen extends StatelessWidget {
     final Uri uri = Uri.parse(urlString);
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       // Optionally show an error message
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.couldNotOpenLink,
         backgroundColor: Colors.red,

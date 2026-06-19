@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:atella/services/email/test_email_service.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -10,6 +10,7 @@ import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class ManufacturerSuggestionController extends GetxController {
   // Tab index: 0 = Recommended, 1 = Custom
   final RxInt tabIndex = 0.obs;
@@ -881,7 +882,7 @@ class ManufacturerSuggestionController extends GetxController {
   Future<void> sendEmailToManufacturer(NewManufacturer manufacturer) async {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.mfNoEmailAvailable,
         _l10n.mfManufacturerNoEmail,
         backgroundColor: Colors.orange,
@@ -1002,7 +1003,7 @@ class ManufacturerSuggestionController extends GetxController {
 
       // Show result
       if (success) {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.mfEmailSentSuccessfully,
           _l10n.mfTechPackSentTo(manufacturer.companyName, manufacturer.email!),
           backgroundColor: Colors.black,
@@ -1011,7 +1012,7 @@ class ManufacturerSuggestionController extends GetxController {
           icon: const Icon(Icons.check_circle, color: Colors.white),
         );
       } else {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.mfEmailFailed,
           _l10n.mfFailedToSendEmail(manufacturer.companyName),
           backgroundColor: Colors.red,
@@ -1021,7 +1022,7 @@ class ManufacturerSuggestionController extends GetxController {
         );
       }
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.mfError,
         _l10n.mfErrorSendingEmail(e.toString()),
         backgroundColor: Colors.red,
@@ -1039,7 +1040,7 @@ class ManufacturerSuggestionController extends GetxController {
   Future<void> previewEmailToManufacturer(NewManufacturer manufacturer) async {
     // Check if manufacturer has email
     if (manufacturer.email == null || manufacturer.email!.isEmpty) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.mfNoEmailAvailable,
         _l10n.mfManufacturerNoEmail,
         backgroundColor: Colors.orange,

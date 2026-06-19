@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
@@ -9,6 +9,7 @@ import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class CreativeBriefController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final EditDataService _editDataService = EditDataService();
@@ -321,7 +322,7 @@ class CreativeBriefController extends GetxController {
 
       // Show loading indicator
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.loading,
         l10n.loadingExistingDesignData,
         backgroundColor: Colors.black,
@@ -362,7 +363,7 @@ class CreativeBriefController extends GetxController {
         }
 
         final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
+        showAppSnackbar(
           l10n.editMode,
           l10n.editingDesign(_editingTechPack!.projectName),
           backgroundColor: Colors.black,
@@ -377,7 +378,7 @@ class CreativeBriefController extends GetxController {
     } catch (e) {
       print('Error loading edit data: $e');
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.failedToLoadExistingData,
         backgroundColor: Colors.black,
@@ -711,7 +712,7 @@ class CreativeBriefController extends GetxController {
     // Show success message
     Future.delayed(Duration(seconds: 2), () {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.dataLoaded,
         l10n.previousAnswersLoadedForEditing,
         backgroundColor: Colors.green,
@@ -1813,7 +1814,7 @@ class CreativeBriefController extends GetxController {
     // Only show completion message if all questions are actually answered
     if (isAllQuestionsCompleted) {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.briefComplete,
         l10n.briefCompletedSuccessfully,
         snackPosition: SnackPosition.TOP,
@@ -2314,7 +2315,7 @@ class CreativeBriefController extends GetxController {
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
                     final l10n = AppLocalizations.of(Get.context!)!;
-                    Get.snackbar(
+                    showAppSnackbar(
                       l10n.invalidInput,
                       l10n.pleaseEnterCustomAnswer(category.key),
                       backgroundColor: Colors.black,
@@ -2358,7 +2359,7 @@ class CreativeBriefController extends GetxController {
                 if (tempSelectedOptions.contains('Custom') &&
                     tempCustomController.text.trim().isEmpty) {
                   final l10n = AppLocalizations.of(Get.context!)!;
-                  Get.snackbar(
+                  showAppSnackbar(
                     l10n.invalidInput,
                     l10n.pleaseEnterCustomAnswerGeneric,
                     backgroundColor: Colors.black,
@@ -2385,7 +2386,7 @@ class CreativeBriefController extends GetxController {
               // Then update and show success message
               update();
               final l10n = AppLocalizations.of(Get.context!)!;
-              Get.snackbar(
+              showAppSnackbar(
                 l10n.answerUpdated,
                 l10n.answerUpdatedSuccessfully,
                 backgroundColor: Colors.black,
@@ -2667,7 +2668,7 @@ class CreativeBriefController extends GetxController {
               final l10n = AppLocalizations.of(Get.context!)!;
               if (tempPrint.value == 'Custom' &&
                   printCustomController.text.trim().isEmpty) {
-                Get.snackbar(
+                showAppSnackbar(
                   l10n.invalidInput,
                   l10n.pleaseEnterCustomPrint,
                   backgroundColor: Colors.black,
@@ -2680,7 +2681,7 @@ class CreativeBriefController extends GetxController {
 
               if (tempTechnique.value == 'Custom' &&
                   techniqueCustomController.text.trim().isEmpty) {
-                Get.snackbar(
+                showAppSnackbar(
                   l10n.invalidInput,
                   l10n.pleaseEnterCustomTechnique,
                   backgroundColor: Colors.black,
@@ -2711,7 +2712,7 @@ class CreativeBriefController extends GetxController {
 
               update();
               final l10nSnack = AppLocalizations.of(Get.context!)!;
-              Get.snackbar(
+              showAppSnackbar(
                 l10nSnack.answerUpdated,
                 l10nSnack.printsAndTechniquesUpdated,
                 backgroundColor: Colors.black,

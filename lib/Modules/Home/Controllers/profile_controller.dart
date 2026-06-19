@@ -1,4 +1,4 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/Modules/Home/Controllers/home_controller.dart';
@@ -6,6 +6,7 @@ import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class ProfileController extends GetxController {
   final TextEditingController fullNameController = TextEditingController();
   final TextEditingController emailController = TextEditingController();
@@ -42,7 +43,7 @@ class ProfileController extends GetxController {
     } catch (e) {
       print('Error loading user data: $e');
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.failedToLoadProfile,
         snackPosition: SnackPosition.TOP,
@@ -70,7 +71,7 @@ class ProfileController extends GetxController {
         final l10n = AppLocalizations.of(Get.context!)!;
 
         if (success) {
-          Get.snackbar(
+          showAppSnackbar(
             l10n.success,
             l10n.profileUpdatedSuccessfully,
             snackPosition: SnackPosition.TOP,
@@ -79,7 +80,7 @@ class ProfileController extends GetxController {
             duration: const Duration(milliseconds: 1500),
           );
         } else {
-          Get.snackbar(
+          showAppSnackbar(
             l10n.error,
             l10n.failedToUpdateProfile,
             snackPosition: SnackPosition.TOP,
@@ -91,7 +92,7 @@ class ProfileController extends GetxController {
       } catch (e) {
         print('❌ Error updating profile: $e');
         final l10n = AppLocalizations.of(Get.context!)!;
-        Get.snackbar(
+        showAppSnackbar(
           l10n.error,
           l10n.errorUpdatingProfile,
           snackPosition: SnackPosition.TOP,
@@ -111,7 +112,7 @@ class ProfileController extends GetxController {
   bool validateForm() {
     final l10n = AppLocalizations.of(Get.context!)!;
     if (fullNameController.text.trim().isEmpty) {
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.pleaseEnterFullName,
         duration: const Duration(milliseconds: 1500),
@@ -163,7 +164,7 @@ class ProfileController extends GetxController {
     final l10n = AppLocalizations.of(Get.context!)!;
     analyticsOptIn.value = enabled;
     await PostHogAnalyticsService().setAnalyticsOptIn(enabled);
-    Get.snackbar(
+    showAppSnackbar(
       enabled ? l10n.analyticsEnabled : l10n.analyticsDisabled,
       enabled
           ? l10n.analyticsEnabledMessage
@@ -196,7 +197,7 @@ class ProfileController extends GetxController {
         Get.deleteAll(force: true);
 
         // Show success message
-        Get.snackbar(
+        showAppSnackbar(
           l10n.accountDeleted,
           l10n.accountDeletedSuccess,
           snackPosition: SnackPosition.TOP,
@@ -223,7 +224,7 @@ class ProfileController extends GetxController {
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.accountDeleteFailed,
         snackPosition: SnackPosition.TOP,
@@ -255,7 +256,7 @@ class ProfileController extends GetxController {
         Get.deleteAll(force: true);
 
         // Show success message
-        Get.snackbar(
+        showAppSnackbar(
           l10n.accountDeleted,
           l10n.accountDeletedSuccess,
           snackPosition: SnackPosition.TOP,
@@ -282,7 +283,7 @@ class ProfileController extends GetxController {
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.accountDeleteFailed,
         snackPosition: SnackPosition.TOP,
@@ -314,7 +315,7 @@ class ProfileController extends GetxController {
         Get.deleteAll(force: true);
 
         // Show success message
-        Get.snackbar(
+        showAppSnackbar(
           l10n.accountDeleted,
           l10n.accountDeletedSuccess,
           snackPosition: SnackPosition.TOP,
@@ -341,7 +342,7 @@ class ProfileController extends GetxController {
       if (Get.isDialogOpen ?? false) {
         Get.back();
       }
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.accountDeleteFailed,
         snackPosition: SnackPosition.TOP,
@@ -394,7 +395,7 @@ class ProfileController extends GetxController {
         break;
     }
 
-    Get.snackbar(
+    showAppSnackbar(
       l10n.error,
       errorMessage,
       snackPosition: SnackPosition.TOP,

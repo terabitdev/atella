@@ -1,4 +1,4 @@
-import 'package:get/get.dart';
+﻿import 'package:get/get.dart';
 import 'tech_pack_details_controller.dart';
 import 'generate_tech_pack_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
@@ -8,6 +8,7 @@ import 'package:share_plus/share_plus.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class TechPackReadyController extends GetxController {
   final TechPackDetailsController _detailsController = Get.find<TechPackDetailsController>();
   final CollectionsService _collectionsService = CollectionsService();
@@ -123,7 +124,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       
       // Check if collection already exists
       if (collections.contains(upperCaseName)) {
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tprCollectionExists,
           _l10n.tprCollectionAlreadyExists,
           backgroundColor: Colors.black,
@@ -144,7 +145,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       print('Collection added successfully: $upperCaseName');
     } catch (e) {
       print('Error adding collection: $e');
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprError,
         _l10n.tprFailedToAddCollection,
         backgroundColor: Colors.red,
@@ -177,7 +178,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
     print('⏳ Design save in progress, waiting...');
 
     // Show waiting snackbar
-    Get.snackbar(
+    showAppSnackbar(
       _l10n.tprSavingDesign,
       _l10n.tprSavingDesignMessage,
       backgroundColor: Colors.black,
@@ -205,7 +206,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         print('❌ Design save failed: ${techPackController.designSaveError.value}');
         Get.closeAllSnackbars();
 
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tprSaveFailed,
           _l10n.tprDesignSaveFailedMessage,
           backgroundColor: Colors.red,
@@ -224,7 +225,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
     print('⏱️ Design save timeout reached');
     Get.closeAllSnackbars();
 
-    Get.snackbar(
+    showAppSnackbar(
       _l10n.tprSaveFailed,
       _l10n.tprDesignSaveTimeoutMessage,
       backgroundColor: Colors.red,
@@ -239,7 +240,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
   // Save tech pack images to Firebase with project and collection info
   Future<void> saveTechPackWithDetails(String projectName, String collectionName) async {
     if (!hasGeneratedImages) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprNoImages,
         _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
@@ -320,7 +321,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
           designData: _detailsController.designData,
         );
 
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tprUpdated,
           _l10n.tprTechPackUpdatedSuccessfully,
           backgroundColor: Colors.black,
@@ -342,7 +343,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
           designData: _detailsController.designData,
         );
 
-        Get.snackbar(
+        showAppSnackbar(
           _l10n.tprSuccess,
           _l10n.tprTechPackSavedSuccessfully,
           backgroundColor: Colors.black,
@@ -370,7 +371,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       // Navigate to nav_bar with refresh flag
       Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
     } catch (e) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprError,
         _l10n.tprFailedToSaveTechPack(e.toString()),
         backgroundColor: Colors.red,
@@ -393,7 +394,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
   // Export tech pack as PDF with logo option
   Future<void> exportTechPackPDF({bool withLogo = true}) async {
     if (!hasGeneratedImages) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprNoImages,
         _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
@@ -423,7 +424,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       // Download PDF to Downloads folder
       await TechPackService.downloadPDF(pdfPath);
 
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprSuccess,
         _l10n.tprPdfSavedSuccessfully,
         backgroundColor: Colors.black,
@@ -436,7 +437,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       PostHogAnalyticsService().trackTechPackDownloaded(format: 'pdf');
     } catch (e) {
       print('Error exporting PDF: ${e.toString()}');
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprError,
         _l10n.tprFailedToExportPdf(e.toString()),
         backgroundColor: Colors.red,
@@ -452,7 +453,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
   // Export tech pack as Word document
   Future<void> exportTechPackWord() async {
     if (!hasGeneratedImages) {
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprNoImages,
         _l10n.tprGenerateImagesFirst,
         backgroundColor: Colors.red,
@@ -478,7 +479,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
 
     } catch (e) {
       print('Error exporting Word: ${e.toString()}');
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprError,
         _l10n.tprFailedToExportWord(e.toString()),
         backgroundColor: Colors.red,
@@ -501,7 +502,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       );
     } catch (e) {
       print('Error sharing file: ${e.toString()}');
-      Get.snackbar(
+      showAppSnackbar(
         _l10n.tprError,
         _l10n.tprFailedToShareFile(e.toString()),
         backgroundColor: Colors.red,

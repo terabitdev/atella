@@ -1,4 +1,4 @@
-import 'dart:async';
+﻿import 'dart:async';
 import 'package:atella/Data/Models/brief_questions_model.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
@@ -19,6 +19,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class RefiningConceptController extends GetxController {
   final DesignDataService _dataService = Get.find<DesignDataService>();
   final StripeSubscriptionService _stripeService = StripeSubscriptionService();
@@ -1455,7 +1456,7 @@ class RefiningConceptController extends GetxController {
     if (isAllQuestionsCompleted) {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
-      Get.snackbar(
+      showAppSnackbar(
         l10n?.rcSnackbarRefiningComplete ?? 'Refining Complete!',
         l10n?.rcSnackbarRefiningCompleteMessage ??
             'Your concept has been refined successfully.',
@@ -1727,7 +1728,7 @@ class RefiningConceptController extends GetxController {
     final hasInternet = await InternetConnectivityChecker.hasInternetConnection();
     if (!hasInternet) {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.noInternetConnection,
         l10n.noInternetConnectionMessage,
         backgroundColor: Colors.red,
@@ -1771,7 +1772,7 @@ class RefiningConceptController extends GetxController {
       if (subscription != null && subscription.subscriptionPlan == 'FREE') {
         final user = _auth.currentUser;
         if (user?.email == null) {
-          Get.snackbar(
+          showAppSnackbar(
             'Error',
             'Unable to verify user email',
             snackPosition: SnackPosition.TOP,
@@ -1791,7 +1792,7 @@ class RefiningConceptController extends GetxController {
               user.email!,
             );
             if (!incrementSuccess) {
-              Get.snackbar(
+              showAppSnackbar(
                 'Error',
                 'Failed to track design usage. Please try again.',
                 snackPosition: SnackPosition.TOP,
@@ -1802,7 +1803,7 @@ class RefiningConceptController extends GetxController {
               return;
             }
           } catch (e) {
-            Get.snackbar(
+            showAppSnackbar(
               'Error',
               'Failed to track design usage. Please try again.',
               snackPosition: SnackPosition.TOP,
@@ -1949,7 +1950,7 @@ class RefiningConceptController extends GetxController {
     if (_isEditMode.value && _editingTechPack != null) {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
-      Get.snackbar(
+      showAppSnackbar(
         l10n?.rcSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
         l10n?.rcSnackbarRegeneratingDesignsMessage ??
             'Creating 3 new designs based on your updated preferences...',
@@ -1970,7 +1971,7 @@ class RefiningConceptController extends GetxController {
     } else {
       final context = Get.context;
       final l10n = context != null ? AppLocalizations.of(context) : null;
-      Get.snackbar(
+      showAppSnackbar(
         l10n?.rcSnackbarGeneratingDesigns ?? 'Generating Designs!',
         l10n?.rcSnackbarGeneratingDesignsMessage ??
             'Creating 3 unique designs based on your preferences...',
@@ -2421,7 +2422,7 @@ class RefiningConceptController extends GetxController {
                   );
                   final controller = categoryCustomControllers[category.key]!;
                   if (hasCustom && controller.text.trim().isEmpty) {
-                    Get.snackbar(
+                    showAppSnackbar(
                       l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
                       l10n?.rcSnackbarInvalidInputCategoryMessage(
                             category.key,
@@ -2465,7 +2466,7 @@ class RefiningConceptController extends GetxController {
                 // For regular chip questions
                 if (tempSelectedOptions.contains('Custom') &&
                     tempCustomController.text.trim().isEmpty) {
-                  Get.snackbar(
+                  showAppSnackbar(
                     l10n?.rcSnackbarInvalidInput ?? 'Invalid Input',
                     l10n?.rcSnackbarInvalidInputMessage ??
                         'Please enter a custom answer',
@@ -2493,7 +2494,7 @@ class RefiningConceptController extends GetxController {
 
               Navigator.of(Get.overlayContext!).pop();
               update();
-              Get.snackbar(
+              showAppSnackbar(
                 l10n?.rcSnackbarAnswerUpdated ?? 'Answer Updated',
                 l10n?.rcSnackbarAnswerUpdatedMessage ??
                     'Your answer has been updated successfully',

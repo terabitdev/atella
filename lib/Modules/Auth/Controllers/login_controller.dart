@@ -1,10 +1,11 @@
-
+﻿
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class LoginController extends GetxController {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
@@ -66,7 +67,7 @@ class LoginController extends GetxController {
       PostHogAnalyticsService().trackUserLoggedIn(method: 'email');
 
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.success,
         l10n.userSuccessfullyLoggedIn,
         backgroundColor: Colors.black,
@@ -83,7 +84,7 @@ class LoginController extends GetxController {
 
       // Show error as snackbar for all authentication errors
       // This is a security best practice to not reveal which field is incorrect
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         errorMessage,
         backgroundColor: Colors.red,
@@ -112,7 +113,7 @@ class LoginController extends GetxController {
       PostHogAnalyticsService().trackUserLoggedIn(method: 'google');
 
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.success,
         l10n.successfullySignedInWithGoogle,
         backgroundColor: Colors.black,
@@ -124,7 +125,7 @@ class LoginController extends GetxController {
     } else {
       final l10n = AppLocalizations.of(Get.context!)!;
       final errorMessage = _getLocalizedError(result, l10n);
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         errorMessage,
         backgroundColor: Colors.red,
@@ -153,7 +154,7 @@ class LoginController extends GetxController {
       PostHogAnalyticsService().trackUserLoggedIn(method: 'apple');
 
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.success,
         l10n.successfullySignedInWithApple,
         backgroundColor: Colors.black,
@@ -165,7 +166,7 @@ class LoginController extends GetxController {
     } else if (result != 'auth-apple-sign-in-cancelled') {
       final l10n = AppLocalizations.of(Get.context!)!;
       final errorMessage = _getLocalizedError(result, l10n);
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         errorMessage,
         backgroundColor: Colors.red,

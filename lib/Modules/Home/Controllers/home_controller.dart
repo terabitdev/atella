@@ -1,10 +1,11 @@
-import 'package:flutter/material.dart';
+﻿import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class HomeController extends GetxController {
   final TextEditingController searchController = TextEditingController();
   final RxString searchQuery = ''.obs;
@@ -203,7 +204,7 @@ class HomeController extends GetxController {
     } catch (e) {
       print('Error toggling favorite: $e');
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.failedToUpdateFavorite,
         backgroundColor: Colors.red,

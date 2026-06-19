@@ -1,4 +1,4 @@
-import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
+﻿import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class DeleteAccountPasswordScreen extends StatefulWidget {
   const DeleteAccountPasswordScreen({super.key});
 
@@ -197,7 +198,7 @@ class _DeleteAccountPasswordScreenState
                                         passwordController.text,
                                       );
                                     } else {
-                                      Get.snackbar(
+                                      showAppSnackbar(
                                         'Error',
                                         'Please enter your password',
                                         backgroundColor: Colors.red,

@@ -1,4 +1,4 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -15,6 +15,7 @@ import '../../Controllers/home_controller.dart';
 import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
 import 'package:atella/core/widgets/tap_tracking_wrapper.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -84,7 +85,7 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   void _showNoConnectionSnackbar() {
-    Get.snackbar(
+    showAppSnackbar(
       'No Internet Connection',
       'Please check your connection and try again.',
       backgroundColor: Colors.red,

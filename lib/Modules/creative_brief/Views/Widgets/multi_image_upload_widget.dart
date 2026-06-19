@@ -1,10 +1,11 @@
-import 'dart:io';
+﻿import 'dart:io';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class MultiImageUploadWidget extends StatelessWidget {
   final List<String> selectedImages;
   final Function(String) onImageAdded;
@@ -28,7 +29,7 @@ class MultiImageUploadWidget extends StatelessWidget {
       if (image != null) {
         onImageAdded(image.path);
 
-        Get.snackbar(
+        showAppSnackbar(
           l10n.imageAdded,
           l10n.imageAddedSuccessfully,
           backgroundColor: Colors.black,
@@ -39,7 +40,7 @@ class MultiImageUploadWidget extends StatelessWidget {
       }
     } catch (e) {
       print('Error picking image: $e');
-      Get.snackbar(
+      showAppSnackbar(
         l10n.error,
         l10n.failedToPickImage,
         backgroundColor: Colors.red,

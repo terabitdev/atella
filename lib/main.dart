@@ -47,6 +47,9 @@ void main() async {
   await _validateSubscriptionOnLaunch();
 
   runApp(const MyApp());
+
+  // Fire-and-forget: runs in background without blocking the app
+  _initializeTranslationModel();
 }
 
 /// Initialize and download French translation model if needed
@@ -181,130 +184,39 @@ Future<void> _validateSubscriptionOnLaunch() async {
   }
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends StatelessWidget {
   const MyApp({super.key});
 
   @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  bool _isInitializing = true;
-
-  @override
-  void initState() {
-    super.initState();
-    _initializeApp();
-  }
-
-  Future<void> _initializeApp() async {
-    // Initialize translation model (download if needed)
-    await _initializeTranslationModel();
-
-    // Mark initialization as complete
-    if (mounted) {
-      setState(() {
-        _isInitializing = false;
-      });
-    }
-  }
-
-  @override
   Widget build(BuildContext context) {
-    // Show main app immediately
-    // PostHogWidget is required for mobile session replay
     return PostHogWidget(
       child: ScreenUtilInit(
         designSize: const Size(375, 812),
         minTextAdapt: true,
-        // useInheritedMediaQuery: true,
         builder: (context, child) {
           // Ensure LocaleController exists before using it (handles hot reload)
           final localeController = Get.isRegistered<LocaleController>()
               ? Get.find<LocaleController>()
               : Get.put(LocaleController(), permanent: true);
 
-          return Obx(() {
-            final app = GetMaterialApp(
-              title: 'Atelia',
-              theme: AppTheme.lightTheme,
-              themeMode: ThemeMode.light,
-              debugShowCheckedModeBanner: false,
-              initialRoute: AppPages.initial,
-              getPages: AppPages.routes,
-              // PostHog: Automatic screen view tracking
-              navigatorObservers: [PosthogObserver()],
-              // Localization configuration
-              locale: localeController.currentLocale,
-              supportedLocales: LocaleController.supportedLocales,
-              localizationsDelegates: const [
-                AppLocalizations.delegate,
-                GlobalMaterialLocalizations.delegate,
-                GlobalWidgetsLocalizations.delegate,
-                GlobalCupertinoLocalizations.delegate,
-              ],
-            );
-
-            // Show loading dialog overlay while initializing
-            if (_isInitializing) {
-              return Directionality(
-                textDirection: TextDirection.ltr,
-                child: Stack(
-                  children: [
-                    app,
-                    // Non-dismissable overlay
-                    Container(
-                      color: Colors.black.withOpacity(0.5),
-                      child: Center(
-                        child: Material(
-                          color: Colors.transparent,
-                          child: Container(
-                            width: 140.w,
-                            height: 140.w,
-                            padding: EdgeInsets.all(24.r),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(16.r),
-                            ),
-                            child: Column(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [
-                                // Loading indicator
-                                SizedBox(
-                                  width: 32.w,
-                                  height: 32.h,
-                                  child: const CircularProgressIndicator(
-                                    strokeWidth: 3,
-                                    valueColor: AlwaysStoppedAnimation<Color>(
-                                      Colors.black87,
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 16.h),
-
-                                // Loading text
-                                Text(
-                                  'Setting things up...',
-                                  style: TextStyle(
-                                    fontSize: 13.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.black87,
-                                  ),
-                                  textAlign: TextAlign.center,
-                                ),
-                              ],
-                            ),
-                          ),
-                        ),
-                      ),
-                    ),
-                  ],
-                ),
-              );
-            }
-
-            return app;
-          });
+          return GetMaterialApp(
+            title: 'Atelia',
+            theme: AppTheme.lightTheme,
+            themeMode: ThemeMode.light,
+            debugShowCheckedModeBanner: false,
+            initialRoute: AppPages.initial,
+            getPages: AppPages.routes,
+            navigatorObservers: [PosthogObserver()],
+            // Localization — locale updates handled by Get.updateLocale() in LocaleController
+            locale: localeController.currentLocale,
+            supportedLocales: LocaleController.supportedLocales,
+            localizationsDelegates: const [
+              AppLocalizations.delegate,
+              GlobalMaterialLocalizations.delegate,
+              GlobalWidgetsLocalizations.delegate,
+              GlobalCupertinoLocalizations.delegate,
+            ],
+          );
         },
       ),
     );

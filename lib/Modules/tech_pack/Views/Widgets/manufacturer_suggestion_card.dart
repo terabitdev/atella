@@ -1,4 +1,4 @@
-// ignore_for_file: public_member_api_docs, sort_constructors_first
+﻿// ignore_for_file: public_member_api_docs, sort_constructors_first
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
@@ -10,6 +10,7 @@ import 'package:atella/Data/Models/new_manufacturer_model.dart';
 import 'package:atella/Modules/tech_pack/controllers/manufacturer_suggestion_controller.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
+import 'package:atella/core/utils/app_snackbar.dart';
 class ManufacturerSuggestionCard extends StatelessWidget {
   final NewManufacturer manufacturer;
   final VoidCallback onViewProfile;
@@ -334,7 +335,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                 value: manufacturer.email ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasEmail
                     ? () => _launchUrl(manufacturer.email!)
-                    : () => Get.snackbar(
+                    : () => showAppSnackbar(
                         l10n.mfError,
                         l10n.mfEmailNotAvailable,
                         duration: const Duration(milliseconds: 1500),
@@ -350,7 +351,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
                 value: manufacturer.website ?? l10n.mfNotAvailable,
                 onTap: manufacturer.hasWebsite
                     ? () => _launchUrl(manufacturer.website!)
-                    : () => Get.snackbar(
+                    : () => showAppSnackbar(
                         l10n.mfError,
                         l10n.mfWebsiteNotAvailable,
                         duration: const Duration(milliseconds: 1500),
@@ -530,7 +531,7 @@ class ManufacturerSuggestionCard extends StatelessWidget {
 
     if (!await launchUrl(uri, mode: LaunchMode.externalApplication)) {
       final l10n = AppLocalizations.of(Get.context!)!;
-      Get.snackbar(
+      showAppSnackbar(
         l10n.mfError,
         l10n.mfCouldNotOpenLink,
         duration: const Duration(milliseconds: 1500),
