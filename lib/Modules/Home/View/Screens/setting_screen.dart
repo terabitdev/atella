@@ -295,7 +295,7 @@ class _SettingScreenState extends State<SettingScreen> {
                                     ),
                                     SizedBox(width: 8.w),
                                     Text(
-                                      '$freeUsed/1 Designs',
+                                      l10n.settingsDesignsLeft(1 - freeUsed),
                                       style: TextStyle(
                                         fontSize: 12.sp,
                                         fontWeight: FontWeight.w500,

@@ -1478,7 +1478,27 @@
   },
   "settingsFreePlan": "Limite des modèles gratuits",
   "settingsFreeMonthly": "Gratuit mensuel",
-  "settingsAddOns": "Extensions",
+  "settingsAddOns": "Extensions restantes",
+  "settingsDesignsLeft": "{count} modèle restant",
+  "@settingsDesignsLeft": {
+    "description": "Remaining designs count label in the free user settings card",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "settingsDesignsLeftPlural": "{count} modèles restants",
+  "@settingsDesignsLeftPlural": {
+    "description": "Remaining designs count label (plural) in the free user settings card",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
+  },
   "subscriptionDetailTitle": "Mon abonnement",
   "@subscriptionDetailTitle": {
     "description": "Title of the subscription detail screen"

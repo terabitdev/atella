@@ -3248,7 +3248,17 @@ class AppLocalizationsFr extends AppLocalizations {
   String get settingsFreeMonthly => 'Gratuit mensuel';
 
   @override
-  String get settingsAddOns => 'Extensions';
+  String get settingsAddOns => 'Extensions restantes';
+
+  @override
+  String settingsDesignsLeft(int count) {
+    return '$count modèle restant';
+  }
+
+  @override
+  String settingsDesignsLeftPlural(int count) {
+    return '$count modèles restants';
+  }
 
   @override
   String get subscriptionDetailTitle => 'Mon abonnement';

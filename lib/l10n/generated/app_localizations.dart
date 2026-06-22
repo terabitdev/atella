@@ -5867,8 +5867,20 @@ abstract class AppLocalizations {
   /// Label for the add-ons section in the free user settings card
   ///
   /// In en, this message translates to:
-  /// **'Add-ons'**
+  /// **'Add-ons remaining'**
   String get settingsAddOns;
+
+  /// Remaining designs count label in the free user settings card
+  ///
+  /// In en, this message translates to:
+  /// **'{count} design left'**
+  String settingsDesignsLeft(int count);
+
+  /// Remaining designs count label (plural) in the free user settings card
+  ///
+  /// In en, this message translates to:
+  /// **'{count} designs left'**
+  String settingsDesignsLeftPlural(int count);
 
   /// Title of the subscription detail screen
   ///

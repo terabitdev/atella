@@ -3191,7 +3191,17 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsFreeMonthly => 'Monthly free';
 
   @override
-  String get settingsAddOns => 'Add-ons';
+  String get settingsAddOns => 'Add-ons remaining';
+
+  @override
+  String settingsDesignsLeft(int count) {
+    return '$count design left';
+  }
+
+  @override
+  String settingsDesignsLeftPlural(int count) {
+    return '$count designs left';
+  }
 
   @override
   String get subscriptionDetailTitle => 'My Subscription';

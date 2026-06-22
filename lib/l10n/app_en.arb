@@ -3882,9 +3882,29 @@
   "@settingsFreeMonthly": {
     "description": "Label for the free monthly allowance section in the settings card"
   },
-  "settingsAddOns": "Add-ons",
+  "settingsAddOns": "Add-ons remaining",
   "@settingsAddOns": {
     "description": "Label for the add-ons section in the free user settings card"
+  },
+  "settingsDesignsLeft": "{count} design left",
+  "@settingsDesignsLeft": {
+    "description": "Remaining designs count label in the free user settings card",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "1"
+      }
+    }
+  },
+  "settingsDesignsLeftPlural": "{count} designs left",
+  "@settingsDesignsLeftPlural": {
+    "description": "Remaining designs count label (plural) in the free user settings card",
+    "placeholders": {
+      "count": {
+        "type": "int",
+        "example": "2"
+      }
+    }
   },
   "subscriptionDetailTitle": "My Subscription",
   "@subscriptionDetailTitle": {
