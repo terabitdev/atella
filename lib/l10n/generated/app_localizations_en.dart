@@ -3256,4 +3256,151 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get subscriptionDetailUpgradeHint =>
       'To change or upgrade your plan, visit us at www.atelia.app';
+
+  @override
+  String get onboardingSelectOption => 'Please select an option to continue';
+
+  @override
+  String get previous => 'Previous';
+
+  @override
+  String get onboardingBrandTitle => 'From your idea to a real brand';
+
+  @override
+  String get onboardingBrandSubtitle =>
+      'Design, production, suppliers — all in one place';
+
+  @override
+  String get onboardingBrandStatBrands => 'Brands created';
+
+  @override
+  String get onboardingBrandStatCountries => 'Countries';
+
+  @override
+  String get onboardingBrandStatRating => 'User rating';
+
+  @override
+  String get onboardingBrandCta => 'Create my brand';
+
+  @override
+  String get onboardingGoalsTitle => 'Why do you want to create a brand?';
+
+  @override
+  String get onboardingGoalsSubtitle =>
+      'We tailor your experience based on your goal.';
+
+  @override
+  String get onboardingGoalsOption1 => 'Launch my first brand';
+
+  @override
+  String get onboardingGoalsOption2 => 'Earn money with my designs';
+
+  @override
+  String get onboardingGoalsOption3 => 'Express my creativity';
+
+  @override
+  String get onboardingGoalsOption4 => 'Build a real business';
+
+  @override
+  String get onboardingGoalsOption5 => 'Launch a collection';
+
+  @override
+  String get onboardingProductionTitle =>
+      'How many pieces do you want to launch?';
+
+  @override
+  String get onboardingProductionSubtitle =>
+      'We\'ll adjust factories and recommendations accordingly.';
+
+  @override
+  String get onboardingProductionOption1 => '1–5 → Test an idea';
+
+  @override
+  String get onboardingProductionOption2 => '5–20 → Small launch';
+
+  @override
+  String get onboardingProductionOption3 => '20–100 → Grow a brand';
+
+  @override
+  String get onboardingProductionOption4 => '100+ → Scale up';
+
+  @override
+  String get onboardingDiscoveryTitle => 'How did you discover Atelia?';
+
+  @override
+  String get onboardingDiscoverySubtitle =>
+      'Help us improve by sharing how you found us.';
+
+  @override
+  String get onboardingDiscoveryOptionRecommendation => 'Recommendation';
+
+  @override
+  String get onboardingDiscoveryOptionOther => 'Other';
+
+  @override
+  String get onboardingExperienceTitle =>
+      'Have you ever created a brand before?';
+
+  @override
+  String get onboardingExperienceSubtitle =>
+      'This helps us personalize your experience on Atelia.';
+
+  @override
+  String get onboardingExperienceOption1 => 'No, I\'m just starting';
+
+  @override
+  String get onboardingExperienceOption2 => 'Yes, a little';
+
+  @override
+  String get onboardingExperienceOption3 => 'Yes, I\'ve already launched one';
+
+  @override
+  String get onboardingFeaturesTitle => 'Atelia takes care of everything';
+
+  @override
+  String get onboardingFeaturesSubtitle =>
+      'We combine creativity, AI and trusted partners to bring your brand to life.';
+
+  @override
+  String get onboardingFeaturesFeature1 => 'Turn an idea into a design';
+
+  @override
+  String get onboardingFeaturesFeature2 =>
+      'Create with an intelligent assistant';
+
+  @override
+  String get onboardingFeaturesFeature3 => 'Auto-generate your tech packs';
+
+  @override
+  String get onboardingFeaturesFeature4 => 'Find reliable factories fast';
+
+  @override
+  String get onboardingBrandStartTitle => 'Your Brand Starts Now';
+
+  @override
+  String get onboardingBrandStartSubtitle => 'Your first product in 3 steps';
+
+  @override
+  String get onboardingBrandStartStep1 => 'Design';
+
+  @override
+  String get onboardingBrandStartStep2 => 'Prototype';
+
+  @override
+  String get onboardingBrandStartStep3 => 'Production';
+
+  @override
+  String get onboardingBrandStartCta => 'Create My First Product';
+
+  @override
+  String get onboardingStepGoals => 'Goals';
+
+  @override
+  String get onboardingStepProduction => 'Production';
+
+  @override
+  String get onboardingStepDiscovery => 'Discovery';
+
+  @override
+  String get onboardingStepExperience => 'Experience';
 }

@@ -1,3 +1,4 @@
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -7,10 +8,15 @@ class OnboardingStepIndicator extends StatelessWidget {
 
   const OnboardingStepIndicator({super.key, required this.currentStep});
 
-  static const _labels = ['Goals', 'Production', 'Discovery', 'Experience'];
-
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final labels = [
+      l10n.onboardingStepGoals,
+      l10n.onboardingStepProduction,
+      l10n.onboardingStepDiscovery,
+      l10n.onboardingStepExperience,
+    ];
     final circleDia = 25.w;
 
     return SizedBox(
@@ -19,7 +25,7 @@ class OnboardingStepIndicator extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 20.w),
         child: LayoutBuilder(builder: (context, constraints) {
           final w = constraints.maxWidth;
-          final n = _labels.length;
+          final n = labels.length;
           final centers = List.generate(
             n,
             (i) => circleDia / 2 + (w - circleDia) * i / (n - 1),
@@ -87,7 +93,7 @@ class OnboardingStepIndicator extends StatelessWidget {
                         Opacity(
                           opacity: i <= currentStep ? 1.0 : 0.31,
                           child: Text(
-                            _labels[i],
+                            labels[i],
                             style: GoogleFonts.workSans(
                               fontSize: 9.sp,
                               fontWeight: FontWeight.w500,

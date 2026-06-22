@@ -1,23 +1,25 @@
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
-import 'package:flutter_svg/flutter_svg.dart';
 import 'package:get/get.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 class OnboardingBrandStartScreen extends StatelessWidget {
   const OnboardingBrandStartScreen({super.key});
 
-  static const List<_Step> _steps = [
-    _Step('1', 'Design'),
-    _Step('2', 'Prototype'),
-    _Step('3', 'Production'),
+  List<_Step> _steps(AppLocalizations l10n) => [
+    _Step('1', l10n.onboardingBrandStartStep1),
+    _Step('2', l10n.onboardingBrandStartStep2),
+    _Step('3', l10n.onboardingBrandStartStep3),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final steps = _steps(l10n);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
@@ -46,8 +48,8 @@ class OnboardingBrandStartScreen extends StatelessWidget {
 
               // Logo — same asset & size as login page
               Center(
-                child: SvgPicture.asset(
-                  onboardingBrandStartLogo,
+                child: Image.asset(
+                  logo,
                   height: 61.h,
                   width: 63.w,
                   fit: BoxFit.contain,
@@ -59,7 +61,7 @@ class OnboardingBrandStartScreen extends StatelessWidget {
               // Title — centered, same sizes as other onboarding screens
               Center(
                 child: Text(
-                  'Your Brand Starts Now',
+                  l10n.onboardingBrandStartTitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.manrope(
                     fontSize: 22.sp,
@@ -74,7 +76,7 @@ class OnboardingBrandStartScreen extends StatelessWidget {
               // Subtitle
               Center(
                 child: Text(
-                  'Your first product in 3 steps',
+                  l10n.onboardingBrandStartSubtitle,
                   textAlign: TextAlign.center,
                   style: GoogleFonts.manrope(
                     fontSize: 16.sp,
@@ -99,12 +101,12 @@ class OnboardingBrandStartScreen extends StatelessWidget {
               SizedBox(height: 16.h),
 
               // Step cards — same padding & tile size as features screen
-              ...List.generate(_steps.length, (i) {
+              ...List.generate(steps.length, (i) {
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: i < _steps.length - 1 ? 12.h : 0,
+                    bottom: i < steps.length - 1 ? 12.h : 0,
                   ),
-                  child: _StepCard(step: _steps[i]),
+                  child: _StepCard(step: steps[i]),
                 );
               }),
 
@@ -123,7 +125,7 @@ class OnboardingBrandStartScreen extends StatelessWidget {
                     ),
                     child: Center(
                       child: Text(
-                        'Create My First Product',
+                        l10n.onboardingBrandStartCta,
                         style: GoogleFonts.outfit(
                           fontSize: 16.sp,
                           fontWeight: FontWeight.w600,

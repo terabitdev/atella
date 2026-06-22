@@ -1,6 +1,7 @@
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -11,15 +12,17 @@ class OnboardingFeaturesScreen extends StatelessWidget {
 
   // Sprite is a 2×2 grid; each cell is ~51×51 within a 104×104 canvas.
   // (offsetX, offsetY) selects which cell to display.
-  static const List<_FeatureItem> _features = [
-    _FeatureItem('Turn an idea into a design', 0, 0),
-    _FeatureItem('Create with an intelligent assistant', 53, 0),
-    _FeatureItem('Auto-generate your tech packs', 0, 52),
-    _FeatureItem('Find reliable factories fast', 53, 52),
+  List<_FeatureItem> _features(AppLocalizations l10n) => [
+    _FeatureItem(l10n.onboardingFeaturesFeature1, 0, 0),
+    _FeatureItem(l10n.onboardingFeaturesFeature2, 53, 0),
+    _FeatureItem(l10n.onboardingFeaturesFeature3, 0, 52),
+    _FeatureItem(l10n.onboardingFeaturesFeature4, 53, 52),
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final features = _features(l10n);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
@@ -47,7 +50,7 @@ class OnboardingFeaturesScreen extends StatelessWidget {
               SizedBox(height: 28.h),
 
               Text(
-                'Atelia takes care of everything',
+                l10n.onboardingFeaturesTitle,
                 style: GoogleFonts.manrope(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w800,
@@ -58,7 +61,7 @@ class OnboardingFeaturesScreen extends StatelessWidget {
               SizedBox(height: 12.h),
 
               Text(
-                'We combine creativity, AI and trusted partners to bring your brand to life.',
+                l10n.onboardingFeaturesSubtitle,
                 style: GoogleFonts.manrope(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
@@ -69,11 +72,11 @@ class OnboardingFeaturesScreen extends StatelessWidget {
               SizedBox(height: 24.h),
 
               // Feature cards
-              ...List.generate(_features.length, (i) {
-                final feature = _features[i];
+              ...List.generate(features.length, (i) {
+                final feature = features[i];
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: i < _features.length - 1 ? 12.h : 0,
+                    bottom: i < features.length - 1 ? 12.h : 0,
                   ),
                   child: _FeatureCard(item: feature, isFirst: i == 0),
                 );
@@ -86,14 +89,14 @@ class OnboardingFeaturesScreen extends StatelessWidget {
                 children: [
                   Expanded(
                     child: _OutlineButton(
-                      label: 'Previous',
+                      label: l10n.previous,
                       onTap: () => Get.back(),
                     ),
                   ),
                   SizedBox(width: 11.w),
                   Expanded(
                     child: _FilledButton(
-                      label: 'Continue',
+                      label: l10n.next,
                       onTap: () => Get.toNamed(AppRoutes.onboardingBrandStart),
                     ),
                   ),

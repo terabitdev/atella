@@ -5983,6 +5983,282 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'To change or upgrade your plan, visit us at www.atelia.app'**
   String get subscriptionDetailUpgradeHint;
+
+  /// Snackbar shown when user tries to proceed without selecting an onboarding option
+  ///
+  /// In en, this message translates to:
+  /// **'Please select an option to continue'**
+  String get onboardingSelectOption;
+
+  /// Previous button label
+  ///
+  /// In en, this message translates to:
+  /// **'Previous'**
+  String get previous;
+
+  /// Title on the brand intro onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'From your idea to a real brand'**
+  String get onboardingBrandTitle;
+
+  /// Subtitle on the brand intro onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'Design, production, suppliers — all in one place'**
+  String get onboardingBrandSubtitle;
+
+  /// Stat card label — brands
+  ///
+  /// In en, this message translates to:
+  /// **'Brands created'**
+  String get onboardingBrandStatBrands;
+
+  /// Stat card label — countries
+  ///
+  /// In en, this message translates to:
+  /// **'Countries'**
+  String get onboardingBrandStatCountries;
+
+  /// Stat card label — rating
+  ///
+  /// In en, this message translates to:
+  /// **'User rating'**
+  String get onboardingBrandStatRating;
+
+  /// Primary CTA on the brand intro screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create my brand'**
+  String get onboardingBrandCta;
+
+  /// Title on the goals onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'Why do you want to create a brand?'**
+  String get onboardingGoalsTitle;
+
+  /// Subtitle on the goals onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'We tailor your experience based on your goal.'**
+  String get onboardingGoalsSubtitle;
+
+  /// Goals option 1
+  ///
+  /// In en, this message translates to:
+  /// **'Launch my first brand'**
+  String get onboardingGoalsOption1;
+
+  /// Goals option 2
+  ///
+  /// In en, this message translates to:
+  /// **'Earn money with my designs'**
+  String get onboardingGoalsOption2;
+
+  /// Goals option 3
+  ///
+  /// In en, this message translates to:
+  /// **'Express my creativity'**
+  String get onboardingGoalsOption3;
+
+  /// Goals option 4
+  ///
+  /// In en, this message translates to:
+  /// **'Build a real business'**
+  String get onboardingGoalsOption4;
+
+  /// Goals option 5
+  ///
+  /// In en, this message translates to:
+  /// **'Launch a collection'**
+  String get onboardingGoalsOption5;
+
+  /// Title on the production onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'How many pieces do you want to launch?'**
+  String get onboardingProductionTitle;
+
+  /// Subtitle on the production onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'We\'ll adjust factories and recommendations accordingly.'**
+  String get onboardingProductionSubtitle;
+
+  /// Production option 1
+  ///
+  /// In en, this message translates to:
+  /// **'1–5 → Test an idea'**
+  String get onboardingProductionOption1;
+
+  /// Production option 2
+  ///
+  /// In en, this message translates to:
+  /// **'5–20 → Small launch'**
+  String get onboardingProductionOption2;
+
+  /// Production option 3
+  ///
+  /// In en, this message translates to:
+  /// **'20–100 → Grow a brand'**
+  String get onboardingProductionOption3;
+
+  /// Production option 4
+  ///
+  /// In en, this message translates to:
+  /// **'100+ → Scale up'**
+  String get onboardingProductionOption4;
+
+  /// Title on the discovery onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'How did you discover Atelia?'**
+  String get onboardingDiscoveryTitle;
+
+  /// Subtitle on the discovery onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'Help us improve by sharing how you found us.'**
+  String get onboardingDiscoverySubtitle;
+
+  /// Discovery option — recommendation
+  ///
+  /// In en, this message translates to:
+  /// **'Recommendation'**
+  String get onboardingDiscoveryOptionRecommendation;
+
+  /// Discovery option — other
+  ///
+  /// In en, this message translates to:
+  /// **'Other'**
+  String get onboardingDiscoveryOptionOther;
+
+  /// Title on the experience onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'Have you ever created a brand before?'**
+  String get onboardingExperienceTitle;
+
+  /// Subtitle on the experience onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'This helps us personalize your experience on Atelia.'**
+  String get onboardingExperienceSubtitle;
+
+  /// Experience option 1
+  ///
+  /// In en, this message translates to:
+  /// **'No, I\'m just starting'**
+  String get onboardingExperienceOption1;
+
+  /// Experience option 2
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, a little'**
+  String get onboardingExperienceOption2;
+
+  /// Experience option 3
+  ///
+  /// In en, this message translates to:
+  /// **'Yes, I\'ve already launched one'**
+  String get onboardingExperienceOption3;
+
+  /// Title on the features onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'Atelia takes care of everything'**
+  String get onboardingFeaturesTitle;
+
+  /// Subtitle on the features onboarding screen
+  ///
+  /// In en, this message translates to:
+  /// **'We combine creativity, AI and trusted partners to bring your brand to life.'**
+  String get onboardingFeaturesSubtitle;
+
+  /// Feature card 1
+  ///
+  /// In en, this message translates to:
+  /// **'Turn an idea into a design'**
+  String get onboardingFeaturesFeature1;
+
+  /// Feature card 2
+  ///
+  /// In en, this message translates to:
+  /// **'Create with an intelligent assistant'**
+  String get onboardingFeaturesFeature2;
+
+  /// Feature card 3
+  ///
+  /// In en, this message translates to:
+  /// **'Auto-generate your tech packs'**
+  String get onboardingFeaturesFeature3;
+
+  /// Feature card 4
+  ///
+  /// In en, this message translates to:
+  /// **'Find reliable factories fast'**
+  String get onboardingFeaturesFeature4;
+
+  /// Title on the brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Your Brand Starts Now'**
+  String get onboardingBrandStartTitle;
+
+  /// Subtitle on the brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Your first product in 3 steps'**
+  String get onboardingBrandStartSubtitle;
+
+  /// Step 1 label on brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Design'**
+  String get onboardingBrandStartStep1;
+
+  /// Step 2 label on brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Prototype'**
+  String get onboardingBrandStartStep2;
+
+  /// Step 3 label on brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Production'**
+  String get onboardingBrandStartStep3;
+
+  /// CTA button on the brand start screen
+  ///
+  /// In en, this message translates to:
+  /// **'Create My First Product'**
+  String get onboardingBrandStartCta;
+
+  /// Step indicator label — step 1
+  ///
+  /// In en, this message translates to:
+  /// **'Goals'**
+  String get onboardingStepGoals;
+
+  /// Step indicator label — step 2
+  ///
+  /// In en, this message translates to:
+  /// **'Production'**
+  String get onboardingStepProduction;
+
+  /// Step indicator label — step 3
+  ///
+  /// In en, this message translates to:
+  /// **'Discovery'**
+  String get onboardingStepDiscovery;
+
+  /// Step indicator label — step 4
+  ///
+  /// In en, this message translates to:
+  /// **'Experience'**
+  String get onboardingStepExperience;
 }
 
 class _AppLocalizationsDelegate

@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:atella/services/firebase/services/delete_account_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
+import 'package:atella/services/onboarding/onboarding_storage_service.dart';
 
 class AuthService {
   final FirebaseAuth _auth = FirebaseAuth.instance;
@@ -49,6 +50,8 @@ class AuthService {
           debugPrint('⚠️ Error initializing quota: $e');
           // Don't fail signup if quota initialization fails
         }
+
+        await _saveOnboardingToFirestore(user.uid);
 
         return null; // Success
       } else {
@@ -110,7 +113,7 @@ class AuthService {
     required String password,
   }) async {
     try {
-      await _auth.signInWithEmailAndPassword(email: email, password: password);
+      final userCredential = await _auth.signInWithEmailAndPassword(email: email, password: password);
 
       // Check and initialize email-based quota (persists across account deletions)
       try {
@@ -119,6 +122,10 @@ class AuthService {
       } catch (e) {
         debugPrint('⚠️ Error checking quota: $e');
         // Don't fail signin if quota check fails
+      }
+
+      if (userCredential.user != null) {
+        await _saveOnboardingToFirestore(userCredential.user!.uid);
       }
 
       return null; // Success
@@ -276,6 +283,8 @@ class AuthService {
           }
         }
 
+        await _saveOnboardingToFirestore(user.uid);
+
         return null;
       } else {
         return 'auth-google-sign-in-failed';
@@ -384,6 +393,8 @@ final oauthCredential = OAuthProvider("apple.com").credential(
             debugPrint('⚠️ Error checking quota for Apple user: $e');
           }
         }
+
+        await _saveOnboardingToFirestore(user.uid);
 
         return null; // Success
       } else {
@@ -579,6 +590,24 @@ final oauthCredential = OAuthProvider("apple.com").credential(
     } catch (e) {
       debugPrint('Error during Apple account deletion: $e');
       return 'auth-delete-account-failed';
+    }
+  }
+
+  // Reads onboarding selections from SharedPreferences and writes them to the
+  // user's Firestore document. Always uses update() so it works for both new
+  // and returning users (overwriting any previous onboarding data). Clears
+  // SharedPreferences afterwards so stale data is never re-sent.
+  Future<void> _saveOnboardingToFirestore(String uid) async {
+    try {
+      final onboardingData = await OnboardingStorageService().getOnboardingData();
+      if (onboardingData == null) return;
+
+      await _firestore.collection('users').doc(uid).update(onboardingData);
+      await OnboardingStorageService().clearOnboardingData();
+      debugPrint('✅ Onboarding data saved to Firestore for: $uid');
+    } catch (e) {
+      debugPrint('⚠️ Error saving onboarding data to Firestore: $e');
+      // Never fail auth because of this
     }
   }
 

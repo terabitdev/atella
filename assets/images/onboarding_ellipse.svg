@@ -1,3 +1,14 @@
-<svg preserveAspectRatio="none" width="100%" height="100%" overflow="visible" style="display: block;" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
-<circle id="Ellipse 2339" opacity="0.38" cx="16" cy="16" r="16" fill="var(--fill-0, #DBDDE1)"/>
+<svg width="32" height="32" viewBox="0 0 32 32" fill="none" xmlns="http://www.w3.org/2000/svg">
+<rect width="32" height="32" fill="#F5F5F5"/>
+<g id="Onboarding">
+<rect width="375" height="812" transform="translate(-30 -537)" fill="#F4F4F4"/>
+<g id="Frame 2085664180">
+<g id="Assessment Gender">
+<rect x="-10" y="-10" width="106" height="103" rx="10" stroke="#E4E4E7"/>
+<g id="Group 427318872">
+<circle id="Ellipse 2339" opacity="0.38" cx="16" cy="16" r="16" fill="#DBDDE1"/>
+</g>
+</g>
+</g>
+</g>
 </svg>

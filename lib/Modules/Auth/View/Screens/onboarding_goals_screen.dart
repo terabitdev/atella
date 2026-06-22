@@ -2,6 +2,9 @@ import 'package:atella/Modules/Auth/View/Widgets/onboarding_step_indicator.dart'
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/core/themes/app_colors.dart';
+import 'package:atella/core/utils/app_snackbar.dart';
+import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:atella/services/onboarding/onboarding_storage_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/flutter_svg.dart';
@@ -16,18 +19,28 @@ class OnboardingGoalsScreen extends StatefulWidget {
 }
 
 class _OnboardingGoalsScreenState extends State<OnboardingGoalsScreen> {
-  int _selectedIndex = 0;
+  int _selectedIndex = -1;
 
-  static const List<List<String>> _options = [
-    ['Launch my first brand', onboardingGoalLaunch],
-    ['Earn money with my designs', onboardingGoalEarn],
-    ['Express my creativity', onboardingGoalExpress],
-    ['Build a real business', onboardingGoalBuild],
-    ['Launch a collection', onboardingGoalCollection],
+  static const List<String> _iconAssets = [
+    onboardingGoalLaunch,
+    onboardingGoalEarn,
+    onboardingGoalExpress,
+    onboardingGoalBuild,
+    onboardingGoalCollection,
+  ];
+
+  List<String> _optionLabels(AppLocalizations l10n) => [
+    l10n.onboardingGoalsOption1,
+    l10n.onboardingGoalsOption2,
+    l10n.onboardingGoalsOption3,
+    l10n.onboardingGoalsOption4,
+    l10n.onboardingGoalsOption5,
   ];
 
   @override
   Widget build(BuildContext context) {
+    final l10n = AppLocalizations.of(context)!;
+    final options = _optionLabels(l10n);
     return Scaffold(
       backgroundColor: AppColors.backgroundColor,
       body: SafeArea(
@@ -37,14 +50,10 @@ class _OnboardingGoalsScreenState extends State<OnboardingGoalsScreen> {
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               SizedBox(height: 16.h),
-
-              // Step indicator
               OnboardingStepIndicator(currentStep: 0),
               SizedBox(height: 28.h),
-
-              // Title
               Text(
-                'Why do you want to create a brand?',
+                l10n.onboardingGoalsTitle,
                 style: GoogleFonts.manrope(
                   fontSize: 22.sp,
                   fontWeight: FontWeight.w800,
@@ -53,10 +62,8 @@ class _OnboardingGoalsScreenState extends State<OnboardingGoalsScreen> {
                 ),
               ),
               SizedBox(height: 12.h),
-
-              // Subtitle
               Text(
-                'We tailor your experience based on your goal.',
+                l10n.onboardingGoalsSubtitle,
                 style: GoogleFonts.manrope(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
@@ -65,39 +72,41 @@ class _OnboardingGoalsScreenState extends State<OnboardingGoalsScreen> {
                 ),
               ),
               SizedBox(height: 24.h),
-
-              // Option cards
-              ...List.generate(_options.length, (i) {
+              ...List.generate(options.length, (i) {
                 final isSelected = _selectedIndex == i;
                 return Padding(
                   padding: EdgeInsets.only(
-                    bottom: i < _options.length - 1 ? 12.h : 0,
+                    bottom: i < options.length - 1 ? 12.h : 0,
                   ),
                   child: _OptionCard(
-                    label: _options[i][0],
-                    iconAsset: _options[i][1],
+                    label: options[i],
+                    iconAsset: _iconAssets[i],
                     isSelected: isSelected,
                     onTap: () => setState(() => _selectedIndex = i),
                   ),
                 );
               }),
-
               const Spacer(),
-
-              // Previous / Next buttons
               Row(
                 children: [
                   Expanded(
                     child: _OutlineButton(
-                      label: 'Back',
+                      label: l10n.back,
                       onTap: () => Get.back(),
                     ),
                   ),
                   SizedBox(width: 11.w),
                   Expanded(
                     child: _FilledButton(
-                      label: 'Next',
-                      onTap: () => Get.toNamed(AppRoutes.onboardingProduction),
+                      label: l10n.next,
+                      onTap: () async {
+                        if (_selectedIndex == -1) {
+                          showAppSnackbar('', l10n.onboardingSelectOption);
+                          return;
+                        }
+                        await OnboardingStorageService().saveGoal(options[_selectedIndex]);
+                        Get.toNamed(AppRoutes.onboardingProduction);
+                      },
                     ),
                   ),
                 ],
@@ -110,8 +119,6 @@ class _OnboardingGoalsScreenState extends State<OnboardingGoalsScreen> {
     );
   }
 }
-
-// ── Option card ───────────────────────────────────────────────────────────────
 
 class _OptionCard extends StatelessWidget {
   final String label;
@@ -136,35 +143,20 @@ class _OptionCard extends StatelessWidget {
         decoration: BoxDecoration(
           color: Colors.white,
           border: Border.all(
-            color: isSelected
-                ? const Color(0xFF090A0C)
-                : const Color(0xFFE4E4E7),
+            color: isSelected ? const Color(0xFF090A0C) : const Color(0xFFE4E4E7),
             width: isSelected ? 2 : 1,
           ),
           borderRadius: BorderRadius.circular(10.r),
           boxShadow: isSelected
               ? [
-                  BoxShadow(
-                    color: const Color(0x050F172A),
-                    offset: const Offset(0, 8),
-                    blurRadius: 16,
-                  ),
-                  BoxShadow(
-                    color: const Color(0x080F172A),
-                    offset: const Offset(0, 4),
-                    blurRadius: 8,
-                  ),
+                  BoxShadow(color: const Color(0x050F172A), offset: const Offset(0, 8), blurRadius: 16),
+                  BoxShadow(color: const Color(0x080F172A), offset: const Offset(0, 4), blurRadius: 8),
                 ]
               : null,
         ),
         child: Row(
           children: [
-            SvgPicture.asset(
-              iconAsset,
-              width: 24.w,
-              height: 24.h,
-              fit: BoxFit.contain,
-            ),
+            SvgPicture.asset(iconAsset, width: 24.w, height: 24.h, fit: BoxFit.contain),
             SizedBox(width: 8.w),
             Expanded(
               child: Text(
@@ -172,31 +164,22 @@ class _OptionCard extends StatelessWidget {
                 style: GoogleFonts.workSans(
                   fontSize: 16.sp,
                   fontWeight: FontWeight.w500,
-                  color: isSelected
-                      ? const Color(0xFF090A0C)
-                      : const Color(0xFF27272A),
+                  color: isSelected ? const Color(0xFF090A0C) : const Color(0xFF27272A),
                   letterSpacing: -0.112,
                   height: 22 / 16,
                 ),
               ),
             ),
             SizedBox(width: 16.w),
-            // Checkbox circle
             Container(
               width: 20.w,
               height: 20.h,
               decoration: BoxDecoration(
                 shape: BoxShape.circle,
-                color: isSelected
-                    ? const Color(0xFF090A0C)
-                    : Colors.white,
-                border: isSelected
-                    ? null
-                    : Border.all(color: const Color(0xFFD4D4D8)),
+                color: isSelected ? const Color(0xFF090A0C) : Colors.white,
+                border: isSelected ? null : Border.all(color: const Color(0xFFD4D4D8)),
               ),
-              child: isSelected
-                  ? Icon(Icons.check, color: Colors.white, size: 12.sp)
-                  : null,
+              child: isSelected ? Icon(Icons.check, color: Colors.white, size: 12.sp) : null,
             ),
           ],
         ),
@@ -205,12 +188,9 @@ class _OptionCard extends StatelessWidget {
   }
 }
 
-// ── Buttons ───────────────────────────────────────────────────────────────────
-
 class _OutlineButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
-
   const _OutlineButton({required this.label, required this.onTap});
 
   @override
@@ -225,14 +205,7 @@ class _OutlineButton extends StatelessWidget {
           borderRadius: BorderRadius.circular(10.r),
         ),
         child: Center(
-          child: Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: const Color(0xFF090A0C),
-            ),
-          ),
+          child: Text(label, style: GoogleFonts.outfit(fontSize: 16.sp, fontWeight: FontWeight.w600, color: const Color(0xFF090A0C))),
         ),
       ),
     );
@@ -242,7 +215,6 @@ class _OutlineButton extends StatelessWidget {
 class _FilledButton extends StatelessWidget {
   final String label;
   final VoidCallback onTap;
-
   const _FilledButton({required this.label, required this.onTap});
 
   @override
@@ -251,19 +223,9 @@ class _FilledButton extends StatelessWidget {
       onTap: onTap,
       child: Container(
         height: 50.h,
-        decoration: BoxDecoration(
-          color: const Color(0xFF090A0C),
-          borderRadius: BorderRadius.circular(10.r),
-        ),
+        decoration: BoxDecoration(color: const Color(0xFF090A0C), borderRadius: BorderRadius.circular(10.r)),
         child: Center(
-          child: Text(
-            label,
-            style: GoogleFonts.outfit(
-              fontSize: 16.sp,
-              fontWeight: FontWeight.w600,
-              color: Colors.white,
-            ),
-          ),
+          child: Text(label, style: GoogleFonts.outfit(fontSize: 16.sp, fontWeight: FontWeight.w600, color: Colors.white)),
         ),
       ),
     );
