@@ -126,28 +126,26 @@ class ProfileController extends GetxController {
   Future<void> logout() async {
     print('🔄 Starting logout process...');
 
-    // Clear all cached data from controllers
+    // Do async work first while controllers are still alive,
+    // so any widget rebuilds during awaits don't hit a cleared registry.
+    await PostHogAnalyticsService().trackUserLoggedOut();
+    await _authService.signOut();
+    print('✅ Signed out from Firebase');
+
+    // Now safe to tear down all controllers synchronously before navigating.
     try {
-      // Clear HomeController data if it exists
       if (Get.isRegistered<HomeController>()) {
         final homeController = Get.find<HomeController>();
         homeController.clearAllData();
         print('✅ HomeController data cleared');
       }
 
-      // Delete all GetX controllers to ensure fresh state on next login
       Get.deleteAll(force: true);
       print('✅ All controllers deleted');
 
     } catch (e) {
       print('⚠️ Error clearing controllers: $e');
     }
-
-    // Sign out from Firebase
-    // Track logout and reset PostHog session
-    await PostHogAnalyticsService().trackUserLoggedOut();
-    await _authService.signOut();
-    print('✅ Signed out from Firebase');
 
     // Navigate to login screen and clear all routes
     Get.offAllNamed('/login');
