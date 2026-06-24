@@ -15,7 +15,7 @@ class SegmentedTabSwitcher extends StatelessWidget {
     return Padding(
       padding: EdgeInsets.symmetric(horizontal: 18.w, vertical: 18.h),
       child: Container(
-        height: 48.h,
+        height: 64.h,
         decoration: BoxDecoration(
           color: const Color.fromRGBO(236, 239, 246, 1),
           borderRadius: BorderRadius.circular(24.r),
@@ -23,35 +23,32 @@ class SegmentedTabSwitcher extends StatelessWidget {
         child: Row(
           children: [
             // Recommended Manufacturers
-            GestureDetector(
-              onTap: () => controller.switchToTab(0),
-              child: Obx(
-                () => Container(
-                  height: 48.h,
-                  decoration: BoxDecoration(
-                    color: controller.tabIndex.value == 0
-                        ? Colors.black
-                        : const Color.fromRGBO(236, 239, 246, 1),
-                    borderRadius: BorderRadius.only(
-                      topLeft: Radius.circular(24.r),
-                      bottomLeft: Radius.circular(24.r),
-                      topRight: Radius.circular(24.r),
-                      bottomRight: Radius.circular(24.r),
+            Expanded(
+              child: GestureDetector(
+                onTap: () => controller.switchToTab(0),
+                child: Obx(
+                  () => Container(
+                    height: 64.h,
+                    decoration: BoxDecoration(
+                      color: controller.tabIndex.value == 0
+                          ? Colors.black
+                          : const Color.fromRGBO(236, 239, 246, 1),
+                      borderRadius: BorderRadius.circular(24.r),
                     ),
-                  ),
-                  alignment: Alignment.center,
-                  child: Padding(
-                    padding: EdgeInsets.all(8.r),
-                    child: Text(
-                      l10n.tpRecommendedManufacturers,
-                      style: TextStyle(
-                        fontSize: 14.sp,
-                        fontWeight: FontWeight.w600,
-                        color: controller.tabIndex.value == 0
-                            ? Colors.white
-                            : Colors.black,
+                    alignment: Alignment.center,
+                    child: Padding(
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
+                      child: Text(
+                        l10n.tpRecommendedManufacturers,
+                        style: TextStyle(
+                          fontSize: 14.sp,
+                          fontWeight: FontWeight.w600,
+                          color: controller.tabIndex.value == 0
+                              ? Colors.white
+                              : Colors.black,
+                        ),
+                        textAlign: TextAlign.center,
                       ),
-                      textAlign: TextAlign.center,
                     ),
                   ),
                 ),
@@ -64,30 +61,28 @@ class SegmentedTabSwitcher extends StatelessWidget {
                 onTap: () => controller.switchToTab(1),
                 child: Obx(
                   () => Container(
-                    height: 48.h,
+                    height: 64.h,
                     decoration: BoxDecoration(
                       color: controller.tabIndex.value == 1
                           ? Colors.black
                           : const Color.fromRGBO(236, 239, 246, 1),
-                      borderRadius: BorderRadius.only(
-                        topLeft: Radius.circular(24.r),
-                        bottomLeft: Radius.circular(24.r),
-                        topRight: Radius.circular(24.r),
-                        bottomRight: Radius.circular(24.r),
-                      ),
+                      borderRadius: BorderRadius.circular(24.r),
                     ),
                     alignment: Alignment.center,
                     child: Padding(
-                      padding: EdgeInsets.all(8.r),
+                      padding: EdgeInsets.symmetric(horizontal: 12.w),
                       child: Text(
                         l10n.tpCustomTab,
                         style: TextStyle(
-                          fontSize: 14.sp,
+                          fontSize: 13.sp,
                           fontWeight: FontWeight.w600,
                           color: controller.tabIndex.value == 1
                               ? Colors.white
                               : Colors.black,
                         ),
+                        textAlign: TextAlign.center,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
                       ),
                     ),
                   ),
