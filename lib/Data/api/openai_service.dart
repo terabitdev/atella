@@ -208,12 +208,12 @@ class OpenAIService {
         }
       }
 
-      // Ensure white background requirement is in the prompt
+      // Ensure white background and front/back split requirement is in the prompt
       String enhancedPrompt = prompt;
       if (!enhancedPrompt.toLowerCase().contains('white background')) {
         enhancedPrompt +=
-            '. Professional product photography on clean white background, no mannequin, no people, ghost mannequin effect.';
-        print('OpenAI: Added white background requirement to prompt');
+            '. Two-panel split image: LEFT panel shows FRONT VIEW, RIGHT panel shows BACK VIEW of the same garment, side by side on a pure white background. No mannequin, no people, ghost mannequin effect, professional e-commerce product photography.';
+        print('OpenAI: Added white background and front/back split requirement to prompt');
       }
 
       // Truncate prompt to 1000 characters if necessary
@@ -325,6 +325,7 @@ IMPORTANT REQUIREMENTS FOR IMAGE GENERATION:
 - Use "ghost mannequin effect" or "flat lay style" or "product photography style" (no people)
 - The garment should be photographed as if floating or laid flat (no people)
 - Professional product photography presentation
+- ALWAYS generate a TWO-PANEL split image: LEFT PANEL shows the FRONT VIEW of the garment, RIGHT PANEL shows the BACK VIEW of the same garment. Both panels on a pure white background, side by side in a single image.
 
 IMPORTANT: ABSOLUTE RULES (do not omit, paraphrase, or weaken):
 1) DO NOT include any people, models, mannequins, partial bodies, torsos, heads, faces, arms, hands, legs, feet, or any human-like forms in the output image.
@@ -380,7 +381,7 @@ FROM REFINED CONCEPT:
 Create a comprehensive, visually descriptive prompt that incorporates ALL these elements. Be specific about colors (use hex codes if provided), materials, fit, and design details.
 
 MANDATORY ENDING - You MUST end EVERY prompt with this EXACT phrase (do not modify or omit):
-"Isolated garment only, NO human, NO model, NO mannequin, NO body, NO torso, NO person wearing the clothing. Product-only shot, floating garment on pure white background, ghost mannequin invisible effect, professional e-commerce product photography."
+"Two-panel split image: LEFT panel shows the FRONT VIEW of the garment, RIGHT panel shows the BACK VIEW of the same garment. Both panels side by side on a pure white background. Isolated garment only, NO human, NO model, NO mannequin, NO body, NO torso, NO person wearing the clothing. Product-only shot, floating garment, ghost mannequin invisible effect, professional e-commerce product photography."
 
 Make the prompt clear, detailed, and visually descriptive - include specific colors, textures, patterns, and construction details.
 ''';
@@ -413,8 +414,8 @@ CRITICAL INSTRUCTIONS:
 7. Mention any special features like necklines, sleeves, closures, pockets
 8. Include material/fabric details and seasonal considerations
 9. Use the budget level from Refined Concept to determine quality/finish
-10. START the prompt with: "Product-only fashion photography of a [garment type], no human, no model, no mannequin, no body visible, no logos, no text or writing, no patterns, prints, textures, or decorative graphics on the garment unless explicitly requested. The garment should be look realistic and according the the type of realistic world garment style, lenght and properties."
-11. END the prompt with: "Isolated floating garment, pure white background, invisible ghost mannequin effect, e-commerce product shot, absolutely no people or body parts."
+10. START the prompt with: "Two-panel split image showing FRONT VIEW on the left and BACK VIEW on the right of a [garment type]. Product-only fashion photography, no human, no model, no mannequin, no body visible, no logos, no text or writing, no patterns, prints, textures, or decorative graphics on the garment unless explicitly requested. The garment should look realistic and according to the type of realistic world garment style, length and properties."
+11. END the prompt with: "Two-panel split image: LEFT panel = FRONT VIEW, RIGHT panel = BACK VIEW. Both side by side on a pure white background. Isolated floating garment, invisible ghost mannequin effect, e-commerce product shot, absolutely no people or body parts."
 
 Generate a comprehensive visual prompt that captures ALL the design elements from the user's questionnaire answers.
 ''';
