@@ -729,11 +729,33 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
   }
 
   /// Uses gpt-4o vision to extract up to 5 dominant Pantone colors from the garment image.
+  /// Accepts a Firebase HTTPS URL, an already-base64 string, or a local file path.
   /// Returns a list of strings like "Pantone 19-1664 TCX | Fiesta | #DD4132".
-  static Future<List<String>> extractColorsFromGarmentImage(String base64Image) async {
+  static Future<List<String>> extractColorsFromGarmentImage(String imageSource) async {
     try {
       final apiKey = await getApiKey();
       if (apiKey == null || apiKey.isEmpty) return [];
+
+      // Build the image_url value based on what we received
+      String imageUrl;
+      if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
+        // Firebase Storage URL or any HTTPS URL — gpt-4o accepts these directly
+        imageUrl = imageSource;
+      } else if (imageSource.startsWith('iVBOR') ||
+                 imageSource.startsWith('/9j/') ||
+                 imageSource.startsWith('R0lGOD')) {
+        // Already base64-encoded PNG/JPEG/GIF
+        final mimeType = imageSource.startsWith('/9j/') ? 'jpeg' : 'png';
+        imageUrl = 'data:image/$mimeType;base64,$imageSource';
+      } else {
+        // Local file path — convert to base64 first
+        final b64 = await _convertImageToBase64(imageSource);
+        if (b64 == null) {
+          print('❌ Color extraction: could not read local file at $imageSource');
+          return [];
+        }
+        imageUrl = 'data:image/png;base64,$b64';
+      }
 
       final response = await http.post(
         Uri.parse('$_baseUrl/chat/completions'),
@@ -764,7 +786,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
                 {
                   'type': 'image_url',
                   'image_url': {
-                    'url': 'data:image/png;base64,$base64Image',
+                    'url': imageUrl,
                   },
                 },
               ],
