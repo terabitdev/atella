@@ -40,6 +40,9 @@ class TechPackDetailsController extends GetxController {
   // Industry standards checkboxes + validation errors
   final RxBool useIndustryStandardComposition = false.obs;
   final RxBool useIndustryStandardGSM = false.obs;
+  final RxBool useIndustryStandardProperties = false.obs;
+  final RxBool useIndustryStandardStitching = false.obs;
+  final RxBool useIndustryStandardDecorativeStitching = false.obs;
   final RxString compositionError = ''.obs;
   final RxString weightError = ''.obs;
 
@@ -336,6 +339,53 @@ class TechPackDetailsController extends GetxController {
     checkMaterialsBlockComplete();
   }
 
+  String _creativeBriefGarmentTypeKey() {
+    final raw = (designData['creativeBrief']?['garmentType'] ?? '').toString();
+    return raw.contains(':') ? raw.split(':').last.trim().toLowerCase() : raw.toLowerCase().trim();
+  }
+
+  void toggleIndustryStandardProperties(bool value) {
+    useIndustryStandardProperties.value = value;
+    if (value) {
+      fabricPropertiesController.text = OpenAIService.resolveByGarmentType(
+        _creativeBriefGarmentTypeKey(),
+        OpenAIService.technicalPropertiesDefaults,
+        'Breathable, moisture-wicking',
+      );
+    } else {
+      fabricPropertiesController.clear();
+    }
+    checkMaterialsBlockComplete();
+  }
+
+  void toggleIndustryStandardStitching(bool value) {
+    useIndustryStandardStitching.value = value;
+    if (value) {
+      stitchingController.text = OpenAIService.resolveByGarmentType(
+        _creativeBriefGarmentTypeKey(),
+        OpenAIService.stitchTypeDefaults,
+        'Overlock stitch (4-thread)',
+      );
+    } else {
+      stitchingController.clear();
+    }
+    checkTechnicalBlockComplete();
+  }
+
+  void toggleIndustryStandardDecorativeStitching(bool value) {
+    useIndustryStandardDecorativeStitching.value = value;
+    if (value) {
+      decorativeStitchingController.text = OpenAIService.resolveByGarmentType(
+        _creativeBriefGarmentTypeKey(),
+        OpenAIService.decorativeStitchingDefaults,
+        'Single topstitch, 2 mm from seam',
+      );
+    } else {
+      decorativeStitchingController.clear();
+    }
+    checkTechnicalBlockComplete();
+  }
+
   void _validateComposition() {
     if (useIndustryStandardComposition.value) {
       compositionError.value = '';
@@ -534,6 +584,9 @@ class TechPackDetailsController extends GetxController {
           selectedDesignPrompt: selectedDesignPrompt.value,
           measurementChartImagePath: measurementImagePath.value.isNotEmpty
               ? measurementImagePath.value
+              : null,
+          garmentImageBase64: selectedDesignImagePath.value.isNotEmpty
+              ? selectedDesignImagePath.value
               : null,
         );
       } catch (e) {
@@ -1297,6 +1350,7 @@ class TechPackDetailsController extends GetxController {
         'fabricProperties': fabricPropertiesController.text,
         'isIndustryStandardComposition': useIndustryStandardComposition.value,
         'isIndustryStandardGSM': useIndustryStandardGSM.value,
+        'isIndustryStandardProperties': useIndustryStandardProperties.value,
       },
       'sizes': {
         'sizeRange': selectedSizes.join(', '),
@@ -1308,6 +1362,8 @@ class TechPackDetailsController extends GetxController {
         'accessories': accessoriesController.text,
         'stitching': stitchingController.text,
         'decorativeStitching': decorativeStitchingController.text,
+        'isIndustryStandardStitching': useIndustryStandardStitching.value,
+        'isIndustryStandardDecorativeStitching': useIndustryStandardDecorativeStitching.value,
       },
       'labeling': {
         'logoPlacement': logoPlacementController.text,

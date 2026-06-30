@@ -129,13 +129,28 @@ class TechPackDetailsScreen extends StatelessWidget {
                       onChanged: (_) =>
                           controller.checkMaterialsBlockComplete(),
                     ),
-                    TechPackQuestionField(
+                    Obx(() => TechPackQuestionField(
                       label: l10n.tpdFabricPropertiesLabel,
                       hint: l10n.tpdFabricPropertiesHint,
                       controller: controller.fabricPropertiesController,
-                      onChanged: (_) =>
-                          controller.checkMaterialsBlockComplete(),
-                    ),
+                      enabled: !controller.useIndustryStandardProperties.value,
+                      onChanged: (_) => controller.checkMaterialsBlockComplete(),
+                    )),
+                    Obx(() => Row(
+                      children: [
+                        Checkbox(
+                          value: controller.useIndustryStandardProperties.value,
+                          activeColor: AppColors.splashcolor,
+                          materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                          visualDensity: VisualDensity.compact,
+                          onChanged: (v) => controller.toggleIndustryStandardProperties(v ?? false),
+                        ),
+                        Text(
+                          'Use industry standard',
+                          style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                        ),
+                      ],
+                    )),
                   ],
                 ),
               ),
@@ -278,21 +293,50 @@ class TechPackDetailsScreen extends StatelessWidget {
                                   onChanged: (_) =>
                                       controller.checkTechnicalBlockComplete(),
                                 ),
-                                TechPackQuestionField(
+                                Obx(() => TechPackQuestionField(
                                   label: l10n.tpdStitchingLabel,
                                   hint: l10n.tpdStitchingHint,
                                   controller: controller.stitchingController,
-                                  onChanged: (_) =>
-                                      controller.checkTechnicalBlockComplete(),
-                                ),
-                                TechPackQuestionField(
+                                  enabled: !controller.useIndustryStandardStitching.value,
+                                  onChanged: (_) => controller.checkTechnicalBlockComplete(),
+                                )),
+                                Obx(() => Row(
+                                  children: [
+                                    Checkbox(
+                                      value: controller.useIndustryStandardStitching.value,
+                                      activeColor: AppColors.splashcolor,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      visualDensity: VisualDensity.compact,
+                                      onChanged: (v) => controller.toggleIndustryStandardStitching(v ?? false),
+                                    ),
+                                    Text(
+                                      'Use industry standard',
+                                      style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                                    ),
+                                  ],
+                                )),
+                                Obx(() => TechPackQuestionField(
                                   label: l10n.tpdDecorativeStitchingLabel,
                                   hint: l10n.tpdDecorativeStitchingHint,
-                                  controller:
-                                      controller.decorativeStitchingController,
-                                  onChanged: (_) =>
-                                      controller.checkTechnicalBlockComplete(),
-                                ),
+                                  controller: controller.decorativeStitchingController,
+                                  enabled: !controller.useIndustryStandardDecorativeStitching.value,
+                                  onChanged: (_) => controller.checkTechnicalBlockComplete(),
+                                )),
+                                Obx(() => Row(
+                                  children: [
+                                    Checkbox(
+                                      value: controller.useIndustryStandardDecorativeStitching.value,
+                                      activeColor: AppColors.splashcolor,
+                                      materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                                      visualDensity: VisualDensity.compact,
+                                      onChanged: (v) => controller.toggleIndustryStandardDecorativeStitching(v ?? false),
+                                    ),
+                                    Text(
+                                      'Use industry standard',
+                                      style: TextStyle(fontSize: 12.sp, color: Colors.grey[700]),
+                                    ),
+                                  ],
+                                )),
                               ],
                             ),
                           ),
