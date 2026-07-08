@@ -585,9 +585,6 @@ class TechPackDetailsController extends GetxController {
           measurementChartImagePath: measurementImagePath.value.isNotEmpty
               ? measurementImagePath.value
               : null,
-          garmentImageBase64: selectedDesignImagePath.value.isNotEmpty
-              ? selectedDesignImagePath.value
-              : null,
         );
       } catch (e) {
         try {

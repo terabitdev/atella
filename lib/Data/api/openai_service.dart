@@ -728,95 +728,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
-  /// Uses gpt-4o vision to extract up to 5 dominant Pantone colors from the garment image.
-  /// Accepts a Firebase HTTPS URL, an already-base64 string, or a local file path.
-  /// Returns a list of strings like "Pantone 19-1664 TCX | Fiesta | #DD4132".
-  static Future<List<String>> extractColorsFromGarmentImage(String imageSource) async {
-    try {
-      final apiKey = await getApiKey();
-      if (apiKey == null || apiKey.isEmpty) return [];
-
-      // Build the image_url value based on what we received
-      String imageUrl;
-      if (imageSource.startsWith('http://') || imageSource.startsWith('https://')) {
-        // Firebase Storage URL or any HTTPS URL — gpt-4o accepts these directly
-        imageUrl = imageSource;
-      } else if (imageSource.startsWith('iVBOR') ||
-                 imageSource.startsWith('/9j/') ||
-                 imageSource.startsWith('R0lGOD')) {
-        // Already base64-encoded PNG/JPEG/GIF
-        final mimeType = imageSource.startsWith('/9j/') ? 'jpeg' : 'png';
-        imageUrl = 'data:image/$mimeType;base64,$imageSource';
-      } else {
-        // Local file path — convert to base64 first
-        final b64 = await _convertImageToBase64(imageSource);
-        if (b64 == null) {
-          print('❌ Color extraction: could not read local file at $imageSource');
-          return [];
-        }
-        imageUrl = 'data:image/png;base64,$b64';
-      }
-
-      final response = await http.post(
-        Uri.parse('$_baseUrl/chat/completions'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-        },
-        body: jsonEncode({
-          'model': 'gpt-4o',
-          'messages': [
-            {
-              'role': 'user',
-              'content': [
-                {
-                  'type': 'text',
-                  'text':
-                      'Analyze this garment image and identify the dominant colors that are part of the garment itself (ignore any plain background, room, or surface the garment is placed on).\n\n'
-                      'For each dominant color, provide the closest Pantone TCX color match.\n\n'
-                      'Return ONLY the following format, one color per line, no extra text:\n'
-                      'Pantone [CODE] TCX | [COLOR NAME] | [HEX]\n\n'
-                      'Rules:\n'
-                      '- Maximum 5 colors, minimum 1\n'
-                      '- Only include colors that are clearly visible and prominent in the garment fabric, pattern, or trim\n'
-                      '- Do NOT include background, mannequin skin, or non-garment elements\n'
-                      '- Use real, valid Pantone TCX codes\n'
-                      '- Hex value must match the named color accurately',
-                },
-                {
-                  'type': 'image_url',
-                  'image_url': {
-                    'url': imageUrl,
-                  },
-                },
-              ],
-            },
-          ],
-          'max_tokens': 300,
-        }),
-      );
-
-      if (response.statusCode == 200) {
-        final data = jsonDecode(response.body);
-        final content = data['choices'][0]['message']['content'] as String;
-        final lines = content
-            .split('\n')
-            .map((l) => l.trim())
-            .where((l) => l.startsWith('Pantone') && l.contains('|'))
-            .take(5)
-            .toList();
-        print('🎨 Extracted garment colors:\n${lines.join('\n')}');
-        return lines;
-      } else {
-        print('❌ Color extraction failed: ${response.body}');
-        return [];
-      }
-    } catch (e) {
-      print('❌ Error extracting garment colors: $e');
-      return [];
-    }
-  }
-
   static Future<Map<String, String>> generateTechPackPrompts({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
@@ -824,7 +735,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     required Map<String, dynamic> techPackDetails,
     required String selectedDesignPrompt,
     String? measurementChartImagePath,
-    String? garmentImageBase64,
   }) async {
     // Extract key information directly - no GPT-4 API call needed
     final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
@@ -837,9 +747,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
     final bool isIndustryComposition = techPackDetails['materials']?['isIndustryStandardComposition'] == true;
     final bool isIndustryGSM = techPackDetails['materials']?['isIndustryStandardGSM'] == true;
-    final bool isIndustryProperties = techPackDetails['materials']?['isIndustryStandardProperties'] == true;
-    final bool isIndustryStitching = techPackDetails['technical']?['isIndustryStandardStitching'] == true;
-    final bool isIndustryDecorativeStitching = techPackDetails['technical']?['isIndustryStandardDecorativeStitching'] == true;
 
     final String resolvedFabric = _buildFabricLine(
       fabricComposition, fabricWeight, creativeBriefFabric,
@@ -847,17 +754,11 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       isIndustryGSM: isIndustryGSM,
     );
     final secondaryMaterial = _resolveField(techPackDetails['materials']?['secondaryMaterials'] ?? '', 'No secondary material');
-    final fabricProperties = isIndustryProperties
-        ? resolveByGarmentType(garmentType, technicalPropertiesDefaults, 'Breathable, moisture-wicking')
-        : _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
+    final fabricProperties = _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
     final measurementChart = techPackDetails['sizes']?['measurementChart'] ?? '';
-    final stitching = isIndustryStitching
-        ? resolveByGarmentType(garmentType, stitchTypeDefaults, 'Overlock stitch (4-thread)')
-        : _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Overlock stitch (4-thread)');
-    final decorativeStitching = isIndustryDecorativeStitching
-        ? resolveByGarmentType(garmentType, decorativeStitchingDefaults, 'Single topstitch, 2 mm from seam')
-        : _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'Single topstitch, 2 mm from seam');
+    final stitching = _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Overlock stitch (4 threads)');
+    final decorativeStitching = _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'Single row, 1 mm spacing');
     final accessories = _resolveField(techPackDetails['technical']?['accessories'] ?? '', 'Bartack at stress points');
     final logoPlacement = _resolveField(techPackDetails['labeling']?['logoPlacement'] ?? '', 'Neck');
     final labelsNeeded = _resolveField(techPackDetails['labeling']?['labelsNeeded'] ?? '', 'No Label');
@@ -892,12 +793,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       measurementTableSection += _standardMeasurementRules(measurementChart);
     }
 
-    // COLOR PALETTE — extracted from garment image via gpt-4o vision
-    List<String> extractedColors = [];
-    if (garmentImageBase64 != null && garmentImageBase64.isNotEmpty) {
-      extractedColors = await extractColorsFromGarmentImage(garmentImageBase64);
-    }
-
     // CONSTRUCTION DETAILS — always 4 mandatory items
     final String constructionSection =
         '-- Stitch type: $stitching\n'
@@ -914,27 +809,6 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     // LOGO AND LABELS — combined section
     String logoAndLabelsSection = '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
 
-    // Build color palette section text
-    String colorPaletteSection = '';
-    for (int i = 0; i < extractedColors.length; i++) {
-      final parts = extractedColors[i].split('|').map((s) => s.trim()).toList();
-      if (parts.length >= 3) {
-        final pantoneCode = parts[0]; // e.g. "Pantone 19-1664 TCX"
-        final colorName = parts[1];   // e.g. "Fiesta"
-        final hex = parts[2];         // e.g. "#DD4132"
-        colorPaletteSection += '• $pantoneCode — $colorName ($hex)\n';
-      }
-    }
-
-    final int totalSections = extractedColors.isNotEmpty ? 6 : 5;
-    final String colorPaletteBlock = extractedColors.isNotEmpty
-        ? '''──────────────────────────────────────
-6. COLOR PALETTE
-──────────────────────────────────────
-For each color below, draw a solid filled square swatch (approx 1.5 cm × 1.5 cm) using the exact hex color value provided, followed by the Pantone code and color name as plain text beside it:
-$colorPaletteSection'''
-        : '';
-
     // Garment overview — 4 clean lines only
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
     if (fit.isNotEmpty) garmentOverviewSection += '• Fit: $fit\n';
@@ -943,22 +817,15 @@ $colorPaletteSection'''
 
     final String garmentTitle = garmentType.toUpperCase();
 
-    final String colorSwatchRule = extractedColors.isNotEmpty
-        ? '- Section 6 (COLOR PALETTE) must show each color as a solid filled square swatch with the Pantone code and name beside it. Swatches are the ONLY non-text visual allowed outside of the garment image.'
-        : '';
-    final String sectionsTextOnlyRule = extractedColors.isNotEmpty
-        ? '- CRITICAL: Sections 1–5 are TEXT ONLY. Section 6 contains color swatches only as described above.'
-        : '- CRITICAL: Sections 1–5 are TEXT ONLY. Zero images or graphics inside any section.';
-
     final String manufacturingPrompt =
         '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
 
-CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly $totalSections sections — no more, no fewer.
+CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 5 sections — no more, no fewer.
 
 IMAGE RULE — STRICTLY ENFORCE:
-- The ONLY image/visual element allowed in the entire document is the single garment design image shown at the top, and color swatches in the COLOR PALETTE section if present.
+- The ONLY image/visual element allowed in the entire document is the single garment design image shown at the top.
 - Do NOT include any fabric swatches, texture thumbnails, logo images, label images, garment cutouts, icons, or any other visual elements anywhere else in the document.
-$colorSwatchRule
+- Sections 1 through 5 must contain TEXT ONLY. No images, no graphics, no illustrations of any kind within the sections.
 
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
@@ -991,7 +858,7 @@ $fabricSection
 5. LOGO AND LABELS
 ──────────────────────────────────────
 $logoAndLabelsSection
-$colorPaletteBlock
+
 Style requirements:
 - White background, clean margins, professional fashion industry layout
 - Section headers in bold with divider lines
@@ -999,8 +866,8 @@ Style requirements:
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
-- CRITICAL: Do NOT add any sections beyond the $totalSections listed above
-$sectionsTextOnlyRule
+- CRITICAL: Do NOT add any sections beyond the 5 listed above
+- CRITICAL: Sections 1–5 are TEXT ONLY. Zero images or graphics inside any section.
 ''';
 
     // Resolve logo placement — chest without explicit side defaults to left chest
