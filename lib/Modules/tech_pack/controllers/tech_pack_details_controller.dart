@@ -573,6 +573,14 @@ class TechPackDetailsController extends GetxController {
       Map<String, String> prompts;
       String approach = '';
 
+      // Extract colors from the garment image via gpt-4o (non-blocking — null on failure)
+      String? extractedColors;
+      if (selectedDesignImagePath.value.isNotEmpty) {
+        extractedColors = await OpenAIService.extractColorsFromGarmentImage(
+          selectedDesignImagePath.value,
+        );
+      }
+
       try {
         // First attempt: Full detailed prompts with three views
         approach = 'Detailed Three Views';
@@ -585,6 +593,7 @@ class TechPackDetailsController extends GetxController {
           measurementChartImagePath: measurementImagePath.value.isNotEmpty
               ? measurementImagePath.value
               : null,
+          colorPalette: extractedColors,
         );
       } catch (e) {
         try {

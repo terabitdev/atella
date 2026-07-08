@@ -669,6 +669,73 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return section;
   }
 
+  /// Calls gpt-4o vision with the garment image and returns dominant colors as a plain text list.
+  /// Returns null if the image cannot be read or the API call fails.
+  static Future<String?> extractColorsFromGarmentImage(String imagePathOrUrl) async {
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) return null;
+
+      List<Map<String, dynamic>> imageContent;
+      if (imagePathOrUrl.startsWith('http://') || imagePathOrUrl.startsWith('https://')) {
+        imageContent = [
+          {'type': 'image_url', 'image_url': {'url': imagePathOrUrl}},
+        ];
+      } else if (imagePathOrUrl.startsWith('iVBOR') ||
+          imagePathOrUrl.startsWith('/9j/') ||
+          imagePathOrUrl.startsWith('R0lGOD')) {
+        // Already base64 data — wrap directly as a data URI
+        final mimeType = imagePathOrUrl.startsWith('/9j/') ? 'jpeg' : 'png';
+        imageContent = [
+          {'type': 'image_url', 'image_url': {'url': 'data:image/$mimeType;base64,$imagePathOrUrl'}},
+        ];
+      } else {
+        final base64Image = await _convertImageToBase64(imagePathOrUrl);
+        if (base64Image == null) return null;
+        imageContent = [
+          {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}},
+        ];
+      }
+
+      final response = await http.post(
+        Uri.parse('$_baseUrl/chat/completions'),
+        headers: {
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $apiKey',
+        },
+        body: jsonEncode({
+          'model': 'gpt-4o',
+          'messages': [
+            {
+              'role': 'user',
+              'content': [
+                {
+                  'type': 'text',
+                  'text': 'List the dominant colors of this garment. Return ONLY a short comma-separated list of color names (e.g. "Navy Blue, Cream White, Gold"). Maximum 5 colors. No explanations, no extra text.',
+                },
+                ...imageContent,
+              ],
+            },
+          ],
+          'max_tokens': 60,
+        }),
+      ).timeout(const Duration(seconds: 20));
+
+      if (response.statusCode == 200) {
+        final data = jsonDecode(response.body);
+        final colors = (data['choices'][0]['message']['content'] as String).trim();
+        print('🎨 Extracted colors: $colors');
+        return colors;
+      } else {
+        print('❌ Color extraction failed: ${response.body}');
+        return null;
+      }
+    } catch (e) {
+      print('❌ Error extracting colors: $e');
+      return null;
+    }
+  }
+
   /// Calls gpt-4o with the size chart image and returns extracted measurements as plain text.
   /// Returns null if the image cannot be read or the API call fails.
   static Future<String?> extractSizesFromChartImage(String imagePath) async {
@@ -728,6 +795,231 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
+  /// Returns garment-appropriate approximate measurements for the technical flat drawing.
+  /// Values are for a size M garment; front, back, and summary table are pre-formatted strings.
+  static Map<String, String> _techFlatMeasurements(String garmentType) {
+    final key = garmentType.toLowerCase().trim();
+
+    if (['t-shirt', 'tshirt', 't shirt', 'tank', 'polo', 'crop top'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
+            '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
+            '  • Front length: 68 cm — vertical arrow along the left outer edge, top to hem\n'
+            '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm\n'
+            '  • Sleeve length: 22 cm — arrow along the outer sleeve edge from shoulder to cuff',
+        'back': '  • Shoulder width: 42 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 70 cm — vertical arrow along the right outer edge, top to hem\n'
+            '  • Sleeve opening width: 16 cm — horizontal arrow at the sleeve hem\n'
+            '  • Waist width: 46 cm — horizontal arrow at waist level\n'
+            '  • Hem width: 48 cm — horizontal arrow at the bottom hem',
+        'table': '  Neck Opening: 20 cm        Shoulder Width: 42 cm\n'
+            '  Chest Width: 50 cm         Back Length: 70 cm\n'
+            '  Front Length: 68 cm        Sleeve Opening: 16 cm\n'
+            '  Armhole Depth: 22 cm       Waist Width: 46 cm\n'
+            '  Sleeve Length: 22 cm       Hem Width: 48 cm',
+      };
+    }
+
+    if (['sweatshirt', 'hoodie', 'sweater', 'pullover', 'cardigan', 'knitwear'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Neck opening width: 22 cm — horizontal arrow across the neckline\n'
+            '  • Chest width: 56 cm — horizontal arrow across the widest chest point\n'
+            '  • Front length: 70 cm — vertical arrow along the left outer edge, top to hem\n'
+            '  • Armhole depth: 25 cm — vertical arrow from shoulder seam to underarm\n'
+            '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
+        'back': '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 72 cm — vertical arrow along the right outer edge, top to hem\n'
+            '  • Cuff width: 18 cm — horizontal arrow across the cuff opening\n'
+            '  • Hem width: 54 cm — horizontal arrow at the bottom hem\n'
+            '  • Sleeve opening width: 18 cm — horizontal arrow at the sleeve hem',
+        'table': '  Neck Opening: 22 cm        Shoulder Width: 46 cm\n'
+            '  Chest Width: 56 cm         Back Length: 72 cm\n'
+            '  Front Length: 70 cm        Cuff Width: 18 cm\n'
+            '  Armhole Depth: 25 cm       Hem Width: 54 cm\n'
+            '  Sleeve Length: 60 cm       Sleeve Opening: 18 cm',
+      };
+    }
+
+    if (['shirt', 'blouse', 'button'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Neck opening width: 38 cm — horizontal arrow at the collar base\n'
+            '  • Chest width: 54 cm — horizontal arrow across the widest chest point\n'
+            '  • Front length: 78 cm — vertical arrow along the left outer edge, top to hem\n'
+            '  • Armhole depth: 24 cm — vertical arrow from shoulder seam to underarm\n'
+            '  • Sleeve length: 62 cm — arrow along the outer sleeve edge from shoulder to cuff',
+        'back': '  • Shoulder width: 44 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 80 cm — vertical arrow along the right outer edge, top to hem\n'
+            '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
+            '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
+            '  • Sleeve opening width: 23 cm — horizontal arrow at the sleeve hem',
+        'table': '  Neck Opening: 38 cm        Shoulder Width: 44 cm\n'
+            '  Chest Width: 54 cm         Back Length: 80 cm\n'
+            '  Front Length: 78 cm        Collar Height: 4 cm\n'
+            '  Armhole Depth: 24 cm       Cuff Width: 11 cm\n'
+            '  Sleeve Length: 62 cm       Sleeve Opening: 23 cm',
+      };
+    }
+
+    if (['jacket', 'coat', 'blazer', 'overcoat', 'trench', 'parka', 'outerwear'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
+            '  • Chest width: 58 cm — horizontal arrow across the widest chest point\n'
+            '  • Front length: 82 cm — vertical arrow along the left outer edge, top to hem\n'
+            '  • Armhole depth: 26 cm — vertical arrow from shoulder seam to underarm\n'
+            '  • Sleeve length: 64 cm — arrow along the outer sleeve edge from shoulder to cuff',
+        'back': '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 84 cm — vertical arrow along the right outer edge, top to hem\n'
+            '  • Collar height: 6 cm — vertical arrow at the collar stand\n'
+            '  • Cuff width: 13 cm — horizontal arrow across the cuff opening\n'
+            '  • Sleeve opening width: 26 cm — horizontal arrow at the sleeve hem',
+        'table': '  Neck Opening: 20 cm        Shoulder Width: 46 cm\n'
+            '  Chest Width: 58 cm         Back Length: 84 cm\n'
+            '  Front Length: 82 cm        Collar Height: 6 cm\n'
+            '  Armhole Depth: 26 cm       Cuff Width: 13 cm\n'
+            '  Sleeve Length: 64 cm       Sleeve Opening: 26 cm',
+      };
+    }
+
+    if (['dress', 'gown', 'frock'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Bust width: 46 cm — horizontal arrow across the widest bust point\n'
+            '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
+            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
+            '  • Front length: 105 cm — vertical arrow from shoulder to hem\n'
+            '  • Armhole depth: 20 cm — vertical arrow from shoulder seam to underarm',
+        'back': '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 107 cm — vertical arrow along the right outer edge, top to hem\n'
+            '  • Neck opening width: 16 cm — horizontal arrow across the back neckline\n'
+            '  • Waist to hem: 70 cm — vertical arrow from waist to hem\n'
+            '  • Hem width: 60 cm — horizontal arrow at the bottom hem',
+        'table': '  Bust Width: 46 cm          Shoulder Width: 38 cm\n'
+            '  Waist Width: 36 cm         Back Length: 107 cm\n'
+            '  Hip Width: 52 cm           Neck Opening: 16 cm\n'
+            '  Front Length: 105 cm       Waist to Hem: 70 cm\n'
+            '  Armhole Depth: 20 cm       Hem Width: 60 cm',
+      };
+    }
+
+    if (['skirt'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Waist width: 34 cm — horizontal arrow at the waistband top\n'
+            '  • Hip width: 50 cm — horizontal arrow at the widest hip point\n'
+            '  • Front length: 60 cm — vertical arrow from waistband to hem\n'
+            '  • Hem width: 58 cm — horizontal arrow at the bottom hem\n'
+            '  • Waistband height: 4 cm — vertical arrow at the waistband',
+        'back': '  • Back waist width: 34 cm — horizontal arrow at the back waistband\n'
+            '  • Back hip width: 50 cm — horizontal arrow at the widest back hip point\n'
+            '  • Back length: 62 cm — vertical arrow from waistband to hem\n'
+            '  • Back hem width: 58 cm — horizontal arrow at the back hem\n'
+            '  • Side seam length: 58 cm — vertical arrow along the side seam',
+        'table': '  Waist Width: 34 cm         Back Waist: 34 cm\n'
+            '  Hip Width: 50 cm           Back Hip: 50 cm\n'
+            '  Front Length: 60 cm        Back Length: 62 cm\n'
+            '  Hem Width: 58 cm           Back Hem: 58 cm\n'
+            '  Waistband Height: 4 cm     Side Seam: 58 cm',
+      };
+    }
+
+    if (['trouser', 'pant', 'jean', 'chino', 'jogger', 'cargo'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
+            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
+            '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
+            '  • Outseam length: 102 cm — vertical arrow from waistband to hem\n'
+            '  • Inseam length: 80 cm — vertical arrow from crotch to hem',
+        'back': '  • Back rise: 32 cm — vertical arrow from waistband to crotch\n'
+            '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
+            '  • Knee width: 22 cm — horizontal arrow at the knee level\n'
+            '  • Leg opening: 18 cm — horizontal arrow at the hem\n'
+            '  • Waistband height: 4 cm — vertical arrow at the waistband',
+        'table': '  Waist Width: 36 cm         Back Rise: 32 cm\n'
+            '  Hip Width: 52 cm           Seat Width: 54 cm\n'
+            '  Thigh Width: 30 cm         Knee Width: 22 cm\n'
+            '  Outseam: 102 cm            Leg Opening: 18 cm\n'
+            '  Inseam: 80 cm              Waistband Height: 4 cm',
+      };
+    }
+
+    if (['short'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
+            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
+            '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
+            '  • Outseam length: 42 cm — vertical arrow from waistband to hem\n'
+            '  • Inseam length: 18 cm — vertical arrow from crotch to hem',
+        'back': '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
+            '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
+            '  • Hem width: 26 cm — horizontal arrow at the bottom hem\n'
+            '  • Side seam: 40 cm — vertical arrow along the side seam\n'
+            '  • Waistband height: 4 cm — vertical arrow at the waistband',
+        'table': '  Waist Width: 36 cm         Back Rise: 28 cm\n'
+            '  Hip Width: 52 cm           Seat Width: 54 cm\n'
+            '  Thigh Width: 30 cm         Hem Width: 26 cm\n'
+            '  Outseam: 42 cm             Side Seam: 40 cm\n'
+            '  Inseam: 18 cm              Waistband Height: 4 cm',
+      };
+    }
+
+    if (['legging', 'tight', 'activewear', 'yoga'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Waist width: 28 cm — horizontal arrow at the waistband\n'
+            '  • Hip width: 46 cm — horizontal arrow at the widest hip point\n'
+            '  • Thigh width: 26 cm — horizontal arrow at the widest thigh\n'
+            '  • Outseam length: 94 cm — vertical arrow from waistband to hem\n'
+            '  • Inseam length: 72 cm — vertical arrow from crotch to hem',
+        'back': '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
+            '  • Seat width: 48 cm — horizontal arrow at the seat level\n'
+            '  • Knee width: 20 cm — horizontal arrow at the knee level\n'
+            '  • Ankle width: 12 cm — horizontal arrow at the ankle/hem\n'
+            '  • Calf width: 16 cm — horizontal arrow at the calf level',
+        'table': '  Waist Width: 28 cm         Back Rise: 28 cm\n'
+            '  Hip Width: 46 cm           Seat Width: 48 cm\n'
+            '  Thigh Width: 26 cm         Knee Width: 20 cm\n'
+            '  Outseam: 94 cm             Ankle Width: 12 cm\n'
+            '  Inseam: 72 cm              Calf Width: 16 cm',
+      };
+    }
+
+    if (['jumpsuit', 'romper', 'playsuit', 'overall'].any((k) => key.contains(k))) {
+      return {
+        'front': '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
+            '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
+            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
+            '  • Total length: 130 cm — vertical arrow from shoulder to hem\n'
+            '  • Inseam length: 78 cm — vertical arrow from crotch to hem',
+        'back': '  • Shoulder width: 40 cm — horizontal arrow across the full shoulder seam\n'
+            '  • Back length: 132 cm — vertical arrow from shoulder to hem\n'
+            '  • Sleeve length: 60 cm — arrow along the outer sleeve edge\n'
+            '  • Leg opening: 18 cm — horizontal arrow at the leg hem\n'
+            '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm',
+        'table': '  Chest Width: 50 cm         Shoulder Width: 40 cm\n'
+            '  Waist Width: 36 cm         Back Length: 132 cm\n'
+            '  Hip Width: 52 cm           Sleeve Length: 60 cm\n'
+            '  Total Length: 130 cm       Leg Opening: 18 cm\n'
+            '  Inseam: 78 cm              Armhole Depth: 22 cm',
+      };
+    }
+
+    // Default fallback
+    return {
+      'front': '  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top\n'
+          '  • Chest width: 48 cm — horizontal arrow across the widest chest point\n'
+          '  • Front length: 65 cm — vertical arrow along the left outer edge, top to hem\n'
+          '  • Armhole depth: 22 cm — vertical arrow on the side from shoulder seam to underarm\n'
+          '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
+      'back': '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
+          '  • Back length: 67 cm — vertical arrow along the right outer edge, top to hem\n'
+          '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
+          '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
+          '  • Sleeve opening width: 12 cm — horizontal arrow at the sleeve hem/opening',
+      'table': '  Neck Opening: 18 cm        Shoulder Width: 38 cm\n'
+          '  Chest Width: 48 cm         Back Length: 67 cm\n'
+          '  Front Length: 65 cm        Collar Height: 4 cm\n'
+          '  Armhole Depth: 22 cm       Cuff Width: 11 cm\n'
+          '  Sleeve Length: 60 cm       Sleeve Opening: 12 cm',
+    };
+  }
+
   static Future<Map<String, String>> generateTechPackPrompts({
     required Map<String, dynamic> creativeBrief,
     required Map<String, dynamic> refinedConcept,
@@ -735,6 +1027,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     required Map<String, dynamic> techPackDetails,
     required String selectedDesignPrompt,
     String? measurementChartImagePath,
+    String? colorPalette,
   }) async {
     // Extract key information directly - no GPT-4 API call needed
     final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
@@ -809,11 +1102,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     // LOGO AND LABELS — combined section
     String logoAndLabelsSection = '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
 
-    // Garment overview — 4 clean lines only
+    // Garment overview — clean lines
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
     if (fit.isNotEmpty) garmentOverviewSection += '• Fit: $fit\n';
     if (gender.isNotEmpty) garmentOverviewSection += '• Gender: $gender\n';
     if (season.isNotEmpty) garmentOverviewSection += '• Season: $season\n';
+    final bool hasColors = colorPalette != null && colorPalette.isNotEmpty;
+    if (hasColors) garmentOverviewSection += '• Colors: $colorPalette\n';
 
     final String garmentTitle = garmentType.toUpperCase();
 
@@ -839,7 +1134,7 @@ GARMENT IMAGE:
 SECTIONS (render each exactly once, in this exact order, no additional sections allowed):
 
 ──────────────────────────────────────
-1. GARMENT OVERVIEW
+1. GARMENT OVERVIEW${hasColors ? ' — MUST include all bullet points below including Colors' : ''}
 ──────────────────────────────────────
 $garmentOverviewSection
 ──────────────────────────────────────
@@ -884,6 +1179,8 @@ Style requirements:
     final String technicalLogoInstruction =
         '\n- Logo placeholder: Draw on the FRONT VIEW (left half) only — a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it in plain text. Place it at $resolvedLogoPlacement, 3 cm below the front neckline. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image, graphic, or artwork inside or near this box. Do NOT draw the logo placeholder on the back view.';
 
+    final measurements = _techFlatMeasurements(garmentType);
+
     final technicalFlatPrompt =
         '''Technical flat drawing of a $garmentType. White background. Black line art only, no colors, no shading, no fill.
 
@@ -901,27 +1198,15 @@ DRAWING STYLE:
 
 MEASUREMENTS — FRONT VIEW (annotate on the left half):
 Draw double-headed dimension arrows OUTSIDE the garment outline, each with a clear numeric cm value:
-  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top
-  • Chest width: 48 cm — horizontal arrow across the widest chest point
-  • Front length: 65 cm — vertical arrow along the left outer edge, top to hem
-  • Armhole depth: 22 cm — vertical arrow on the side from shoulder seam to underarm
-  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff
+${measurements['front']}
 
 MEASUREMENTS — BACK VIEW (annotate on the right half):
 Draw double-headed dimension arrows OUTSIDE the garment outline, each with a clear numeric cm value:
-  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam
-  • Back length: 67 cm — vertical arrow along the right outer edge, top to hem
-  • Collar height: 4 cm — vertical arrow at the collar stand
-  • Cuff width: 11 cm — horizontal arrow across the cuff opening
-  • Sleeve opening width: 12 cm — horizontal arrow at the sleeve hem/opening$technicalLogoInstruction
+${measurements['back']}$technicalLogoInstruction
 
 MEASUREMENT SUMMARY TABLE — below the drawing:
 After both garment views, add a clean text summary at the bottom of the image listing all measurements in two columns:
-  Neck Opening: 18 cm        Shoulder Width: 38 cm
-  Chest Width: 48 cm         Back Length: 67 cm
-  Front Length: 65 cm        Collar Height: 4 cm
-  Armhole Depth: 22 cm       Cuff Width: 11 cm
-  Sleeve Length: 60 cm       Sleeve Opening: 12 cm
+${measurements['table']}
 
 RULES:
 - Every single measurement arrow MUST display its numeric cm value — no blank or missing values
@@ -929,6 +1214,9 @@ RULES:
 - Use small, clear, sans-serif font for all measurement text
 - Do not add any extra labels, callouts, or garment feature annotations beyond measurements
 - The measurement summary table at the bottom must include all 10 measurements
+- Draw ONLY the measurement arrows listed above — do NOT add any additional arrows, lines, or callouts not listed
+- Each arrow must be placed at the exact anatomical position described — do NOT place arrows arbitrarily or in the wrong location
+- Do NOT add inaccurate measurement arrows — if a measurement position is unclear, omit the arrow entirely rather than placing it incorrectly
 
 CRITICAL: All text and numbers must be spelled and written correctly with no mistakes.
 ''';
