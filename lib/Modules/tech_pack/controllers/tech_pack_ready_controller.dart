@@ -418,6 +418,8 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         withLogo: withLogo,
         labelImagePath: labelImagePath.isNotEmpty ? labelImagePath : null,
         logoPlacement: logoPlacement.isNotEmpty ? logoPlacement : null,
+        selectedDesignImageBase64:
+            selectedDesignImage.isNotEmpty ? selectedDesignImage : null,
       );
 
       // Open share sheet instead of downloading

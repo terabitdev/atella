@@ -156,6 +156,7 @@ class TechPackService {
     bool withLogo = true,
     String? labelImagePath,
     String? logoPlacement,
+    String? selectedDesignImageBase64,
   }) async {
     try {
       // Request permission first
@@ -192,6 +193,17 @@ if (withLogo) {
   logoImage = pw.MemoryImage(
     (await rootBundle.load('assets/images/logo.png')).buffer.asUint8List(),
   );
+}
+
+// Load the final selected design image for the summary page, if provided
+pw.MemoryImage? designImage;
+if (selectedDesignImageBase64 != null && selectedDesignImageBase64.isNotEmpty) {
+  try {
+    final designBytes = base64Decode(selectedDesignImageBase64);
+    designImage = pw.MemoryImage(designBytes);
+  } catch (e) {
+    print('⚠️ Could not load selected design image: $e');
+  }
 }
 
 // Add cover page
@@ -236,7 +248,21 @@ pdf.addPage(
             style: const pw.TextStyle(fontSize: 14, lineSpacing: 1.5),
           ),
 
-          pw.Spacer(),
+          if (designImage != null) ...[
+            pw.SizedBox(height: 20),
+            pw.Text(
+              'Final Design',
+              style: const pw.TextStyle(fontSize: 16),
+            ),
+            pw.SizedBox(height: 12),
+            pw.Expanded(
+              child: pw.Center(
+                child: pw.Image(designImage, fit: pw.BoxFit.contain),
+              ),
+            ),
+            pw.SizedBox(height: 12),
+          ] else
+            pw.Spacer(),
 
           pw.Center(
             child: pw.Text(
@@ -315,6 +341,39 @@ pdf.addPage(
                             child: pw.Image(pdfImages[i], fit: pw.BoxFit.contain),
                           ),
                   ),
+                ],
+              );
+            },
+          ),
+        );
+      }
+
+      // Add a dedicated logo page if the user selected a logo/label image
+      if (labelImage != null) {
+        pdf.addPage(
+          pw.Page(
+            pageFormat: PdfPageFormat.a4,
+            margin: const pw.EdgeInsets.all(32),
+            build: (context) {
+              return pw.Column(
+                children: [
+                  pw.Text(
+                    'Logo',
+                    style: const pw.TextStyle(fontSize: 18),
+                  ),
+                  pw.SizedBox(height: 20),
+                  pw.Expanded(
+                    child: pw.Center(
+                      child: pw.Image(labelImage!, fit: pw.BoxFit.contain),
+                    ),
+                  ),
+                  if (logoPlacement != null && logoPlacement.isNotEmpty) ...[
+                    pw.SizedBox(height: 12),
+                    pw.Text(
+                      'Placement: $logoPlacement',
+                      style: const pw.TextStyle(fontSize: 12),
+                    ),
+                  ],
                 ],
               );
             },
