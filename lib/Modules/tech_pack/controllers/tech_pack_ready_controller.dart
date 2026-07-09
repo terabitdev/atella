@@ -177,34 +177,36 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
 
     print('⏳ Design save in progress, waiting...');
 
-    // Show waiting snackbar
-    showAppSnackbar(
+    // Show waiting snackbar — capture its dismiss handle since
+    // Get.closeAllSnackbars() cannot close this custom overlay entry.
+    final dismissWaitingSnackbar = showAppSnackbar(
       _l10n.tprSavingDesign,
       _l10n.tprSavingDesignMessage,
       backgroundColor: Colors.black,
       colorText: Colors.white,
       snackPosition: SnackPosition.TOP,
-      duration: const Duration(seconds: 10), // Will be dismissed when complete
       showProgressIndicator: true,
     );
 
-    // Poll for completion with 10-second timeout
+    // Poll for completion. Uploads run sequentially in the background save
+    // (multiple full-size images to Storage + a Firestore write), so give it
+    // a generous timeout rather than aborting a save that's still in-flight.
     const checkInterval = Duration(milliseconds: 500);
-    const timeout = Duration(seconds: 10);
+    const timeout = Duration(seconds: 60);
     final startTime = DateTime.now();
 
     while (DateTime.now().difference(startTime) < timeout) {
       // Check if save completed successfully
       if (techPackController.isDesignSaveComplete.value) {
         print('✅ Design save completed, proceeding with tech pack save');
-        Get.closeAllSnackbars(); // Dismiss waiting snackbar
+        dismissWaitingSnackbar();
         return true;
       }
 
       // Check if save failed
       if (techPackController.designSaveError.value.isNotEmpty) {
         print('❌ Design save failed: ${techPackController.designSaveError.value}');
-        Get.closeAllSnackbars();
+        dismissWaitingSnackbar();
 
         showAppSnackbar(
           _l10n.tprSaveFailed,
@@ -223,7 +225,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
 
     // Timeout reached
     print('⏱️ Design save timeout reached');
-    Get.closeAllSnackbars();
+    dismissWaitingSnackbar();
 
     showAppSnackbar(
       _l10n.tprSaveFailed,

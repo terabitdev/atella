@@ -669,6 +669,27 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return section;
   }
 
+  /// Builds the COLORS section body. If real extracted color names are available,
+  /// each gets its own bullet with an explicit instruction to draw a small solid
+  /// swatch block filled with that color next to its name. Falls back to a plain
+  /// instruction to reference the garment image when extraction produced nothing.
+  static String _buildColorSwatchSection(String? colorPalette) {
+    if (colorPalette == null || colorPalette.isEmpty) {
+      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its color name as text next to it\n';
+    }
+    final colors = colorPalette
+        .split(',')
+        .map((c) => c.trim())
+        .where((c) => c.isNotEmpty)
+        .toList();
+    if (colors.isEmpty) {
+      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its color name as text next to it\n';
+    }
+    return colors
+        .map((c) => '• $c — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the name "$c" printed next to it')
+        .join('\n') + '\n';
+  }
+
   /// Calls gpt-4o vision with the garment image and returns dominant colors as a plain text list.
   /// Returns null if the image cannot be read or the API call fails.
   static Future<String?> extractColorsFromGarmentImage(String imagePathOrUrl) async {
@@ -1107,20 +1128,22 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (fit.isNotEmpty) garmentOverviewSection += '• Fit: $fit\n';
     if (gender.isNotEmpty) garmentOverviewSection += '• Gender: $gender\n';
     if (season.isNotEmpty) garmentOverviewSection += '• Season: $season\n';
+
+    // COLORS — dedicated section with drawn swatch blocks
     final bool hasColors = colorPalette != null && colorPalette.isNotEmpty;
-    if (hasColors) garmentOverviewSection += '• Colors: $colorPalette\n';
+    final String colorsSection = _buildColorSwatchSection(hasColors ? colorPalette : null);
 
     final String garmentTitle = garmentType.toUpperCase();
 
     final String manufacturingPrompt =
         '''Generate a professional fashion tech pack specification sheet as a clean document image on a white background. Use clear section headers, professional typography, and organized layout.
 
-CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 5 sections — no more, no fewer.
+CRITICAL GLOBAL RULE: Render each section header and its content EXACTLY ONCE. Do NOT repeat any section or heading anywhere in the image under any circumstance. There must be exactly 6 sections — no more, no fewer.
 
 IMAGE RULE — STRICTLY ENFORCE:
-- The ONLY image/visual element allowed in the entire document is the single garment design image shown at the top.
+- The ONLY visual elements allowed in the entire document are: (1) the single garment design image shown at the top, and (2) small solid color swatch blocks inside the COLORS section only.
 - Do NOT include any fabric swatches, texture thumbnails, logo images, label images, garment cutouts, icons, or any other visual elements anywhere else in the document.
-- Sections 1 through 5 must contain TEXT ONLY. No images, no graphics, no illustrations of any kind within the sections.
+- Sections other than COLORS must contain TEXT ONLY. No images, no graphics, no illustrations of any kind within those sections.
 
 ═══════════════════════════════════════════════
 TECH PACK — $garmentTitle
@@ -1129,40 +1152,44 @@ TECH PACK — $garmentTitle
 GARMENT IMAGE:
 - Show the garment exactly as it appears in the reference design image provided
 - The garment image must be clearly visible, proportional, and not cropped
-- This is the ONLY image in the entire document
+- This is the only full garment image in the document (small color swatch blocks in the COLORS section are the sole exception)
 
 SECTIONS (render each exactly once, in this exact order, no additional sections allowed):
 
 ──────────────────────────────────────
-1. GARMENT OVERVIEW${hasColors ? ' — MUST include all bullet points below including Colors' : ''}
+1. GARMENT OVERVIEW
 ──────────────────────────────────────
 $garmentOverviewSection
 ──────────────────────────────────────
-2. MEASUREMENT TABLE
+2. COLORS — MUST include a drawn solid color swatch block for each color listed below, plus its name
+──────────────────────────────────────
+$colorsSection
+──────────────────────────────────────
+3. MEASUREMENT TABLE
 ──────────────────────────────────────
 $measurementTableSection
 ──────────────────────────────────────
-3. CONSTRUCTION DETAILS
+4. CONSTRUCTION DETAILS
 ──────────────────────────────────────
 $constructionSection
 ──────────────────────────────────────
-4. FABRIC
+5. FABRIC
 ──────────────────────────────────────
 $fabricSection
 ──────────────────────────────────────
-5. LOGO AND LABELS
+6. LOGO AND LABELS
 ──────────────────────────────────────
 $logoAndLabelsSection
 
 Style requirements:
 - White background, clean margins, professional fashion industry layout
 - Section headers in bold with divider lines
-- Bullet points for list items; bordered grid table for MEASUREMENT TABLE section
+- Bullet points for list items; bordered grid table for MEASUREMENT TABLE section; small solid color blocks for the COLORS section
 - All text clearly readable, professional sans-serif typography
 - Complete layout fully visible within image boundaries
 - CRITICAL: All text must be spelled correctly with zero spelling mistakes
-- CRITICAL: Do NOT add any sections beyond the 5 listed above
-- CRITICAL: Sections 1–5 are TEXT ONLY. Zero images or graphics inside any section.
+- CRITICAL: Do NOT add any sections beyond the 6 listed above
+- CRITICAL: Sections 1, 3, 4, 5, 6 are TEXT ONLY. Zero images or graphics inside those sections. Section 2 (COLORS) is the only section allowed to contain drawn color swatch blocks.
 ''';
 
     // Resolve logo placement — chest without explicit side defaults to left chest

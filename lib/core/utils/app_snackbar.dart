@@ -8,7 +8,12 @@ import 'package:get/get.dart';
 // lives) for Overlay.of() to succeed. We bypass Overlay.of() entirely by
 // obtaining the OverlayState directly from Get.key.currentState?.overlay and
 // inserting an OverlayEntry manually.
-void showAppSnackbar(
+/// Shows the snackbar and returns a callback that dismisses this specific
+/// instance. Needed for `showProgressIndicator: true` snackbars, which have
+/// no auto-dismiss timer and must be closed manually — `Get.closeAllSnackbars()`
+/// does NOT work here since this overlay entry is inserted directly and isn't
+/// tracked by GetX's SnackbarController.
+VoidCallback showAppSnackbar(
   String title,
   String message, {
   Color? colorText,
@@ -22,7 +27,7 @@ void showAppSnackbar(
   bool showProgressIndicator = false,
 }) {
   final overlayState = Get.key.currentState?.overlay;
-  if (overlayState == null) return;
+  if (overlayState == null) return () {};
 
   final bgColor = backgroundColor ?? Colors.black;
   final txtColor = colorText ?? Colors.white;
@@ -61,6 +66,8 @@ void showAppSnackbar(
   if (!showProgressIndicator) {
     Future.delayed(dur, remove);
   }
+
+  return remove;
 }
 
 class _AppSnackbarWidget extends StatefulWidget {

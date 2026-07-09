@@ -200,20 +200,21 @@ class DesignsService {
       }
 
       print('=== OPTIMIZED DESIGN SAVE STARTED ===');
-      
-      // Step 1: Upload ALL images to Firebase Storage
-      List<String> allImageUrls = [];
+
+      // Step 1: Upload ALL images to Firebase Storage in parallel — sequential
+      // uploads of 3 full-size images were the main reason this save took
+      // longer than the caller's wait timeout.
       String sessionId = DateTime.now().millisecondsSinceEpoch.toString();
-      
-      for (int i = 0; i < base64Images.length; i++) {
+
+      Future<String> uploadOne(int i) async {
         try {
           // Create unique path for each design image
           Uint8List imageBytes = base64Decode(base64Images[i]);
           String fileName = 'design_${i + 1}_$sessionId.jpg';
           Reference storageRef = _storage.ref('users/$currentUserId/designs/$sessionId/$fileName');
-          
+
           print('Uploading design ${i + 1} to Storage...');
-          
+
           // Upload with metadata
           UploadTask uploadTask = storageRef.putData(
             imageBytes,
@@ -228,18 +229,22 @@ class DesignsService {
               },
             ),
           );
-          
+
           TaskSnapshot snapshot = await uploadTask;
           String downloadUrl = await snapshot.ref.getDownloadURL();
-          allImageUrls.add(downloadUrl);
-          
+
           print('✅ Design ${i + 1} uploaded successfully');
+          return downloadUrl;
         } catch (e) {
           print('❌ Failed to upload design ${i + 1}: $e');
           throw Exception('Failed to upload design image ${i + 1}');
         }
       }
-      
+
+      List<String> allImageUrls = await Future.wait(
+        List.generate(base64Images.length, uploadOne),
+      );
+
       print('All ${allImageUrls.length} images uploaded to Storage');
       
       // Step 2: Save ONLY selected design data to Firestore
