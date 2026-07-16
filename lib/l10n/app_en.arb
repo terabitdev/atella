@@ -2709,7 +2709,7 @@
   "@tpdLabelsNeededHint": {
     "description": "Labels needed hint text"
   },
-  "tpdUploadReferenceImage": "Upload reference image (optional)",
+  "tpdUploadReferenceImage": "Upload your logo (optional)",
   "@tpdUploadReferenceImage": {
     "description": "Upload image instruction"
   },

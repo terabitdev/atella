@@ -715,7 +715,7 @@
   "tpdLogoPlacementHint": "Placement du logo : Poitrine et cou",
   "tpdLabelsNeededLabel": "Quels types d'étiquettes sont nécessaires ?",
   "tpdLabelsNeededHint": "Marque, entretien, taille",
-  "tpdUploadReferenceImage": "Télécharger une image de référence (optionnel)",
+  "tpdUploadReferenceImage": "Téléchargez votre logo (optionnel)",
   "tpdQrCodeLabel": "Un code QR, un code-barres ou une puce NFC doivent-ils être inclus ?",
   "tpdQrCodeHint": "Ajouter un code QR",
   "tpdPackagingShipping": "Emballage et Expédition",

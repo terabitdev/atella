@@ -4277,7 +4277,7 @@ abstract class AppLocalizations {
   /// Upload image instruction
   ///
   /// In en, this message translates to:
-  /// **'Upload reference image (optional)'**
+  /// **'Upload your logo (optional)'**
   String get tpdUploadReferenceImage;
 
   /// QR code question label

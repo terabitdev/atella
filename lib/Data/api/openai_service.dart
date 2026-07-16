@@ -669,13 +669,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return section;
   }
 
-  /// Builds the COLORS section body. If real extracted color names are available,
+  /// Builds the COLORS section body. If real extracted Pantone codes are available,
   /// each gets its own bullet with an explicit instruction to draw a small solid
-  /// swatch block filled with that color next to its name. Falls back to a plain
-  /// instruction to reference the garment image when extraction produced nothing.
+  /// swatch block filled with that color next to its Pantone code. Falls back to a
+  /// plain instruction to reference the garment image when extraction produced nothing.
   static String _buildColorSwatchSection(String? colorPalette) {
     if (colorPalette == null || colorPalette.isEmpty) {
-      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its color name as text next to it\n';
+      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its Pantone code as text next to it\n';
     }
     final colors = colorPalette
         .split(',')
@@ -683,10 +683,10 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
         .where((c) => c.isNotEmpty)
         .toList();
     if (colors.isEmpty) {
-      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its color name as text next to it\n';
+      return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its Pantone code as text next to it\n';
     }
     return colors
-        .map((c) => '• $c — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the name "$c" printed next to it')
+        .map((c) => '• $c — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the text "$c" printed next to it')
         .join('\n') + '\n';
   }
 
@@ -732,7 +732,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
               'content': [
                 {
                   'type': 'text',
-                  'text': 'List the dominant colors of this garment. Return ONLY a short comma-separated list of color names (e.g. "Navy Blue, Cream White, Gold"). Maximum 5 colors. No explanations, no extra text.',
+                  'text': 'Identify the dominant colors of this garment and match each one to its closest Pantone TPX color code. Return ONLY a short comma-separated list of Pantone codes in the exact format "Pantone 19-4052 TPX" (e.g. "Pantone 19-4052 TPX, Pantone 11-0601 TPX, Pantone 14-0952 TPX"). Maximum 5 colors. No color names, no explanations, no extra text.',
                 },
                 ...imageContent,
               ],

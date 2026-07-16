@@ -2322,8 +2322,7 @@ class AppLocalizationsFr extends AppLocalizations {
   String get tpdLabelsNeededHint => 'Marque, entretien, taille';
 
   @override
-  String get tpdUploadReferenceImage =>
-      'Télécharger une image de référence (optionnel)';
+  String get tpdUploadReferenceImage => 'Téléchargez votre logo (optionnel)';
 
   @override
   String get tpdQrCodeLabel =>
