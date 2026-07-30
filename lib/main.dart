@@ -17,6 +17,7 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'services/PaymentService/subscription_manager_service.dart';
 import 'services/PaymentService/stripe_subscription_service.dart';
 import 'services/PaymentService/revenuecat_service.dart';
+import 'services/deeplink/deep_link_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
@@ -47,6 +48,10 @@ void main() async {
   await _validateSubscriptionOnLaunch();
 
   runApp(const MyApp());
+
+  // Must start after runApp so GetMaterialApp/navigator is mounted for
+  // Get.toNamed() calls triggered by an incoming deep link.
+  await DeepLinkService().initialize();
 
   // Fire-and-forget: runs in background without blocking the app
   _initializeTranslationModel();

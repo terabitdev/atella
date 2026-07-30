@@ -1,0 +1,48 @@
+rules_version = '2';
+
+service firebase.storage {
+  match /b/{bucket}/o {
+
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isSupplierOwner(supplierId) {
+      return isSignedIn() &&
+        request.auth.token.role == 'supplier' &&
+        request.auth.token.supplierId == supplierId;
+    }
+
+    // Per-user upload areas (tech packs, design session images, etc.)
+    match /users/{userId}/{allPaths=**} {
+      allow read, write: if isSignedIn() && (request.auth.uid == userId || isAdmin());
+    }
+
+    // Legacy global design uploads (path does not embed the owning uid) —
+    // left open to any signed-in user to avoid breaking the existing
+    // working upload flow; not part of this feature.
+    match /designs/{allPaths=**} {
+      allow read, write: if isSignedIn();
+    }
+
+    match /test/{allPaths=**} {
+      allow read, write: if isSignedIn();
+    }
+
+    // Supplier logos: publicly viewable, writable only by the owning
+    // supplier (via custom claim) or an admin.
+    match /supplier_logos/{supplierId}/{fileName} {
+      allow read: if true;
+      allow write: if isAdmin() || isSupplierOwner(supplierId);
+    }
+
+    // Default deny.
+    match /{allPaths=**} {
+      allow read, write: if false;
+    }
+  }
+}

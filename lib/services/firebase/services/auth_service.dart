@@ -40,6 +40,8 @@ class AuthService {
           'stripeCustomerId': null,
           'currentSubscriptionId': null,
           'techpacksUsedThisMonth': 0,
+          'accountType': 'user',
+          'supplierId': null,
         });
 
         // Initialize or fetch email-based quota (persists across account deletions)
@@ -267,6 +269,8 @@ class AuthService {
             'stripeCustomerId': null,
             'currentSubscriptionId': null,
             'techpacksUsedThisMonth': 0,
+            'accountType': 'user',
+            'supplierId': null,
           });
         }
 
@@ -378,6 +382,8 @@ final oauthCredential = OAuthProvider("apple.com").credential(
             'stripeCustomerId': null,
             'currentSubscriptionId': null,
             'techpacksUsedThisMonth': 0,
+            'accountType': 'user',
+            'supplierId': null,
           });
         }
 

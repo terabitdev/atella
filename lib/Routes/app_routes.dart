@@ -40,4 +40,17 @@ class AppRoutes {
 
   static const String wordGenerator = '/word_generator';
   static const String subscriptionDetail = '/subscription_detail';
+
+  // Supplier marketplace — admin invite flow
+  static const String adminSupplierInvite = '/admin_supplier_invite';
+  static const String supplierInviteSignup = '/supplier_invite_signup';
+  static const String supplierHome = '/supplier_home';
+  static const String supplierDirectory = '/supplier_directory';
+  static const String supplierDetail = '/supplier_detail';
+  static const String conversationList = '/conversation_list';
+  static const String chat = '/chat';
+  static const String sampleOrderForm = '/sample_order_form';
+  static const String orderCheckout = '/order_checkout';
+  static const String orderTracking = '/order_tracking';
+  static const String orderList = '/order_list';
 }

@@ -1,4 +1,5 @@
 ﻿import 'package:atella/Data/Models/tech_pack_model.dart';
+import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
@@ -9,7 +10,6 @@ import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:gal/gal.dart';
 
-import 'package:atella/core/utils/app_snackbar.dart';
 class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
   final String version;
@@ -135,10 +135,40 @@ class _PreviewScreenState extends State<PreviewScreen> {
                     ),
                   ),
                 ),
+                Container(height: 1, color: Colors.grey.shade300),
+                Expanded(
+                  child: InkWell(
+                    onTap: () {
+                      Navigator.of(context).pop();
+                      _handleSendToSupplier();
+                    },
+                    child: Container(
+                      width: double.infinity,
+                      child: Center(
+                        child: Text(
+                          'Send to Manufacturing Partner',
+                          style: dbTitleTextTextStyle14400,
+                        ),
+                      ),
+                    ),
+                  ),
+                ),
               ],
             ),
           ),
         );
+      },
+    );
+  }
+
+  // Send this tech pack to a supplier via the invite-only marketplace.
+  void _handleSendToSupplier() {
+    Get.toNamed(
+      AppRoutes.supplierDirectory,
+      arguments: {
+        'techPackId': widget.techPack.id,
+        'techPackProjectName': widget.techPack.projectName,
+        'techPackImageUrl': widget.techPack.displayImage,
       },
     );
   }

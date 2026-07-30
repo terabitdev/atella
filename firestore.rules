@@ -1,0 +1,140 @@
+rules_version = '2';
+
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    // ---------- Helpers ----------
+    function isSignedIn() {
+      return request.auth != null;
+    }
+
+    function isOwner(uid) {
+      return isSignedIn() && request.auth.uid == uid;
+    }
+
+    function isAdmin() {
+      return isSignedIn() && request.auth.token.role == 'admin';
+    }
+
+    function isSupplier() {
+      return isSignedIn() && request.auth.token.role == 'supplier';
+    }
+
+    function isSupplierOwner(supplierId) {
+      return isSupplier() && request.auth.token.supplierId == supplierId;
+    }
+
+    function unchanged(field) {
+      return request.resource.data[field] == resource.data[field];
+    }
+
+    // ---------- Existing app data (previously unprotected) ----------
+
+    match /users/{userId} {
+      allow read: if isOwner(userId) || isAdmin();
+      allow write: if isOwner(userId) || isAdmin();
+
+      match /tech_packs/{techPackId} {
+        allow read, write: if isOwner(userId) || isAdmin();
+      }
+    }
+
+    match /designs/{userId} {
+      allow read, write: if isOwner(userId) || isAdmin();
+    }
+
+    // Static manufacturer directory/catalog (unrelated to supplier accounts below).
+    match /manufacturers/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    match /new_manufacturers/{docId} {
+      allow read: if isSignedIn();
+      allow write: if isAdmin();
+    }
+
+    // ---------- Supplier marketplace ----------
+
+    // Supplier accounts are invite-only: created and claimed exclusively via
+    // Cloud Functions (Admin SDK, bypasses these rules). Clients may read an
+    // active/public profile, or their own profile, and may update only the
+    // non-privileged fields of their own profile.
+    match /suppliers/{supplierId} {
+      allow read: if (resource.data.status == 'active') || isAdmin() || isSupplierOwner(supplierId);
+      allow create: if false; // only via createSupplierInvite / acceptSupplierInvite Cloud Functions
+      allow update: if isAdmin() || (
+        isSupplierOwner(supplierId) &&
+        unchanged('ownerUid') &&
+        unchanged('status') &&
+        unchanged('stripeConnectAccountId') &&
+        unchanged('payoutsEnabled') &&
+        unchanged('inviteEmail')
+      );
+      allow delete: if isAdmin();
+    }
+
+    // Invite tokens must never be readable/writable by regular clients —
+    // only the admin app (to show status / re-copy a link) can read them,
+    // and every write still goes through Cloud Functions (Admin SDK).
+    match /supplierInvites/{inviteId} {
+      allow read: if isAdmin();
+      allow write: if false;
+    }
+
+    // A user sending a tech pack to a supplier. Status transitions beyond
+    // creation happen via Cloud Functions once messaging/orders exist.
+    match /supplierSubmissions/{submissionId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userUid == request.auth.uid)
+        || isSupplierOwner(resource.data.supplierId);
+      allow create: if isSignedIn() && request.resource.data.userUid == request.auth.uid;
+      allow update: if isAdmin()
+        || (isSignedIn() && resource.data.userUid == request.auth.uid)
+        || isSupplierOwner(resource.data.supplierId);
+      allow delete: if isAdmin();
+    }
+
+    // Direct messaging between a user and a supplier.
+    match /conversations/{conversationId} {
+      allow read: if isAdmin() || (isSignedIn() && request.auth.uid in resource.data.participantUids);
+      allow create: if isSignedIn() && request.auth.uid in request.resource.data.participantUids;
+      allow update: if isAdmin() || (isSignedIn() && request.auth.uid in resource.data.participantUids);
+      allow delete: if false;
+
+      match /messages/{messageId} {
+        allow read: if isAdmin() || (isSignedIn() &&
+          request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids);
+        allow create: if isSignedIn() &&
+          request.auth.uid in get(/databases/$(database)/documents/conversations/$(conversationId)).data.participantUids &&
+          request.resource.data.senderUid == request.auth.uid;
+        allow update, delete: if false;
+      }
+    }
+
+    // Orders are money-bearing: no direct client writes at all. Every
+    // mutation (create, payment, shipping, status) goes through a callable
+    // Cloud Function using the Admin SDK, which bypasses these rules.
+    match /orders/{orderId} {
+      allow read: if isAdmin()
+        || (isSignedIn() && resource.data.userUid == request.auth.uid)
+        || (isSignedIn() && resource.data.supplierOwnerUid == request.auth.uid);
+      allow write: if false;
+    }
+
+    // In-app notifications: recipient may read and mark their own as read,
+    // nothing else. Creation is Cloud-Functions-only.
+    match /notifications/{notificationId} {
+      allow read: if isAdmin() || (isSignedIn() && resource.data.recipientUid == request.auth.uid);
+      allow create: if false;
+      allow update: if isSignedIn() && resource.data.recipientUid == request.auth.uid &&
+        request.resource.data.diff(resource.data).affectedKeys().hasOnly(['read']);
+      allow delete: if false;
+    }
+
+    // Default deny for anything not explicitly matched above.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

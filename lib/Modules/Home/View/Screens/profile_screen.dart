@@ -1,5 +1,7 @@
 import 'package:atella/Modules/Home/View/Widgets/profile_textField.dart';
+import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -174,6 +176,64 @@ class _ProfileScreenState extends State<ProfileScreen> {
                     ),
                   ),
                 ),
+              ),
+              SizedBox(height: 24.h),
+              InkWell(
+                onTap: () => Get.toNamed(AppRoutes.conversationList),
+                child: Container(
+                  height: 50.h,
+                  width: 375.w,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.buttonColor),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Center(
+                    child: Text('Messages', style: gButtonTextStyle166001),
+                  ),
+                ),
+              ),
+              SizedBox(height: 12.h),
+              InkWell(
+                onTap: () => Get.toNamed(AppRoutes.orderList, arguments: {'asSupplier': false}),
+                child: Container(
+                  height: 50.h,
+                  width: 375.w,
+                  decoration: BoxDecoration(
+                    border: Border.all(color: AppColors.buttonColor),
+                    borderRadius: BorderRadius.circular(10.r),
+                  ),
+                  child: Center(
+                    child: Text('My Orders', style: gButtonTextStyle166001),
+                  ),
+                ),
+              ),
+              SizedBox(height: 24.h),
+              // Only visible to accounts granted the 'admin' custom claim
+              // (see bootstrapAdmin / the supplier invite flow).
+              FutureBuilder<IdTokenResult?>(
+                future: FirebaseAuth.instance.currentUser?.getIdTokenResult(),
+                builder: (context, snapshot) {
+                  final isAdmin = snapshot.data?.claims?['role'] == 'admin';
+                  if (!isAdmin) return const SizedBox.shrink();
+
+                  return InkWell(
+                    onTap: () => Get.toNamed(AppRoutes.adminSupplierInvite),
+                    child: Container(
+                      height: 50.h,
+                      width: 375.w,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: AppColors.buttonColor),
+                        borderRadius: BorderRadius.circular(10.r),
+                      ),
+                      child: Center(
+                        child: Text(
+                          'Invite a Manufacturer (Admin)',
+                          style: gButtonTextStyle166001,
+                        ),
+                      ),
+                    ),
+                  );
+                },
               ),
               SizedBox(height: 40.h),
             ],

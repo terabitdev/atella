@@ -32,6 +32,16 @@
 				<string>com.googleusercontent.apps.1097482533368-2l5o6ku5bf3qubkutdjla9ildf7noi22</string>
 			</array>
 		</dict>
+		<dict>
+			<key>CFBundleTypeRole</key>
+			<string>Editor</string>
+			<key>CFBundleURLName</key>
+			<string>com.atella.deeplink</string>
+			<key>CFBundleURLSchemes</key>
+			<array>
+				<string>atella</string>
+			</array>
+		</dict>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>22</string>

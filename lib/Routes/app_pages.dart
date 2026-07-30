@@ -1,4 +1,21 @@
 import 'package:atella/Routes/app_routes.dart';
+import 'package:atella/Modules/Admin/Bindings/admin_bindings.dart';
+import 'package:atella/Modules/Admin/View/Screens/admin_supplier_invite_screen.dart';
+import 'package:atella/Modules/SupplierAuth/Bindings/supplier_auth_bindings.dart';
+import 'package:atella/Modules/SupplierAuth/View/Screens/supplier_invite_signup_screen.dart';
+import 'package:atella/Modules/SupplierAccount/Bindings/supplier_account_bindings.dart';
+import 'package:atella/Modules/SupplierAccount/View/Screens/supplier_home_screen.dart';
+import 'package:atella/Modules/SupplierDirectory/Bindings/supplier_directory_bindings.dart';
+import 'package:atella/Modules/SupplierDirectory/View/Screens/supplier_directory_screen.dart';
+import 'package:atella/Modules/SupplierDirectory/View/Screens/supplier_detail_screen.dart';
+import 'package:atella/Modules/Messaging/Bindings/messaging_bindings.dart';
+import 'package:atella/Modules/Messaging/View/Screens/conversation_list_screen.dart';
+import 'package:atella/Modules/Messaging/View/Screens/chat_screen.dart';
+import 'package:atella/Modules/Orders/Bindings/orders_bindings.dart';
+import 'package:atella/Modules/Orders/View/Screens/sample_order_form_screen.dart';
+import 'package:atella/Modules/Orders/View/Screens/order_checkout_screen.dart';
+import 'package:atella/Modules/Orders/View/Screens/order_tracking_screen.dart';
+import 'package:atella/Modules/Orders/View/Screens/order_list_screen.dart';
 import 'package:atella/Modules/Auth/Bindings/auth_bindings.dart';
 import 'package:atella/Modules/Auth/View/Screens/Signup_screen.dart';
 import 'package:atella/Modules/Auth/View/Screens/login_screen.dart';
@@ -158,6 +175,61 @@ class AppPages {
     GetPage(
       name: AppRoutes.subscriptionDetail,
       page: () => const SubscriptionDetailScreen(),
+    ),
+    GetPage(
+      name: AppRoutes.adminSupplierInvite,
+      page: () => const AdminSupplierInviteScreen(),
+      binding: AdminSupplierInviteBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.supplierInviteSignup,
+      page: () => const SupplierInviteSignupScreen(),
+      binding: SupplierInviteSignupBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.supplierHome,
+      page: () => const SupplierHomeScreen(),
+      binding: SupplierHomeBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.supplierDirectory,
+      page: () => const SupplierDirectoryScreen(),
+      binding: SupplierDirectoryBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.supplierDetail,
+      page: () => const SupplierDetailScreen(),
+      binding: SupplierDetailBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.conversationList,
+      page: () => const ConversationListScreen(),
+      binding: ConversationListBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.chat,
+      page: () => const ChatScreen(),
+      binding: ChatBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.sampleOrderForm,
+      page: () => const SampleOrderFormScreen(),
+      binding: SampleOrderFormBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.orderCheckout,
+      page: () => const OrderCheckoutScreen(),
+      binding: OrderCheckoutBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.orderTracking,
+      page: () => const OrderTrackingScreen(),
+      binding: OrderTrackingBinding(),
+    ),
+    GetPage(
+      name: AppRoutes.orderList,
+      page: () => const OrderListScreen(),
+      binding: OrderListBinding(),
     ),
   ];
 }

@@ -1,6 +1,7 @@
 ﻿
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:atella/core/utils/post_auth_router.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -75,7 +76,7 @@ class LoginController extends GetxController {
         duration: const Duration(milliseconds: 1500),
       );
       // Success
-      Get.offAllNamed('/nav_bar');
+      Get.offAllNamed(await resolvePostAuthRoute());
     } else {
       final l10n = AppLocalizations.of(Get.context!)!;
       debugPrint('Login error code received: $result');
@@ -121,7 +122,7 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
       );
-      Get.offAllNamed('/nav_bar');
+      Get.offAllNamed(await resolvePostAuthRoute());
     } else {
       final l10n = AppLocalizations.of(Get.context!)!;
       final errorMessage = _getLocalizedError(result, l10n);
@@ -162,7 +163,7 @@ class LoginController extends GetxController {
         snackPosition: SnackPosition.TOP,
         duration: const Duration(milliseconds: 1500),
       );
-      Get.offAllNamed('/nav_bar');
+      Get.offAllNamed(await resolvePostAuthRoute());
     } else if (result != 'auth-apple-sign-in-cancelled') {
       final l10n = AppLocalizations.of(Get.context!)!;
       final errorMessage = _getLocalizedError(result, l10n);
