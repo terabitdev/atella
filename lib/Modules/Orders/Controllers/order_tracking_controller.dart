@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -54,7 +55,11 @@ class OrderTrackingController extends GetxController {
         trackingCarrier: trackingCarrierController.text.trim().isEmpty ? null : trackingCarrierController.text.trim(),
       );
       showAppSnackbar('Marked as shipped', 'The designer has been notified', backgroundColor: Colors.black, colorText: Colors.white);
+    } on FirebaseFunctionsException catch (e) {
+      debugPrint('markOrderShipped failed: code=${e.code} message=${e.message} details=${e.details}');
+      showAppSnackbar('Error', e.message ?? 'Something went wrong (${e.code})', backgroundColor: Colors.red, colorText: Colors.white);
     } catch (e) {
+      debugPrint('markOrderShipped failed: $e');
       showAppSnackbar('Error', e.toString().replaceFirst('Exception: ', ''), backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isMarkingShipped.value = false;

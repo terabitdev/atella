@@ -101,6 +101,31 @@ class MessagingService {
         .add(message.toFirestore(uid));
   }
 
+  /// Posts the tech pack itself as a visible card in the conversation —
+  /// without this, "sending a tech pack" only ever created an empty
+  /// conversation with the project name tucked away as metadata.
+  Future<void> sendTechPackSharedMessage(
+    String conversationId, {
+    String? techPackProjectName,
+    String? techPackImageUrl,
+  }) async {
+    final uid = _uid;
+    if (uid == null) throw Exception('Not signed in');
+
+    final message = MessageModel(
+      id: '',
+      senderUid: uid,
+      text: techPackProjectName ?? 'Tech Pack',
+      attachmentUrl: techPackImageUrl,
+      type: 'tech_pack_shared',
+    );
+    await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .add(message.toFirestore(uid));
+  }
+
   Future<void> markConversationRead(String conversationId) async {
     final uid = _uid;
     if (uid == null) return;

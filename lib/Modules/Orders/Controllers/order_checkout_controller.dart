@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_stripe/flutter_stripe.dart';
 import 'package:get/get.dart';
@@ -73,8 +74,13 @@ class OrderCheckoutController extends GetxController {
       showAppSnackbar('Payment successful', 'Your order is being processed', backgroundColor: Colors.black, colorText: Colors.white);
       Get.offNamed(AppRoutes.orderTracking, arguments: {'orderId': orderId});
     } on StripeException catch (e) {
+      debugPrint('Order payment failed: ${e.error.code} ${e.error.message}');
       showAppSnackbar('Payment cancelled', e.error.localizedMessage ?? 'The payment was not completed', backgroundColor: Colors.red, colorText: Colors.white);
+    } on FirebaseFunctionsException catch (e) {
+      debugPrint('createOrderPaymentIntent failed: code=${e.code} message=${e.message} details=${e.details}');
+      showAppSnackbar('Error', e.message ?? 'Something went wrong (${e.code})', backgroundColor: Colors.red, colorText: Colors.white);
     } catch (e) {
+      debugPrint('Order payment failed: $e');
       showAppSnackbar('Error', e.toString().replaceFirst('Exception: ', ''), backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isPaying.value = false;

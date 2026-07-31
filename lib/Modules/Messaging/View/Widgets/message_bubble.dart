@@ -3,6 +3,7 @@ import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -24,6 +25,67 @@ class MessageBubble extends StatelessWidget {
             message.text,
             style: ssTitleTextTextStyle14400.copyWith(color: Colors.grey[500]),
             textAlign: TextAlign.center,
+          ),
+        ),
+      );
+    }
+
+    if (message.type == 'tech_pack_shared') {
+      return Align(
+        alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
+        child: Container(
+          constraints: BoxConstraints(maxWidth: 240.w),
+          margin: EdgeInsets.symmetric(vertical: 6.h),
+          padding: EdgeInsets.all(10.w),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(14.r),
+            border: Border.all(color: const Color(0xFFE0E0E0)),
+          ),
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (message.attachmentUrl != null && message.attachmentUrl!.isNotEmpty)
+                ClipRRect(
+                  borderRadius: BorderRadius.circular(10.r),
+                  child: CachedNetworkImage(
+                    imageUrl: message.attachmentUrl!,
+                    width: double.infinity,
+                    height: 160.h,
+                    fit: BoxFit.cover,
+                    placeholder: (context, url) => Container(
+                      height: 160.h,
+                      color: const Color(0xFFF4F4F4),
+                    ),
+                    errorWidget: (context, url, error) => Container(
+                      height: 160.h,
+                      color: const Color(0xFFF4F4F4),
+                      child: const Icon(Icons.broken_image_outlined),
+                    ),
+                  ),
+                ),
+              Padding(
+                padding: EdgeInsets.only(top: 8.h, left: 4.w, right: 4.w),
+                child: Row(
+                  children: [
+                    Icon(Icons.description_outlined, size: 16.sp, color: AppColors.buttonColor),
+                    SizedBox(width: 6.w),
+                    Expanded(
+                      child: Text(
+                        message.text,
+                        style: gsTextStyle16600,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              Padding(
+                padding: EdgeInsets.only(left: 4.w, top: 2.h),
+                child: Text('Tech pack shared', style: ssTitleTextTextStyle14400.copyWith(color: Colors.grey[500])),
+              ),
+            ],
           ),
         ),
       );

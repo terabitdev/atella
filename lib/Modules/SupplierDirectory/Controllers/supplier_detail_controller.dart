@@ -55,6 +55,11 @@ class SupplierDetailController extends GetxController {
         techPackImageUrl: techPackImageUrl,
       );
       conversationId.value = await _messagingService.getOrCreateConversation(submissionId);
+      await _messagingService.sendTechPackSharedMessage(
+        conversationId.value,
+        techPackProjectName: techPackProjectName,
+        techPackImageUrl: techPackImageUrl,
+      );
       hasSent.value = true;
       showAppSnackbar('Sent!', 'Your tech pack has been sent to ${supplier.value?.companyName ?? "the supplier"}.', backgroundColor: Colors.black, colorText: Colors.white);
     } catch (e) {

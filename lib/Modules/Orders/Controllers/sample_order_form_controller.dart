@@ -1,3 +1,4 @@
+import 'package:cloud_functions/cloud_functions.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -39,7 +40,11 @@ class SampleOrderFormController extends GetxController {
       );
       showAppSnackbar('Sent', 'Sample order form sent to the designer', backgroundColor: Colors.black, colorText: Colors.white);
       Get.back();
+    } on FirebaseFunctionsException catch (e) {
+      debugPrint('createSampleOrderForm failed: code=${e.code} message=${e.message} details=${e.details}');
+      showAppSnackbar('Error', e.message ?? 'Something went wrong (${e.code})', backgroundColor: Colors.red, colorText: Colors.white);
     } catch (e) {
+      debugPrint('createSampleOrderForm failed: $e');
       showAppSnackbar('Error', e.toString().replaceFirst('Exception: ', ''), backgroundColor: Colors.red, colorText: Colors.white);
     } finally {
       isSubmitting.value = false;
