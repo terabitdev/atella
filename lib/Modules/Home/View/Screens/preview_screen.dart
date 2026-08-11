@@ -104,15 +104,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 ),
                 _popupDivider(),
                 _PopupMenuItem(
-                  icon: Icons.factory_outlined,
-                  label: l10n.manufactureSuggestions,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleManufactureSuggestions();
-                  },
-                ),
-                _popupDivider(),
-                _PopupMenuItem(
                   icon: Icons.send_outlined,
                   label: 'Send to Manufacturing Partner',
                   onTap: () {
@@ -250,17 +241,6 @@ class _PreviewScreenState extends State<PreviewScreen> {
         duration: const Duration(milliseconds: 1500),
       );
     }
-  }
-
-  void _handleManufactureSuggestions() {
-    print('=== MANUFACTURE SUGGESTIONS BUTTON CLICKED ===');
-    print('TechPack ID: ${widget.techPack.id}');
-    print('Project Name: ${widget.techPack.projectName}');
-
-    // Navigate to RecommendedTechPackScreen
-    Get.toNamed('/recommended_tech_pack');
-
-    print('=== NAVIGATION TO MANUFACTURE SUGGESTIONS TRIGGERED ===');
   }
 
   // Download all images method

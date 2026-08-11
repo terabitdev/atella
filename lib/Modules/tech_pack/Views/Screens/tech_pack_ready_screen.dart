@@ -1,4 +1,3 @@
-import 'package:atella/Modules/tech_pack/Views/Screens/recommended_manufacture_screen.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -7,8 +6,6 @@ import '../Widgets/save_export_button_row.dart';
 import '../Widgets/save_tech_pack_dialog.dart';
 import '../Widgets/export_options_dialog.dart';
 import '../Widgets/export_options_controller.dart';
-import 'package:atella/Widgets/custom_roundbutton.dart';
-import 'package:atella/core/themes/app_colors.dart';
 import '../../controllers/tech_pack_ready_controller.dart';
 import 'dart:convert';
 import 'dart:io';
@@ -373,21 +370,6 @@ class TechPackReadyScreen extends StatelessWidget {
                 }
                 return Column(
                   children: [
-                    RoundButton(
-                      title: l10n.tprGetManufacturerSuggestions,
-                      onTap: ()  {
-                        Get.to(
-                          () => RecommendedManufactureScreen(),
-                          arguments: {
-                            'manufacturerCountry': controller.manufacturerCountry,
-                            'productType': controller.garmentType,
-                          },
-                        );
-                      },
-                      color: AppColors.buttonColor,
-                      isloading: false,
-                    ),
-                    SizedBox(height: 16.h),
                     SaveExportButtonRow(
                       onSave: () => _showSaveDialog(context, controller),
                       onExport: () => _showExportDialog(context, controller),

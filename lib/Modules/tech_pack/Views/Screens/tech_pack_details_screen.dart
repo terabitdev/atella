@@ -4,7 +4,6 @@ import 'package:atella/core/constants/app_images.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
-import 'package:country_picker/country_picker.dart';
 import '../../controllers/tech_pack_details_controller.dart';
 import '../Widgets/tech_pack_question_field.dart';
 import '../Widgets/tech_pack_image_upload_container.dart';
@@ -447,72 +446,7 @@ class TechPackDetailsScreen extends StatelessWidget {
                                 RoundedTagContainer(
                                   text: l10n.tpdManufacturers,
                                 ),
-                                SizedBox(height: 10.h),
-                                Text(
-                                  l10n.tpdSelectCountryForManufacturers,
-                                  style: TextStyle(
-                                    fontSize: 14.sp,
-                                    fontWeight: FontWeight.w500,
-                                    color: const Color(0xFF2C2C2C),
-                                  ),
-                                ),
-                                SizedBox(height: 8.h),
-                                Builder(
-                                  builder: (ctx) => InkWell(
-                                    onTap: () {
-                                      showCountryPicker(
-                                        context: ctx,
-                                        showPhoneCode: false,
-                                        onSelect: (Country country) {
-                                          controller.setManufacturerCountry(country.name);
-                                        },
-                                        countryListTheme: CountryListThemeData(
-                                          backgroundColor: Colors.white,
-                                          textStyle: TextStyle(fontSize: 16.sp),
-                                          searchTextStyle: TextStyle(fontSize: 16.sp),
-                                          inputDecoration: InputDecoration(
-                                            labelText: l10n.tpdSearchCountry,
-                                            hintText: l10n.tpdSearchCountryHint,
-                                            prefixIcon: const Icon(Icons.search),
-                                            border: OutlineInputBorder(
-                                              borderSide: BorderSide(
-                                                color: const Color(0xFF8C98A8).withValues(alpha: 0.2),
-                                              ),
-                                            ),
-                                          ),
-                                        ),
-                                      );
-                                    },
-                                    borderRadius: BorderRadius.circular(12.r),
-                                    child: Container(
-                                      width: double.infinity,
-                                      padding: EdgeInsets.symmetric(vertical: 14.h, horizontal: 16.w),
-                                      decoration: BoxDecoration(
-                                        color: const Color(0xFFE3E1FB),
-                                        borderRadius: BorderRadius.circular(12.r),
-                                      ),
-                                      child: Row(
-                                        children: [
-                                          Expanded(
-                                            child: Obx(() => Text(
-                                              controller.selectedManufacturerCountry.value.isEmpty
-                                                  ? l10n.tpdSelectACountry
-                                                  : controller.selectedManufacturerCountry.value,
-                                              style: TextStyle(
-                                                fontSize: 16.sp,
-                                                color: controller.selectedManufacturerCountry.value.isEmpty
-                                                    ? Colors.grey[600]
-                                                    : Colors.black,
-                                              ),
-                                            )),
-                                          ),
-                                          Icon(Icons.arrow_drop_down, color: Colors.grey[700]),
-                                        ],
-                                      ),
-                                    ),
-                                  ),
-                                ),
-                                SizedBox(height: 20.h),
+                                SizedBox(height: 18.h),
                                 Obx(() => OutlineGenerateRoundButton(
                                   title: l10n.tpdGenerateTechPack,
                                   onTap: () {
