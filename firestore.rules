@@ -43,6 +43,18 @@ service cloud.firestore {
       allow read, write: if isOwner(userId) || isAdmin();
     }
 
+    // Free-design monthly quota, keyed by lowercased email (not uid) so it
+    // survives account deletion — pre-existing collection, never had rules
+    // before this file existed. Client reads/writes/increments its own
+    // quota doc directly (no Cloud Function involved in this flow).
+    match /design_quotas/{email} {
+      allow read, write: if isAdmin() || (
+        isSignedIn() &&
+        request.auth.token.email != null &&
+        request.auth.token.email.lower() == email
+      );
+    }
+
     // Static manufacturer directory/catalog (unrelated to supplier accounts below).
     match /manufacturers/{docId} {
       allow read: if isSignedIn();

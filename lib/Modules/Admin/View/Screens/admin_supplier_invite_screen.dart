@@ -131,7 +131,11 @@ class _InviteTile extends StatelessWidget {
     final inviteLink = 'atella://supplier-invite?token=${invite.token}';
 
     return Obx(() {
-      final isExpanded = isPending && controller.expandedInviteId.value == invite.id;
+      // Read unconditionally so Obx always has an observable to track —
+      // `isPending && controller.expandedInviteId.value == ...` would
+      // short-circuit past the read entirely for non-pending invites.
+      final expandedId = controller.expandedInviteId.value;
+      final isExpanded = isPending && expandedId == invite.id;
 
       return Container(
         margin: EdgeInsets.only(bottom: 10.h),

@@ -163,6 +163,28 @@ class DesignQuotaService {
     }
   }
 
+  /// Live quota stream for the current authenticated user — used anywhere
+  /// the UI displays remaining designs, so it can never show a stale
+  /// snapshot from before a generation elsewhere incremented `designsUsed`.
+  /// Ensures the quota document exists (and performs the monthly reset check
+  /// `getQuotaByEmail` already does) before subscribing to live updates.
+  Stream<Map<String, dynamic>?> streamCurrentUserQuota() async* {
+    final user = _auth.currentUser;
+    if (user == null || user.email == null) {
+      yield null;
+      return;
+    }
+
+    final normalizedEmail = user.email!.toLowerCase().trim();
+    await getQuotaByEmail(normalizedEmail); // creates doc / performs reset if needed
+
+    yield* _firestore
+        .collection(_quotaCollection)
+        .doc(normalizedEmail)
+        .snapshots()
+        .map((snap) => snap.data());
+  }
+
   /// Get quota info for current authenticated user
   Future<Map<String, dynamic>?> getCurrentUserQuota() async {
     try {
