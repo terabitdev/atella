@@ -2,6 +2,7 @@
 import 'package:get/get.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -96,6 +97,7 @@ class SignupController extends GetxController {
     if (result == null) {
       // Success - Track signup event
       PostHogAnalyticsService().trackUserSignedUp(method: 'email');
+      AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'email');
 
       // Identify user for PostHog
       final user = _authService.currentUser;

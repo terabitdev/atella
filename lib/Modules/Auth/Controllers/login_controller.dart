@@ -4,6 +4,7 @@ import 'package:get/get.dart';
 import 'package:atella/core/utils/post_auth_router.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -100,7 +101,7 @@ class LoginController extends GetxController {
     final result = await _authService.signInWithGoogle();
     isGoogleLoading.value = false;
 
-    if (result == null) {
+    if (result.error == null) {
       // Identify user for PostHog
       final user = _authService.currentUser;
       if (user != null) {
@@ -112,6 +113,10 @@ class LoginController extends GetxController {
       }
       // Track Google login event
       PostHogAnalyticsService().trackUserLoggedIn(method: 'google');
+      // Only fire registration event for brand-new accounts, not returning logins
+      if (result.isNewUser) {
+        AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'google');
+      }
 
       final l10n = AppLocalizations.of(Get.context!)!;
       showAppSnackbar(
@@ -125,7 +130,7 @@ class LoginController extends GetxController {
       Get.offAllNamed(await resolvePostAuthRoute());
     } else {
       final l10n = AppLocalizations.of(Get.context!)!;
-      final errorMessage = _getLocalizedError(result, l10n);
+      final errorMessage = _getLocalizedError(result.error!, l10n);
       showAppSnackbar(
         l10n.error,
         errorMessage,
@@ -141,7 +146,7 @@ class LoginController extends GetxController {
     final result = await _authService.signInWithApple();
     isAppleLoading.value = false;
 
-    if (result == null) {
+    if (result.error == null) {
       // Identify user for PostHog
       final user = _authService.currentUser;
       if (user != null) {
@@ -153,6 +158,10 @@ class LoginController extends GetxController {
       }
       // Track Apple login event
       PostHogAnalyticsService().trackUserLoggedIn(method: 'apple');
+      // Only fire registration event for brand-new accounts, not returning logins
+      if (result.isNewUser) {
+        AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'apple');
+      }
 
       final l10n = AppLocalizations.of(Get.context!)!;
       showAppSnackbar(
@@ -164,9 +173,9 @@ class LoginController extends GetxController {
         duration: const Duration(milliseconds: 1500),
       );
       Get.offAllNamed(await resolvePostAuthRoute());
-    } else if (result != 'auth-apple-sign-in-cancelled') {
+    } else if (result.error != 'auth-apple-sign-in-cancelled') {
       final l10n = AppLocalizations.of(Get.context!)!;
-      final errorMessage = _getLocalizedError(result, l10n);
+      final errorMessage = _getLocalizedError(result.error!, l10n);
       showAppSnackbar(
         l10n.error,
         errorMessage,

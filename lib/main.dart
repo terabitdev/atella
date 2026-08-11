@@ -1,7 +1,11 @@
+import 'dart:io';
 import 'package:atella/Routes/app_pages.dart';
 import 'package:atella/core/themes/app_theme.dart';
 import 'package:atella/core/controllers/locale_controller.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
+import 'package:appsflyer_sdk/appsflyer_sdk.dart';
+import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -25,7 +29,7 @@ import 'package:atella/services/translation/ml_translation_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  Stripe.publishableKey = dotenv.env['PublishableKey']!;
+  Stripe.publishableKey = dotenv.env['PUBLISHABLE_KEY']!;
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -40,6 +44,9 @@ void main() async {
   await _initializePostHog();
   // Identify returning user (if already authenticated)
   await _identifyExistingUser();
+
+  // Initialize AppsFlyer Analytics (attribution + in-app events)
+  await _initializeAppsFlyer();
 
   // Initialize LocaleController for language management (permanent to survive logout)
   Get.put(LocaleController(), permanent: true);
@@ -152,6 +159,51 @@ Future<void> _initializePostHog() async {
   } catch (e) {
     if (kDebugMode) {
       debugPrint('PostHog: Failed to initialize - $e');
+    }
+  }
+}
+
+/// Initialize AppsFlyer for attribution and in-app event tracking
+Future<void> _initializeAppsFlyer() async {
+  final devKey = dotenv.env['APPSFLYER_DEV_KEY'];
+  final appleAppId = dotenv.env['APPSFLYER_APPLE_APP_ID'];
+
+  if (devKey == null || devKey.isEmpty) {
+    if (kDebugMode) {
+      debugPrint('AppsFlyer: dev key not configured, skipping initialization');
+    }
+    return;
+  }
+
+  try {
+    // iOS 14.5+ requires user consent before AppsFlyer can access the
+    // precise device ad ID. Request it before the SDK starts, so the
+    // very first session is tracked as accurately as possible.
+    if (Platform.isIOS) {
+      await Permission.appTrackingTransparency.request();
+    }
+
+    final options = AppsFlyerOptions(
+      afDevKey: devKey,
+      appId: appleAppId ?? '',
+      showDebug: kDebugMode,
+    );
+
+    final appsflyerSdk = AppsflyerSdk(options);
+    await appsflyerSdk.initSdk(
+      registerConversionDataCallback: true,
+      registerOnAppOpenAttributionCallback: true,
+      registerOnDeepLinkingCallback: false,
+    );
+
+    AppsFlyerAnalyticsService().attachSdk(appsflyerSdk);
+
+    if (kDebugMode) {
+      debugPrint('AppsFlyer: Initialized');
+    }
+  } catch (e) {
+    if (kDebugMode) {
+      debugPrint('AppsFlyer: Failed to initialize - $e');
     }
   }
 }

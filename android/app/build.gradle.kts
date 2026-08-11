@@ -52,7 +52,7 @@ android {
             }
         }
         getByName("debug") {
-            storeFile = file("${rootProject.projectDir}/app/debug.keystore")
+            storeFile = file(System.getProperty("user.home") + "/.android/debug.keystore")
             storePassword = "android"
             keyAlias = "androiddebugkey"
             keyPassword = "android"

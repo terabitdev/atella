@@ -233,11 +233,14 @@ class AuthService {
     }
   }
 
-  Future<String?> signInWithGoogle() async {
+  /// Returns the auth error code (null on success) plus whether this
+  /// sign-in created a brand-new account, so callers can distinguish a
+  /// first-time registration from a routine login.
+  Future<({String? error, bool isNewUser})> signInWithGoogle() async {
     try {
       final GoogleSignInAccount? googleUser = await _googleSignIn.signIn();
       if (googleUser == null) {
-        return 'auth-google-sign-in-cancelled';
+        return (error: 'auth-google-sign-in-cancelled', isNewUser: false);
       }
 
       final GoogleSignInAuthentication googleAuth =
@@ -258,7 +261,9 @@ class AuthService {
             .doc(user.uid)
             .get();
 
-        if (!userDoc.exists) {
+        final isNewUser = !userDoc.exists;
+
+        if (isNewUser) {
           await _firestore.collection('users').doc(user.uid).set({
             'uid': user.uid,
             'name': user.displayName ?? 'Google User',
@@ -289,30 +294,30 @@ class AuthService {
 
         await _saveOnboardingToFirestore(user.uid);
 
-        return null;
+        return (error: null, isNewUser: isNewUser);
       } else {
-        return 'auth-google-sign-in-failed';
+        return (error: 'auth-google-sign-in-failed', isNewUser: false);
       }
     } on FirebaseAuthException catch (e) {
       debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
       // Return Firebase error codes for localization
       switch (e.code) {
         case 'user-not-found':
-          return 'auth-user-not-found';
+          return (error: 'auth-user-not-found', isNewUser: false);
         case 'user-disabled':
-          return 'auth-user-disabled';
+          return (error: 'auth-user-disabled', isNewUser: false);
         case 'network-request-failed':
-          return 'auth-network-error';
+          return (error: 'auth-network-error', isNewUser: false);
         default:
-          return 'auth-generic-error';
+          return (error: 'auth-generic-error', isNewUser: false);
       }
     } catch (e) {
       debugPrint('Error during Google sign-in: $e');
       if (e.toString().contains('sign_in_failed') ||
           e.toString().contains('ApiException: 10')) {
-        return 'auth-google-config-error';
+        return (error: 'auth-google-config-error', isNewUser: false);
       }
-      return 'auth-google-generic-error';
+      return (error: 'auth-google-generic-error', isNewUser: false);
     }
   }
 
@@ -332,7 +337,10 @@ class AuthService {
     return digest.toString();
   }
 
-  Future<String?> signInWithApple() async {
+  /// Returns the auth error code (null on success) plus whether this
+  /// sign-in created a brand-new account, so callers can distinguish a
+  /// first-time registration from a routine login.
+  Future<({String? error, bool isNewUser})> signInWithApple() async {
     try {
       final rawNonce = _generateNonce();
       final nonce = _sha256ofString(rawNonce);
@@ -371,7 +379,9 @@ final oauthCredential = OAuthProvider("apple.com").credential(
         DocumentSnapshot userDoc =
             await _firestore.collection('users').doc(user.uid).get();
 
-        if (!userDoc.exists) {
+        final isNewUser = !userDoc.exists;
+
+        if (isNewUser) {
           await _firestore.collection('users').doc(user.uid).set({
             'uid': user.uid,
             'name': displayName.isNotEmpty ? displayName : 'Apple User',
@@ -402,29 +412,29 @@ final oauthCredential = OAuthProvider("apple.com").credential(
 
         await _saveOnboardingToFirestore(user.uid);
 
-        return null; // Success
+        return (error: null, isNewUser: isNewUser); // Success
       } else {
-        return 'auth-apple-sign-in-failed';
+        return (error: 'auth-apple-sign-in-failed', isNewUser: false);
       }
     } on SignInWithAppleAuthorizationException catch (e) {
       debugPrint('Apple Sign In Authorization Error: ${e.code} - ${e.message}');
       if (e.code == AuthorizationErrorCode.canceled) {
-        return 'auth-apple-sign-in-cancelled';
+        return (error: 'auth-apple-sign-in-cancelled', isNewUser: false);
       }
-      return 'auth-apple-sign-in-failed';
+      return (error: 'auth-apple-sign-in-failed', isNewUser: false);
     } on FirebaseAuthException catch (e) {
       debugPrint('Firebase Auth Error: ${e.code} - ${e.message}');
       switch (e.code) {
         case 'user-disabled':
-          return 'auth-user-disabled';
+          return (error: 'auth-user-disabled', isNewUser: false);
         case 'network-request-failed':
-          return 'auth-network-error';
+          return (error: 'auth-network-error', isNewUser: false);
         default:
-          return 'auth-generic-error';
+          return (error: 'auth-generic-error', isNewUser: false);
       }
     } catch (e) {
       debugPrint('Error during Apple sign-in: $e');
-      return 'auth-apple-sign-in-failed';
+      return (error: 'auth-apple-sign-in-failed', isNewUser: false);
     }
   }
 
