@@ -191,7 +191,7 @@ class OrderTrackingScreen extends StatelessWidget {
                   SizedBox(height: 28.h),
                   Text('Mark as shipped', style: gsTextStyle16600),
                   SizedBox(height: 14.h),
-                  AuthTextField(label: 'Tracking number', controller: controller.trackingNumberController),
+                  AuthTextField(label: 'Tracking number or tracking link', controller: controller.trackingNumberController),
                   SizedBox(height: 14.h),
                   AuthTextField(label: 'Carrier (optional)', controller: controller.trackingCarrierController),
                   SizedBox(height: 20.h),

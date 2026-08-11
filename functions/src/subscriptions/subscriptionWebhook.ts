@@ -3,7 +3,15 @@ import Stripe from 'stripe';
 import { admin, db, stripe, FUNCTIONS_REGION, SERVICE_ACCOUNT } from '../lib/admin';
 import { handleOrderPaymentSucceeded, handleOrderPaymentFailed } from '../orders/webhookHandlers';
 
-const stripeWebhookSecretKey = process.env.STRIPE_WEBHOOK_SECRET || '';
+// Two destinations point at this same endpoint URL, each with its own
+// signing secret: the original one (subscription events) and a second one
+// created later for order payment events — Stripe destinations can't have
+// their event list edited after creation, so a second destination was the
+// only option. We try both secrets before giving up.
+const stripeWebhookSecrets = [
+  process.env.STRIPE_WEBHOOK_SECRET || '',
+  process.env.STRIPE_ORDERS_WEBHOOK_SECRET || '',
+].filter(Boolean);
 
 // Stripe webhook Cloud Function (2nd Gen)
 export const stripeWebhook = onRequest(
@@ -14,25 +22,34 @@ export const stripeWebhook = onRequest(
   },
   async (req, res) => {
     const sig = req.headers['stripe-signature'] as string;
-    const webhookSecret = stripeWebhookSecretKey;
 
-    let event: Stripe.Event;
+    let event: Stripe.Event | undefined;
+    let lastError: any;
 
-    try {
-      // Must use raw body buffer — never the parsed req.body object
-      const rawBody = (req as any).rawBody;
-      if (!rawBody) {
-        console.error('❌ WEBHOOK: rawBody is undefined — cannot verify signature');
-        res.status(400).send('Webhook Error: raw body not available');
-        return;
-      }
-      event = stripe.webhooks.constructEvent(rawBody, sig, webhookSecret);
-      console.log('✅ WEBHOOK: Signature verified successfully');
-    } catch (err: any) {
-      console.error(`❌ WEBHOOK: Signature verification failed.`, err.message);
-      res.status(400).send(`Webhook Error: ${err.message}`);
+    // Must use raw body buffer — never the parsed req.body object
+    const rawBody = (req as any).rawBody;
+    if (!rawBody) {
+      console.error('❌ WEBHOOK: rawBody is undefined — cannot verify signature');
+      res.status(400).send('Webhook Error: raw body not available');
       return;
     }
+
+    for (const secret of stripeWebhookSecrets) {
+      try {
+        event = stripe.webhooks.constructEvent(rawBody, sig, secret);
+        break;
+      } catch (err: any) {
+        lastError = err;
+      }
+    }
+
+    if (!event) {
+      console.error(`❌ WEBHOOK: Signature verification failed against all known secrets.`, lastError?.message);
+      res.status(400).send(`Webhook Error: ${lastError?.message}`);
+      return;
+    }
+
+    console.log('✅ WEBHOOK: Signature verified successfully');
 
   console.log(`✅ Received webhook: ${event.type}`);
 
