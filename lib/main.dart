@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:atella/Routes/app_pages.dart';
 import 'package:atella/core/themes/app_theme.dart';
 import 'package:atella/core/controllers/locale_controller.dart';
@@ -30,6 +32,31 @@ void main() async {
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
 
+  // Initialize LocaleController for language management (permanent to survive logout)
+  Get.put(LocaleController(), permanent: true);
+
+  // Everything above is fast/local. runApp() is called immediately after so
+  // Android always has a rendered first frame quickly — critical for cold
+  // starts (e.g. opening the app via the supplier-invite deep link when it
+  // wasn't already running), otherwise Android's input-dispatch watchdog can
+  // time out waiting for a focused window and show an ANR ("app isn't
+  // responding") before the app ever gets to draw anything.
+  runApp(const MyApp());
+
+  // Must start after runApp so GetMaterialApp/navigator is mounted for
+  // Get.toNamed() calls triggered by an incoming deep link. DeepLinkService
+  // itself defers the actual navigation to the first post-frame callback,
+  // so it's safe even if called right as the tree is still settling.
+  await DeepLinkService().initialize();
+
+  // Everything below is network-dependent (RevenueCat, PostHog, subscription
+  // validation) and was previously awaited BEFORE runApp — that's what was
+  // causing the ANR on cold start. Now it all runs in the background after
+  // the UI is already on screen.
+  unawaited(_initializeBackgroundServices());
+}
+
+Future<void> _initializeBackgroundServices() async {
   // Initialize RevenueCat for in-app purchases (add-ons)
   await RevenueCatService().initialize();
 
@@ -41,17 +68,8 @@ void main() async {
   // Identify returning user (if already authenticated)
   await _identifyExistingUser();
 
-  // Initialize LocaleController for language management (permanent to survive logout)
-  Get.put(LocaleController(), permanent: true);
-
   // Validate and cleanup incomplete/unpaid subscriptions
   await _validateSubscriptionOnLaunch();
-
-  runApp(const MyApp());
-
-  // Must start after runApp so GetMaterialApp/navigator is mounted for
-  // Get.toNamed() calls triggered by an incoming deep link.
-  await DeepLinkService().initialize();
 
   // Fire-and-forget: runs in background without blocking the app
   _initializeTranslationModel();

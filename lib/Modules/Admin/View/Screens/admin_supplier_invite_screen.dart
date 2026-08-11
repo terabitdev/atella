@@ -128,7 +128,7 @@ class _InviteTile extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final isPending = invite.status == 'pending';
-    final inviteLink = 'atella://supplier-invite?token=${invite.token}';
+    final inviteLink = 'https://atelia-123.web.app/supplier-invite?token=${invite.token}';
 
     return Obx(() {
       // Read unconditionally so Obx always has an observable to track —
