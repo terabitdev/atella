@@ -31,6 +31,14 @@
         { "fieldPath": "supplierOwnerUid", "order": "ASCENDING" },
         { "fieldPath": "createdAt", "order": "DESCENDING" }
       ]
+    },
+    {
+      "collectionGroup": "supplierSubmissions",
+      "queryScope": "COLLECTION",
+      "fields": [
+        { "fieldPath": "supplierId", "order": "ASCENDING" },
+        { "fieldPath": "createdAt", "order": "DESCENDING" }
+      ]
     }
   ],
   "fieldOverrides": []

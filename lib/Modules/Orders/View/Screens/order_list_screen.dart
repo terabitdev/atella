@@ -8,7 +8,9 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class OrderListScreen extends StatelessWidget {
-  const OrderListScreen({super.key});
+  final bool showBackButton;
+
+  const OrderListScreen({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -21,7 +23,7 @@ class OrderListScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GlobalHeader(title: 'My Orders'),
+              GlobalHeader(title: 'My Orders', showBackButton: showBackButton),
               SizedBox(height: 16.h),
               Expanded(
                 child: Obx(() {

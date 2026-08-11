@@ -46,4 +46,14 @@ class SupplierSubmissionService {
     final doc = await _firestore.collection('supplierSubmissions').add(submission.toFirestore());
     return doc.id;
   }
+
+  Stream<List<SupplierSubmissionModel>> streamSubmissionsForSupplier(String supplierId, {int limit = 5}) {
+    return _firestore
+        .collection('supplierSubmissions')
+        .where('supplierId', isEqualTo: supplierId)
+        .orderBy('createdAt', descending: true)
+        .limit(limit)
+        .snapshots()
+        .map((snap) => snap.docs.map((d) => SupplierSubmissionModel.fromFirestore(d)).toList());
+  }
 }

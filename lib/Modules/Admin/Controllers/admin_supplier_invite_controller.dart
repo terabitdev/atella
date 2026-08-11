@@ -17,9 +17,17 @@ class AdminSupplierInviteController extends GetxController {
 
   final RxString logoLocalPath = ''.obs;
   final RxBool isSubmitting = false.obs;
-  final RxString lastInviteLink = ''.obs;
+
+  /// Which pending invite's link is currently expanded/visible in the list.
+  /// Persisted here (not a one-shot banner) so a generated link stays
+  /// re-viewable and copyable for as long as the invite is still pending.
+  final RxString expandedInviteId = ''.obs;
 
   Stream<List<SupplierInviteModel>> get invitesStream => _service.streamInvites();
+
+  void toggleExpanded(String inviteId) {
+    expandedInviteId.value = expandedInviteId.value == inviteId ? '' : inviteId;
+  }
 
   Future<void> pickLogo() async {
     try {
@@ -64,7 +72,7 @@ class AdminSupplierInviteController extends GetxController {
         logoUrl: logoUrl,
       );
 
-      lastInviteLink.value = result['inviteLink'] as String? ?? '';
+      expandedInviteId.value = result['inviteId'] as String? ?? '';
 
       _clearForm();
       showAppSnackbar('Invite created', 'Copy the link below and send it to the manufacturer', backgroundColor: Colors.black, colorText: Colors.white);

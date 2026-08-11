@@ -4,7 +4,7 @@ import 'package:atella/Modules/Admin/View/Screens/admin_supplier_invite_screen.d
 import 'package:atella/Modules/SupplierAuth/Bindings/supplier_auth_bindings.dart';
 import 'package:atella/Modules/SupplierAuth/View/Screens/supplier_invite_signup_screen.dart';
 import 'package:atella/Modules/SupplierAccount/Bindings/supplier_account_bindings.dart';
-import 'package:atella/Modules/SupplierAccount/View/Screens/supplier_home_screen.dart';
+import 'package:atella/Modules/SupplierAccount/View/Screens/supplier_nav_bar_screen.dart';
 import 'package:atella/Modules/SupplierDirectory/Bindings/supplier_directory_bindings.dart';
 import 'package:atella/Modules/SupplierDirectory/View/Screens/supplier_directory_screen.dart';
 import 'package:atella/Modules/SupplierDirectory/View/Screens/supplier_detail_screen.dart';
@@ -188,8 +188,8 @@ class AppPages {
     ),
     GetPage(
       name: AppRoutes.supplierHome,
-      page: () => const SupplierHomeScreen(),
-      binding: SupplierHomeBinding(),
+      page: () => const SupplierNavBarScreen(),
+      binding: SupplierNavBarBinding(),
     ),
     GetPage(
       name: AppRoutes.supplierDirectory,

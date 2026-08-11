@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:atella/Modules/Auth/View/Widgets/auth_textfield.dart';
 import 'package:atella/Modules/SupplierAccount/Controllers/supplier_home_controller.dart';
-import 'package:atella/Routes/app_routes.dart';
+import 'package:atella/Widgets/app_header.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/themes/app_fonts.dart';
@@ -11,8 +11,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
-class SupplierHomeScreen extends StatelessWidget {
-  const SupplierHomeScreen({super.key});
+/// Supplier bottom-nav tab 4 of 4 — company profile editing + account actions.
+class SupplierProfileTabScreen extends StatelessWidget {
+  const SupplierProfileTabScreen({super.key});
 
   @override
   Widget build(BuildContext context) {
@@ -40,53 +41,21 @@ class SupplierHomeScreen extends StatelessWidget {
           }
 
           return SingleChildScrollView(
-            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 24.h),
+            padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Row(
-                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                  children: [
-                    Text('Supplier Home', style: loginTextTextStyle22700),
+                GlobalHeader(
+                  title: 'Company Profile',
+                  showBackButton: false,
+                  actions: [
                     GestureDetector(
                       onTap: controller.logout,
-                      child: Text('Log out', style: forgotTextTextStyle16500),
+                      child: Text('Log out', style: gsTextStyle16400.copyWith(color: Colors.red)),
                     ),
                   ],
                 ),
-                SizedBox(height: 20.h),
-                InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.conversationList),
-                  child: Container(
-                    height: 50.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.buttonColor),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Center(child: Text('Messages', style: gsTextStyle16600)),
-                  ),
-                ),
-                SizedBox(height: 12.h),
-                InkWell(
-                  onTap: () => Get.toNamed(AppRoutes.orderList, arguments: {'asSupplier': true}),
-                  child: Container(
-                    height: 50.h,
-                    width: double.infinity,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: AppColors.buttonColor),
-                      borderRadius: BorderRadius.circular(10.r),
-                    ),
-                    child: Center(child: Text('My Orders', style: gsTextStyle16600)),
-                  ),
-                ),
                 SizedBox(height: 24.h),
-
-                _OnboardingStatusCard(controller: controller),
-                SizedBox(height: 32.h),
-
-                Text('Company profile', style: gsTextStyle16600),
-                SizedBox(height: 16.h),
 
                 _LogoPicker(controller: controller, existingUrl: supplier.logoUrl),
                 SizedBox(height: 20.h),
@@ -113,64 +82,6 @@ class SupplierHomeScreen extends StatelessWidget {
             ),
           );
         }),
-      ),
-    );
-  }
-}
-
-class _OnboardingStatusCard extends StatelessWidget {
-  final SupplierHomeController controller;
-  const _OnboardingStatusCard({required this.controller});
-
-  @override
-  Widget build(BuildContext context) {
-    final supplier = controller.supplier.value!;
-    final complete = supplier.payoutsEnabled;
-
-    return Container(
-      width: double.infinity,
-      padding: EdgeInsets.all(16.w),
-      decoration: BoxDecoration(
-        color: complete ? const Color(0xFFEFFAF0) : const Color(0xFFFFF8E8),
-        borderRadius: BorderRadius.circular(12.r),
-        border: Border.all(color: complete ? Colors.green.shade200 : Colors.orange.shade200),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Icon(
-                complete ? Icons.check_circle : Icons.info_outline,
-                color: complete ? Colors.green : Colors.orange,
-                size: 20.sp,
-              ),
-              SizedBox(width: 8.w),
-              Text(
-                complete ? 'Payouts enabled' : 'Payout setup required',
-                style: gsTextStyle16600,
-              ),
-            ],
-          ),
-          SizedBox(height: 8.h),
-          Text(
-            complete
-                ? 'Stripe has verified your account — you can now receive payments through Atella.'
-                : 'Complete Stripe onboarding so you can receive payments for sample and production orders.',
-            style: ssTitleTextTextStyle14400,
-          ),
-          if (!complete) ...[
-            SizedBox(height: 14.h),
-            Obx(
-              () => RoundButton(
-                title: controller.isLaunchingOnboarding.value ? 'Opening...' : 'Complete Stripe Onboarding',
-                color: AppColors.buttonColor,
-                isloading: controller.isLaunchingOnboarding.value,
-                onTap: controller.isLaunchingOnboarding.value ? null : controller.startStripeOnboarding,
-              ),
-            ),
-          ],
-        ],
       ),
     );
   }

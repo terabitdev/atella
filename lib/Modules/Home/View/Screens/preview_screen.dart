@@ -1,6 +1,5 @@
 ﻿import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/Routes/app_routes.dart';
-import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
@@ -73,85 +72,54 @@ class _PreviewScreenState extends State<PreviewScreen> {
     final l10n = AppLocalizations.of(context)!;
     showDialog(
       context: context,
+      barrierColor: Colors.black.withValues(alpha: 0.35),
       builder: (context) {
         return Dialog(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(16.r),
           ),
           backgroundColor: Colors.white,
+          insetPadding: EdgeInsets.symmetric(horizontal: 40.w),
           child: SizedBox(
-            width: 238.w,
-            height: 80.h,
+            width: 260.w,
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _handleEdit();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(l10n.edit, style: dbTitleTextTextStyle14400),
-                      ),
-                    ),
-                  ),
+                _PopupMenuItem(
+                  icon: Icons.edit_outlined,
+                  label: l10n.edit,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleEdit();
+                  },
                 ),
-                Container(height: 1, color: Colors.grey.shade300),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _handleDownload();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          l10n.download,
-                          style: dbTitleTextTextStyle14400,
-                        ),
-                      ),
-                    ),
-                  ),
+                _popupDivider(),
+                _PopupMenuItem(
+                  icon: Icons.download_outlined,
+                  label: l10n.download,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleDownload();
+                  },
                 ),
-                Container(height: 1, color: Colors.grey.shade300),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _handleManufactureSuggestions();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          l10n.manufactureSuggestions,
-                          style: dbTitleTextTextStyle14400,
-                        ),
-                      ),
-                    ),
-                  ),
+                _popupDivider(),
+                _PopupMenuItem(
+                  icon: Icons.factory_outlined,
+                  label: l10n.manufactureSuggestions,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleManufactureSuggestions();
+                  },
                 ),
-                Container(height: 1, color: Colors.grey.shade300),
-                Expanded(
-                  child: InkWell(
-                    onTap: () {
-                      Navigator.of(context).pop();
-                      _handleSendToSupplier();
-                    },
-                    child: Container(
-                      width: double.infinity,
-                      child: Center(
-                        child: Text(
-                          'Send to Manufacturing Partner',
-                          style: dbTitleTextTextStyle14400,
-                        ),
-                      ),
-                    ),
-                  ),
+                _popupDivider(),
+                _PopupMenuItem(
+                  icon: Icons.send_outlined,
+                  label: 'Send to Manufacturing Partner',
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _handleSendToSupplier();
+                  },
+                  isLast: true,
                 ),
               ],
             ),
@@ -160,6 +128,8 @@ class _PreviewScreenState extends State<PreviewScreen> {
       },
     );
   }
+
+  Widget _popupDivider() => Container(height: 1, color: Colors.grey.shade200);
 
   // Send this tech pack to a supplier via the invite-only marketplace.
   void _handleSendToSupplier() {
@@ -622,6 +592,55 @@ class _PreviewScreenState extends State<PreviewScreen> {
             ),
           ),
         ],
+      ),
+    );
+  }
+}
+
+// ─── Three-dot action menu row ───────────────────────────────────────────────
+
+class _PopupMenuItem extends StatelessWidget {
+  final IconData icon;
+  final String label;
+  final VoidCallback onTap;
+  final bool isLast;
+
+  const _PopupMenuItem({
+    required this.icon,
+    required this.label,
+    required this.onTap,
+    this.isLast = false,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    final bottomRadius = isLast ? Radius.circular(16.r) : Radius.zero;
+
+    return Material(
+      color: Colors.transparent,
+      borderRadius: BorderRadius.vertical(bottom: bottomRadius),
+      child: InkWell(
+        onTap: onTap,
+        borderRadius: BorderRadius.vertical(bottom: bottomRadius),
+        child: Padding(
+          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 16.h),
+          child: Row(
+            children: [
+              Icon(icon, size: 20.sp, color: Colors.black87),
+              SizedBox(width: 14.w),
+              Expanded(
+                child: Text(
+                  label,
+                  style: TextStyle(
+                    fontSize: 15.sp,
+                    fontWeight: FontWeight.w500,
+                    color: Colors.black87,
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }

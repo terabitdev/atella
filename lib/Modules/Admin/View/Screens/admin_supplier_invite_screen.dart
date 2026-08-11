@@ -63,45 +63,20 @@ class AdminSupplierInviteScreen extends StatelessWidget {
 
               Obx(
                 () => RoundButton(
-                  title: controller.isSubmitting.value ? 'Sending invite...' : 'Create & Send Invite',
+                  title: controller.isSubmitting.value ? 'Sending invite...' : 'Create Invite',
                   color: AppColors.buttonColor,
                   isloading: controller.isSubmitting.value,
                   onTap: controller.isSubmitting.value ? null : controller.sendInvite,
                 ),
               ),
 
-              Obx(() {
-                final link = controller.lastInviteLink.value;
-                if (link.isEmpty) return const SizedBox.shrink();
-                return Padding(
-                  padding: EdgeInsets.only(top: 20.h),
-                  child: Container(
-                    width: double.infinity,
-                    padding: EdgeInsets.all(14.w),
-                    decoration: BoxDecoration(
-                      color: const Color(0xFFF8F9FA),
-                      borderRadius: BorderRadius.circular(10.r),
-                      border: Border.all(color: const Color(0xFFE0E0E0)),
-                    ),
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text('Invite link', style: gsTextStyle16600),
-                        SizedBox(height: 6.h),
-                        SelectableText(link, style: ssTitleTextTextStyle14400),
-                        SizedBox(height: 10.h),
-                        GestureDetector(
-                          onTap: () => controller.copyInviteLink(link),
-                          child: Text('Copy link', style: forgotTextTextStyle16500),
-                        ),
-                      ],
-                    ),
-                  ),
-                );
-              }),
-
               SizedBox(height: 32.h),
               Text('Sent invites', style: gsTextStyle16600),
+              SizedBox(height: 6.h),
+              Text(
+                'Tap a pending invite to view and copy its link again.',
+                style: ssTitleTextTextStyle14400.copyWith(color: Colors.grey[500]),
+              ),
               SizedBox(height: 12.h),
               StreamBuilder<List<SupplierInviteModel>>(
                 stream: controller.invitesStream,
@@ -152,38 +127,86 @@ class _InviteTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      margin: EdgeInsets.only(bottom: 10.h),
-      padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
-      decoration: BoxDecoration(
-        border: Border.all(color: const Color(0xFFE9E9E9)),
-        borderRadius: BorderRadius.circular(10.r),
-      ),
-      child: Row(
-        children: [
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(invite.email, style: gsTextStyle16400),
-                SizedBox(height: 4.h),
-                Text(
-                  invite.status,
-                  style: ssTitleTextTextStyle14400.copyWith(
-                    color: _statusColor(),
-                    fontWeight: FontWeight.w600,
+    final isPending = invite.status == 'pending';
+    final inviteLink = 'atella://supplier-invite?token=${invite.token}';
+
+    return Obx(() {
+      final isExpanded = isPending && controller.expandedInviteId.value == invite.id;
+
+      return Container(
+        margin: EdgeInsets.only(bottom: 10.h),
+        decoration: BoxDecoration(
+          border: Border.all(color: const Color(0xFFE9E9E9)),
+          borderRadius: BorderRadius.circular(10.r),
+        ),
+        child: Column(
+          children: [
+            InkWell(
+              borderRadius: BorderRadius.circular(10.r),
+              onTap: isPending ? () => controller.toggleExpanded(invite.id) : null,
+              child: Padding(
+                padding: EdgeInsets.symmetric(horizontal: 14.w, vertical: 12.h),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(invite.email, style: gsTextStyle16400),
+                          SizedBox(height: 4.h),
+                          Text(
+                            invite.status,
+                            style: ssTitleTextTextStyle14400.copyWith(
+                              color: _statusColor(),
+                              fontWeight: FontWeight.w600,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    if (isPending)
+                      TextButton(
+                        onPressed: () => controller.revokeInvite(invite.id),
+                        child: const Text('Revoke', style: TextStyle(color: Colors.red)),
+                      ),
+                    if (isPending)
+                      Icon(
+                        isExpanded ? Icons.expand_less : Icons.expand_more,
+                        color: Colors.grey[500],
+                      ),
+                  ],
+                ),
+              ),
+            ),
+            if (isExpanded)
+              Padding(
+                padding: EdgeInsets.fromLTRB(14.w, 0, 14.w, 14.h),
+                child: Container(
+                  width: double.infinity,
+                  padding: EdgeInsets.all(12.w),
+                  decoration: BoxDecoration(
+                    color: const Color(0xFFF8F9FA),
+                    borderRadius: BorderRadius.circular(8.r),
+                    border: Border.all(color: const Color(0xFFE0E0E0)),
+                  ),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      SelectableText(inviteLink, style: ssTitleTextTextStyle14400),
+                      SizedBox(height: 10.h),
+                      TextButton.icon(
+                        onPressed: () => controller.copyInviteLink(inviteLink),
+                        icon: Icon(Icons.copy, size: 16.sp, color: AppColors.buttonColor),
+                        label: Text('Copy link', style: gsTextStyle16400.copyWith(color: AppColors.buttonColor)),
+                        style: TextButton.styleFrom(padding: EdgeInsets.zero, minimumSize: Size.zero, tapTargetSize: MaterialTapTargetSize.shrinkWrap),
+                      ),
+                    ],
                   ),
                 ),
-              ],
-            ),
-          ),
-          if (invite.status == 'pending')
-            TextButton(
-              onPressed: () => controller.revokeInvite(invite.id),
-              child: const Text('Revoke', style: TextStyle(color: Colors.red)),
-            ),
-        ],
-      ),
-    );
+              ),
+          ],
+        ),
+      );
+    });
   }
 }

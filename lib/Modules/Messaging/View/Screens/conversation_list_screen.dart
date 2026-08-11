@@ -11,7 +11,9 @@ import 'package:get/get.dart';
 import 'package:intl/intl.dart';
 
 class ConversationListScreen extends StatelessWidget {
-  const ConversationListScreen({super.key});
+  final bool showBackButton;
+
+  const ConversationListScreen({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -24,7 +26,7 @@ class ConversationListScreen extends StatelessWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GlobalHeader(title: 'Messages'),
+              GlobalHeader(title: 'Messages', showBackButton: showBackButton),
               SizedBox(height: 16.h),
               Expanded(
                 child: Obx(() {

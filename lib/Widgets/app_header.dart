@@ -7,12 +7,14 @@ class GlobalHeader extends StatelessWidget {
   final String title;
   final VoidCallback? onBack;
   final List<Widget>? actions;
+  final bool showBackButton;
 
   const GlobalHeader({
     super.key,
     required this.title,
     this.onBack,
     this.actions,
+    this.showBackButton = true,
   });
 
   @override
@@ -21,19 +23,21 @@ class GlobalHeader extends StatelessWidget {
       padding: EdgeInsets.only(top: 20.h),
       child: Row(
         children: [
-          GestureDetector(
-            onTap: onBack ?? () => Navigator.of(context).pop(),
-            behavior: HitTestBehavior.opaque,
-            child: Padding(
-              padding: EdgeInsets.all(8.w),
-              child: Icon(
-                Icons.arrow_back_ios_new,
-                size: 20.sp,
-                color: Colors.black,
+          if (showBackButton) ...[
+            GestureDetector(
+              onTap: onBack ?? () => Navigator.of(context).pop(),
+              behavior: HitTestBehavior.opaque,
+              child: Padding(
+                padding: EdgeInsets.all(8.w),
+                child: Icon(
+                  Icons.arrow_back_ios_new,
+                  size: 20.sp,
+                  color: Colors.black,
+                ),
               ),
             ),
-          ),
-          SizedBox(width: 16.w),
+            SizedBox(width: 16.w),
+          ],
           Expanded(child: Text(title, style: vsTextStyle20800)),
           if (actions != null) ...actions!,
         ],

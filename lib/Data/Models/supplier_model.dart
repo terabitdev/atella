@@ -62,6 +62,7 @@ class SupplierInviteModel {
   final String id;
   final String email;
   final String supplierId;
+  final String token;
   final String status; // pending | accepted | expired | revoked
   final DateTime? createdAt;
   final DateTime? expiresAt;
@@ -70,6 +71,7 @@ class SupplierInviteModel {
     required this.id,
     required this.email,
     required this.supplierId,
+    required this.token,
     required this.status,
     this.createdAt,
     this.expiresAt,
@@ -81,6 +83,7 @@ class SupplierInviteModel {
       id: doc.id,
       email: data['email'] ?? '',
       supplierId: data['supplierId'] ?? '',
+      token: data['token'] ?? '',
       status: data['status'] ?? 'pending',
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       expiresAt: (data['expiresAt'] as Timestamp?)?.toDate(),

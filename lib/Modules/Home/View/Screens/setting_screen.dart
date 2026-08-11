@@ -4,6 +4,7 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/constants/app_images.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -133,61 +134,141 @@ class _SettingScreenState extends State<SettingScreen> {
                     horizontal: 24.w,
                     vertical: 30.h,
                   ),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.start,
-                    children: [
-                      // Plan card — shown for all users
-                      FutureBuilder<_PlanData>(
-                        future: _planDataFuture,
-                        builder: (context, snapshot) {
-                          final cardDecoration = BoxDecoration(
-                            color: Colors.grey.shade50,
-                            borderRadius: BorderRadius.circular(12.r),
-                            border: Border.all(color: Colors.grey.shade200),
-                          );
-
-                          // Loading — show card skeleton with Lottie
-                          if (snapshot.connectionState ==
-                              ConnectionState.waiting) {
-                            return Container(
-                              margin: EdgeInsets.only(bottom: 16.h),
-                              padding: EdgeInsets.symmetric(
-                                horizontal: 16.w,
-                                vertical: 14.h,
-                              ),
-                              decoration: cardDecoration,
-                              child: Center(
-                                child: Lottie.asset(
-                                  'assets/lottie/Loading_dots.json',
-                                  height: 32.h,
-                                ),
-                              ),
+                  child: SingleChildScrollView(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.start,
+                      children: [
+                        // Plan card — shown for all users
+                        FutureBuilder<_PlanData>(
+                          future: _planDataFuture,
+                          builder: (context, snapshot) {
+                            final cardDecoration = BoxDecoration(
+                              color: Colors.grey.shade50,
+                              borderRadius: BorderRadius.circular(12.r),
+                              border: Border.all(color: Colors.grey.shade200),
                             );
-                          }
 
-                          final sub = snapshot.data?.subscription;
-                          final isPaid =
-                              sub != null &&
-                              sub.subscriptionPlan != 'FREE' &&
-                              (sub.subscriptionStatus == 'active' ||
-                                  sub.subscriptionStatus == 'trialing');
+                            // Loading — show card skeleton with Lottie
+                            if (snapshot.connectionState ==
+                                ConnectionState.waiting) {
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 16.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 14.h,
+                                ),
+                                decoration: cardDecoration,
+                                child: Center(
+                                  child: Lottie.asset(
+                                    'assets/lottie/Loading_dots.json',
+                                    height: 32.h,
+                                  ),
+                                ),
+                              );
+                            }
 
-                          if (isPaid) {
-                            // Paid user card — plan name + billing + View Plan
-                            final plan = sub.subscriptionPlan;
-                            final planLabel = plan.startsWith('STUDIO')
-                                ? l10n.planNameStudio
-                                : plan.startsWith('PRO')
-                                ? l10n.planNamePro
-                                : plan.startsWith('STARTER')
-                                ? l10n.planNameStarter
-                                : plan;
-                            final isYearly =
-                                sub.billingPeriod == 'YEARLY' ||
-                                plan.contains('YEARLY');
-                            final subLabel = isYearly
-                                ? l10n.billingYearly
-                                : l10n.billingMonthly;
+                            final sub = snapshot.data?.subscription;
+                            final isPaid =
+                                sub != null &&
+                                sub.subscriptionPlan != 'FREE' &&
+                                (sub.subscriptionStatus == 'active' ||
+                                    sub.subscriptionStatus == 'trialing');
+
+                            if (isPaid) {
+                              // Paid user card — plan name + billing + View Plan
+                              final plan = sub.subscriptionPlan;
+                              final planLabel = plan.startsWith('STUDIO')
+                                  ? l10n.planNameStudio
+                                  : plan.startsWith('PRO')
+                                  ? l10n.planNamePro
+                                  : plan.startsWith('STARTER')
+                                  ? l10n.planNameStarter
+                                  : plan;
+                              final isYearly =
+                                  sub.billingPeriod == 'YEARLY' ||
+                                  plan.contains('YEARLY');
+                              final subLabel = isYearly
+                                  ? l10n.billingYearly
+                                  : l10n.billingMonthly;
+
+                              return Container(
+                                margin: EdgeInsets.only(bottom: 16.h),
+                                padding: EdgeInsets.symmetric(
+                                  horizontal: 16.w,
+                                  vertical: 14.h,
+                                ),
+                                decoration: cardDecoration,
+                                child: Row(
+                                  children: [
+                                    Expanded(
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        mainAxisSize: MainAxisSize.min,
+                                        children: [
+                                          Text(
+                                            planLabel,
+                                            style: TextStyle(
+                                              fontSize: 15.sp,
+                                              fontWeight: FontWeight.w700,
+                                              color: Colors.black,
+                                            ),
+                                          ),
+                                          SizedBox(height: 3.h),
+                                          Text(
+                                            subLabel,
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w400,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          ),
+                                        ],
+                                      ),
+                                    ),
+                                    GestureDetector(
+                                      onTap: () => Get.toNamed(
+                                        AppRoutes.subscriptionDetail,
+                                      ),
+                                      child: Container(
+                                        padding: EdgeInsets.symmetric(
+                                          horizontal: 12.w,
+                                          vertical: 6.h,
+                                        ),
+                                        decoration: BoxDecoration(
+                                          color: Colors.black,
+                                          borderRadius: BorderRadius.circular(
+                                            20.r,
+                                          ),
+                                        ),
+                                        child: Text(
+                                          l10n.viewPlan,
+                                          style: TextStyle(
+                                            fontSize: 12.sp,
+                                            fontWeight: FontWeight.w600,
+                                            color: Colors.white,
+                                          ),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                ),
+                              );
+                            }
+
+                            // Free user card
+                            final freeUsed =
+                                snapshot.data?.freeDesignsUsed ?? 0;
+                            final addonDesignsPurchased =
+                                sub?.freeExtraDesignsPurchased ?? 0;
+                            final addonDesignsUsed =
+                                sub?.freeExtraDesignsUsed ?? 0;
+                            final addonTechpacksPurchased =
+                                sub?.freeExtraTechpacksPurchased ?? 0;
+                            final addonTechpacksUsed =
+                                sub?.freeExtraTechpacksUsed ?? 0;
+                            final addonDesignsTotal = addonDesignsPurchased * 5;
+                            final addonTechpacksTotal = addonTechpacksPurchased;
 
                             return Container(
                               margin: EdgeInsets.only(bottom: 16.h),
@@ -196,404 +277,368 @@ class _SettingScreenState extends State<SettingScreen> {
                                 vertical: 14.h,
                               ),
                               decoration: cardDecoration,
-                              child: Row(
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.start,
+                                mainAxisSize: MainAxisSize.min,
                                 children: [
-                                  Expanded(
-                                    child: Column(
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.start,
-                                      mainAxisSize: MainAxisSize.min,
-                                      children: [
-                                        Text(
-                                          planLabel,
+                                  // Free Plan + monthly designs on same row
+                                  Row(
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.start,
+                                    children: [
+                                      Expanded(
+                                        child: Text(
+                                          l10n.settingsFreePlan,
                                           style: TextStyle(
                                             fontSize: 15.sp,
                                             fontWeight: FontWeight.w700,
                                             color: Colors.black,
                                           ),
                                         ),
-                                        SizedBox(height: 3.h),
+                                      ),
+                                      SizedBox(width: 8.w),
+                                      Text(
+                                        l10n.settingsDesignsLeft(1 - freeUsed),
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: FontWeight.w500,
+                                          color: Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                  SizedBox(height: 8.h),
+                                  // Add-ons section
+                                  Text(
+                                    l10n.settingsAddOns,
+                                    style: TextStyle(
+                                      fontSize: 11.sp,
+                                      fontWeight: FontWeight.w600,
+                                      color: Colors.grey.shade500,
+                                      letterSpacing: 0.4,
+                                    ),
+                                  ),
+                                  SizedBox(height: 4.h),
+                                  Row(
+                                    children: [
+                                      // Design add-ons
+                                      Text(
+                                        addonDesignsPurchased > 0
+                                            ? '$addonDesignsUsed/$addonDesignsTotal Designs'
+                                            : '0 Designs',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight: addonDesignsPurchased > 0
+                                              ? FontWeight.w600
+                                              : FontWeight.w400,
+                                          color: addonDesignsPurchased > 0
+                                              ? Colors.black
+                                              : Colors.grey.shade600,
+                                        ),
+                                      ),
+                                      SizedBox(width: 12.w),
+                                      // Techpack add-ons
+                                      Text(
+                                        addonTechpacksPurchased > 0
+                                            ? '$addonTechpacksUsed/$addonTechpacksTotal Techpacks'
+                                            : '0 Techpacks',
+                                        style: TextStyle(
+                                          fontSize: 12.sp,
+                                          fontWeight:
+                                              addonTechpacksPurchased > 0
+                                              ? FontWeight.w600
+                                              : FontWeight.w400,
+                                          color: addonTechpacksPurchased > 0
+                                              ? Colors.black
+                                              : Colors.grey.shade600,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ],
+                              ),
+                            );
+                          },
+                        ),
+                        SettingCard(
+                          title: l10n.personalInformation,
+                          onTap: () {
+                            Get.toNamed('/profile');
+                          },
+                        ),
+                        SettingCard(
+                          title: 'Messages',
+                          onTap: () {
+                            Get.toNamed(AppRoutes.conversationList);
+                          },
+                        ),
+                        SettingCard(
+                          title: 'My Orders',
+                          onTap: () {
+                            Get.toNamed(
+                              AppRoutes.orderList,
+                              arguments: {'asSupplier': false},
+                            );
+                          },
+                        ),
+                        // Only visible to accounts granted the 'admin' custom
+                        // claim (see bootstrapAdmin / the supplier invite flow).
+                        FutureBuilder<IdTokenResult?>(
+                          future: FirebaseAuth.instance.currentUser
+                              ?.getIdTokenResult(),
+                          builder: (context, snapshot) {
+                            final isAdmin =
+                                snapshot.data?.claims?['role'] == 'admin';
+                            if (!isAdmin) return const SizedBox.shrink();
+
+                            return SettingCard(
+                              title: 'Invite a Manufacturer',
+                              onTap: () {
+                                Get.toNamed(AppRoutes.adminSupplierInvite);
+                              },
+                            );
+                          },
+                        ),
+                        SettingCard(
+                          title: l10n.termsAndConditions,
+                          onTap: () {
+                            Get.toNamed('/terms');
+                          },
+                        ),
+                        SettingCard(
+                          title: l10n.privacyPolicy,
+                          onTap: () {
+                            Get.toNamed('/privacy');
+                          },
+                        ),
+                        SettingCard(
+                          title: l10n.deleteAccount,
+                          textColor: Colors.red,
+                          onTap: () {
+                            _showDeleteAccountDialog(context, l10n);
+                          },
+                        ),
+                        SettingCard(
+                          title: l10n.logout,
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (dialogContext) {
+                                return Dialog(
+                                  shape: RoundedRectangleBorder(
+                                    borderRadius: BorderRadius.circular(12),
+                                  ),
+                                  child: Padding(
+                                    padding: const EdgeInsets.symmetric(
+                                      vertical: 20,
+                                      horizontal: 16,
+                                    ),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      children: [
                                         Text(
-                                          subLabel,
-                                          style: TextStyle(
-                                            fontSize: 12.sp,
-                                            fontWeight: FontWeight.w400,
-                                            color: Colors.grey.shade600,
+                                          l10n.logoutConfirmation,
+                                          textAlign: TextAlign.center,
+                                          style: lLastTextStyle16500,
+                                        ),
+                                        const SizedBox(height: 24),
+                                        IntrinsicHeight(
+                                          child: Row(
+                                            children: [
+                                              Expanded(
+                                                child: OutlinedButton(
+                                                  style:
+                                                      OutlinedButton.styleFrom(
+                                                        foregroundColor:
+                                                            Colors.black,
+                                                        side: BorderSide(
+                                                          color: Colors.black,
+                                                        ),
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 12,
+                                                            ),
+                                                      ),
+                                                  onPressed: () {
+                                                    Navigator.of(
+                                                      dialogContext,
+                                                    ).pop();
+                                                  },
+                                                  child: Text(
+                                                    l10n.cancel,
+                                                    textAlign: TextAlign.center,
+                                                    style: lLastTextStyle16500
+                                                        .copyWith(
+                                                          fontSize: 14,
+                                                          height: 1.2,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                              const SizedBox(width: 8),
+                                              Expanded(
+                                                child: ElevatedButton(
+                                                  style:
+                                                      ElevatedButton.styleFrom(
+                                                        backgroundColor:
+                                                            Colors.black,
+                                                        foregroundColor:
+                                                            Colors.white,
+                                                        padding:
+                                                            EdgeInsets.symmetric(
+                                                              vertical: 12,
+                                                              horizontal: 12,
+                                                            ),
+                                                      ),
+                                                  onPressed: () {
+                                                    controller.logout();
+                                                  },
+                                                  child: Text(
+                                                    l10n.logout,
+                                                    textAlign: TextAlign.center,
+                                                    style: lLastTextStyle16500
+                                                        .copyWith(
+                                                          color: Colors.white,
+                                                          fontSize: 14,
+                                                          height: 1.2,
+                                                        ),
+                                                  ),
+                                                ),
+                                              ),
+                                            ],
                                           ),
                                         ),
                                       ],
                                     ),
                                   ),
-                                  GestureDetector(
-                                    onTap: () => Get.toNamed(
-                                      AppRoutes.subscriptionDetail,
-                                    ),
-                                    child: Container(
-                                      padding: EdgeInsets.symmetric(
-                                        horizontal: 12.w,
-                                        vertical: 6.h,
-                                      ),
-                                      decoration: BoxDecoration(
-                                        color: Colors.black,
-                                        borderRadius: BorderRadius.circular(
-                                          20.r,
-                                        ),
-                                      ),
-                                      child: Text(
-                                        l10n.viewPlan,
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w600,
-                                          color: Colors.white,
-                                        ),
-                                      ),
-                                    ),
-                                  ),
-                                ],
-                              ),
+                                );
+                              },
                             );
-                          }
+                          },
+                        ),
+                        // // Button to check database stats
+                        // ElevatedButton(
+                        //   onPressed: () async {
+                        //     final firebaseService = ManufacturerFirebaseService();
+                        //     final stats = await firebaseService
+                        //         .getManufacturerCountByCountry();
+                        //     print('📊 MANUFACTURER STATISTICS:');
+                        //     stats.forEach((country, count) {
+                        //       print('  $country: $count manufacturers');
+                        //     });
+                        //     print('Total countries: ${stats.length}');
+                        //     if (stats.isNotEmpty) {
+                        //       print(
+                        //         'Total manufacturers: ${stats.values.reduce((a, b) => a + b)}',
+                        //       );
+                        //     }
+                        //   },
+                        //   child: Text('Check Database Stats'),
+                        // ),
+                        // SizedBox(height: 10),
+                        // // Button to generate small-brand manufacturers
+                        // ElevatedButton(
+                        //   style: ElevatedButton.styleFrom(
+                        //     backgroundColor: Colors.green,
+                        //     foregroundColor: Colors.white,
+                        //   ),
+                        //   onPressed: () async {
+                        //     // Load API key from .env file if not already in secure storage
+                        //     String? apiKey = await OpenAIService.getApiKey();
 
-                          // Free user card
-                          final freeUsed =
-                              snapshot.data?.freeDesignsUsed ?? 0;
-                          final addonDesignsPurchased =
-                              sub?.freeExtraDesignsPurchased ?? 0;
-                          final addonDesignsUsed =
-                              sub?.freeExtraDesignsUsed ?? 0;
-                          final addonTechpacksPurchased =
-                              sub?.freeExtraTechpacksPurchased ?? 0;
-                          final addonTechpacksUsed =
-                              sub?.freeExtraTechpacksUsed ?? 0;
-                          final addonDesignsTotal = addonDesignsPurchased * 5;
-                          final addonTechpacksTotal = addonTechpacksPurchased;
+                        //     if (apiKey == null || apiKey.isEmpty) {
+                        //       // Try to get from .env file
+                        //       final envKey = dotenv.env['OPENAI_API_KEY'];
+                        //       if (envKey != null && envKey.isNotEmpty) {
+                        //         await OpenAIService.setApiKey(envKey);
+                        //         print('✅ Loaded API key from .env file');
+                        //         apiKey = envKey;
+                        //       } else {
+                        //         print('⚠️ OpenAI API key not found in .env file!');
+                        //         print('📝 Please add OPENAI_API_KEY to your .env file');
+                        //         return;
+                        //       }
+                        //     }
 
-                          return Container(
-                            margin: EdgeInsets.only(bottom: 16.h),
-                            padding: EdgeInsets.symmetric(
-                              horizontal: 16.w,
-                              vertical: 14.h,
-                            ),
-                            decoration: cardDecoration,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                // Free Plan + monthly designs on same row
-                                Row(
-                                  crossAxisAlignment: CrossAxisAlignment.start,
-                                  children: [
-                                    Expanded(
-                                      child: Text(
-                                        l10n.settingsFreePlan,
-                                        style: TextStyle(
-                                          fontSize: 15.sp,
-                                          fontWeight: FontWeight.w700,
-                                          color: Colors.black,
-                                        ),
-                                      ),
-                                    ),
-                                    SizedBox(width: 8.w),
-                                    Text(
-                                      l10n.settingsDesignsLeft(1 - freeUsed),
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: FontWeight.w500,
-                                        color: Colors.grey.shade600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                                SizedBox(height: 8.h),
-                                // Add-ons section
-                                Text(
-                                  l10n.settingsAddOns,
-                                  style: TextStyle(
-                                    fontSize: 11.sp,
-                                    fontWeight: FontWeight.w600,
-                                    color: Colors.grey.shade500,
-                                    letterSpacing: 0.4,
-                                  ),
-                                ),
-                                SizedBox(height: 4.h),
-                                Row(
-                                  children: [
-                                    // Design add-ons
-                                    Text(
-                                      addonDesignsPurchased > 0
-                                          ? '$addonDesignsUsed/$addonDesignsTotal Designs'
-                                          : '0 Designs',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: addonDesignsPurchased > 0
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                        color: addonDesignsPurchased > 0
-                                            ? Colors.black
-                                            : Colors.grey.shade600,
-                                      ),
-                                    ),
-                                    SizedBox(width: 12.w),
-                                    // Techpack add-ons
-                                    Text(
-                                      addonTechpacksPurchased > 0
-                                          ? '$addonTechpacksUsed/$addonTechpacksTotal Techpacks'
-                                          : '0 Techpacks',
-                                      style: TextStyle(
-                                        fontSize: 12.sp,
-                                        fontWeight: addonTechpacksPurchased > 0
-                                            ? FontWeight.w600
-                                            : FontWeight.w400,
-                                        color: addonTechpacksPurchased > 0
-                                            ? Colors.black
-                                            : Colors.grey.shade600,
-                                      ),
-                                    ),
-                                  ],
-                                ),
-                              ],
-                            ),
-                          );
-                        },
-                      ),
-                      SettingCard(
-                        title: l10n.personalInformation,
-                        onTap: () {
-                          Get.toNamed('/profile');
-                        },
-                      ),
-                      SettingCard(
-                        title: l10n.termsAndConditions,
-                        onTap: () {
-                          Get.toNamed('/terms');
-                        },
-                      ),
-                      SettingCard(
-                        title: l10n.privacyPolicy,
-                        onTap: () {
-                          Get.toNamed('/privacy');
-                        },
-                      ),
-                      SettingCard(
-                        title: l10n.deleteAccount,
-                        textColor: Colors.red,
-                        onTap: () {
-                          _showDeleteAccountDialog(context, l10n);
-                        },
-                      ),
-                      SettingCard(
-                        title: l10n.logout,
-                        onTap: () {
-                          showDialog(
-                            context: context,
-                            builder: (dialogContext) {
-                              return Dialog(
-                                shape: RoundedRectangleBorder(
-                                  borderRadius: BorderRadius.circular(12),
-                                ),
-                                child: Padding(
-                                  padding: const EdgeInsets.symmetric(
-                                    vertical: 20,
-                                    horizontal: 16,
-                                  ),
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    children: [
-                                      Text(
-                                        l10n.logoutConfirmation,
-                                        textAlign: TextAlign.center,
-                                        style: lLastTextStyle16500,
-                                      ),
-                                      const SizedBox(height: 24),
-                                      IntrinsicHeight(
-                                        child: Row(
-                                          children: [
-                                            Expanded(
-                                              child: OutlinedButton(
-                                                style: OutlinedButton.styleFrom(
-                                                  foregroundColor: Colors.black,
-                                                  side: BorderSide(
-                                                    color: Colors.black,
-                                                  ),
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                    horizontal: 12,
-                                                  ),
-                                                ),
-                                                onPressed: () {
-                                                  Navigator.of(
-                                                    dialogContext,
-                                                  ).pop();
-                                                },
-                                                child: Text(
-                                                  l10n.cancel,
-                                                  textAlign: TextAlign.center,
-                                                  style: lLastTextStyle16500
-                                                      .copyWith(
-                                                        fontSize: 14,
-                                                        height: 1.2,
-                                                      ),
-                                                ),
-                                              ),
-                                            ),
-                                            const SizedBox(width: 8),
-                                            Expanded(
-                                              child: ElevatedButton(
-                                                style: ElevatedButton.styleFrom(
-                                                  backgroundColor: Colors.black,
-                                                  foregroundColor: Colors.white,
-                                                  padding: EdgeInsets.symmetric(
-                                                    vertical: 12,
-                                                    horizontal: 12,
-                                                  ),
-                                                ),
-                                                onPressed: () {
-                                                  controller.logout();
-                                                },
-                                                child: Text(
-                                                  l10n.logout,
-                                                  textAlign: TextAlign.center,
-                                                  style: lLastTextStyle16500
-                                                      .copyWith(
-                                                        color: Colors.white,
-                                                        fontSize: 14,
-                                                        height: 1.2,
-                                                      ),
-                                                ),
-                                              ),
-                                            ),
-                                          ],
-                                        ),
-                                      ),
-                                    ],
-                                  ),
-                                ),
-                              );
-                            },
-                          );
-                        },
-                      ),
-                      // // Button to check database stats
-                      // ElevatedButton(
-                      //   onPressed: () async {
-                      //     final firebaseService = ManufacturerFirebaseService();
-                      //     final stats = await firebaseService
-                      //         .getManufacturerCountByCountry();
-                      //     print('📊 MANUFACTURER STATISTICS:');
-                      //     stats.forEach((country, count) {
-                      //       print('  $country: $count manufacturers');
-                      //     });
-                      //     print('Total countries: ${stats.length}');
-                      //     if (stats.isNotEmpty) {
-                      //       print(
-                      //         'Total manufacturers: ${stats.values.reduce((a, b) => a + b)}',
-                      //       );
-                      //     }
-                      //   },
-                      //   child: Text('Check Database Stats'),
-                      // ),
-                      // SizedBox(height: 10),
-                      // // Button to generate small-brand manufacturers
-                      // ElevatedButton(
-                      //   style: ElevatedButton.styleFrom(
-                      //     backgroundColor: Colors.green,
-                      //     foregroundColor: Colors.white,
-                      //   ),
-                      //   onPressed: () async {
-                      //     // Load API key from .env file if not already in secure storage
-                      //     String? apiKey = await OpenAIService.getApiKey();
+                        //     print('🚀 Starting manufacturer generation...');
+                        //     print('✅ API key found');
 
-                      //     if (apiKey == null || apiKey.isEmpty) {
-                      //       // Try to get from .env file
-                      //       final envKey = dotenv.env['OPENAI_API_KEY'];
-                      //       if (envKey != null && envKey.isNotEmpty) {
-                      //         await OpenAIService.setApiKey(envKey);
-                      //         print('✅ Loaded API key from .env file');
-                      //         apiKey = envKey;
-                      //       } else {
-                      //         print('⚠️ OpenAI API key not found in .env file!');
-                      //         print('📝 Please add OPENAI_API_KEY to your .env file');
-                      //         return;
-                      //       }
-                      //     }
+                        //     // ALL 51 countries from your database
+                        //     final countries = [
+                        //       // Already done - commenting out
+                        //       // 'Pakistan',
+                        //       // 'India',
+                        //       // 'China',
+                        //       // 'Bangladesh',
+                        //       // 'Turkey',
+                        //       // 'Italy',
+                        //       // 'Portugal',
+                        //       // 'Spain',
+                        //       // 'Vietnam',
+                        //       // 'USA',
 
-                      //     print('🚀 Starting manufacturer generation...');
-                      //     print('✅ API key found');
+                        //       // Remaining 41 countries
+                        //       'Finland',
+                        //       'Sweden',
+                        //       'Germany',
+                        //       'Switzerland',
+                        //       'United Arab Emirates',
+                        //       'Egypt',
+                        //       'Greece',
+                        //       'Indonesia',
+                        //       'Czech Republic',
+                        //       'Australia',
+                        //       'Norway',
+                        //       'Denmark',
+                        //       'Sri Lanka',
+                        //       'Romania',
+                        //       'UK',
+                        //       'Brazil',
+                        //       'Canada',
+                        //       'South Africa',
+                        //       'Morocco',
+                        //       'Jordan',
+                        //       'France',
+                        //       'Mexico',
+                        //       'Hungary',
+                        //       'Poland',
+                        //       'Israel',
+                        //       'Belgium',
+                        //       'South Korea',
+                        //       'Philippines',
+                        //       'Netherlands',
+                        //       'Japan',
+                        //       'Nepal',
+                        //       'Lebanon',
+                        //       'Kuwait',
+                        //       'Austria',
+                        //       'Malaysia',
+                        //       'Thailand',
+                        //       'Oman',
+                        //       'Singapore',
+                        //       'Qatar',
+                        //       'Kenya',
+                        //       'Ghana',
+                        //     ];
 
-                      //     // ALL 51 countries from your database
-                      //     final countries = [
-                      //       // Already done - commenting out
-                      //       // 'Pakistan',
-                      //       // 'India',
-                      //       // 'China',
-                      //       // 'Bangladesh',
-                      //       // 'Turkey',
-                      //       // 'Italy',
-                      //       // 'Portugal',
-                      //       // 'Spain',
-                      //       // 'Vietnam',
-                      //       // 'USA',
+                        //     final firebaseService = ManufacturerFirebaseService();
+                        //     final result = await firebaseService
+                        //         .generateSmallBrandManufacturers(
+                        //       countries: countries,
+                        //       manufacturersPerCountry: 5,
+                        //     );
 
-                      //       // Remaining 41 countries
-                      //       'Finland',
-                      //       'Sweden',
-                      //       'Germany',
-                      //       'Switzerland',
-                      //       'United Arab Emirates',
-                      //       'Egypt',
-                      //       'Greece',
-                      //       'Indonesia',
-                      //       'Czech Republic',
-                      //       'Australia',
-                      //       'Norway',
-                      //       'Denmark',
-                      //       'Sri Lanka',
-                      //       'Romania',
-                      //       'UK',
-                      //       'Brazil',
-                      //       'Canada',
-                      //       'South Africa',
-                      //       'Morocco',
-                      //       'Jordan',
-                      //       'France',
-                      //       'Mexico',
-                      //       'Hungary',
-                      //       'Poland',
-                      //       'Israel',
-                      //       'Belgium',
-                      //       'South Korea',
-                      //       'Philippines',
-                      //       'Netherlands',
-                      //       'Japan',
-                      //       'Nepal',
-                      //       'Lebanon',
-                      //       'Kuwait',
-                      //       'Austria',
-                      //       'Malaysia',
-                      //       'Thailand',
-                      //       'Oman',
-                      //       'Singapore',
-                      //       'Qatar',
-                      //       'Kenya',
-                      //       'Ghana',
-                      //     ];
-
-                      //     final firebaseService = ManufacturerFirebaseService();
-                      //     final result = await firebaseService
-                      //         .generateSmallBrandManufacturers(
-                      //       countries: countries,
-                      //       manufacturersPerCountry: 5,
-                      //     );
-
-                      //     print('\n📋 GENERATION RESULTS:');
-                      //     print('   Success: ${result['success']}');
-                      //     print('   Total Added: ${result['totalAdded']}');
-                      //     print('   Total Failed: ${result['totalFailed']}');
-                      //     print('   Country Results: ${result['countryResults']}');
-                      //   },
-                      //   child: Text('Generate Small-Brand Manufacturers'),
-                      // ),
-                    ],
+                        //     print('\n📋 GENERATION RESULTS:');
+                        //     print('   Success: ${result['success']}');
+                        //     print('   Total Added: ${result['totalAdded']}');
+                        //     print('   Total Failed: ${result['totalFailed']}');
+                        //     print('   Country Results: ${result['countryResults']}');
+                        //   },
+                        //   child: Text('Generate Small-Brand Manufacturers'),
+                        // ),
+                      ],
+                    ),
                   ),
                 ),
               ),

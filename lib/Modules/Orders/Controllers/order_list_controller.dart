@@ -6,6 +6,13 @@ import 'package:atella/services/firebase/services/orders_service.dart';
 class OrderListController extends GetxController {
   final OrdersService _service = OrdersService();
 
+  /// When set, overrides the `Get.arguments`-based detection below — needed
+  /// when this controller is put explicitly for a statically-embedded tab
+  /// (e.g. the supplier bottom nav bar) rather than reached via navigation.
+  final bool? forceAsSupplier;
+
+  OrderListController({this.forceAsSupplier});
+
   final RxList<OrderModel> orders = <OrderModel>[].obs;
   final RxBool isLoading = true.obs;
   late final bool asSupplier;
@@ -14,7 +21,7 @@ class OrderListController extends GetxController {
   void onInit() {
     super.onInit();
     final args = Get.arguments;
-    asSupplier = args is Map && args['asSupplier'] == true;
+    asSupplier = forceAsSupplier ?? (args is Map && args['asSupplier'] == true);
 
     final uid = FirebaseAuth.instance.currentUser?.uid;
     if (uid == null) {

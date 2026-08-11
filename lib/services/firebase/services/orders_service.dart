@@ -73,12 +73,12 @@ class OrdersService {
         .map((snap) => snap.docs.map((d) => OrderModel.fromFirestore(d)).toList());
   }
 
-  Stream<List<OrderModel>> streamOrdersAsSupplier(String supplierOwnerUid) {
-    return _firestore
+  Stream<List<OrderModel>> streamOrdersAsSupplier(String supplierOwnerUid, {int? limit}) {
+    Query<Map<String, dynamic>> query = _firestore
         .collection('orders')
         .where('supplierOwnerUid', isEqualTo: supplierOwnerUid)
-        .orderBy('createdAt', descending: true)
-        .snapshots()
-        .map((snap) => snap.docs.map((d) => OrderModel.fromFirestore(d)).toList());
+        .orderBy('createdAt', descending: true);
+    if (limit != null) query = query.limit(limit);
+    return query.snapshots().map((snap) => snap.docs.map((d) => OrderModel.fromFirestore(d)).toList());
   }
 }
