@@ -11,6 +11,7 @@ import 'package:atella/services/PaymentService/stripe_subscription_service.dart'
 import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/Modules/final_details/Views/Widgets/usage_warning_dialog.dart';
 import 'package:atella/Modules/tech_pack/Views/Widgets/techpack_limit_dialog.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
@@ -234,6 +235,7 @@ class TechPackController extends GetxController {
         numberOfDesigns: base64Images.length,
         generationTime: DateTime.now().difference(startTime),
       );
+      AppsFlyerAnalyticsService().trackCreatedDesign();
     } catch (e) {
       hasError.value = true;
       errorMessage.value = e.toString();

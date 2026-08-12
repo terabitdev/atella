@@ -6,6 +6,7 @@ import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -364,6 +365,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         }
       }
       PostHogAnalyticsService().trackTechPackCompleted(garmentType: garmentType);
+      AppsFlyerAnalyticsService().trackGeneratedTechPack();
 
       // Clear any existing project controller to force refresh
       if (Get.isRegistered<dynamic>(tag: 'projectController')) {

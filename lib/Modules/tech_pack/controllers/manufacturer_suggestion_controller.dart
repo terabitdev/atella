@@ -7,6 +7,7 @@ import 'package:atella/Data/Models/translated_manufacturer_model.dart';
 import 'package:atella/services/manufacture_services/new_manufacturer_firebase_service.dart';
 import 'package:atella/Modules/tech_pack/controllers/tech_pack_ready_controller.dart';
 import 'package:atella/services/firebase/services/auth_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
 
@@ -1011,6 +1012,7 @@ class ManufacturerSuggestionController extends GetxController {
           duration: const Duration(milliseconds: 1500),
           icon: const Icon(Icons.check_circle, color: Colors.white),
         );
+        AppsFlyerAnalyticsService().trackContactedManufacturer();
       } else {
         showAppSnackbar(
           _l10n.mfEmailFailed,

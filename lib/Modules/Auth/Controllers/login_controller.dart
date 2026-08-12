@@ -67,6 +67,7 @@ class LoginController extends GetxController {
       }
       // Track login event
       PostHogAnalyticsService().trackUserLoggedIn(method: 'email');
+      AppsFlyerAnalyticsService().syncAppsFlyerIdToFirestore();
 
       final l10n = AppLocalizations.of(Get.context!)!;
       showAppSnackbar(
@@ -117,6 +118,7 @@ class LoginController extends GetxController {
       if (result.isNewUser) {
         AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'google');
       }
+      AppsFlyerAnalyticsService().syncAppsFlyerIdToFirestore();
 
       final l10n = AppLocalizations.of(Get.context!)!;
       showAppSnackbar(
@@ -162,6 +164,7 @@ class LoginController extends GetxController {
       if (result.isNewUser) {
         AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'apple');
       }
+      AppsFlyerAnalyticsService().syncAppsFlyerIdToFirestore();
 
       final l10n = AppLocalizations.of(Get.context!)!;
       showAppSnackbar(

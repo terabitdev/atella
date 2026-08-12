@@ -2,6 +2,7 @@ import { onRequest } from 'firebase-functions/v2/https';
 import Stripe from 'stripe';
 import { admin, db, stripe, FUNCTIONS_REGION, SERVICE_ACCOUNT } from '../lib/admin';
 import { handleOrderPaymentSucceeded, handleOrderPaymentFailed } from '../orders/webhookHandlers';
+import { sendAppsFlyerPurchaseEvent } from '../analytics/appsflyerS2S';
 
 const stripeWebhookSecretKey = process.env.STRIPE_WEBHOOK_SECRET || '';
 
@@ -273,7 +274,7 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
 
   try {
     // Find user by Stripe customer ID or email
-    const { userId } = await findUserByCustomerIdOrEmail(customerId);
+    const { userId, userDoc } = await findUserByCustomerIdOrEmail(customerId);
 
     if (!userId) {
       console.log(`❌ No user found for customer ${customerId}`);
@@ -314,6 +315,33 @@ async function handlePaymentSucceeded(invoice: Stripe.Invoice) {
       updateData.updatedBy = 'WEBHOOK_PAYMENT';
 
       console.log(`✅ Payment succeeded for user ${userId} - Updating to ${planName} plan`);
+
+      // Track first subscription payment only — skip monthly/yearly renewals
+      if (invoice.billing_reason === 'subscription_create') {
+        const userData = userDoc?.data();
+        const appsflyerId = userData?.appsflyerId as string | undefined;
+        const appsflyerPlatform = userData?.appsflyerPlatform as string | undefined;
+
+        if (!appsflyerId) {
+          console.log(
+            `⚠️ AppsFlyer S2S: No appsflyerId for user ${userId}, skipping af_purchase`,
+          );
+        } else {
+          const platform: 'android' | 'ios' =
+            appsflyerPlatform === 'ios' ? 'ios' : 'android';
+          const revenue = (invoice.amount_paid ?? 0) / 100;
+          const currency = (invoice.currency ?? 'eur').toUpperCase();
+
+          await sendAppsFlyerPurchaseEvent({
+            appsflyerId,
+            platform,
+            customerUserId: userId,
+            contentId: planName,
+            revenue,
+            currency,
+          });
+        }
+      }
     } else {
       console.log(`✅ Payment succeeded for user ${userId} - One-time payment (no subscription update)`);
     }

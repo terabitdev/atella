@@ -29,7 +29,7 @@ import 'package:atella/services/translation/ml_translation_service.dart';
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await dotenv.load(fileName: ".env");
-  Stripe.publishableKey = dotenv.env['PUBLISHABLE_KEY']!;
+  Stripe.publishableKey = dotenv.env['PublishableKey']!;
   await Stripe.instance.applySettings();
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
   await SystemChrome.setPreferredOrientations([DeviceOrientation.portraitUp]);
@@ -47,6 +47,8 @@ void main() async {
 
   // Initialize AppsFlyer Analytics (attribution + in-app events)
   await _initializeAppsFlyer();
+  // Persist AppsFlyer install ID for returning users (needed for S2S attribution)
+  await AppsFlyerAnalyticsService().syncAppsFlyerIdToFirestore();
 
   // Initialize LocaleController for language management (permanent to survive logout)
   Get.put(LocaleController(), permanent: true);

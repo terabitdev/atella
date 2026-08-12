@@ -98,6 +98,7 @@ class SignupController extends GetxController {
       // Success - Track signup event
       PostHogAnalyticsService().trackUserSignedUp(method: 'email');
       AppsFlyerAnalyticsService().trackCompleteRegistration(method: 'email');
+      AppsFlyerAnalyticsService().syncAppsFlyerIdToFirestore();
 
       // Identify user for PostHog
       final user = _authService.currentUser;
