@@ -39,13 +39,11 @@ class _SettingScreenState extends State<SettingScreen> {
   }
 
   Future<_PlanData> _loadPlanData() async {
+    // Design quota is intentionally NOT fetched here — it's streamed live
+    // from the design_quotas collection in the free-user card below, so it
+    // can never show a stale count from before this screen was built.
     final sub = await StripeSubscriptionService().getCurrentUserSubscription();
-    int freeDesignsUsed = 0;
-    if (sub?.subscriptionPlan == 'FREE') {
-      final quota = await DesignQuotaService().getCurrentUserQuota();
-      freeDesignsUsed = (quota?['designsUsed'] as int?) ?? 0;
-    }
-    return _PlanData(subscription: sub, freeDesignsUsed: freeDesignsUsed);
+    return _PlanData(subscription: sub);
   }
 
   @override
@@ -257,8 +255,6 @@ class _SettingScreenState extends State<SettingScreen> {
                             }
 
                             // Free user card
-                            final freeUsed =
-                                snapshot.data?.freeDesignsUsed ?? 0;
                             final addonDesignsPurchased =
                                 sub?.freeExtraDesignsPurchased ?? 0;
                             final addonDesignsUsed =
@@ -297,13 +293,37 @@ class _SettingScreenState extends State<SettingScreen> {
                                         ),
                                       ),
                                       SizedBox(width: 8.w),
-                                      Text(
-                                        l10n.settingsDesignsLeft(1 - freeUsed),
-                                        style: TextStyle(
-                                          fontSize: 12.sp,
-                                          fontWeight: FontWeight.w500,
-                                          color: Colors.grey.shade600,
-                                        ),
+                                      // Streamed live from the design_quotas
+                                      // collection — never a stale one-shot
+                                      // snapshot, and never a hardcoded limit.
+                                      StreamBuilder<Map<String, dynamic>?>(
+                                        stream: DesignQuotaService()
+                                            .streamCurrentUserQuota(),
+                                        builder: (context, quotaSnapshot) {
+                                          final quota = quotaSnapshot.data;
+                                          final designsUsed =
+                                              (quota?['designsUsed'] as int?) ??
+                                              0;
+                                          final monthlyLimit =
+                                              (quota?['monthlyLimit']
+                                                  as int?) ??
+                                              1;
+                                          final rawRemaining =
+                                              monthlyLimit - designsUsed;
+                                          final remaining = rawRemaining < 0
+                                              ? 0
+                                              : rawRemaining;
+                                          return Text(
+                                            l10n.settingsDesignsLeft(
+                                              remaining,
+                                            ),
+                                            style: TextStyle(
+                                              fontSize: 12.sp,
+                                              fontWeight: FontWeight.w500,
+                                              color: Colors.grey.shade600,
+                                            ),
+                                          );
+                                        },
                                       ),
                                     ],
                                   ),
@@ -1172,7 +1192,6 @@ class _SettingScreenState extends State<SettingScreen> {
 
 class _PlanData {
   final UserSubscription? subscription;
-  final int freeDesignsUsed;
 
-  const _PlanData({this.subscription, this.freeDesignsUsed = 0});
+  const _PlanData({this.subscription});
 }

@@ -56,7 +56,6 @@ import 'package:atella/Modules/refining_concept/Views/Screens/refine_concept_scr
 import 'package:atella/Modules/refining_concept/Views/Screens/refining_brief_screen.dart';
 import 'package:atella/Modules/refining_concept/bindings/refining_concept_binding.dart';
 import 'package:atella/Modules/tech_pack/Views/Screens/generate_tech_pack_screen.dart';
-import 'package:atella/Modules/tech_pack/Views/Screens/recommended_manufacture_screen.dart';
 import 'package:atella/Modules/tech_pack/Views/Screens/tech_pack_details_screen.dart';
 import 'package:atella/Modules/tech_pack/Views/Screens/tech_pack_ready_screen.dart';
 import 'package:atella/Modules/tech_pack/Views/Screens/view_profile_tech_pack_screen.dart';
@@ -137,10 +136,6 @@ class AppPages {
     GetPage(
       name: AppRoutes.techPackReadyScreen,
       page: () => const TechPackReadyScreen(),
-    ),
-    GetPage(
-      name: AppRoutes.recommendedTechPack,
-      page: () => const RecommendedManufactureScreen(),
     ),
     GetPage(
       name: AppRoutes.viewprofileTechPack,

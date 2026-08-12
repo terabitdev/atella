@@ -70,7 +70,10 @@ export const createSupplierInvite = onCall(
       supplierId: supplierRef.id,
       inviteId: inviteRef.id,
       token,
-      inviteLink: `atella://supplier-invite?token=${token}`,
+      // Real https:// link, verified as an Android App Link / iOS Universal
+      // Link (see public/.well-known/) so it's an actual tappable link in
+      // messaging apps, not just a custom scheme that sits as plain text.
+      inviteLink: `https://atelia-123.web.app/supplier-invite?token=${token}`,
     };
   }
 );

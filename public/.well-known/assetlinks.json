@@ -1,0 +1,13 @@
+[
+  {
+    "relation": ["delegate_permission/common.handle_all_urls"],
+    "target": {
+      "namespace": "android_app",
+      "package_name": "com.company.atella",
+      "sha256_cert_fingerprints": [
+        "C1:4B:51:2D:0E:B4:D3:C4:E1:80:CF:F9:97:5E:A3:16:CD:35:AB:A2:1E:E8:06:17:97:67:A6:EF:3F:10:0E:55",
+        "2A:4C:86:7C:A3:10:93:D3:66:68:62:AB:30:2F:1A:B9:3A:E6:10:B4:A8:79:7E:FE:50:90:F1:AA:8C:69:5F:F2"
+      ]
+    }
+  }
+]

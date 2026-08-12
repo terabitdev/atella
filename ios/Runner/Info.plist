@@ -97,5 +97,11 @@
 	</array>
 	<key>com.posthog.posthog.AUTO_INIT</key>
 	<false/>
+	<!-- Deep links are handled ourselves via the app_links package +
+	     DeepLinkService. Without this, Flutter's engine tries to use the
+	     incoming Universal Link URL as the GetX initial route name, which
+	     doesn't match any registered route and crashes route resolution. -->
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 </dict>
 </plist>

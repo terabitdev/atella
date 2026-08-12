@@ -3,12 +3,13 @@ import 'dart:async';
 import 'package:app_links/app_links.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/widgets.dart';
 import 'package:get/get.dart';
 
-/// Listens for `atella://...` links (invite links today; extensible to
-/// other links later) and routes to the matching screen. Custom-scheme
-/// links, not universal/App Links — no web hosting/domain verification
-/// required, which is why this is the v1 approach.
+/// Listens for supplier-invite links — verified Android App Links / iOS
+/// Universal Links (`https://atelia-123.web.app/supplier-invite?token=...`,
+/// see `public/.well-known/`), plus the legacy `atella://` custom scheme
+/// kept for backward compatibility — and routes to the matching screen.
 class DeepLinkService {
   static final DeepLinkService _instance = DeepLinkService._internal();
   factory DeepLinkService() => _instance;
@@ -38,14 +39,41 @@ class DeepLinkService {
   void _handleUri(Uri uri) {
     if (kDebugMode) debugPrint('DeepLink: received $uri');
 
-    if (uri.scheme != 'atella') return;
+    // Verified Android App Link / iOS Universal Link — the real, tappable
+    // link format (see public/.well-known/ for the verification files).
+    final isVerifiedInviteLink = uri.scheme == 'https' &&
+        uri.host == 'atelia-123.web.app' &&
+        uri.path.startsWith('/supplier-invite');
 
-    if (uri.host == 'supplier-invite') {
-      final token = uri.queryParameters['token'];
-      if (token != null && token.isNotEmpty) {
+    // Legacy custom scheme — kept so any already-sent atella:// links
+    // (from before this app-links setup) still work.
+    final isLegacySchemeInviteLink =
+        uri.scheme == 'atella' && uri.host == 'supplier-invite';
+
+    if (!isVerifiedInviteLink && !isLegacySchemeInviteLink) return;
+
+    final token = uri.queryParameters['token'];
+    if (token == null || token.isEmpty) return;
+
+    // A link can arrive (via getInitialLink) before the widget tree has
+    // produced a stable first frame — especially on a cold start, which is
+    // exactly what tapping this link does when the app wasn't already
+    // running. Navigating immediately in that case throws "Looking up a
+    // deactivated widget's ancestor is unsafe" and silently fails, leaving
+    // a blank screen.
+    //
+    // A post-frame callback alone isn't enough either: it still runs during
+    // the frame's synchronous callback phase, which is exactly when the
+    // Navigator can be mid-transition and locked (`_debugLocked` assertion)
+    // handling the app's own initial route push. Nesting a zero-duration
+    // `Future.delayed` inside the post-frame callback pushes the actual
+    // navigation into a later event-loop turn, after that lock is released,
+    // while the post-frame callback still guarantees the tree exists first.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      Future.delayed(Duration.zero, () {
         Get.toNamed(AppRoutes.supplierInviteSignup, arguments: {'token': token});
-      }
-    }
+      });
+    });
   }
 
   void dispose() {

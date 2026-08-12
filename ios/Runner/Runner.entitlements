@@ -6,9 +6,9 @@
 	<array>
 		<string>Default</string>
 	</array>
-</dict>
-</plist>
-nAppPurchase</key>
-	<true/>
+	<key>com.apple.developer.associated-domains</key>
+	<array>
+		<string>applinks:atelia-123.web.app</string>
+	</array>
 </dict>
 </plist>
