@@ -370,12 +370,50 @@ class TechPackReadyScreen extends StatelessWidget {
                 }
                 return Column(
                   children: [
+                    SizedBox(
+                      width: double.infinity,
+                      child: OutlinedButton(
+                        onPressed: controller.isSendingToPartner.value ||
+                                controller.isSaving.value
+                            ? null
+                            : () => controller.sendToManufacturePartner(),
+                        style: OutlinedButton.styleFrom(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12.r),
+                          ),
+                          side: const BorderSide(color: Colors.black, width: 1),
+                          padding: EdgeInsets.symmetric(vertical: 16.h),
+                        ),
+                        child: controller.isSendingToPartner.value
+                            ? SizedBox(
+                                width: 20.w,
+                                height: 20.h,
+                                child: const CircularProgressIndicator(
+                                  strokeWidth: 2,
+                                  valueColor: AlwaysStoppedAnimation<Color>(
+                                    Color(0xFF222222),
+                                  ),
+                                ),
+                              )
+                            : Text(
+                                'Send to manufacture partner',
+                                style: TextStyle(
+                                  fontWeight: FontWeight.w600,
+                                  color: const Color(0xFF222222),
+                                  fontSize: 16.sp,
+                                ),
+                              ),
+                      ),
+                    ),
+                    SizedBox(height: 16.h),
                     SaveExportButtonRow(
-                      onSave: () => _showSaveDialog(context, controller),
-                      onExport: () => _showExportDialog(context, controller),
-                      isSaving: controller
-                          .isSaving
-                          .value, // Show loading on screen save button
+                      onSave: controller.isSendingToPartner.value
+                          ? null
+                          : () => _showSaveDialog(context, controller),
+                      onExport: controller.isSendingToPartner.value
+                          ? null
+                          : () => _showExportDialog(context, controller),
+                      isSaving: controller.isSaving.value,
                       isExporting: controller.isExporting.value,
                     ),
                     SizedBox(height: 30.h),

@@ -1,4 +1,5 @@
 ﻿import 'package:get/get.dart';
+import 'package:atella/Routes/app_routes.dart';
 import 'tech_pack_details_controller.dart';
 import 'generate_tech_pack_controller.dart';
 import '../../../services/firebase/techpack/tech_pack_service.dart';
@@ -6,7 +7,6 @@ import '../../../services/firebase/collections/collections_service.dart';
 import 'package:flutter/material.dart';
 import 'package:share_plus/share_plus.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
-import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -86,7 +86,12 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
 
   // Loading states
   RxBool isSaving = false.obs;
+  RxBool isSendingToPartner = false.obs;
   RxBool isExporting = false.obs;
+
+  /// Remembers the tech pack ID after the first save in this ready-screen session
+  /// (silent send-to-partner or normal Save) so a second save updates the same entry.
+  String? _sessionSavedTechPackId;
 
   // Dialog state management
   final TextEditingController projectNameController = TextEditingController();
@@ -240,8 +245,16 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
     return false;
   }
 
-  // Save tech pack images to Firebase with project and collection info
-  Future<void> saveTechPackWithDetails(String projectName, String collectionName) async {
+  // Save tech pack images to Firebase with project and collection info.
+  // When [silent] is true: no success snackbars and optional skip of home navigation
+  // (used by "Send to manufacture partner"). Returns the saved techPackId, or null on failure.
+  Future<String?> saveTechPackWithDetails(
+    String projectName,
+    String collectionName, {
+    bool silent = false,
+    bool navigateAfterSave = true,
+    bool manageSavingFlag = true,
+  }) async {
     if (!hasGeneratedImages) {
       showAppSnackbar(
         _l10n.tprNoImages,
@@ -249,27 +262,34 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         backgroundColor: Colors.red,
         colorText: Colors.white,
       );
-      return;
+      return null;
     }
 
     try {
-      isSaving.value = true;
+      if (manageSavingFlag) {
+        isSaving.value = true;
+      }
 
       // CHECKPOINT: Wait for design save to complete before proceeding
       final designSaveComplete = await _waitForDesignSaveCompletion();
       if (!designSaveComplete) {
         print('❌ Tech pack save aborted - design save incomplete');
-        return;
+        return null;
       }
 
-      // Check if we're in edit mode
+      // Check if we're in edit mode or already saved once this session
       final isEditMode = _detailsController.isEditMode;
       final editingTechPack = _detailsController.editingTechPack;
+      final hasSessionSavedId = _sessionSavedTechPackId != null;
 
-      // Use existing tech pack ID in edit mode, or generate new one
+      // Reuse edit-mode ID, or ID from an earlier save this session, else create new
       final techPackId = isEditMode && editingTechPack != null
           ? editingTechPack.id
-          : DateTime.now().millisecondsSinceEpoch.toString();
+          : (_sessionSavedTechPackId ??
+              DateTime.now().millisecondsSinceEpoch.toString());
+
+      final isUpdatingExisting =
+          (isEditMode && editingTechPack != null) || hasSessionSavedId;
 
       // Get selected design image URL
       final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
@@ -307,11 +327,10 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       print('   Logo placement: ${_detailsController.logoPlacementController.text}');
       print('   Measurement image: ${_detailsController.measurementImagePath.value}');
 
-      if (isEditMode && editingTechPack != null) {
-        // EDIT MODE: Update existing tech pack
-        print('=== EDIT MODE: Updating existing tech pack ===');
+      if (isUpdatingExisting) {
+        // UPDATE: edit mode or already saved once this session (e.g. send-to-partner)
+        print('=== UPDATING EXISTING TECH PACK ($techPackId) ===');
         
-        // Update tech pack details and questionnaire data
         await _collectionsService.addCollection(collectionName); // Ensure collection exists
         
         await TechPackService.saveTechPackImages(
@@ -324,14 +343,16 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
           designData: _detailsController.designData,
         );
 
-        showAppSnackbar(
-          _l10n.tprUpdated,
-          _l10n.tprTechPackUpdatedSuccessfully,
-          backgroundColor: Colors.black,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(milliseconds: 1500),
-        );
+        if (!silent) {
+          showAppSnackbar(
+            _l10n.tprUpdated,
+            _l10n.tprTechPackUpdatedSuccessfully,
+            backgroundColor: Colors.black,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(milliseconds: 1500),
+          );
+        }
       } else {
         // NEW TECH PACK MODE: Create new tech pack
         print('=== NEW TECH PACK MODE ===');
@@ -346,15 +367,20 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
           designData: _detailsController.designData,
         );
 
-        showAppSnackbar(
-          _l10n.tprSuccess,
-          _l10n.tprTechPackSavedSuccessfully,
-          backgroundColor: Colors.black,
-          colorText: Colors.white,
-          snackPosition: SnackPosition.TOP,
-          duration: const Duration(milliseconds: 1500),
-        );
+        if (!silent) {
+          showAppSnackbar(
+            _l10n.tprSuccess,
+            _l10n.tprTechPackSavedSuccessfully,
+            backgroundColor: Colors.black,
+            colorText: Colors.white,
+            snackPosition: SnackPosition.TOP,
+            duration: const Duration(milliseconds: 1500),
+          );
+        }
       }
+
+      // Remember ID so a later Save / send in this session updates the same entry
+      _sessionSavedTechPackId = techPackId;
 
       // Track tech pack completed
       String garmentType = 'Fashion';
@@ -365,15 +391,18 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         }
       }
       PostHogAnalyticsService().trackTechPackCompleted(garmentType: garmentType);
-      AppsFlyerAnalyticsService().trackGeneratedTechPack();
 
       // Clear any existing project controller to force refresh
       if (Get.isRegistered<dynamic>(tag: 'projectController')) {
         Get.delete(tag: 'projectController', force: true);
       }
 
-      // Navigate to nav_bar with refresh flag
-      Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
+      if (navigateAfterSave) {
+        // Navigate to nav_bar with refresh flag
+        Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
+      }
+
+      return techPackId;
     } catch (e) {
       showAppSnackbar(
         _l10n.tprError,
@@ -384,8 +413,44 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         duration: const Duration(milliseconds: 1500),
       );
       print('Error saving tech pack: ${e.toString()}');
+      return null;
     } finally {
-      isSaving.value = false;
+      if (manageSavingFlag) {
+        isSaving.value = false;
+      }
+    }
+  }
+
+  /// Silently saves with defaults (no popup / success snackbar / home navigation),
+  /// then opens Manufacturing Partners — same destination as Preview 3-dot menu.
+  Future<void> sendToManufacturePartner() async {
+    if (isSaving.value || isSendingToPartner.value) return;
+
+    isSendingToPartner.value = true;
+    try {
+      final projectName = _getProjectName();
+      final techPackId = await saveTechPackWithDetails(
+        projectName,
+        'GENERAL COLLECTION',
+        silent: true,
+        navigateAfterSave: false,
+        manageSavingFlag: false,
+      );
+
+      if (techPackId == null) return;
+
+      final imageUrl = await TechPackService.getSelectedDesignImageUrl();
+
+      Get.toNamed(
+        AppRoutes.supplierDirectory,
+        arguments: {
+          'techPackId': techPackId,
+          'techPackProjectName': projectName,
+          'techPackImageUrl': imageUrl,
+        },
+      );
+    } finally {
+      isSendingToPartner.value = false;
     }
   }
 

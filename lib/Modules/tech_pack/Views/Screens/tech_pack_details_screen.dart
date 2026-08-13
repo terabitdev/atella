@@ -424,41 +424,21 @@ class TechPackDetailsScreen extends StatelessWidget {
                       )
                     : const SizedBox.shrink(),
               ),
-              // Manufacturers Block
+              // Generate Tech Pack button (shown when the last form block is ready)
               Obx(
                 () => controller.showManufacturersBlock.value
                     ? Column(
                         children: [
                           SizedBox(height: 18.h),
-                          Container(
-                            width: double.infinity,
-                            padding: const EdgeInsets.symmetric(
-                              vertical: 18,
-                              horizontal: 14,
-                            ),
-                            decoration: BoxDecoration(
-                              color: Colors.white,
-                              borderRadius: BorderRadius.circular(18.r),
-                            ),
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                RoundedTagContainer(
-                                  text: l10n.tpdManufacturers,
-                                ),
-                                SizedBox(height: 18.h),
-                                Obx(() => OutlineGenerateRoundButton(
-                                  title: l10n.tpdGenerateTechPack,
-                                  onTap: () {
-                                    controller.checkSubscriptionAndGenerate();
-                                  },
-                                  color: AppColors.buttonColor,
-                                  loading: controller.isStartingGeneration.value,
-                                  imagePath: generateTechPackIcon,
-                                )),
-                              ],
-                            ),
-                          ),
+                          Obx(() => OutlineGenerateRoundButton(
+                            title: l10n.tpdGenerateTechPack,
+                            onTap: () {
+                              controller.checkSubscriptionAndGenerate();
+                            },
+                            color: AppColors.buttonColor,
+                            loading: controller.isStartingGeneration.value,
+                            imagePath: generateTechPackIcon,
+                          )),
                         ],
                       )
                     : const SizedBox.shrink(),

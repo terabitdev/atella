@@ -1,6 +1,12 @@
-﻿import 'package:atella/Data/Models/tech_pack_model.dart';
+﻿import 'dart:convert';
+
+import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/export_options_controller.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/export_options_dialog.dart';
+import 'package:atella/services/analytics/posthog_analytics_service.dart';
+import 'package:atella/services/firebase/techpack/tech_pack_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -8,6 +14,7 @@ import 'package:atella/core/utils/app_snackbar.dart';
 import 'package:http/http.dart' as http;
 import 'package:lottie/lottie.dart';
 import 'package:gal/gal.dart';
+import 'package:share_plus/share_plus.dart';
 
 class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
@@ -104,6 +111,15 @@ class _PreviewScreenState extends State<PreviewScreen> {
                 ),
                 _popupDivider(),
                 _PopupMenuItem(
+                  icon: Icons.ios_share_outlined,
+                  label: l10n.tpwExportButton,
+                  onTap: () {
+                    Navigator.of(context).pop();
+                    _showExportDialog();
+                  },
+                ),
+                _popupDivider(),
+                _PopupMenuItem(
                   icon: Icons.send_outlined,
                   label: 'Send to Manufacturing Partner',
                   onTap: () {
@@ -121,6 +137,150 @@ class _PreviewScreenState extends State<PreviewScreen> {
   }
 
   Widget _popupDivider() => Container(height: 1, color: Colors.grey.shade200);
+
+  void _showExportDialog() {
+    showDialog(
+      context: context,
+      barrierDismissible: true,
+      builder: (dialogContext) {
+        return ExportOptionsDialog(
+          onExport: (exportType) async {
+            Navigator.of(dialogContext).pop();
+            await Future.delayed(const Duration(milliseconds: 300));
+            await _exportSavedTechPack(exportType);
+          },
+        );
+      },
+    );
+  }
+
+  Future<void> _exportSavedTechPack(ExportType exportType) async {
+    if (!mounted) return;
+    final l10n = AppLocalizations.of(context)!;
+
+    final techPackUrls = widget.techPack.images.values
+        .where((url) => url.startsWith('http'))
+        .toList();
+
+    if (techPackUrls.isEmpty) {
+      showAppSnackbar(
+        l10n.info,
+        l10n.noImagesAvailable,
+        backgroundColor: Colors.orange,
+        colorText: Colors.white,
+        duration: const Duration(milliseconds: 1500),
+      );
+      return;
+    }
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        content: SizedBox(
+          height: 80.h,
+          child: const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          ),
+        ),
+      ),
+    );
+
+    try {
+      final base64Images = await _urlsToBase64(techPackUrls);
+      if (base64Images.isEmpty) {
+        throw Exception('Failed to load tech pack images');
+      }
+
+      String? selectedDesignBase64;
+      final designUrl = widget.techPack.selectedDesignImageUrl;
+      if (designUrl != null && designUrl.startsWith('http')) {
+        selectedDesignBase64 = await _urlToBase64(designUrl);
+      }
+
+      final projectName = widget.techPack.projectName;
+      final summary =
+          'Project: $projectName\nCollection: ${widget.techPack.collectionName}';
+
+      late final String filePath;
+      switch (exportType) {
+        case ExportType.pdfWithLogo:
+        case ExportType.neutralPdf:
+          filePath = await TechPackService.generateTechPackPDF(
+            base64Images: base64Images,
+            techPackSummary: summary,
+            projectName: projectName,
+            withLogo: exportType == ExportType.pdfWithLogo,
+            selectedDesignImageBase64: selectedDesignBase64,
+          );
+          break;
+        case ExportType.word:
+          filePath = await TechPackService.generateTechPackWord(
+            base64Images: base64Images,
+            techPackSummary: summary,
+            projectName: projectName,
+          );
+          break;
+      }
+
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
+
+      await Share.shareXFiles(
+        [XFile(filePath)],
+        text: l10n.tprTechPackDocument,
+      );
+
+      if (exportType != ExportType.word) {
+        await TechPackService.downloadPDF(filePath);
+        showAppSnackbar(
+          l10n.tprSuccess,
+          l10n.tprPdfSavedSuccessfully,
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(seconds: 3),
+        );
+        PostHogAnalyticsService().trackTechPackDownloaded(format: 'pdf');
+      }
+    } catch (e) {
+      if (mounted) Navigator.of(context, rootNavigator: true).pop();
+      showAppSnackbar(
+        l10n.tprError,
+        exportType == ExportType.word
+            ? l10n.tprFailedToExportWord(e.toString())
+            : l10n.tprFailedToExportPdf(e.toString()),
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+      );
+    }
+  }
+
+  Future<List<String>> _urlsToBase64(List<String> urls) async {
+    final result = <String>[];
+    for (final url in urls) {
+      final encoded = await _urlToBase64(url);
+      if (encoded != null) result.add(encoded);
+    }
+    return result;
+  }
+
+  Future<String?> _urlToBase64(String url) async {
+    try {
+      final response = await http.get(Uri.parse(url));
+      if (response.statusCode != 200 || response.bodyBytes.isEmpty) {
+        return null;
+      }
+      return base64Encode(response.bodyBytes);
+    } catch (_) {
+      return null;
+    }
+  }
 
   // Send this tech pack to a supplier via the invite-only marketplace.
   void _handleSendToSupplier() {

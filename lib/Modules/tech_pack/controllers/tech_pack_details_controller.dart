@@ -11,6 +11,7 @@ import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../services/PaymentService/revenuecat_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
 import '../../../services/internet_connectivity_checker.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 import '../Views/Widgets/techpack_limit_dialog.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
@@ -774,6 +775,7 @@ class TechPackDetailsController extends GetxController {
           colorText: Colors.white,
           duration: const Duration(milliseconds: 1500),
         );
+        AppsFlyerAnalyticsService().trackGeneratedTechPack();
       } else {
         print(
           '⚠️ Warning: Only ${generatedTechPackImages.length} images generated',

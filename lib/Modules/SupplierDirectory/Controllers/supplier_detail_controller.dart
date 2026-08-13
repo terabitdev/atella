@@ -4,6 +4,7 @@ import 'package:atella/Data/Models/supplier_model.dart';
 import 'package:atella/core/utils/app_snackbar.dart';
 import 'package:atella/services/firebase/services/messaging_service.dart';
 import 'package:atella/services/firebase/services/supplier_submission_service.dart';
+import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 
 class SupplierDetailController extends GetxController {
   final SupplierSubmissionService _service = SupplierSubmissionService();
@@ -62,6 +63,7 @@ class SupplierDetailController extends GetxController {
       );
       hasSent.value = true;
       showAppSnackbar('Sent!', 'Your tech pack has been sent to ${supplier.value?.companyName ?? "the supplier"}.', backgroundColor: Colors.black, colorText: Colors.white);
+      AppsFlyerAnalyticsService().trackContactedManufacturer();
     } catch (e) {
       showAppSnackbar('Error', 'Failed to send tech pack. Please try again.', backgroundColor: Colors.red, colorText: Colors.white);
     } finally {

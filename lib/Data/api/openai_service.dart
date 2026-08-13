@@ -1192,19 +1192,9 @@ Style requirements:
 - CRITICAL: Sections 1, 3, 4, 5, 6 are TEXT ONLY. Zero images or graphics inside those sections. Section 2 (COLORS) is the only section allowed to contain drawn color swatch blocks.
 ''';
 
-    // Resolve logo placement — chest without explicit side defaults to left chest
-    final String resolvedLogoPlacement = () {
-      final lp = logoPlacement.toLowerCase();
-      if ((lp.contains('chest') || lp.contains('centre chest') || lp.contains('center chest')) &&
-          !lp.contains('left') && !lp.contains('right')) {
-        return 'left chest';
-      }
-      return logoPlacement;
-    }();
-
-    // Technical flat always uses a plain dashed box labelled "LOGO" — never renders an actual image
+    // Dashed LOGO box at the user's requested location (not hardcoded to chest/neck)
     final String technicalLogoInstruction =
-        '\n- Logo placeholder: Draw on the FRONT VIEW (left half) only — a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it in plain text. Place it at $resolvedLogoPlacement, 3 cm below the front neckline. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image, graphic, or artwork inside or near this box. Do NOT draw the logo placeholder on the back view.';
+        '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacement". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
 
     final measurements = _techFlatMeasurements(garmentType);
 
