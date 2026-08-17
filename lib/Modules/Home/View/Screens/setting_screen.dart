@@ -1,5 +1,6 @@
 import 'package:atella/Modules/Home/Controllers/profile_controller.dart';
 import 'package:atella/Widgets/setting_card.dart';
+import 'package:atella/Widgets/bug_report_dialog.dart';
 import 'package:atella/core/themes/app_fonts.dart';
 import 'package:atella/core/themes/app_colors.dart';
 import 'package:atella/core/constants/app_images.dart';
@@ -429,6 +430,15 @@ class _SettingScreenState extends State<SettingScreen> {
                           title: l10n.privacyPolicy,
                           onTap: () {
                             Get.toNamed('/privacy');
+                          },
+                        ),
+                        SettingCard(
+                          title: 'Bug Report',
+                          onTap: () {
+                            showDialog(
+                              context: context,
+                              builder: (_) => const BugReportDialog(),
+                            );
                           },
                         ),
                         SettingCard(

@@ -169,7 +169,9 @@ class OpenAIService {
       } else {
         print('OpenAI: Error response: ${response.body}');
         if (response.body.isEmpty) {
-          throw Exception('OpenAI API Error: status ${response.statusCode}, empty response body');
+          throw Exception(
+            'OpenAI API Error: status ${response.statusCode}, empty response body',
+          );
         }
         final errorData = jsonDecode(response.body);
         throw Exception('OpenAI API Error: ${errorData['error']['message']}');
@@ -213,7 +215,9 @@ class OpenAIService {
       if (!enhancedPrompt.toLowerCase().contains('white background')) {
         enhancedPrompt +=
             '. Two-panel split image: LEFT panel shows FRONT VIEW, RIGHT panel shows BACK VIEW of the same garment, side by side on a pure white background. No mannequin, no people, ghost mannequin effect, professional e-commerce product photography.';
-        print('OpenAI: Added white background and front/back split requirement to prompt');
+        print(
+          'OpenAI: Added white background and front/back split requirement to prompt',
+        );
       }
 
       // Truncate prompt to 1000 characters if necessary
@@ -295,7 +299,9 @@ class OpenAIService {
       } else {
         print('OpenAI: Error response: ${response.body}');
         if (response.body.isEmpty) {
-          throw Exception('OpenAI API Error: status ${response.statusCode}, empty response body');
+          throw Exception(
+            'OpenAI API Error: status ${response.statusCode}, empty response body',
+          );
         }
         final errorData = jsonDecode(response.body);
         throw Exception('OpenAI API Error: ${errorData['error']['message']}');
@@ -452,18 +458,38 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
   static const Map<String, Map<String, String>> fabricDefaults = {
     // Cotton subcategories
     'cotton': {'composition': '100% Cotton', 'type': 'Jersey', 'gsm': '180'},
-    'lightweight (poplin, voile)': {'composition': '100% Cotton', 'type': 'Poplin', 'gsm': '90'},
+    'lightweight (poplin, voile)': {
+      'composition': '100% Cotton',
+      'type': 'Poplin',
+      'gsm': '90',
+    },
     'poplin': {'composition': '100% Cotton', 'type': 'Poplin', 'gsm': '90'},
     'voile': {'composition': '100% Cotton', 'type': 'Voile', 'gsm': '70'},
-    'medium (twill)': {'composition': '100% Cotton', 'type': 'Twill', 'gsm': '150'},
+    'medium (twill)': {
+      'composition': '100% Cotton',
+      'type': 'Twill',
+      'gsm': '150',
+    },
     'twill': {'composition': '100% Cotton', 'type': 'Twill', 'gsm': '150'},
-    'heavy (denim, canvas)': {'composition': '100% Cotton', 'type': 'Denim', 'gsm': '320'},
+    'heavy (denim, canvas)': {
+      'composition': '100% Cotton',
+      'type': 'Denim',
+      'gsm': '320',
+    },
     'denim': {'composition': '100% Cotton', 'type': 'Denim', 'gsm': '320'},
     'canvas': {'composition': '100% Cotton', 'type': 'Canvas', 'gsm': '350'},
     // Wool
     'wool': {'composition': '100% Wool', 'type': 'Woven', 'gsm': '300'},
-    'merino': {'composition': '100% Merino Wool', 'type': 'Fine Knit', 'gsm': '200'},
-    'cashmere': {'composition': '100% Cashmere', 'type': 'Fine Knit', 'gsm': '160'},
+    'merino': {
+      'composition': '100% Merino Wool',
+      'type': 'Fine Knit',
+      'gsm': '200',
+    },
+    'cashmere': {
+      'composition': '100% Cashmere',
+      'type': 'Fine Knit',
+      'gsm': '160',
+    },
     'tweed': {'composition': '100% Wool', 'type': 'Tweed', 'gsm': '400'},
     'felt': {'composition': '100% Wool', 'type': 'Felt', 'gsm': '500'},
     // Silk
@@ -474,25 +500,69 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     // Linen
     'linen': {'composition': '100% Linen', 'type': 'Plain Weave', 'gsm': '140'},
     'plain': {'composition': '100% Linen', 'type': 'Plain Weave', 'gsm': '140'},
-    'textured': {'composition': '100% Linen', 'type': 'Textured Weave', 'gsm': '160'},
-    'blended': {'composition': '55% Linen 45% Cotton', 'type': 'Blended Weave', 'gsm': '150'},
+    'textured': {
+      'composition': '100% Linen',
+      'type': 'Textured Weave',
+      'gsm': '160',
+    },
+    'blended': {
+      'composition': '55% Linen 45% Cotton',
+      'type': 'Blended Weave',
+      'gsm': '150',
+    },
     // Synthetic
-    'polyester': {'composition': '100% Polyester', 'type': 'Woven', 'gsm': '120'},
+    'polyester': {
+      'composition': '100% Polyester',
+      'type': 'Woven',
+      'gsm': '120',
+    },
     'nylon': {'composition': '100% Nylon', 'type': 'Plain Weave', 'gsm': '100'},
-    'spandex': {'composition': '80% Polyester 20% Spandex', 'type': 'Stretch Woven', 'gsm': '180'},
+    'spandex': {
+      'composition': '80% Polyester 20% Spandex',
+      'type': 'Stretch Woven',
+      'gsm': '180',
+    },
     'neoprene': {'composition': '100% Neoprene', 'type': 'Scuba', 'gsm': '380'},
     // Eco
-    'organic cotton': {'composition': '100% Organic Cotton', 'type': 'Jersey', 'gsm': '180'},
-    'recycled polyester': {'composition': '100% Recycled Polyester', 'type': 'Woven', 'gsm': '120'},
-    'bamboo': {'composition': '70% Bamboo 30% Cotton', 'type': 'Jersey', 'gsm': '160'},
+    'organic cotton': {
+      'composition': '100% Organic Cotton',
+      'type': 'Jersey',
+      'gsm': '180',
+    },
+    'recycled polyester': {
+      'composition': '100% Recycled Polyester',
+      'type': 'Woven',
+      'gsm': '120',
+    },
+    'bamboo': {
+      'composition': '70% Bamboo 30% Cotton',
+      'type': 'Jersey',
+      'gsm': '160',
+    },
     'hemp': {'composition': '100% Hemp', 'type': 'Plain Weave', 'gsm': '200'},
     // Leather
-    'leather': {'composition': '100% Genuine Leather', 'type': 'Full Grain', 'gsm': '800'},
-    'faux leather': {'composition': '100% Faux Leather (PU)', 'type': 'Backed Fabric', 'gsm': '600'},
+    'leather': {
+      'composition': '100% Genuine Leather',
+      'type': 'Full Grain',
+      'gsm': '800',
+    },
+    'faux leather': {
+      'composition': '100% Faux Leather (PU)',
+      'type': 'Backed Fabric',
+      'gsm': '600',
+    },
     // Knitwear
     'jersey': {'composition': '100% Cotton', 'type': 'Jersey', 'gsm': '180'},
-    'rib knit': {'composition': '95% Cotton 5% Elastane', 'type': 'Rib Knit', 'gsm': '220'},
-    'interlock': {'composition': '100% Cotton', 'type': 'Interlock', 'gsm': '200'},
+    'rib knit': {
+      'composition': '95% Cotton 5% Elastane',
+      'type': 'Rib Knit',
+      'gsm': '220',
+    },
+    'interlock': {
+      'composition': '100% Cotton',
+      'type': 'Interlock',
+      'gsm': '200',
+    },
   };
 
   static const Map<String, String> technicalPropertiesDefaults = {
@@ -567,7 +637,11 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     'cardigan': 'No decorative stitching',
   };
 
-  static String resolveByGarmentType(String garmentType, Map<String, String> defaults, String fallback) {
+  static String resolveByGarmentType(
+    String garmentType,
+    Map<String, String> defaults,
+    String fallback,
+  ) {
     final key = garmentType.toLowerCase().trim();
     if (defaults.containsKey(key)) return defaults[key]!;
     for (final entry in defaults.entries) {
@@ -576,7 +650,11 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return fallback;
   }
 
-  static String _resolveFabricLine(String compositionInput, String weightInput, String creativeBriefFabric) {
+  static String _resolveFabricLine(
+    String compositionInput,
+    String weightInput,
+    String creativeBriefFabric,
+  ) {
     final compositionKey = compositionInput.toLowerCase().trim();
     // Strip any "Category:" prefix from creative brief fabric (e.g. "Knitwear:Jersey" → "jersey")
     final fabricTypeKey = creativeBriefFabric.contains(':')
@@ -584,13 +662,16 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
         : creativeBriefFabric.toLowerCase().trim();
 
     // Look up defaults: try composition input first, then creative brief fabric type
-    final defaults = fabricDefaults[compositionKey] ?? fabricDefaults[fabricTypeKey];
+    final defaults =
+        fabricDefaults[compositionKey] ?? fabricDefaults[fabricTypeKey];
 
     // If composition already has %, treat as complete — only fill missing weight
     if (compositionInput.contains('%')) {
       final resolvedType = defaults?['type'] ?? fabricTypeKey;
       final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
-      final resolvedGsm = rawGsm.isNotEmpty ? rawGsm : (defaults?['gsm'] ?? '180');
+      final resolvedGsm = rawGsm.isNotEmpty
+          ? rawGsm
+          : (defaults?['gsm'] ?? '180');
       return resolvedType.isNotEmpty
           ? '$compositionInput, $resolvedType, $resolvedGsm GSM'
           : '$compositionInput, $resolvedGsm GSM';
@@ -608,7 +689,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     // Fallback: pass through whatever user entered
     if (compositionInput.isNotEmpty) {
       final rawGsm = weightInput.replaceAll(RegExp(r'[^0-9]'), '');
-      return rawGsm.isNotEmpty ? '$compositionInput, $rawGsm GSM' : compositionInput;
+      return rawGsm.isNotEmpty
+          ? '$compositionInput, $rawGsm GSM'
+          : compositionInput;
     }
 
     return '';
@@ -639,7 +722,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       return '$compositionInput, ${mapEntry['gsm']} GSM';
     } else {
       // Both manual — use raw values, skip map entirely
-      return rawGsm.isNotEmpty ? '$compositionInput, $rawGsm GSM' : compositionInput;
+      return rawGsm.isNotEmpty
+          ? '$compositionInput, $rawGsm GSM'
+          : compositionInput;
     }
   }
 
@@ -663,7 +748,8 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     if (measurementChart.isNotEmpty) {
       section += 'Measurement data: $measurementChart\n';
     }
-    section += 'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
+    section +=
+        'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
         'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
         'Tolerance: ±1 cm for all measurements.\n';
     return section;
@@ -686,21 +772,31 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       return '• Primary colors: match the garment shown in the reference image above — draw one small solid color swatch block (1.5cm x 1.5cm) for each distinct color visible on the garment, with its Pantone code as text next to it\n';
     }
     return colors
-        .map((c) => '• $c — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the text "$c" printed next to it')
-        .join('\n') + '\n';
+            .map(
+              (c) =>
+                  '• $c — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the text "$c" printed next to it',
+            )
+            .join('\n') +
+        '\n';
   }
 
   /// Calls gpt-4o vision with the garment image and returns dominant colors as a plain text list.
   /// Returns null if the image cannot be read or the API call fails.
-  static Future<String?> extractColorsFromGarmentImage(String imagePathOrUrl) async {
+  static Future<String?> extractColorsFromGarmentImage(
+    String imagePathOrUrl,
+  ) async {
     try {
       final apiKey = await getApiKey();
       if (apiKey == null || apiKey.isEmpty) return null;
 
       List<Map<String, dynamic>> imageContent;
-      if (imagePathOrUrl.startsWith('http://') || imagePathOrUrl.startsWith('https://')) {
+      if (imagePathOrUrl.startsWith('http://') ||
+          imagePathOrUrl.startsWith('https://')) {
         imageContent = [
-          {'type': 'image_url', 'image_url': {'url': imagePathOrUrl}},
+          {
+            'type': 'image_url',
+            'image_url': {'url': imagePathOrUrl},
+          },
         ];
       } else if (imagePathOrUrl.startsWith('iVBOR') ||
           imagePathOrUrl.startsWith('/9j/') ||
@@ -708,43 +804,53 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
         // Already base64 data — wrap directly as a data URI
         final mimeType = imagePathOrUrl.startsWith('/9j/') ? 'jpeg' : 'png';
         imageContent = [
-          {'type': 'image_url', 'image_url': {'url': 'data:image/$mimeType;base64,$imagePathOrUrl'}},
+          {
+            'type': 'image_url',
+            'image_url': {'url': 'data:image/$mimeType;base64,$imagePathOrUrl'},
+          },
         ];
       } else {
         final base64Image = await _convertImageToBase64(imagePathOrUrl);
         if (base64Image == null) return null;
         imageContent = [
-          {'type': 'image_url', 'image_url': {'url': 'data:image/jpeg;base64,$base64Image'}},
+          {
+            'type': 'image_url',
+            'image_url': {'url': 'data:image/jpeg;base64,$base64Image'},
+          },
         ];
       }
 
-      final response = await http.post(
-        Uri.parse('$_baseUrl/chat/completions'),
-        headers: {
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $apiKey',
-        },
-        body: jsonEncode({
-          'model': 'gpt-4o',
-          'messages': [
-            {
-              'role': 'user',
-              'content': [
-                {
-                  'type': 'text',
-                  'text': 'Identify the dominant colors of this garment and match each one to its closest Pantone TPX color code. Return ONLY a short comma-separated list of Pantone codes in the exact format "Pantone 19-4052 TPX" (e.g. "Pantone 19-4052 TPX, Pantone 11-0601 TPX, Pantone 14-0952 TPX"). Maximum 5 colors. No color names, no explanations, no extra text.',
-                },
-                ...imageContent,
-              ],
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/chat/completions'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $apiKey',
             },
-          ],
-          'max_tokens': 60,
-        }),
-      ).timeout(const Duration(seconds: 20));
+            body: jsonEncode({
+              'model': 'gpt-4o',
+              'messages': [
+                {
+                  'role': 'user',
+                  'content': [
+                    {
+                      'type': 'text',
+                      'text':
+                          'Identify the dominant colors of this garment and match each one to its closest Pantone TPX color code. Return ONLY a short comma-separated list of Pantone codes in the exact format "Pantone 19-4052 TPX" (e.g. "Pantone 19-4052 TPX, Pantone 11-0601 TPX, Pantone 14-0952 TPX"). Maximum 5 colors. No color names, no explanations, no extra text.',
+                    },
+                    ...imageContent,
+                  ],
+                },
+              ],
+              'max_tokens': 60,
+            }),
+          )
+          .timeout(const Duration(seconds: 20));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final colors = (data['choices'][0]['message']['content'] as String).trim();
+        final colors = (data['choices'][0]['message']['content'] as String)
+            .trim();
         print('🎨 Extracted colors: $colors');
         return colors;
       } else {
@@ -790,9 +896,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
                 },
                 {
                   'type': 'image_url',
-                  'image_url': {
-                    'url': 'data:image/jpeg;base64,$base64Image',
-                  },
+                  'image_url': {'url': 'data:image/jpeg;base64,$base64Image'},
                 },
               ],
             },
@@ -821,19 +925,29 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
   static Map<String, String> _techFlatMeasurements(String garmentType) {
     final key = garmentType.toLowerCase().trim();
 
-    if (['t-shirt', 'tshirt', 't shirt', 'tank', 'polo', 'crop top'].any((k) => key.contains(k))) {
+    if ([
+      't-shirt',
+      'tshirt',
+      't shirt',
+      'tank',
+      'polo',
+      'crop top',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
+        'front':
+            '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
             '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
             '  • Front length: 68 cm — vertical arrow along the left outer edge, top to hem\n'
             '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm\n'
             '  • Sleeve length: 22 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back': '  • Shoulder width: 42 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 42 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 70 cm — vertical arrow along the right outer edge, top to hem\n'
             '  • Sleeve opening width: 16 cm — horizontal arrow at the sleeve hem\n'
             '  • Waist width: 46 cm — horizontal arrow at waist level\n'
             '  • Hem width: 48 cm — horizontal arrow at the bottom hem',
-        'table': '  Neck Opening: 20 cm        Shoulder Width: 42 cm\n'
+        'table':
+            '  Neck Opening: 20 cm        Shoulder Width: 42 cm\n'
             '  Chest Width: 50 cm         Back Length: 70 cm\n'
             '  Front Length: 68 cm        Sleeve Opening: 16 cm\n'
             '  Armhole Depth: 22 cm       Waist Width: 46 cm\n'
@@ -841,19 +955,29 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       };
     }
 
-    if (['sweatshirt', 'hoodie', 'sweater', 'pullover', 'cardigan', 'knitwear'].any((k) => key.contains(k))) {
+    if ([
+      'sweatshirt',
+      'hoodie',
+      'sweater',
+      'pullover',
+      'cardigan',
+      'knitwear',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Neck opening width: 22 cm — horizontal arrow across the neckline\n'
+        'front':
+            '  • Neck opening width: 22 cm — horizontal arrow across the neckline\n'
             '  • Chest width: 56 cm — horizontal arrow across the widest chest point\n'
             '  • Front length: 70 cm — vertical arrow along the left outer edge, top to hem\n'
             '  • Armhole depth: 25 cm — vertical arrow from shoulder seam to underarm\n'
             '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back': '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 72 cm — vertical arrow along the right outer edge, top to hem\n'
             '  • Cuff width: 18 cm — horizontal arrow across the cuff opening\n'
             '  • Hem width: 54 cm — horizontal arrow at the bottom hem\n'
             '  • Sleeve opening width: 18 cm — horizontal arrow at the sleeve hem',
-        'table': '  Neck Opening: 22 cm        Shoulder Width: 46 cm\n'
+        'table':
+            '  Neck Opening: 22 cm        Shoulder Width: 46 cm\n'
             '  Chest Width: 56 cm         Back Length: 72 cm\n'
             '  Front Length: 70 cm        Cuff Width: 18 cm\n'
             '  Armhole Depth: 25 cm       Hem Width: 54 cm\n'
@@ -863,17 +987,20 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     if (['shirt', 'blouse', 'button'].any((k) => key.contains(k))) {
       return {
-        'front': '  • Neck opening width: 38 cm — horizontal arrow at the collar base\n'
+        'front':
+            '  • Neck opening width: 38 cm — horizontal arrow at the collar base\n'
             '  • Chest width: 54 cm — horizontal arrow across the widest chest point\n'
             '  • Front length: 78 cm — vertical arrow along the left outer edge, top to hem\n'
             '  • Armhole depth: 24 cm — vertical arrow from shoulder seam to underarm\n'
             '  • Sleeve length: 62 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back': '  • Shoulder width: 44 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 44 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 80 cm — vertical arrow along the right outer edge, top to hem\n'
             '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
             '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
             '  • Sleeve opening width: 23 cm — horizontal arrow at the sleeve hem',
-        'table': '  Neck Opening: 38 cm        Shoulder Width: 44 cm\n'
+        'table':
+            '  Neck Opening: 38 cm        Shoulder Width: 44 cm\n'
             '  Chest Width: 54 cm         Back Length: 80 cm\n'
             '  Front Length: 78 cm        Collar Height: 4 cm\n'
             '  Armhole Depth: 24 cm       Cuff Width: 11 cm\n'
@@ -881,19 +1008,30 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       };
     }
 
-    if (['jacket', 'coat', 'blazer', 'overcoat', 'trench', 'parka', 'outerwear'].any((k) => key.contains(k))) {
+    if ([
+      'jacket',
+      'coat',
+      'blazer',
+      'overcoat',
+      'trench',
+      'parka',
+      'outerwear',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
+        'front':
+            '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
             '  • Chest width: 58 cm — horizontal arrow across the widest chest point\n'
             '  • Front length: 82 cm — vertical arrow along the left outer edge, top to hem\n'
             '  • Armhole depth: 26 cm — vertical arrow from shoulder seam to underarm\n'
             '  • Sleeve length: 64 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back': '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 84 cm — vertical arrow along the right outer edge, top to hem\n'
             '  • Collar height: 6 cm — vertical arrow at the collar stand\n'
             '  • Cuff width: 13 cm — horizontal arrow across the cuff opening\n'
             '  • Sleeve opening width: 26 cm — horizontal arrow at the sleeve hem',
-        'table': '  Neck Opening: 20 cm        Shoulder Width: 46 cm\n'
+        'table':
+            '  Neck Opening: 20 cm        Shoulder Width: 46 cm\n'
             '  Chest Width: 58 cm         Back Length: 84 cm\n'
             '  Front Length: 82 cm        Collar Height: 6 cm\n'
             '  Armhole Depth: 26 cm       Cuff Width: 13 cm\n'
@@ -903,17 +1041,20 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     if (['dress', 'gown', 'frock'].any((k) => key.contains(k))) {
       return {
-        'front': '  • Bust width: 46 cm — horizontal arrow across the widest bust point\n'
+        'front':
+            '  • Bust width: 46 cm — horizontal arrow across the widest bust point\n'
             '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
             '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
             '  • Front length: 105 cm — vertical arrow from shoulder to hem\n'
             '  • Armhole depth: 20 cm — vertical arrow from shoulder seam to underarm',
-        'back': '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 107 cm — vertical arrow along the right outer edge, top to hem\n'
             '  • Neck opening width: 16 cm — horizontal arrow across the back neckline\n'
             '  • Waist to hem: 70 cm — vertical arrow from waist to hem\n'
             '  • Hem width: 60 cm — horizontal arrow at the bottom hem',
-        'table': '  Bust Width: 46 cm          Shoulder Width: 38 cm\n'
+        'table':
+            '  Bust Width: 46 cm          Shoulder Width: 38 cm\n'
             '  Waist Width: 36 cm         Back Length: 107 cm\n'
             '  Hip Width: 52 cm           Neck Opening: 16 cm\n'
             '  Front Length: 105 cm       Waist to Hem: 70 cm\n'
@@ -923,17 +1064,20 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     if (['skirt'].any((k) => key.contains(k))) {
       return {
-        'front': '  • Waist width: 34 cm — horizontal arrow at the waistband top\n'
+        'front':
+            '  • Waist width: 34 cm — horizontal arrow at the waistband top\n'
             '  • Hip width: 50 cm — horizontal arrow at the widest hip point\n'
             '  • Front length: 60 cm — vertical arrow from waistband to hem\n'
             '  • Hem width: 58 cm — horizontal arrow at the bottom hem\n'
             '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'back': '  • Back waist width: 34 cm — horizontal arrow at the back waistband\n'
+        'back':
+            '  • Back waist width: 34 cm — horizontal arrow at the back waistband\n'
             '  • Back hip width: 50 cm — horizontal arrow at the widest back hip point\n'
             '  • Back length: 62 cm — vertical arrow from waistband to hem\n'
             '  • Back hem width: 58 cm — horizontal arrow at the back hem\n'
             '  • Side seam length: 58 cm — vertical arrow along the side seam',
-        'table': '  Waist Width: 34 cm         Back Waist: 34 cm\n'
+        'table':
+            '  Waist Width: 34 cm         Back Waist: 34 cm\n'
             '  Hip Width: 50 cm           Back Hip: 50 cm\n'
             '  Front Length: 60 cm        Back Length: 62 cm\n'
             '  Hem Width: 58 cm           Back Hem: 58 cm\n'
@@ -941,19 +1085,29 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       };
     }
 
-    if (['trouser', 'pant', 'jean', 'chino', 'jogger', 'cargo'].any((k) => key.contains(k))) {
+    if ([
+      'trouser',
+      'pant',
+      'jean',
+      'chino',
+      'jogger',
+      'cargo',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
+        'front':
+            '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
             '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
             '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
             '  • Outseam length: 102 cm — vertical arrow from waistband to hem\n'
             '  • Inseam length: 80 cm — vertical arrow from crotch to hem',
-        'back': '  • Back rise: 32 cm — vertical arrow from waistband to crotch\n'
+        'back':
+            '  • Back rise: 32 cm — vertical arrow from waistband to crotch\n'
             '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
             '  • Knee width: 22 cm — horizontal arrow at the knee level\n'
             '  • Leg opening: 18 cm — horizontal arrow at the hem\n'
             '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'table': '  Waist Width: 36 cm         Back Rise: 32 cm\n'
+        'table':
+            '  Waist Width: 36 cm         Back Rise: 32 cm\n'
             '  Hip Width: 52 cm           Seat Width: 54 cm\n'
             '  Thigh Width: 30 cm         Knee Width: 22 cm\n'
             '  Outseam: 102 cm            Leg Opening: 18 cm\n'
@@ -963,17 +1117,20 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     if (['short'].any((k) => key.contains(k))) {
       return {
-        'front': '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
+        'front':
+            '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
             '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
             '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
             '  • Outseam length: 42 cm — vertical arrow from waistband to hem\n'
             '  • Inseam length: 18 cm — vertical arrow from crotch to hem',
-        'back': '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
+        'back':
+            '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
             '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
             '  • Hem width: 26 cm — horizontal arrow at the bottom hem\n'
             '  • Side seam: 40 cm — vertical arrow along the side seam\n'
             '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'table': '  Waist Width: 36 cm         Back Rise: 28 cm\n'
+        'table':
+            '  Waist Width: 36 cm         Back Rise: 28 cm\n'
             '  Hip Width: 52 cm           Seat Width: 54 cm\n'
             '  Thigh Width: 30 cm         Hem Width: 26 cm\n'
             '  Outseam: 42 cm             Side Seam: 40 cm\n'
@@ -981,19 +1138,27 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       };
     }
 
-    if (['legging', 'tight', 'activewear', 'yoga'].any((k) => key.contains(k))) {
+    if ([
+      'legging',
+      'tight',
+      'activewear',
+      'yoga',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Waist width: 28 cm — horizontal arrow at the waistband\n'
+        'front':
+            '  • Waist width: 28 cm — horizontal arrow at the waistband\n'
             '  • Hip width: 46 cm — horizontal arrow at the widest hip point\n'
             '  • Thigh width: 26 cm — horizontal arrow at the widest thigh\n'
             '  • Outseam length: 94 cm — vertical arrow from waistband to hem\n'
             '  • Inseam length: 72 cm — vertical arrow from crotch to hem',
-        'back': '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
+        'back':
+            '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
             '  • Seat width: 48 cm — horizontal arrow at the seat level\n'
             '  • Knee width: 20 cm — horizontal arrow at the knee level\n'
             '  • Ankle width: 12 cm — horizontal arrow at the ankle/hem\n'
             '  • Calf width: 16 cm — horizontal arrow at the calf level',
-        'table': '  Waist Width: 28 cm         Back Rise: 28 cm\n'
+        'table':
+            '  Waist Width: 28 cm         Back Rise: 28 cm\n'
             '  Hip Width: 46 cm           Seat Width: 48 cm\n'
             '  Thigh Width: 26 cm         Knee Width: 20 cm\n'
             '  Outseam: 94 cm             Ankle Width: 12 cm\n'
@@ -1001,19 +1166,27 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       };
     }
 
-    if (['jumpsuit', 'romper', 'playsuit', 'overall'].any((k) => key.contains(k))) {
+    if ([
+      'jumpsuit',
+      'romper',
+      'playsuit',
+      'overall',
+    ].any((k) => key.contains(k))) {
       return {
-        'front': '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
+        'front':
+            '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
             '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
             '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
             '  • Total length: 130 cm — vertical arrow from shoulder to hem\n'
             '  • Inseam length: 78 cm — vertical arrow from crotch to hem',
-        'back': '  • Shoulder width: 40 cm — horizontal arrow across the full shoulder seam\n'
+        'back':
+            '  • Shoulder width: 40 cm — horizontal arrow across the full shoulder seam\n'
             '  • Back length: 132 cm — vertical arrow from shoulder to hem\n'
             '  • Sleeve length: 60 cm — arrow along the outer sleeve edge\n'
             '  • Leg opening: 18 cm — horizontal arrow at the leg hem\n'
             '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm',
-        'table': '  Chest Width: 50 cm         Shoulder Width: 40 cm\n'
+        'table':
+            '  Chest Width: 50 cm         Shoulder Width: 40 cm\n'
             '  Waist Width: 36 cm         Back Length: 132 cm\n'
             '  Hip Width: 52 cm           Sleeve Length: 60 cm\n'
             '  Total Length: 130 cm       Leg Opening: 18 cm\n'
@@ -1023,17 +1196,20 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     // Default fallback
     return {
-      'front': '  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top\n'
+      'front':
+          '  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top\n'
           '  • Chest width: 48 cm — horizontal arrow across the widest chest point\n'
           '  • Front length: 65 cm — vertical arrow along the left outer edge, top to hem\n'
           '  • Armhole depth: 22 cm — vertical arrow on the side from shoulder seam to underarm\n'
           '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
-      'back': '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
+      'back':
+          '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
           '  • Back length: 67 cm — vertical arrow along the right outer edge, top to hem\n'
           '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
           '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
           '  • Sleeve opening width: 12 cm — horizontal arrow at the sleeve hem/opening',
-      'table': '  Neck Opening: 18 cm        Shoulder Width: 38 cm\n'
+      'table':
+          '  Neck Opening: 18 cm        Shoulder Width: 38 cm\n'
           '  Chest Width: 48 cm         Back Length: 67 cm\n'
           '  Front Length: 65 cm        Collar Height: 4 cm\n'
           '  Armhole Depth: 22 cm       Cuff Width: 11 cm\n'
@@ -1051,31 +1227,62 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     String? colorPalette,
   }) async {
     // Extract key information directly - no GPT-4 API call needed
-    final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket').toString();
+    final rawGarmentType = (creativeBrief['garmentType'] ?? 'jacket')
+        .toString();
     // Strip category prefix: "Dresses:Cocktail dress" → "Cocktail dress"
     final garmentType = rawGarmentType.contains(':')
         ? rawGarmentType.split(':').last.trim()
         : rawGarmentType;
-    final fabricComposition = _resolveField(techPackDetails['materials']?['fabricComposition'] ?? '', 'Standard fabric');
-    final fabricWeight = _resolveField(techPackDetails['materials']?['fabricWeight'] ?? '', '180 GSM');
+    final fabricComposition = _resolveField(
+      techPackDetails['materials']?['fabricComposition'] ?? '',
+      'Standard fabric',
+    );
+    final fabricWeight = _resolveField(
+      techPackDetails['materials']?['fabricWeight'] ?? '',
+      '180 GSM',
+    );
     final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
-    final bool isIndustryComposition = techPackDetails['materials']?['isIndustryStandardComposition'] == true;
-    final bool isIndustryGSM = techPackDetails['materials']?['isIndustryStandardGSM'] == true;
+    final bool isIndustryComposition =
+        techPackDetails['materials']?['isIndustryStandardComposition'] == true;
+    final bool isIndustryGSM =
+        techPackDetails['materials']?['isIndustryStandardGSM'] == true;
 
     final String resolvedFabric = _buildFabricLine(
-      fabricComposition, fabricWeight, creativeBriefFabric,
+      fabricComposition,
+      fabricWeight,
+      creativeBriefFabric,
       isIndustryComposition: isIndustryComposition,
       isIndustryGSM: isIndustryGSM,
     );
-    final secondaryMaterial = _resolveField(techPackDetails['materials']?['secondaryMaterials'] ?? '', 'No secondary material');
-    final fabricProperties = _resolveField(techPackDetails['materials']?['fabricProperties'] ?? '', 'Standard');
+    final secondaryMaterial = _resolveField(
+      techPackDetails['materials']?['secondaryMaterials'] ?? '',
+      'No secondary material',
+    );
+    final fabricProperties = _resolveField(
+      techPackDetails['materials']?['fabricProperties'] ?? '',
+      'Standard',
+    );
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
-    final measurementChart = techPackDetails['sizes']?['measurementChart'] ?? '';
-    final stitching = _resolveField(techPackDetails['technical']?['stitching'] ?? '', 'Overlock stitch (4 threads)');
-    final decorativeStitching = _resolveField(techPackDetails['technical']?['decorativeStitching'] ?? '', 'Single row, 1 mm spacing');
-    final accessories = _resolveField(techPackDetails['technical']?['accessories'] ?? '', 'Bartack at stress points');
-    final logoPlacement = _resolveField(techPackDetails['labeling']?['logoPlacement'] ?? '', 'Neck');
-    final labelsNeeded = _resolveField(techPackDetails['labeling']?['labelsNeeded'] ?? '', 'No Label');
+    final measurementChart =
+        techPackDetails['sizes']?['measurementChart'] ?? '';
+    final stitching = _resolveField(
+      techPackDetails['technical']?['stitching'] ?? '',
+      'Overlock stitch (4 threads)',
+    );
+    final decorativeStitching = _resolveField(
+      techPackDetails['technical']?['decorativeStitching'] ?? '',
+      'Single row, 1 mm spacing',
+    );
+    final accessories = _resolveField(
+      techPackDetails['technical']?['accessories'] ?? '',
+      'Bartack at stress points',
+    );
+    final logoPlacement =
+        (techPackDetails['labeling']?['logoPlacement'] ?? '').toString().trim();
+    final labelsNeeded = _resolveField(
+      techPackDetails['labeling']?['labelsNeeded'] ?? '',
+      'No Label',
+    );
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
     // Garment overview fields
     final fit = (refinedConcept['silhouette'] ?? '').toString();
@@ -1091,8 +1298,11 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       measurementTableSection += 'Selected sizes: $sizeRange\n';
     }
 
-    if (measurementChartImagePath != null && measurementChartImagePath.isNotEmpty) {
-      final extractedSizes = await extractSizesFromChartImage(measurementChartImagePath);
+    if (measurementChartImagePath != null &&
+        measurementChartImagePath.isNotEmpty) {
+      final extractedSizes = await extractSizesFromChartImage(
+        measurementChartImagePath,
+      );
       if (extractedSizes != null && extractedSizes.isNotEmpty) {
         measurementTableSection +=
             'IMPORTANT: Use ONLY the following measurements extracted from the user\'s size chart. '
@@ -1116,12 +1326,16 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     // FABRIC — dedicated section
     String fabricSection = '';
-    if (resolvedFabric.isNotEmpty) fabricSection += '-- Fabric: $resolvedFabric\n';
-    if (secondaryMaterial.isNotEmpty) fabricSection += '-- Secondary material: $secondaryMaterial\n';
-    if (fabricProperties.isNotEmpty) fabricSection += '-- Fabric properties: $fabricProperties\n';
+    if (resolvedFabric.isNotEmpty)
+      fabricSection += '-- Fabric: $resolvedFabric\n';
+    if (secondaryMaterial.isNotEmpty)
+      fabricSection += '-- Secondary material: $secondaryMaterial\n';
+    if (fabricProperties.isNotEmpty)
+      fabricSection += '-- Fabric properties: $fabricProperties\n';
 
     // LOGO AND LABELS — combined section
-    String logoAndLabelsSection = '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
+    String logoAndLabelsSection =
+        '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
 
     // Garment overview — clean lines
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
@@ -1131,7 +1345,9 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     // COLORS — dedicated section with drawn swatch blocks
     final bool hasColors = colorPalette != null && colorPalette.isNotEmpty;
-    final String colorsSection = _buildColorSwatchSection(hasColors ? colorPalette : null);
+    final String colorsSection = _buildColorSwatchSection(
+      hasColors ? colorPalette : null,
+    );
 
     final String garmentTitle = garmentType.toUpperCase();
 
@@ -1193,8 +1409,23 @@ Style requirements:
 ''';
 
     // Dashed LOGO box at the user's requested location (not hardcoded to chest/neck)
-    final String technicalLogoInstruction =
-        '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacement". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
+    // final String technicalLogoInstruction =
+    //     '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacement". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
+
+    final lp = logoPlacement.toLowerCase();
+    final bool wantsNoLogo =
+        lp.contains('no logo') ||
+        lp.contains('without logo') ||
+        lp.contains('no branding') ||
+        lp == 'none' ||
+        lp == 'no' ||
+        lp == 'nope' ||
+        lp == 'n/a' ||
+        lp == 'na';
+
+    final String technicalLogoInstruction = wantsNoLogo
+        ? '\n- Logo placeholder: Do NOT draw any dashed LOGO box, logo mark, placeholder, or branding graphic on the FRONT VIEW or BACK VIEW. The garment must have zero logo boxes.'
+        : '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacement". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
 
     final measurements = _techFlatMeasurements(garmentType);
 
