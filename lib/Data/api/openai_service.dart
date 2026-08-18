@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+import 'dart:math';
 import 'package:http/http.dart' as http;
 import 'package:http_parser/http_parser.dart';
 import 'package:flutter_secure_storage/flutter_secure_storage.dart';
@@ -743,6 +744,144 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     return value.trim();
   }
 
+  /// Checks the tech pack's free-text answers for any that essentially mean
+  /// "none / not applicable" in a language other than English (e.g. French
+  /// "non") so they can be routed to the same sensible defaults the English
+  /// equivalents already trigger via _resolveField — instead of being
+  /// printed literally in the document. This NEVER translates or rewrites
+  /// real content: an answer with genuine meaning, in any language (e.g.
+  /// French "milieux poitrine" or "cotton bio"), is left completely
+  /// untouched and prints exactly as typed. Non-blocking — returns an empty
+  /// set on any failure, so generation proceeds exactly as it does today.
+  static Future<Set<String>> _detectEmptyMeaningFields(
+    Map<String, String> fields,
+  ) async {
+    // Only worth asking about fields that actually have text in them.
+    final candidates = Map<String, String>.fromEntries(
+      fields.entries.where((e) => e.value.trim().isNotEmpty),
+    );
+    if (candidates.isEmpty) return {};
+
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) return {};
+
+      final keysInOrder = candidates.keys.toList();
+      final numbered = List.generate(
+        keysInOrder.length,
+        (i) => '${i + 1}. ${candidates[keysInOrder[i]]}',
+      ).join('\n');
+
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/chat/completions'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $apiKey',
+            },
+            body: jsonEncode({
+              'model': 'gpt-4o',
+              'messages': [
+                {
+                  'role': 'user',
+                  'content':
+                      'These are answers from a tech pack form (the app supports English and French). '
+                      'For each numbered answer below, decide if it essentially means "none / not applicable / nothing" '
+                      '(in any language or wording — e.g. "non", "aucun", "n/a", "none") rather than real content. '
+                      'Do NOT flag real content as empty, even short or unusual answers — only flag ones that genuinely mean nothing. '
+                      'Return ONLY a comma-separated list of the numbers that mean "empty" (e.g. "2,5"). '
+                      'If none of them mean empty, return exactly: NONE\n\n$numbered',
+                },
+              ],
+              'max_tokens': 40,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode != 200) {
+        print('❌ Empty-meaning field check failed: ${response.body}');
+        return {};
+      }
+
+      final data = jsonDecode(response.body);
+      final content = (data['choices'][0]['message']['content'] as String)
+          .trim();
+      print('🌐 Empty-meaning field check result: $content');
+
+      if (content.toUpperCase() == 'NONE') return {};
+
+      final emptyKeys = <String>{};
+      for (final part in content.split(',')) {
+        final index = int.tryParse(part.trim());
+        if (index != null && index >= 1 && index <= keysInOrder.length) {
+          emptyKeys.add(keysInOrder[index - 1]);
+        }
+      }
+      return emptyKeys;
+    } catch (e) {
+      print('❌ Error during empty-meaning field check: $e');
+      return {};
+    }
+  }
+
+  /// Translates the user's logo placement answer (which may be in French)
+  /// into a short, clear English location phrase — used ONLY to help the
+  /// technical flat drawing AI correctly decide front/back/sleeve placement.
+  /// This is a separate, internal-only copy: the user's original text
+  /// (whatever language) is never modified anywhere else and is still what
+  /// gets printed on the visible spec sheet. Falls back to returning the
+  /// original text unchanged on any failure, so generation is never blocked
+  /// by this. See Problem 2/3 (placement) discussion.
+  static Future<String> _translateLogoPlacementForDrawing(
+    String logoPlacement,
+  ) async {
+    if (logoPlacement.trim().isEmpty) return logoPlacement;
+
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) return logoPlacement;
+
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/chat/completions'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $apiKey',
+            },
+            body: jsonEncode({
+              'model': 'gpt-4o',
+              'messages': [
+                {
+                  'role': 'user',
+                  'content':
+                      'Translate this garment logo placement answer into a short, clear English location phrase suitable for a technical fashion drawing (e.g. "right shoulder", "mid-chest", "left sleeve", "center back"). '
+                      'If it is already in English, return it unchanged (just cleaned up if needed). '
+                      'Return ONLY the short phrase, no explanation, no quotes.\n\n"$logoPlacement"',
+                },
+              ],
+              'max_tokens': 20,
+            }),
+          )
+          .timeout(const Duration(seconds: 15));
+
+      if (response.statusCode != 200) {
+        print('❌ Logo placement translation failed: ${response.body}');
+        return logoPlacement;
+      }
+
+      final data = jsonDecode(response.body);
+      final translated =
+          (data['choices'][0]['message']['content'] as String).trim();
+      print(
+        '🌐 Logo placement translated for drawing: "$logoPlacement" -> "$translated"',
+      );
+      return translated.isEmpty ? logoPlacement : translated;
+    } catch (e) {
+      print('❌ Error translating logo placement: $e');
+      return logoPlacement;
+    }
+  }
+
   static String _standardMeasurementRules(String measurementChart) {
     String section = '';
     if (measurementChart.isNotEmpty) {
@@ -836,7 +975,7 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
                     {
                       'type': 'text',
                       'text':
-                          'Identify the dominant colors of this garment and match each one to its closest Pantone TPX color code. Return ONLY a short comma-separated list of Pantone codes in the exact format "Pantone 19-4052 TPX" (e.g. "Pantone 19-4052 TPX, Pantone 11-0601 TPX, Pantone 14-0952 TPX"). Maximum 5 colors. No color names, no explanations, no extra text.',
+                          'Identify the truly distinct fabric colors of this garment — ignore shadows, highlights, folds, and ordinary lighting variation on the same fabric. If the garment is a single solid color, identify only ONE color even if the photo shows some shading. Only list additional colors if there are genuinely different colored components (e.g. a contrast panel, a different-colored trim or hood). For each distinct color, give its closest Pantone TPX code AND its approximate hex value. Return ONLY a comma-separated list in the exact format "Pantone 19-4052 TPX #2F4F3E" (e.g. "Pantone 19-4052 TPX #2F4F3E, Pantone 11-0601 TPX #1A2B1C"). Maximum 5 colors. No color names, no explanations, no extra text.',
                     },
                     ...imageContent,
                   ],
@@ -849,10 +988,13 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-        final colors = (data['choices'][0]['message']['content'] as String)
+        final rawColors = (data['choices'][0]['message']['content'] as String)
             .trim();
-        print('🎨 Extracted colors: $colors');
-        return colors;
+        print('🎨 Extracted colors (raw): $rawColors');
+
+        final dedupedColors = _dedupeSimilarColors(rawColors);
+        print('🎨 Extracted colors (after merging near-identical shades): $dedupedColors');
+        return dedupedColors;
       } else {
         print('❌ Color extraction failed: ${response.body}');
         return null;
@@ -861,6 +1003,59 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       print('❌ Error extracting colors: $e');
       return null;
     }
+  }
+
+  /// Merges Pantone/hex entries that are close enough in color to be
+  /// shadow or lighting variation on the same fabric, rather than a
+  /// genuinely distinct second color (fixes solid-color garments getting
+  /// multiple fake Pantone matches). Expects entries in the format
+  /// "Pantone 19-4052 TPX #2F4F3E". If any entry doesn't include a
+  /// parseable hex value, dedup is skipped and the original list is
+  /// returned as-is (no hex values means no safe way to compare colors).
+  static String _dedupeSimilarColors(String rawColorList) {
+    final entries = rawColorList
+        .split(',')
+        .map((c) => c.trim())
+        .where((c) => c.isNotEmpty)
+        .toList();
+    if (entries.isEmpty) return rawColorList;
+
+    final hexPattern = RegExp(r'^(.*?)\s*#([0-9A-Fa-f]{6})$');
+    final parsed = <MapEntry<String, List<int>>>[];
+
+    for (final entry in entries) {
+      final match = hexPattern.firstMatch(entry);
+      if (match == null) {
+        // Couldn't parse a hex value from this entry — can't safely compare
+        // colors, so skip deduping entirely and return the original list.
+        return entries.join(', ');
+      }
+      final code = match.group(1)!.trim();
+      final hex = match.group(2)!;
+      final r = int.parse(hex.substring(0, 2), radix: 16);
+      final g = int.parse(hex.substring(2, 4), radix: 16);
+      final b = int.parse(hex.substring(4, 6), radix: 16);
+      parsed.add(MapEntry(code, [r, g, b]));
+    }
+
+    // Two colors closer than this in RGB space are treated as the same
+    // fabric color (shadow/highlight/lighting variation), not a real
+    // second color. Max possible distance is ~441 (pure black vs white).
+    const double similarityThreshold = 60.0;
+
+    final kept = <MapEntry<String, List<int>>>[];
+    for (final candidate in parsed) {
+      final isDuplicate = kept.any((existing) {
+        final dr = candidate.value[0] - existing.value[0];
+        final dg = candidate.value[1] - existing.value[1];
+        final db = candidate.value[2] - existing.value[2];
+        final distance = sqrt((dr * dr + dg * dg + db * db).toDouble());
+        return distance < similarityThreshold;
+      });
+      if (!isDuplicate) kept.add(candidate);
+    }
+
+    return kept.map((e) => e.key).join(', ');
   }
 
   /// Calls gpt-4o with the size chart image and returns extracted measurements as plain text.
@@ -1233,12 +1428,49 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     final garmentType = rawGarmentType.contains(':')
         ? rawGarmentType.split(':').last.trim()
         : rawGarmentType;
+
+    // Check every free-text tech pack answer for ones that mean "none/not
+    // applicable" in a language other than English (e.g. French "non")
+    // BEFORE resolving defaults below. Real content — in English, French, or
+    // any wording — is left completely untouched and prints exactly as
+    // typed; only genuinely empty-meaning answers get routed to the same
+    // defaults English "none" already triggers. See Problem 2/3 discussion.
+    final rawFreeTextFields = <String, String>{
+      'fabricComposition':
+          (techPackDetails['materials']?['fabricComposition'] ?? '')
+              .toString(),
+      'fabricWeight':
+          (techPackDetails['materials']?['fabricWeight'] ?? '').toString(),
+      'secondaryMaterials':
+          (techPackDetails['materials']?['secondaryMaterials'] ?? '')
+              .toString(),
+      'fabricProperties':
+          (techPackDetails['materials']?['fabricProperties'] ?? '')
+              .toString(),
+      'stitching':
+          (techPackDetails['technical']?['stitching'] ?? '').toString(),
+      'decorativeStitching':
+          (techPackDetails['technical']?['decorativeStitching'] ?? '')
+              .toString(),
+      'accessories':
+          (techPackDetails['technical']?['accessories'] ?? '').toString(),
+      'logoPlacement':
+          (techPackDetails['labeling']?['logoPlacement'] ?? '').toString(),
+      'labelsNeeded':
+          (techPackDetails['labeling']?['labelsNeeded'] ?? '').toString(),
+    };
+    final emptyMeaningFields = await _detectEmptyMeaningFields(
+      rawFreeTextFields,
+    );
+    String rawOrEmpty(String key) =>
+        emptyMeaningFields.contains(key) ? '' : rawFreeTextFields[key]!;
+
     final fabricComposition = _resolveField(
-      techPackDetails['materials']?['fabricComposition'] ?? '',
+      rawOrEmpty('fabricComposition'),
       'Standard fabric',
     );
     final fabricWeight = _resolveField(
-      techPackDetails['materials']?['fabricWeight'] ?? '',
+      rawOrEmpty('fabricWeight'),
       '180 GSM',
     );
     final creativeBriefFabric = (creativeBrief['fabrics'] ?? '').toString();
@@ -1255,32 +1487,31 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       isIndustryGSM: isIndustryGSM,
     );
     final secondaryMaterial = _resolveField(
-      techPackDetails['materials']?['secondaryMaterials'] ?? '',
+      rawOrEmpty('secondaryMaterials'),
       'No secondary material',
     );
     final fabricProperties = _resolveField(
-      techPackDetails['materials']?['fabricProperties'] ?? '',
+      rawOrEmpty('fabricProperties'),
       'Standard',
     );
     final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
     final measurementChart =
         techPackDetails['sizes']?['measurementChart'] ?? '';
     final stitching = _resolveField(
-      techPackDetails['technical']?['stitching'] ?? '',
+      rawOrEmpty('stitching'),
       'Overlock stitch (4 threads)',
     );
     final decorativeStitching = _resolveField(
-      techPackDetails['technical']?['decorativeStitching'] ?? '',
+      rawOrEmpty('decorativeStitching'),
       'Single row, 1 mm spacing',
     );
     final accessories = _resolveField(
-      techPackDetails['technical']?['accessories'] ?? '',
+      rawOrEmpty('accessories'),
       'Bartack at stress points',
     );
-    final logoPlacement =
-        (techPackDetails['labeling']?['logoPlacement'] ?? '').toString().trim();
+    final logoPlacement = rawOrEmpty('logoPlacement').trim();
     final labelsNeeded = _resolveField(
-      techPackDetails['labeling']?['labelsNeeded'] ?? '',
+      rawOrEmpty('labelsNeeded'),
       'No Label',
     );
     final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
@@ -1423,9 +1654,16 @@ Style requirements:
         lp == 'n/a' ||
         lp == 'na';
 
+    // Translated ONLY for this drawing instruction — never shown anywhere.
+    // The visible spec sheet (logoAndLabelsSection, above) still uses the
+    // original, untranslated $logoPlacement exactly as the user typed it.
+    final String logoPlacementForDrawing = wantsNoLogo
+        ? ''
+        : await _translateLogoPlacementForDrawing(logoPlacement);
+
     final String technicalLogoInstruction = wantsNoLogo
         ? '\n- Logo placeholder: Do NOT draw any dashed LOGO box, logo mark, placeholder, or branding graphic on the FRONT VIEW or BACK VIEW. The garment must have zero logo boxes.'
-        : '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacement". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
+        : '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacementForDrawing". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
 
     final measurements = _techFlatMeasurements(garmentType);
 
@@ -1478,155 +1716,176 @@ CRITICAL: All text and numbers must be spelled and written correctly with no mis
     };
   }
 
-  // ALTERNATIVE: Single detailed view if three views still cause cutting
-  static Map<String, String> getDetailedSingleViewPrompts(
-    Map<String, dynamic> techPackDetails,
-    Map<String, dynamic> creativeBrief,
-  ) {
-    final garmentType = creativeBrief['garmentType'] ?? 'jacket';
-    final accessories =
-        techPackDetails['technical']?['accessories'] ?? 'zipper';
-    final stitching =
-        techPackDetails['technical']?['stitching'] ?? 'single stitch';
-    final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
-    final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
-    final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
-
-    // Create label text for LABELS section
-    String labelTextForSection = '';
-    String technicalLogoInstruction = '';
-
-    if (labelImage.isNotEmpty) {
-      // User uploaded logo image - show actual logo
-      technicalLogoInstruction =
-          'Show logo from reference image on $logoPlacement with callout. ';
-      if (labelsNeeded.isNotEmpty) {
-        labelTextForSection = labelsNeeded;
-      }
-    } else if (labelsNeeded.isNotEmpty) {
-      // User provided label text only - keep garment clean, show highlighted area on technical
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
-      labelTextForSection = labelsNeeded;
-    } else if (logoPlacement.isNotEmpty) {
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
-    }
-
-    String labelsSection = '';
-    if (labelTextForSection.isNotEmpty) {
-      // Only show label text, not placement
-      labelsSection = labelTextForSection;
-    } else if (logoPlacement.isNotEmpty) {
-      labelsSection = '$logoPlacement placement';
-    }
-
-    return {
-      'manufacturing_prompt':
-          'Professional fashion tech pack specification sheet for $garmentType. Organized sections: materials, colors with swatches, sizes chart, technical details, LABELS ($labelsSection), production info. Clean grid layout, white background.',
-
-      'technical_flat_prompt':
-          'Detailed technical flat drawing of $garmentType, large front view centered on white background. Black line art with comprehensive annotations: measurement arrows (A, B, C, D), seam allowances labeled, $accessories details, $stitching callouts, construction notes, dimension lines. ${technicalLogoInstruction}Professional fashion industry flat with detailed labeling. Complete drawing visible with wide margins.',
-    };
-  }
-
-  // ADVANCED: Detailed layout with explicit positioning
-  static Map<String, String> getAdvancedDetailedPrompts(
-    Map<String, dynamic> techPackDetails,
-    Map<String, dynamic> creativeBrief,
-  ) {
-    final garmentType = creativeBrief['garmentType'] ?? 'jacket';
-    final accessories =
-        techPackDetails['technical']?['accessories'] ?? 'zipper';
-    final stitching =
-        techPackDetails['technical']?['stitching'] ?? 'single stitch';
-    final decorativeStitching =
-        techPackDetails['technical']?['decorativeStitching'] ??
-        'contrast topstitch';
-    final features = creativeBrief['features'] ?? 'collar';
-    final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
-    final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
-    final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
-
-    // Create label text for LABELS section
-    String labelTextForSection = '';
-    String technicalLogoInstruction = '';
-
-    if (labelImage.isNotEmpty) {
-      technicalLogoInstruction =
-          'Show logo from reference image on $logoPlacement with callout. ';
-      if (labelsNeeded.isNotEmpty) {
-        labelTextForSection = labelsNeeded;
-      }
-    } else if (labelsNeeded.isNotEmpty) {
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
-      labelTextForSection = labelsNeeded;
-    } else if (logoPlacement.isNotEmpty) {
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
-    }
-
-    String labelsSection = '';
-    if (labelTextForSection.isNotEmpty) {
-      labelsSection = labelTextForSection;
-    } else if (logoPlacement.isNotEmpty) {
-      labelsSection = '$logoPlacement placement';
-    }
-
-    return {
-      'manufacturing_prompt':
-          'Complete fashion tech pack layout for $garmentType. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL ($accessories, $stitching), LABELS ($labelsSection), PACKAGING, PRODUCTION. Professional format, white background, all content within frame.',
-
-      'technical_flat_prompt':
-          'Technical flat drawing sheet for $garmentType. Layout: Front view (upper left), back view (upper right), detail callouts (bottom). Black lines on white. Show: $features, $accessories, $stitching, $decorativeStitching. ${technicalLogoInstruction}Include: measurement points A-F with arrows, seam allowances, construction details, topstitching circles. Professional annotations. Complete sheet layout with 10% margin border.',
-    };
-  }
-
-  // FALLBACK: Simplified but still detailed
-  static Map<String, String> getSimplifiedDetailedPrompts(
-    Map<String, dynamic> techPackDetails,
-    Map<String, dynamic> creativeBrief,
-  ) {
-    final garmentType = creativeBrief['garmentType'] ?? 'jacket';
-    final accessories =
-        techPackDetails['technical']?['accessories'] ?? 'zipper';
-    final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
-    final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
-    final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
-
-    // Create label text for LABELS section
-    String labelTextForSection = '';
-    String technicalLogoInstruction = '';
-
-    if (labelImage.isNotEmpty) {
-      technicalLogoInstruction =
-          'Show logo from reference on $logoPlacement with callout. ';
-      if (labelsNeeded.isNotEmpty) {
-        labelTextForSection = labelsNeeded;
-      }
-    } else if (labelsNeeded.isNotEmpty) {
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text, add annotation "Label: $labelsNeeded". ';
-      labelTextForSection = labelsNeeded;
-    } else if (logoPlacement.isNotEmpty) {
-      technicalLogoInstruction =
-          'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
-    }
-
-    String labelsSection = '';
-    if (labelTextForSection.isNotEmpty) {
-      labelsSection = labelTextForSection;
-    } else if (logoPlacement.isNotEmpty) {
-      labelsSection = '$logoPlacement placement';
-    }
-
-    return {
-      'manufacturing_prompt':
-          'Fashion tech pack for $garmentType: materials, colors, sizes, LABELS ($labelsSection), production details. Professional layout, white background, organized sections.',
-
-      'technical_flat_prompt':
-          'Technical drawing $garmentType with detailed labels. Front view, black lines, measurement arrows, $accessories details, construction notes. ${technicalLogoInstruction}Complete drawing with margins.',
-    };
-  }
+  // ============================================================================
+  // COMMENTED OUT (Problem 5 fix) — DO NOT re-enable without fixing the bug below.
+  //
+  // These 3 backup prompt-builders used hardcoded placeholder defaults
+  // ('jacket' for garment type, 'collar' for features, 'zipper' for
+  // accessories) whenever real data wasn't found. They were called as a
+  // silent safety net when the main method (generateTechPackPrompts) failed —
+  // which is exactly what caused a hoodie to be drawn as a collared, zipped
+  // jacket for a real client, with no error ever shown to the user.
+  //
+  // On top of the hardcoded defaults, 'features' was read from
+  // creativeBrief['features'], but that value is actually stored under
+  // finalDetailsData['features'] / refinedConceptData['features'] instead —
+  // so it was NEVER found, meaning the 'collar' default fired on every
+  // single call to these methods, for every garment type, guaranteed.
+  //
+  // All call sites (main generation flow + the unused testTechnicalDrawingPrompts
+  // debug helper in tech_pack_details_controller.dart) have been disabled too.
+  // Kept here, disabled, only for reference / possible rollback.
+  // ============================================================================
+  //
+  // // ALTERNATIVE: Single detailed view if three views still cause cutting
+  // static Map<String, String> getDetailedSingleViewPrompts(
+  //   Map<String, dynamic> techPackDetails,
+  //   Map<String, dynamic> creativeBrief,
+  // ) {
+  //   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
+  //   final accessories =
+  //       techPackDetails['technical']?['accessories'] ?? 'zipper';
+  //   final stitching =
+  //       techPackDetails['technical']?['stitching'] ?? 'single stitch';
+  //   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  //   final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  //   final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+  //
+  //   // Create label text for LABELS section
+  //   String labelTextForSection = '';
+  //   String technicalLogoInstruction = '';
+  //
+  //   if (labelImage.isNotEmpty) {
+  //     // User uploaded logo image - show actual logo
+  //     technicalLogoInstruction =
+  //         'Show logo from reference image on $logoPlacement with callout. ';
+  //     if (labelsNeeded.isNotEmpty) {
+  //       labelTextForSection = labelsNeeded;
+  //     }
+  //   } else if (labelsNeeded.isNotEmpty) {
+  //     // User provided label text only - keep garment clean, show highlighted area on technical
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
+  //     labelTextForSection = labelsNeeded;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
+  //   }
+  //
+  //   String labelsSection = '';
+  //   if (labelTextForSection.isNotEmpty) {
+  //     // Only show label text, not placement
+  //     labelsSection = labelTextForSection;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     labelsSection = '$logoPlacement placement';
+  //   }
+  //
+  //   return {
+  //     'manufacturing_prompt':
+  //         'Professional fashion tech pack specification sheet for $garmentType. Organized sections: materials, colors with swatches, sizes chart, technical details, LABELS ($labelsSection), production info. Clean grid layout, white background.',
+  //
+  //     'technical_flat_prompt':
+  //         'Detailed technical flat drawing of $garmentType, large front view centered on white background. Black line art with comprehensive annotations: measurement arrows (A, B, C, D), seam allowances labeled, $accessories details, $stitching callouts, construction notes, dimension lines. ${technicalLogoInstruction}Professional fashion industry flat with detailed labeling. Complete drawing visible with wide margins.',
+  //   };
+  // }
+  //
+  // // ADVANCED: Detailed layout with explicit positioning
+  // static Map<String, String> getAdvancedDetailedPrompts(
+  //   Map<String, dynamic> techPackDetails,
+  //   Map<String, dynamic> creativeBrief,
+  // ) {
+  //   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
+  //   final accessories =
+  //       techPackDetails['technical']?['accessories'] ?? 'zipper';
+  //   final stitching =
+  //       techPackDetails['technical']?['stitching'] ?? 'single stitch';
+  //   final decorativeStitching =
+  //       techPackDetails['technical']?['decorativeStitching'] ??
+  //       'contrast topstitch';
+  //   final features = creativeBrief['features'] ?? 'collar';
+  //   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  //   final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  //   final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+  //
+  //   // Create label text for LABELS section
+  //   String labelTextForSection = '';
+  //   String technicalLogoInstruction = '';
+  //
+  //   if (labelImage.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Show logo from reference image on $logoPlacement with callout. ';
+  //     if (labelsNeeded.isNotEmpty) {
+  //       labelTextForSection = labelsNeeded;
+  //     }
+  //   } else if (labelsNeeded.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text, add callout annotation "Label: $labelsNeeded". ';
+  //     labelTextForSection = labelsNeeded;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
+  //   }
+  //
+  //   String labelsSection = '';
+  //   if (labelTextForSection.isNotEmpty) {
+  //     labelsSection = labelTextForSection;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     labelsSection = '$logoPlacement placement';
+  //   }
+  //
+  //   return {
+  //     'manufacturing_prompt':
+  //         'Complete fashion tech pack layout for $garmentType. Grid format with sections: MATERIALS (fabric swatches), COLORS (color blocks with codes), SIZES (measurement table), TECHNICAL ($accessories, $stitching), LABELS ($labelsSection), PACKAGING, PRODUCTION. Professional format, white background, all content within frame.',
+  //
+  //     'technical_flat_prompt':
+  //         'Technical flat drawing sheet for $garmentType. Layout: Front view (upper left), back view (upper right), detail callouts (bottom). Black lines on white. Show: $features, $accessories, $stitching, $decorativeStitching. ${technicalLogoInstruction}Include: measurement points A-F with arrows, seam allowances, construction details, topstitching circles. Professional annotations. Complete sheet layout with 10% margin border.',
+  //   };
+  // }
+  //
+  // // FALLBACK: Simplified but still detailed
+  // static Map<String, String> getSimplifiedDetailedPrompts(
+  //   Map<String, dynamic> techPackDetails,
+  //   Map<String, dynamic> creativeBrief,
+  // ) {
+  //   final garmentType = creativeBrief['garmentType'] ?? 'jacket';
+  //   final accessories =
+  //       techPackDetails['technical']?['accessories'] ?? 'zipper';
+  //   final logoPlacement = techPackDetails['labeling']?['logoPlacement'] ?? '';
+  //   final labelsNeeded = techPackDetails['labeling']?['labelsNeeded'] ?? '';
+  //   final labelImage = techPackDetails['labeling']?['labelImage'] ?? '';
+  //
+  //   // Create label text for LABELS section
+  //   String labelTextForSection = '';
+  //   String technicalLogoInstruction = '';
+  //
+  //   if (labelImage.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Show logo from reference on $logoPlacement with callout. ';
+  //     if (labelsNeeded.isNotEmpty) {
+  //       labelTextForSection = labelsNeeded;
+  //     }
+  //   } else if (labelsNeeded.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text, add annotation "Label: $labelsNeeded". ';
+  //     labelTextForSection = labelsNeeded;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     technicalLogoInstruction =
+  //         'Mark $logoPlacement area with highlighted box containing "LOGO" text. ';
+  //   }
+  //
+  //   String labelsSection = '';
+  //   if (labelTextForSection.isNotEmpty) {
+  //     labelsSection = labelTextForSection;
+  //   } else if (logoPlacement.isNotEmpty) {
+  //     labelsSection = '$logoPlacement placement';
+  //   }
+  //
+  //   return {
+  //     'manufacturing_prompt':
+  //         'Fashion tech pack for $garmentType: materials, colors, sizes, LABELS ($labelsSection), production details. Professional layout, white background, organized sections.',
+  //
+  //     'technical_flat_prompt':
+  //         'Technical drawing $garmentType with detailed labels. Front view, black lines, measurement arrows, $accessories details, construction notes. ${technicalLogoInstruction}Complete drawing with margins.',
+  //   };
+  // }
 }

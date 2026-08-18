@@ -107,6 +107,12 @@ class TechPackDetailsController extends GetxController {
   String? _activeGenerationId;
   bool _isGenerationInFlight = false;
 
+  // True while the generation-failed popup is up. Keeps isGeneratingTechPack
+  // (the Ready screen's loading view) from flipping off until the user
+  // actually dismisses the popup, so the screen behind it doesn't flash to
+  // its bare "no images" fallback before the user has seen the error.
+  bool _failureDialogPending = false;
+
   TechPackModel? get editingTechPack => _editingTechPack;
 
   @override
@@ -583,7 +589,10 @@ class TechPackDetailsController extends GetxController {
       }
 
       try {
-        // First attempt: Full detailed prompts with three views
+        // Only attempt: Full detailed prompts with three views.
+        // This is the sole source of truth for garment type/features/accessories —
+        // no fallback is used anymore, so a failure here never silently swaps in
+        // wrong hardcoded defaults (see Problem 5 discussion).
         approach = 'Detailed Three Views';
         prompts = await OpenAIService.generateTechPackPrompts(
           creativeBrief: designData['creativeBrief'] ?? {},
@@ -597,34 +606,41 @@ class TechPackDetailsController extends GetxController {
           colorPalette: extractedColors,
         );
       } catch (e) {
-        try {
-          // Second attempt: Advanced detailed with explicit positioning
-          approach = 'Advanced Detailed Layout';
-          print('Trying advanced detailed prompts...');
-          prompts = OpenAIService.getAdvancedDetailedPrompts(
-            techPackDetails,
-            designData['creativeBrief'] ?? {},
-          );
-        } catch (e2) {
-          try {
-            // Third attempt: Detailed single view
-            approach = 'Detailed Single View';
-            print('Trying detailed single view prompts...');
-            prompts = OpenAIService.getDetailedSingleViewPrompts(
-              techPackDetails,
-              designData['creativeBrief'] ?? {},
-            );
-          } catch (e3) {
-            // Final fallback: Simplified but detailed
-            approach = 'Simplified Detailed';
-            print('Using simplified detailed prompts...');
-            prompts = OpenAIService.getSimplifiedDetailedPrompts(
-              techPackDetails,
-              designData['creativeBrief'] ?? {},
-            );
-          }
-        }
+        print('❌ [TECH PACK FAILURE - STAGE: Prompt Building] $e');
+        rethrow;
       }
+
+      // --- Backup prompt-building fallbacks commented out (Problem 5 fix) ---
+      // These used hardcoded defaults ('jacket', 'collar', 'zipper') whenever
+      // the real garment data wasn't found, which is what caused a hoodie to
+      // be drawn as a jacket. Kept here, disabled, in case of rollback.
+      //
+      // } catch (e) {
+      //   try {
+      //     approach = 'Advanced Detailed Layout';
+      //     print('Trying advanced detailed prompts...');
+      //     prompts = OpenAIService.getAdvancedDetailedPrompts(
+      //       techPackDetails,
+      //       designData['creativeBrief'] ?? {},
+      //     );
+      //   } catch (e2) {
+      //     try {
+      //       approach = 'Detailed Single View';
+      //       print('Trying detailed single view prompts...');
+      //       prompts = OpenAIService.getDetailedSingleViewPrompts(
+      //         techPackDetails,
+      //         designData['creativeBrief'] ?? {},
+      //       );
+      //     } catch (e3) {
+      //       approach = 'Simplified Detailed';
+      //       print('Using simplified detailed prompts...');
+      //       prompts = OpenAIService.getSimplifiedDetailedPrompts(
+      //         techPackDetails,
+      //         designData['creativeBrief'] ?? {},
+      //       );
+      //     }
+      //   }
+      // }
 
       print('Using approach: $approach');
       print('Manufacturing Prompt: ${prompts['manufacturing_prompt']}');
@@ -650,7 +666,7 @@ class TechPackDetailsController extends GetxController {
           '   Base64 preview: ${manufacturingImages.isNotEmpty ? manufacturingImages[0].substring(0, 50) : "EMPTY"}...',
         );
       } catch (e) {
-        print('❌ Manufacturing image generation failed: $e');
+        print('❌ [TECH PACK FAILURE - STAGE: Manufacturing Image Generation] $e');
         throw Exception('Failed to generate manufacturing image');
       }
 
@@ -687,19 +703,16 @@ class TechPackDetailsController extends GetxController {
           '   Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...',
         );
       } catch (e) {
-        print('❌ Technical image generation failed, trying fallback: $e');
-
-        // Fallback with even simpler prompt
-        final fallbackPrompt =
-            'Technical flat drawing of garment, front view, black lines on white background. Include measurement labels A, B, C, D and construction details. Complete drawing centered with margins.';
-        technicalImages = await OpenAIService.generateDesignImages(
-          prompt: fallbackPrompt,
-          numberOfImages: 1,
-          size: '1024x1024',
-        );
-        print(
-          '   Fallback Base64 preview: ${technicalImages.isNotEmpty ? technicalImages[0].substring(0, 50) : "EMPTY"}...',
-        );
+        print('❌ [TECH PACK FAILURE - STAGE: Technical Flat Image Generation] $e');
+        rethrow;
+        // --- Simplified-retry fallback commented out (Problem 5 fix, Part A) ---
+        // final fallbackPrompt =
+        //     'Technical flat drawing of garment, front view, black lines on white background. Include measurement labels A, B, C, D and construction details. Complete drawing centered with margins.';
+        // technicalImages = await OpenAIService.generateDesignImages(
+        //   prompt: fallbackPrompt,
+        //   numberOfImages: 1,
+        //   size: '1024x1024',
+        // );
       }
 
       // CRITICAL CHECK: Verify images are different before adding to list
@@ -778,39 +791,30 @@ class TechPackDetailsController extends GetxController {
         AppsFlyerAnalyticsService().trackGeneratedTechPack();
       } else {
         print(
-          '⚠️ Warning: Only ${generatedTechPackImages.length} images generated',
+          '❌ [TECH PACK FAILURE - STAGE: Incomplete Result] Only ${generatedTechPackImages.length}/2 images generated (no exception thrown)',
         );
-        showAppSnackbar(
-          _l10n.tpdPartialSuccess,
-          _l10n.tpdSomeTechPackImagesGenerated,
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.black,
-          colorText: Colors.white,
-        );
+        _showGenerationFailedDialog(generationId);
       }
     } catch (e) {
       print('=== TECH PACK GENERATION ERROR ===');
       print('Error: $e');
-
-      // Only show error snackbar if this generation is still active
-      if (generationId == _activeGenerationId) {
-        showAppSnackbar(
-          _l10n.tpdError,
-          _l10n.tpdFailedToGenerateTechPack(e.toString()),
-          snackPosition: SnackPosition.TOP,
-          backgroundColor: Colors.red,
-          colorText: Colors.white,
-        );
-      } else {
-        print('⚠️ Generation ID mismatch - skipping error notification');
-        print('   Expected: $_activeGenerationId, Got: $generationId');
-      }
+      _showGenerationFailedDialog(generationId);
     } finally {
       // CRITICAL: Only reset flags if this generation is still the active one
       // This prevents cancelled generations from interfering with new generations
       if (generationId == _activeGenerationId) {
-        isGeneratingTechPack.value = false;
+        // Always safe to clear immediately — this only guards against
+        // starting a second generation, it doesn't drive any screen's UI.
         _isGenerationInFlight = false;
+
+        // isGeneratingTechPack drives the Ready screen's loading view. If a
+        // failure popup is currently up, leave it true so that screen stays
+        // frozen on the loading state behind the popup — the popup's button
+        // flips it off itself once the user dismisses it. Otherwise (success
+        // or cancellation), reset it immediately as before.
+        if (!_failureDialogPending) {
+          isGeneratingTechPack.value = false;
+        }
         print('🏁 Generation $generationId completed, flags reset');
       } else {
         print('⚠️ Generation $generationId outdated, skipping flag reset');
@@ -819,34 +823,148 @@ class TechPackDetailsController extends GetxController {
     }
   }
 
-  // Add this function to test different technical drawing approaches
-  void testTechnicalDrawingPrompts() {
-    final techPackDetails = _collectTechPackDetails();
-    final creativeBrief = designData['creativeBrief'] ?? {};
+  // Single, unified failure popup for any tech pack generation error —
+  // whether prompt building failed, an image failed to generate, or the
+  // run finished with an incomplete result. Sends the user back to the
+  // tech pack details screen (still on the nav stack, so their inputs are
+  // preserved) to retry manually. See Problem 5 discussion.
+  void _showGenerationFailedDialog(String generationId) {
+    // Only surface the popup for the generation that's still active — avoids
+    // showing an error for a run the user already cancelled or replaced.
+    if (generationId != _activeGenerationId) {
+      print('⚠️ Generation ID mismatch - skipping failure dialog');
+      print('   Expected: $_activeGenerationId, Got: $generationId');
+      return;
+    }
 
-    print('=== TESTING TECHNICAL DRAWING PROMPTS ===');
+    generatedTechPackImages.clear();
 
-    // Test detailed three views
-    final detailed = OpenAIService.getAdvancedDetailedPrompts(
-      techPackDetails,
-      creativeBrief,
+    // Mark a failure dialog as pending BEFORE the enclosing try/finally
+    // reaches its finally block, so it knows to leave isGeneratingTechPack
+    // (the Ready screen's loading view) untouched until this dialog is
+    // dismissed, instead of flipping it off immediately.
+    _failureDialogPending = true;
+
+    Get.dialog(
+      Dialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        child: Padding(
+          padding: EdgeInsets.all(24.w),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Row(
+                children: [
+                  Container(
+                    width: 40.w,
+                    height: 40.h,
+                    decoration: BoxDecoration(
+                      color: const Color(0xFFFEF3E7),
+                      borderRadius: BorderRadius.circular(8.r),
+                    ),
+                    child: Icon(
+                      Icons.error_outline_rounded,
+                      color: const Color(0xFFFF9800),
+                      size: 24.sp,
+                    ),
+                  ),
+                  SizedBox(width: 12.w),
+                  Expanded(
+                    child: Text(
+                      'Generation Failed',
+                      style: TextStyle(
+                        fontSize: 20.sp,
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF1A1A1A),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              SizedBox(height: 20.h),
+              Text(
+                'Something went wrong while generating your tech pack. Please try again.',
+                style: TextStyle(
+                  fontSize: 14.sp,
+                  color: const Color(0xFF666666),
+                  height: 1.5,
+                ),
+              ),
+              SizedBox(height: 24.h),
+              SizedBox(
+                width: double.infinity,
+                child: ElevatedButton(
+                  onPressed: () {
+                    // Now it's safe to switch the Ready screen off its
+                    // loading view — the user has actually seen the popup.
+                    _failureDialogPending = false;
+                    isGeneratingTechPack.value = false;
+                    Navigator.of(Get.overlayContext!).pop(); // close dialog
+                    Get.back(); // return to Tech Pack Details screen
+                  },
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Colors.black,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(12.r),
+                    ),
+                    padding: EdgeInsets.symmetric(vertical: 14.h),
+                    elevation: 0,
+                  ),
+                  child: Text(
+                    'Back to Tech Pack Details',
+                    style: TextStyle(
+                      fontSize: 16.sp,
+                      fontWeight: FontWeight.w600,
+                      color: Colors.white,
+                    ),
+                  ),
+                ),
+              ),
+            ],
+          ),
+        ),
+      ),
+      barrierDismissible: false,
     );
-    print('Advanced Detailed: ${detailed['technical_flat_prompt']}');
-
-    // Test single detailed view
-    final singleView = OpenAIService.getDetailedSingleViewPrompts(
-      techPackDetails,
-      creativeBrief,
-    );
-    print('Single Detailed: ${singleView['technical_flat_prompt']}');
-
-    // Test simplified detailed
-    final simplified = OpenAIService.getSimplifiedDetailedPrompts(
-      techPackDetails,
-      creativeBrief,
-    );
-    print('Simplified Detailed: ${simplified['technical_flat_prompt']}');
   }
+
+  // Debug/test utility — not called from anywhere in the app.
+  // Commented out (Problem 5 fix): it called the same hardcoded-default
+  // backup methods ('jacket', 'collar', 'zipper') that were removed from the
+  // real generation flow. Left disabled here too so it can't silently
+  // reintroduce the bug if ever wired up to a debug button later.
+  //
+  // void testTechnicalDrawingPrompts() {
+  //   final techPackDetails = _collectTechPackDetails();
+  //   final creativeBrief = designData['creativeBrief'] ?? {};
+  //
+  //   print('=== TESTING TECHNICAL DRAWING PROMPTS ===');
+  //
+  //   // Test detailed three views
+  //   final detailed = OpenAIService.getAdvancedDetailedPrompts(
+  //     techPackDetails,
+  //     creativeBrief,
+  //   );
+  //   print('Advanced Detailed: ${detailed['technical_flat_prompt']}');
+  //
+  //   // Test single detailed view
+  //   final singleView = OpenAIService.getDetailedSingleViewPrompts(
+  //     techPackDetails,
+  //     creativeBrief,
+  //   );
+  //   print('Single Detailed: ${singleView['technical_flat_prompt']}');
+  //
+  //   // Test simplified detailed
+  //   final simplified = OpenAIService.getSimplifiedDetailedPrompts(
+  //     techPackDetails,
+  //     creativeBrief,
+  //   );
+  //   print('Simplified Detailed: ${simplified['technical_flat_prompt']}');
+  // }
 
   // Gallery functionality for measurements
   Future<void> openCameraForMeasurement() async {
