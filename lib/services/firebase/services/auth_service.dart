@@ -9,6 +9,7 @@ import 'package:google_sign_in/google_sign_in.dart';
 import 'package:sign_in_with_apple/sign_in_with_apple.dart';
 import 'package:atella/services/firebase/services/delete_account_service.dart';
 import 'package:atella/services/firebase/services/design_quota_service.dart';
+import 'package:atella/services/firebase/services/push_notification_service.dart';
 import 'package:atella/services/onboarding/onboarding_storage_service.dart';
 
 class AuthService {
@@ -54,6 +55,7 @@ class AuthService {
         }
 
         await _saveOnboardingToFirestore(user.uid);
+        await PushNotificationService().saveTokenForCurrentUser();
 
         return null; // Success
       } else {
@@ -128,6 +130,7 @@ class AuthService {
 
       if (userCredential.user != null) {
         await _saveOnboardingToFirestore(userCredential.user!.uid);
+        await PushNotificationService().saveTokenForCurrentUser();
       }
 
       return null; // Success
@@ -293,6 +296,7 @@ class AuthService {
         }
 
         await _saveOnboardingToFirestore(user.uid);
+        await PushNotificationService().saveTokenForCurrentUser();
 
         return (error: null, isNewUser: isNewUser);
       } else {
@@ -411,6 +415,7 @@ final oauthCredential = OAuthProvider("apple.com").credential(
         }
 
         await _saveOnboardingToFirestore(user.uid);
+        await PushNotificationService().saveTokenForCurrentUser();
 
         return (error: null, isNewUser: isNewUser); // Success
       } else {

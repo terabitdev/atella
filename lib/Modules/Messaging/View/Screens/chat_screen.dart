@@ -6,9 +6,46 @@ import 'package:atella/core/themes/app_fonts.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
+import 'package:image_picker/image_picker.dart';
 
 class ChatScreen extends StatelessWidget {
   const ChatScreen({super.key});
+
+  void _showAttachmentOptions(BuildContext context, ChatController controller) {
+    showModalBottomSheet(
+      context: context,
+      builder: (_) => SafeArea(
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.photo_camera_outlined),
+              title: const Text('Camera'),
+              onTap: () {
+                Navigator.pop(context);
+                controller.pickAndSendImage(ImageSource.camera);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.photo_library_outlined),
+              title: const Text('Gallery'),
+              onTap: () {
+                Navigator.pop(context);
+                controller.pickAndSendImage(ImageSource.gallery);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.insert_drive_file_outlined),
+              title: const Text('Document'),
+              onTap: () {
+                Navigator.pop(context);
+                controller.pickAndSendDocument();
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -97,7 +134,9 @@ class ChatScreen extends StatelessWidget {
                 () => ChatInputBar(
                   controller: controller.textController,
                   isSending: controller.isSending.value,
+                  isUploading: controller.isUploading.value,
                   onSend: controller.send,
+                  onAttach: () => _showAttachmentOptions(context, controller),
                 ),
               ),
             ],

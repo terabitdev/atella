@@ -24,6 +24,7 @@ import 'services/PaymentService/subscription_manager_service.dart';
 import 'services/PaymentService/stripe_subscription_service.dart';
 import 'services/PaymentService/revenuecat_service.dart';
 import 'services/deeplink/deep_link_service.dart';
+import 'services/firebase/services/push_notification_service.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
 import 'package:atella/services/translation/ml_translation_service.dart';
@@ -79,6 +80,10 @@ Future<void> _initializeBackgroundServices() async {
 
   // Initialize LocaleController for language management (permanent to survive logout)
   Get.put(LocaleController(), permanent: true);
+
+  // Requests notification permission and registers this device's FCM token
+  // for the signed-in user (no-op if nobody is signed in yet).
+  await PushNotificationService().initialize();
 
   // Validate and cleanup incomplete/unpaid subscriptions
   await _validateSubscriptionOnLaunch();

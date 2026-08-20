@@ -33,6 +33,14 @@ service firebase.storage {
       allow read, write: if isSignedIn();
     }
 
+    // Chat attachments: readable/writable by either participant in the
+    // conversation (looked up from the Firestore conversation doc), so an
+    // image/document one side sends can actually be viewed by the other.
+    match /conversations/{conversationId}/{allPaths=**} {
+      allow read, write: if isSignedIn() &&
+        request.auth.uid in firestore.get(/databases/(default)/documents/conversations/$(conversationId)).data.participantUids;
+    }
+
     // Supplier logos: publicly viewable, writable only by the owning
     // supplier (via custom claim) or an admin.
     match /supplier_logos/{supplierId}/{fileName} {

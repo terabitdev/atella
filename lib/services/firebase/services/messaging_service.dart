@@ -1,5 +1,8 @@
+import 'dart:io';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:atella/Data/Models/conversation_model.dart';
 import 'package:atella/Data/Models/message_model.dart';
 
@@ -11,6 +14,7 @@ import 'package:atella/Data/Models/message_model.dart';
 class MessagingService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseStorage _storage = FirebaseStorage.instance;
 
   String? get _uid => _auth.currentUser?.uid;
 
@@ -118,6 +122,43 @@ class MessagingService {
       text: techPackProjectName ?? 'Tech Pack',
       attachmentUrl: techPackImageUrl,
       type: 'tech_pack_shared',
+    );
+    await _firestore
+        .collection('conversations')
+        .doc(conversationId)
+        .collection('messages')
+        .add(message.toFirestore(uid));
+  }
+
+  /// Uploads a picked image/document to Storage under this conversation and
+  /// posts it as an 'image' or 'file' message so the other participant can
+  /// see and open it — this is what lets ongoing chat (not just the initial
+  /// tech-pack share) carry attachments.
+  Future<void> sendAttachmentMessage(
+    String conversationId, {
+    required File file,
+    required String type,
+    required String fileName,
+  }) async {
+    final uid = _uid;
+    if (uid == null) throw Exception('Not signed in');
+
+    final ref = _storage
+        .ref()
+        .child('conversations')
+        .child(conversationId)
+        .child('attachments')
+        .child('${DateTime.now().millisecondsSinceEpoch}_$fileName');
+    final uploadTask = await ref.putFile(file);
+    final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+    final message = MessageModel(
+      id: '',
+      senderUid: uid,
+      text: fileName,
+      attachmentUrl: downloadUrl,
+      type: type,
+      fileName: fileName,
     );
     await _firestore
         .collection('conversations')

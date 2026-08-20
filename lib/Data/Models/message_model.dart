@@ -5,7 +5,8 @@ class MessageModel {
   final String senderUid;
   final String text;
   final String? attachmentUrl;
-  final String type; // text | system | sample_order_form
+  final String type; // text | system | sample_order_form | tech_pack_shared | image | file
+  final String? fileName;
   final String? orderId;
   final DateTime? createdAt;
   final List<String> readBy;
@@ -16,6 +17,7 @@ class MessageModel {
     required this.text,
     this.attachmentUrl,
     this.type = 'text',
+    this.fileName,
     this.orderId,
     this.createdAt,
     this.readBy = const [],
@@ -29,6 +31,7 @@ class MessageModel {
       text: data['text'] ?? '',
       attachmentUrl: data['attachmentUrl'],
       type: data['type'] ?? 'text',
+      fileName: data['fileName'],
       orderId: data['orderId'],
       createdAt: (data['createdAt'] as Timestamp?)?.toDate(),
       readBy: List<String>.from(data['readBy'] ?? []),
@@ -41,6 +44,7 @@ class MessageModel {
       'text': text,
       'attachmentUrl': attachmentUrl,
       'type': type,
+      'fileName': fileName,
       'createdAt': FieldValue.serverTimestamp(),
       'readBy': [senderUid],
     };

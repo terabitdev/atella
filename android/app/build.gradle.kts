@@ -23,6 +23,7 @@ android {
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
         targetCompatibility = JavaVersion.VERSION_11
+        isCoreLibraryDesugaringEnabled = true
     }
 
     kotlinOptions {
@@ -85,4 +86,6 @@ flutter {
 dependencies {
     // Google Play Billing library for in-app purchases
     implementation("com.android.billingclient:billing:7.1.1")
+    // Required by flutter_local_notifications (core library desugaring)
+    coreLibraryDesugaring("com.android.tools:desugar_jdk_libs:2.1.4")
 }

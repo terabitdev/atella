@@ -5,13 +5,17 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 class ChatInputBar extends StatelessWidget {
   final TextEditingController controller;
   final bool isSending;
+  final bool isUploading;
   final VoidCallback onSend;
+  final VoidCallback onAttach;
 
   const ChatInputBar({
     super.key,
     required this.controller,
     required this.isSending,
+    required this.isUploading,
     required this.onSend,
+    required this.onAttach,
   });
 
   @override
@@ -22,6 +26,19 @@ class ChatInputBar extends StatelessWidget {
         padding: EdgeInsets.symmetric(horizontal: 12.w, vertical: 10.h),
         child: Row(
           children: [
+            InkWell(
+              onTap: isUploading ? null : onAttach,
+              child: Padding(
+                padding: EdgeInsets.all(8.w),
+                child: isUploading
+                    ? SizedBox(
+                        width: 22.w,
+                        height: 22.w,
+                        child: const CircularProgressIndicator(strokeWidth: 2),
+                      )
+                    : Icon(Icons.attach_file, color: AppColors.buttonColor, size: 22.sp),
+              ),
+            ),
             Expanded(
               child: Container(
                 decoration: BoxDecoration(

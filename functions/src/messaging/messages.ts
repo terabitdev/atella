@@ -1,5 +1,6 @@
 import { onDocumentCreated } from 'firebase-functions/v2/firestore';
 import { admin, db, FUNCTIONS_REGION } from '../lib/admin';
+import { sendPushToUser } from '../lib/push';
 
 // Fires on every new message. Keeps the parent conversation's summary
 // (lastMessage, unread counts) in sync and notifies the recipient — in-app
@@ -22,6 +23,16 @@ export const onMessageCreated = onDocumentCreated(
 
     const preview =
       message.type === 'text' ? message.text : message.type === 'sample_order_form' ? 'Sent a sample order form' : message.text;
+
+    const senderIsBuyer = message.senderUid === conversation.userUid;
+    const senderName = senderIsBuyer ? conversation.userName || 'A user' : conversation.supplierCompanyName || 'A supplier';
+
+    const pushBody =
+      message.type === 'tech_pack_shared'
+        ? `${senderName} sent you a design: ${message.text}`
+        : message.type === 'image' || message.type === 'file'
+          ? `${senderName} sent you an attachment`
+          : `${senderName} sent you a message`;
 
     const batch = db.batch();
     batch.update(conversationRef, {
@@ -47,6 +58,11 @@ export const onMessageCreated = onDocumentCreated(
     }
 
     await batch.commit();
+
+    if (recipientUid) {
+      await sendPushToUser(recipientUid, senderName, pushBody, { conversationId, type: message.type });
+    }
+
     console.log(`✅ Message in ${conversationId}: notified ${recipientUid || 'nobody (no recipient found)'}`);
   }
 );
