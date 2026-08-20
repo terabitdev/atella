@@ -72,8 +72,12 @@ class TechPackDetailsController extends GetxController {
 
   // Labeling & Branding
   final logoPlacementController = TextEditingController();
+  final logoShapeController = TextEditingController();
+  final logoWidthController = TextEditingController();
+  final logoHeightController = TextEditingController();
   final labelsNeededController = TextEditingController();
   final qrCodeController = TextEditingController();
+  final embroideryThreadPantoneController = TextEditingController();
   final RxString labelImagePath = ''.obs;
   final RxBool showLabelImage = true.obs;
   final RxBool showLabelText = true.obs;
@@ -291,9 +295,14 @@ class TechPackDetailsController extends GetxController {
     print('   labelImage value: ${labeling['labelImage']}');
 
     logoPlacementController.text = labeling['logoPlacement'] ?? '';
+    logoShapeController.text = labeling['logoShape'] ?? '';
+    logoWidthController.text = labeling['logoWidth'] ?? '';
+    logoHeightController.text = labeling['logoHeight'] ?? '';
     labelsNeededController.text = labeling['labelsNeeded'] ?? '';
     labelImagePath.value = labeling['labelImage'] ?? '';
     qrCodeController.text = labeling['qrCode'] ?? '';
+    embroideryThreadPantoneController.text =
+        labeling['embroideryThreadPantone'] ?? '';
 
     print('🖼️ After loading - label image path: ${labelImagePath.value}');
     print('   Logo placement: ${logoPlacementController.text}');
@@ -686,15 +695,26 @@ class TechPackDetailsController extends GetxController {
       generationStep.value = 3;
       generationProgress.value = 0.75;
 
-      // Generate technical flat drawing with detailed approach and reference images
+      // Generate technical flat drawing WITHOUT the garment photo as an edit
+      // reference — the flat is supposed to look nothing like that photo
+      // (black-and-white line art vs. a color photo), and editing models
+      // stay conservative/anchored to the source image, which is the likely
+      // reason precise placement instructions (e.g. logo zone/side) weren't
+      // being followed even when correct. Generating fresh from the text
+      // description alone lets the AI actually act on the instructions
+      // instead of anchoring to the photo. Any other reference hints
+      // (measurement chart, label reference) are kept — only the photo
+      // itself is left out. See "Option 2" discussion.
+      final referenceImagesForFlat = Map<String, String>.from(referenceImages)
+        ..remove('selectedDesign');
       print(
-        'Generating detailed technical flat drawing with ${referenceImages.length} reference images...',
+        'Generating detailed technical flat drawing with ${referenceImagesForFlat.length} reference images (no garment photo)...',
       );
       List<String> technicalImages = [];
       try {
         technicalImages = await OpenAIService.generateTechPackImages(
           prompt: prompts['technical_flat_prompt'] ?? '',
-          referenceImages: referenceImages,
+          referenceImages: referenceImagesForFlat,
           numberOfImages: 1,
           size: '1024x1024', // Try 1024x1792 for vertical if 1024x1024 cuts off
         );
@@ -1493,9 +1513,13 @@ class TechPackDetailsController extends GetxController {
       },
       'labeling': {
         'logoPlacement': logoPlacementController.text,
+        'logoShape': logoShapeController.text,
+        'logoWidth': logoWidthController.text,
+        'logoHeight': logoHeightController.text,
         'labelsNeeded': labelsNeededController.text,
         'labelImage': labelImagePath.value,
         'qrCode': qrCodeController.text,
+        'embroideryThreadPantone': embroideryThreadPantoneController.text,
       },
       'manufacturers': {'country': manufacturerCountryController.text},
     };
@@ -1513,8 +1537,12 @@ class TechPackDetailsController extends GetxController {
     stitchingController.dispose();
     decorativeStitchingController.dispose();
     logoPlacementController.dispose();
+    logoShapeController.dispose();
+    logoWidthController.dispose();
+    logoHeightController.dispose();
     labelsNeededController.dispose();
     qrCodeController.dispose();
+    embroideryThreadPantoneController.dispose();
     manufacturerCountryController.dispose();
     super.onClose();
   }

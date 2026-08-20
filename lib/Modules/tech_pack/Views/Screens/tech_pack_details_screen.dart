@@ -336,6 +336,12 @@ class TechPackDetailsScreen extends StatelessWidget {
                                     ),
                                   ],
                                 )),
+                                TechPackQuestionField(
+                                  label: 'Embroidery Thread Pantone Reference',
+                                  hint: 'e.g. Pantone 19-4052 TPX',
+                                  controller:
+                                      controller.embroideryThreadPantoneController,
+                                ),
                               ],
                             ),
                           ),
@@ -373,6 +379,21 @@ class TechPackDetailsScreen extends StatelessWidget {
                                       controller.logoPlacementController,
                                   onChanged: (_) =>
                                       controller.checkLabelingBlockComplete(),
+                                ),
+                                TechPackQuestionField(
+                                  label: 'Logo Shape',
+                                  hint: 'e.g. circle, square, custom outline',
+                                  controller: controller.logoShapeController,
+                                ),
+                                TechPackQuestionField(
+                                  label: 'Logo Width (cm)',
+                                  hint: 'e.g. 5',
+                                  controller: controller.logoWidthController,
+                                ),
+                                TechPackQuestionField(
+                                  label: 'Logo Height (cm)',
+                                  hint: 'e.g. 3',
+                                  controller: controller.logoHeightController,
                                 ),
                                 Obx(() => controller.showLabelText.value
                                     ? TechPackQuestionField(

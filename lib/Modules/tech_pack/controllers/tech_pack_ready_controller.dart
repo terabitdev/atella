@@ -314,9 +314,14 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
         },
         'labeling': {
           'logoPlacement': _detailsController.logoPlacementController.text,
+          'logoShape': _detailsController.logoShapeController.text,
+          'logoWidth': _detailsController.logoWidthController.text,
+          'logoHeight': _detailsController.logoHeightController.text,
           'labelsNeeded': _detailsController.labelsNeededController.text,
           'labelImage': _detailsController.labelImagePath.value,
           'qrCode': _detailsController.qrCodeController.text,
+          'embroideryThreadPantone':
+              _detailsController.embroideryThreadPantoneController.text,
         },
         'manufacturers': {
           'country': _detailsController.manufacturerCountryController.text,

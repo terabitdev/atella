@@ -824,22 +824,79 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
-  /// Translates the user's logo placement answer (which may be in French)
-  /// into a short, clear English location phrase — used ONLY to help the
-  /// technical flat drawing AI correctly decide front/back/sleeve placement.
-  /// This is a separate, internal-only copy: the user's original text
-  /// (whatever language) is never modified anywhere else and is still what
-  /// gets printed on the visible spec sheet. Falls back to returning the
-  /// original text unchanged on any failure, so generation is never blocked
-  /// by this. See Problem 2/3 (placement) discussion.
-  static Future<String> _translateLogoPlacementForDrawing(
+  // Replaced by _classifyLogoPlacement + _visualSideForView below — this
+  // only translated the words, it never told the drawing AI which side of
+  // the WEARER's body was meant vs. which half of the image, which is what
+  // caused unreliable/duplicate placement even on clear English input like
+  // "chest". Kept here, disabled, for reference / possible rollback.
+  //
+  // static Future<String> _translateLogoPlacementForDrawing(
+  //   String logoPlacement,
+  // ) async {
+  //   if (logoPlacement.trim().isEmpty) return logoPlacement;
+  //
+  //   try {
+  //     final apiKey = await getApiKey();
+  //     if (apiKey == null || apiKey.isEmpty) return logoPlacement;
+  //
+  //     final response = await http
+  //         .post(
+  //           Uri.parse('$_baseUrl/chat/completions'),
+  //           headers: {
+  //             'Content-Type': 'application/json',
+  //             'Authorization': 'Bearer $apiKey',
+  //           },
+  //           body: jsonEncode({
+  //             'model': 'gpt-4o',
+  //             'messages': [
+  //               {
+  //                 'role': 'user',
+  //                 'content':
+  //                     'Translate this garment logo placement answer into a short, clear English location phrase suitable for a technical fashion drawing (e.g. "right shoulder", "mid-chest", "left sleeve", "center back"). '
+  //                     'If it is already in English, return it unchanged (just cleaned up if needed). '
+  //                     'Return ONLY the short phrase, no explanation, no quotes.\n\n"$logoPlacement"',
+  //               },
+  //             ],
+  //             'max_tokens': 20,
+  //           }),
+  //         )
+  //         .timeout(const Duration(seconds: 15));
+  //
+  //     if (response.statusCode != 200) {
+  //       print('❌ Logo placement translation failed: ${response.body}');
+  //       return logoPlacement;
+  //     }
+  //
+  //     final data = jsonDecode(response.body);
+  //     final translated =
+  //         (data['choices'][0]['message']['content'] as String).trim();
+  //     print(
+  //       '🌐 Logo placement translated for drawing: "$logoPlacement" -> "$translated"',
+  //     );
+  //     return translated.isEmpty ? logoPlacement : translated;
+  //   } catch (e) {
+  //     print('❌ Error translating logo placement: $e');
+  //     return logoPlacement;
+  //   }
+  // }
+
+  /// Classifies a logo placement description into three simple facts a
+  /// drawing AI can act on reliably: which view (front/back), which side
+  /// of the WEARER's body (left/right/center — not the image's left/right),
+  /// and a short zone description appropriate for the garment type (chest,
+  /// shoulder, quad, waistband, back pocket, etc.). Works for any garment
+  /// type, including bottoms and custom garments — no fixed word list.
+  /// Layer 2 safety net: an incomplete/malformed response is never trusted,
+  /// falls back to front/center instead. Non-blocking on any failure.
+  static Future<Map<String, String>> _classifyLogoPlacement(
     String logoPlacement,
+    String garmentType,
   ) async {
-    if (logoPlacement.trim().isEmpty) return logoPlacement;
+    const fallback = {'view': 'front', 'side': 'center', 'zone': 'as specified'};
 
     try {
       final apiKey = await getApiKey();
-      if (apiKey == null || apiKey.isEmpty) return logoPlacement;
+      if (apiKey == null || apiKey.isEmpty) return fallback;
 
       final response = await http
           .post(
@@ -854,44 +911,184 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
                 {
                   'role': 'user',
                   'content':
-                      'Translate this garment logo placement answer into a short, clear English location phrase suitable for a technical fashion drawing (e.g. "right shoulder", "mid-chest", "left sleeve", "center back"). '
-                      'If it is already in English, return it unchanged (just cleaned up if needed). '
-                      'Return ONLY the short phrase, no explanation, no quotes.\n\n"$logoPlacement"',
+                      'A logo/embellishment placement was requested for a "$garmentType": "$logoPlacement". '
+                      'Classify it into exactly three answers:\n'
+                      'VIEW: front or back (visible from the front of the garment, or the back?)\n'
+                      'SIDE: left, right, or center (the WEARER\'s own left/right, as if you were the person '
+                      'wearing the garment — NOT the viewer\'s left/right)\n'
+                      'ZONE: a short 1-3 word description of the specific area, appropriate for this garment '
+                      'type (e.g. chest, shoulder, quad, waistband, back pocket, ankle)\n\n'
+                      'Return ONLY these three lines, in this exact format, no explanation:\n'
+                      'VIEW: front\n'
+                      'SIDE: center\n'
+                      'ZONE: chest',
                 },
               ],
-              'max_tokens': 20,
+              'max_tokens': 30,
             }),
           )
           .timeout(const Duration(seconds: 15));
 
       if (response.statusCode != 200) {
-        print('❌ Logo placement translation failed: ${response.body}');
-        return logoPlacement;
+        print('❌ Logo placement classification failed: ${response.body}');
+        return fallback;
       }
 
       final data = jsonDecode(response.body);
-      final translated =
-          (data['choices'][0]['message']['content'] as String).trim();
-      print(
-        '🌐 Logo placement translated for drawing: "$logoPlacement" -> "$translated"',
-      );
-      return translated.isEmpty ? logoPlacement : translated;
+      final content = (data['choices'][0]['message']['content'] as String).trim();
+      print('🌐 Logo placement classified: $content');
+
+      String? view;
+      String? side;
+      String? zone;
+      for (final line in content.split('\n')) {
+        final parts = line.split(':');
+        if (parts.length < 2) continue;
+        final key = parts[0].trim().toUpperCase();
+        final value = parts.sublist(1).join(':').trim().toLowerCase();
+        if (key == 'VIEW' && (value == 'front' || value == 'back')) view = value;
+        if (key == 'SIDE' && ['left', 'right', 'center'].contains(value)) side = value;
+        if (key == 'ZONE' && value.isNotEmpty) zone = value;
+      }
+
+      // Layer 2 backstop: an incomplete/malformed reply is never trusted.
+      if (view == null || side == null || zone == null) return fallback;
+      return {'view': view, 'side': side, 'zone': zone};
     } catch (e) {
-      print('❌ Error translating logo placement: $e');
-      return logoPlacement;
+      print('❌ Error classifying logo placement: $e');
+      return fallback;
     }
   }
 
-  static String _standardMeasurementRules(String measurementChart) {
-    String section = '';
-    if (measurementChart.isNotEmpty) {
-      section += 'Measurement data: $measurementChart\n';
+  /// Converts the WEARER's side into the side it actually appears on
+  /// within a given view — a fixed, deterministic rule, not an AI guess.
+  /// Looking at someone's FRONT is a mirror (their right shows up on the
+  /// left); looking at their BACK is not (their right stays on the right).
+  static String _visualSideForView(String view, String wearerSide) {
+    if (wearerSide == 'center') return 'center';
+    final isRight = wearerSide == 'right';
+    if (view == 'front') {
+      return isRight ? 'left' : 'right';
+    } else {
+      return isRight ? 'right' : 'left';
     }
-    section +=
-        'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
-        'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
-        'Tolerance: ±1 cm for all measurements.\n';
-    return section;
+  }
+
+  // Replaced by _buildMeasurementTableSection, which uses garment-aware
+  // labels and real computed/chart-derived numbers instead of always
+  // hardcoding "Chest, Waist, Hip, Length, Sleeve" for every garment type
+  // (this is what caused jeans to show a nonsensical "Chest" row). Kept
+  // here, disabled, for reference / possible rollback.
+  //
+  // static String _standardMeasurementRules(String measurementChart) {
+  //   String section = '';
+  //   if (measurementChart.isNotEmpty) {
+  //     section += 'Measurement data: $measurementChart\n';
+  //   }
+  //   section +=
+  //       'Render as a clean bordered grid table. Columns = each selected size (e.g. S, M, L, XL). Rows = standard measurements: Chest, Waist, Hip, Length, Sleeve. Fill in standard industry values for each size.\n'
+  //       'Grading rules: Chest +3 cm, Length +2 cm, Shoulder +2 cm, Armhole +1 cm per size.\n'
+  //       'Tolerance: ±1 cm for all measurements.\n';
+  //   return section;
+  // }
+
+  /// A small, safe set used only if the AI measurement call fails entirely
+  /// or returns unusable data — never shown to a user as a "final" result,
+  /// just enough to keep generation from breaking outright.
+  static List<Map<String, dynamic>> _fallbackMeasurementFields() => [
+    _f('Chest Width', 'front', 50, 3, 'horizontal arrow across the widest chest point'),
+    _f('Waist Width', 'front', 40, 3, 'horizontal arrow at waist level'),
+    _f('Length', 'front', 65, 2, 'vertical arrow along the outer edge, top to hem'),
+    _f('Shoulder Width', 'back', 40, 1.5, 'horizontal arrow across the full shoulder seam'),
+  ];
+
+  /// Asks AI to determine the standard, essential measurements for a given
+  /// garment — works for ANY garment type, including "Custom" or anything
+  /// not on a predefined list, since it reasons directly about the garment
+  /// description rather than matching it against a fixed category list.
+  ///
+  /// Layer 1 (the ask): explicitly bounded to 6-10 NECESSARY measurements
+  /// only, with reference examples so the AI calibrates to a normal,
+  /// standard level of detail instead of returning something arbitrary.
+  /// Layer 2 (the check): the response is parsed and hard-capped in code
+  /// regardless of what the AI actually returned — never trusted blindly.
+  /// Falls back to a small generic set on any failure (non-blocking).
+  static Future<List<Map<String, dynamic>>> _generateMeasurementFields(
+    String garmentType,
+  ) async {
+    try {
+      final apiKey = await getApiKey();
+      if (apiKey == null || apiKey.isEmpty) return _fallbackMeasurementFields();
+
+      final response = await http
+          .post(
+            Uri.parse('$_baseUrl/chat/completions'),
+            headers: {
+              'Content-Type': 'application/json',
+              'Authorization': 'Bearer $apiKey',
+            },
+            body: jsonEncode({
+              'model': 'gpt-4o',
+              'messages': [
+                {
+                  'role': 'user',
+                  'content':
+                      'List the standard measurements needed for a technical spec sheet for this garment: "$garmentType". '
+                      'Give between 6 and 10 measurements total — ONLY the standard, essential sizing points a manufacturer '
+                      'would actually need to produce this garment. Do NOT include decorative, cosmetic, or overly specific '
+                      'measurements. For reference: a t-shirt typically needs neck opening, chest width, front length, armhole '
+                      'depth, sleeve length, shoulder width, back length, sleeve opening, waist width, hem width. Jeans typically '
+                      'need waist width, hip width, thigh width, outseam, inseam, back rise, seat width, knee width, leg opening, '
+                      'waistband height. Use this as a guide for the right LEVEL of detail for any garment type, including unusual '
+                      'or custom ones.\n\n'
+                      'For each measurement give: a short label, which view it belongs on (front or back), whether it is drawn as '
+                      'a horizontal or vertical arrow, a realistic value in centimeters for a size M, and how many centimeters it '
+                      'should grow or shrink per size step (grading).\n\n'
+                      'Return ONLY plain lines in this exact format, one measurement per line, no headers, no explanation:\n'
+                      'Label | View | Orientation | BaseAtM | GradingPerSize\n'
+                      'Example: Chest Width | front | horizontal | 50 | 3',
+                },
+              ],
+              'max_tokens': 400,
+            }),
+          )
+          .timeout(const Duration(seconds: 20));
+
+      if (response.statusCode != 200) {
+        print('❌ Measurement field generation failed: ${response.body}');
+        return _fallbackMeasurementFields();
+      }
+
+      final data = jsonDecode(response.body);
+      final content = (data['choices'][0]['message']['content'] as String).trim();
+      print('📐 AI-generated measurement fields:\n$content');
+
+      final parsed = <Map<String, dynamic>>[];
+      for (final line in content.split('\n')) {
+        final parts = line.split('|').map((p) => p.trim()).toList();
+        if (parts.length != 5) continue;
+        final base = double.tryParse(parts[3]);
+        final grading = double.tryParse(parts[4]);
+        final view = parts[1].toLowerCase();
+        if (base == null || grading == null) continue;
+        if (view != 'front' && view != 'back') continue;
+        final isVertical = parts[2].toLowerCase().contains('vertical');
+        final desc = isVertical
+            ? 'vertical arrow along the ${parts[0]}'
+            : 'horizontal arrow across the ${parts[0]}';
+        parsed.add(_f(parts[0], view, base, grading, desc));
+        // Layer 2 backstop: hard cap regardless of what the AI returned.
+        if (parsed.length >= 10) break;
+      }
+
+      // Too little usable data came back — safer to fall back than build
+      // an incomplete spec sheet from a mostly-failed parse.
+      if (parsed.length < 4) return _fallbackMeasurementFields();
+      return parsed;
+    } catch (e) {
+      print('❌ Error generating measurement fields: $e');
+      return _fallbackMeasurementFields();
+    }
   }
 
   /// Builds the COLORS section body. If real extracted Pantone codes are available,
@@ -1115,301 +1312,162 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     }
   }
 
-  /// Returns garment-appropriate approximate measurements for the technical flat drawing.
-  /// Values are for a size M garment; front, back, and summary table are pre-formatted strings.
-  static Map<String, String> _techFlatMeasurements(String garmentType) {
-    final key = garmentType.toLowerCase().trim();
+  // ============================================================================
+  // SHARED MEASUREMENT SYSTEM — single source of truth for both Page 2's
+  // measurement table and Page 3's technical flat drawing. Every field has a
+  // base value at size M plus a per-size grading amount, so any selected
+  // size can be computed (not just a fixed M), and both pages read from the
+  // exact same category + field data so they can never disagree with each
+  // other. An uploaded measurement chart's real values take priority over
+  // these computed defaults wherever the chart actually provides them.
+  // ============================================================================
 
-    if ([
-      't-shirt',
-      'tshirt',
-      't shirt',
-      'tank',
-      'polo',
-      'crop top',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
-            '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
-            '  • Front length: 68 cm — vertical arrow along the left outer edge, top to hem\n'
-            '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm\n'
-            '  • Sleeve length: 22 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back':
-            '  • Shoulder width: 42 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 70 cm — vertical arrow along the right outer edge, top to hem\n'
-            '  • Sleeve opening width: 16 cm — horizontal arrow at the sleeve hem\n'
-            '  • Waist width: 46 cm — horizontal arrow at waist level\n'
-            '  • Hem width: 48 cm — horizontal arrow at the bottom hem',
-        'table':
-            '  Neck Opening: 20 cm        Shoulder Width: 42 cm\n'
-            '  Chest Width: 50 cm         Back Length: 70 cm\n'
-            '  Front Length: 68 cm        Sleeve Opening: 16 cm\n'
-            '  Armhole Depth: 22 cm       Waist Width: 46 cm\n'
-            '  Sleeve Length: 22 cm       Hem Width: 48 cm',
-      };
+  static const List<String> _sizeOrder = ['XXS', 'XS', 'S', 'M', 'L', 'XL', 'XXL'];
+
+  /// How many size steps `size` is away from M (negative = smaller, positive
+  /// = larger). Unrecognized size labels are treated as M (no adjustment).
+  static int _sizeStepFromM(String size) {
+    final normalized = size.trim().toUpperCase();
+    final idx = _sizeOrder.indexOf(normalized);
+    if (idx == -1) return 0;
+    return idx - _sizeOrder.indexOf('M');
+  }
+
+  static String _fmtCm(double value) => '${value.round()} cm';
+
+  static Map<String, dynamic> _f(
+    String label,
+    String view,
+    double base,
+    double grading,
+    String desc,
+  ) => {
+    'label': label,
+    'view': view,
+    'base': base,
+    'grading': grading,
+    'desc': desc,
+  };
+
+
+  /// Finds a chart-provided value for `label` at `size`, matching loosely
+  /// (case-insensitive, either name containing the other) since an uploaded
+  /// chart's wording won't exactly match our field labels. Returns null if
+  /// the chart doesn't cover this field for this size.
+  static String? _chartValueFor(
+    Map<String, Map<String, String>>? chartData,
+    String size,
+    String label,
+  ) {
+    final sizeData = chartData?[size.trim().toUpperCase()];
+    if (sizeData == null) return null;
+    final target = label.toLowerCase();
+    for (final entry in sizeData.entries) {
+      final chartLabel = entry.key.toLowerCase();
+      if (chartLabel.contains(target) || target.contains(chartLabel)) {
+        return entry.value;
+      }
+    }
+    return null;
+  }
+
+  /// Parses "Size | Measurement Name | Value" lines (the exact format
+  /// extractSizesFromChartImage's prompt asks the AI to return) into
+  /// size -> field name -> value-with-unit. Malformed lines are skipped.
+  static Map<String, Map<String, String>> _parseChartMeasurements(String rawChartText) {
+    final result = <String, Map<String, String>>{};
+    for (final line in rawChartText.split('\n')) {
+      final parts = line.split('|').map((p) => p.trim()).toList();
+      if (parts.length != 3 || parts.any((p) => p.isEmpty)) continue;
+      final size = parts[0].toUpperCase();
+      result.putIfAbsent(size, () => {})[parts[1]] = parts[2];
+    }
+    return result;
+  }
+
+  /// Returns size-appropriate measurements for the technical flat drawing
+  /// (ONE reference size only — a flat drawing can't legibly show arrows
+  /// for multiple sizes at once), from the `fields` already produced by
+  /// _generateMeasurementFields — the exact same fields Page 2's table
+  /// uses, so the two pages can never disagree. Uses real chart values
+  /// first where the chart covers a field, computed base+grading otherwise.
+  static Map<String, String> _techFlatMeasurements(
+    List<Map<String, dynamic>> fields,
+    String referenceSize, {
+    Map<String, Map<String, String>>? chartData,
+  }) {
+    String valueFor(Map<String, dynamic> field) {
+      final chartValue = _chartValueFor(chartData, referenceSize, field['label'] as String);
+      if (chartValue != null && chartValue.isNotEmpty) return chartValue;
+      final steps = _sizeStepFromM(referenceSize);
+      final computed = (field['base'] as double) + (field['grading'] as double) * steps;
+      return _fmtCm(computed);
     }
 
-    if ([
-      'sweatshirt',
-      'hoodie',
-      'sweater',
-      'pullover',
-      'cardigan',
-      'knitwear',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Neck opening width: 22 cm — horizontal arrow across the neckline\n'
-            '  • Chest width: 56 cm — horizontal arrow across the widest chest point\n'
-            '  • Front length: 70 cm — vertical arrow along the left outer edge, top to hem\n'
-            '  • Armhole depth: 25 cm — vertical arrow from shoulder seam to underarm\n'
-            '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back':
-            '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 72 cm — vertical arrow along the right outer edge, top to hem\n'
-            '  • Cuff width: 18 cm — horizontal arrow across the cuff opening\n'
-            '  • Hem width: 54 cm — horizontal arrow at the bottom hem\n'
-            '  • Sleeve opening width: 18 cm — horizontal arrow at the sleeve hem',
-        'table':
-            '  Neck Opening: 22 cm        Shoulder Width: 46 cm\n'
-            '  Chest Width: 56 cm         Back Length: 72 cm\n'
-            '  Front Length: 70 cm        Cuff Width: 18 cm\n'
-            '  Armhole Depth: 25 cm       Hem Width: 54 cm\n'
-            '  Sleeve Length: 60 cm       Sleeve Opening: 18 cm',
-      };
+    final frontFields =
+        fields.where((f) => (f['view'] as String) == 'front').toList();
+    final backFields =
+        fields.where((f) => (f['view'] as String) == 'back').toList();
+
+    String bulletsFor(List<Map<String, dynamic>> group) => group
+        .map((f) => '  • ${f['label']}: ${valueFor(f)} — ${f['desc']}')
+        .join('\n');
+
+    final tableLines = <String>[];
+    for (int i = 0; i < frontFields.length; i++) {
+      final left = '${frontFields[i]['label']}: ${valueFor(frontFields[i])}';
+      final right = i < backFields.length
+          ? '${backFields[i]['label']}: ${valueFor(backFields[i])}'
+          : '';
+      tableLines.add('  ${left.padRight(28)}$right');
     }
 
-    if (['shirt', 'blouse', 'button'].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Neck opening width: 38 cm — horizontal arrow at the collar base\n'
-            '  • Chest width: 54 cm — horizontal arrow across the widest chest point\n'
-            '  • Front length: 78 cm — vertical arrow along the left outer edge, top to hem\n'
-            '  • Armhole depth: 24 cm — vertical arrow from shoulder seam to underarm\n'
-            '  • Sleeve length: 62 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back':
-            '  • Shoulder width: 44 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 80 cm — vertical arrow along the right outer edge, top to hem\n'
-            '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
-            '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
-            '  • Sleeve opening width: 23 cm — horizontal arrow at the sleeve hem',
-        'table':
-            '  Neck Opening: 38 cm        Shoulder Width: 44 cm\n'
-            '  Chest Width: 54 cm         Back Length: 80 cm\n'
-            '  Front Length: 78 cm        Collar Height: 4 cm\n'
-            '  Armhole Depth: 24 cm       Cuff Width: 11 cm\n'
-            '  Sleeve Length: 62 cm       Sleeve Opening: 23 cm',
-      };
-    }
-
-    if ([
-      'jacket',
-      'coat',
-      'blazer',
-      'overcoat',
-      'trench',
-      'parka',
-      'outerwear',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Neck opening width: 20 cm — horizontal arrow across the neckline\n'
-            '  • Chest width: 58 cm — horizontal arrow across the widest chest point\n'
-            '  • Front length: 82 cm — vertical arrow along the left outer edge, top to hem\n'
-            '  • Armhole depth: 26 cm — vertical arrow from shoulder seam to underarm\n'
-            '  • Sleeve length: 64 cm — arrow along the outer sleeve edge from shoulder to cuff',
-        'back':
-            '  • Shoulder width: 46 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 84 cm — vertical arrow along the right outer edge, top to hem\n'
-            '  • Collar height: 6 cm — vertical arrow at the collar stand\n'
-            '  • Cuff width: 13 cm — horizontal arrow across the cuff opening\n'
-            '  • Sleeve opening width: 26 cm — horizontal arrow at the sleeve hem',
-        'table':
-            '  Neck Opening: 20 cm        Shoulder Width: 46 cm\n'
-            '  Chest Width: 58 cm         Back Length: 84 cm\n'
-            '  Front Length: 82 cm        Collar Height: 6 cm\n'
-            '  Armhole Depth: 26 cm       Cuff Width: 13 cm\n'
-            '  Sleeve Length: 64 cm       Sleeve Opening: 26 cm',
-      };
-    }
-
-    if (['dress', 'gown', 'frock'].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Bust width: 46 cm — horizontal arrow across the widest bust point\n'
-            '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
-            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
-            '  • Front length: 105 cm — vertical arrow from shoulder to hem\n'
-            '  • Armhole depth: 20 cm — vertical arrow from shoulder seam to underarm',
-        'back':
-            '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 107 cm — vertical arrow along the right outer edge, top to hem\n'
-            '  • Neck opening width: 16 cm — horizontal arrow across the back neckline\n'
-            '  • Waist to hem: 70 cm — vertical arrow from waist to hem\n'
-            '  • Hem width: 60 cm — horizontal arrow at the bottom hem',
-        'table':
-            '  Bust Width: 46 cm          Shoulder Width: 38 cm\n'
-            '  Waist Width: 36 cm         Back Length: 107 cm\n'
-            '  Hip Width: 52 cm           Neck Opening: 16 cm\n'
-            '  Front Length: 105 cm       Waist to Hem: 70 cm\n'
-            '  Armhole Depth: 20 cm       Hem Width: 60 cm',
-      };
-    }
-
-    if (['skirt'].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Waist width: 34 cm — horizontal arrow at the waistband top\n'
-            '  • Hip width: 50 cm — horizontal arrow at the widest hip point\n'
-            '  • Front length: 60 cm — vertical arrow from waistband to hem\n'
-            '  • Hem width: 58 cm — horizontal arrow at the bottom hem\n'
-            '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'back':
-            '  • Back waist width: 34 cm — horizontal arrow at the back waistband\n'
-            '  • Back hip width: 50 cm — horizontal arrow at the widest back hip point\n'
-            '  • Back length: 62 cm — vertical arrow from waistband to hem\n'
-            '  • Back hem width: 58 cm — horizontal arrow at the back hem\n'
-            '  • Side seam length: 58 cm — vertical arrow along the side seam',
-        'table':
-            '  Waist Width: 34 cm         Back Waist: 34 cm\n'
-            '  Hip Width: 50 cm           Back Hip: 50 cm\n'
-            '  Front Length: 60 cm        Back Length: 62 cm\n'
-            '  Hem Width: 58 cm           Back Hem: 58 cm\n'
-            '  Waistband Height: 4 cm     Side Seam: 58 cm',
-      };
-    }
-
-    if ([
-      'trouser',
-      'pant',
-      'jean',
-      'chino',
-      'jogger',
-      'cargo',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
-            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
-            '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
-            '  • Outseam length: 102 cm — vertical arrow from waistband to hem\n'
-            '  • Inseam length: 80 cm — vertical arrow from crotch to hem',
-        'back':
-            '  • Back rise: 32 cm — vertical arrow from waistband to crotch\n'
-            '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
-            '  • Knee width: 22 cm — horizontal arrow at the knee level\n'
-            '  • Leg opening: 18 cm — horizontal arrow at the hem\n'
-            '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'table':
-            '  Waist Width: 36 cm         Back Rise: 32 cm\n'
-            '  Hip Width: 52 cm           Seat Width: 54 cm\n'
-            '  Thigh Width: 30 cm         Knee Width: 22 cm\n'
-            '  Outseam: 102 cm            Leg Opening: 18 cm\n'
-            '  Inseam: 80 cm              Waistband Height: 4 cm',
-      };
-    }
-
-    if (['short'].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Waist width: 36 cm — horizontal arrow at the waistband\n'
-            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
-            '  • Thigh width: 30 cm — horizontal arrow at the widest thigh\n'
-            '  • Outseam length: 42 cm — vertical arrow from waistband to hem\n'
-            '  • Inseam length: 18 cm — vertical arrow from crotch to hem',
-        'back':
-            '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
-            '  • Seat width: 54 cm — horizontal arrow at the seat level\n'
-            '  • Hem width: 26 cm — horizontal arrow at the bottom hem\n'
-            '  • Side seam: 40 cm — vertical arrow along the side seam\n'
-            '  • Waistband height: 4 cm — vertical arrow at the waistband',
-        'table':
-            '  Waist Width: 36 cm         Back Rise: 28 cm\n'
-            '  Hip Width: 52 cm           Seat Width: 54 cm\n'
-            '  Thigh Width: 30 cm         Hem Width: 26 cm\n'
-            '  Outseam: 42 cm             Side Seam: 40 cm\n'
-            '  Inseam: 18 cm              Waistband Height: 4 cm',
-      };
-    }
-
-    if ([
-      'legging',
-      'tight',
-      'activewear',
-      'yoga',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Waist width: 28 cm — horizontal arrow at the waistband\n'
-            '  • Hip width: 46 cm — horizontal arrow at the widest hip point\n'
-            '  • Thigh width: 26 cm — horizontal arrow at the widest thigh\n'
-            '  • Outseam length: 94 cm — vertical arrow from waistband to hem\n'
-            '  • Inseam length: 72 cm — vertical arrow from crotch to hem',
-        'back':
-            '  • Back rise: 28 cm — vertical arrow from waistband to crotch\n'
-            '  • Seat width: 48 cm — horizontal arrow at the seat level\n'
-            '  • Knee width: 20 cm — horizontal arrow at the knee level\n'
-            '  • Ankle width: 12 cm — horizontal arrow at the ankle/hem\n'
-            '  • Calf width: 16 cm — horizontal arrow at the calf level',
-        'table':
-            '  Waist Width: 28 cm         Back Rise: 28 cm\n'
-            '  Hip Width: 46 cm           Seat Width: 48 cm\n'
-            '  Thigh Width: 26 cm         Knee Width: 20 cm\n'
-            '  Outseam: 94 cm             Ankle Width: 12 cm\n'
-            '  Inseam: 72 cm              Calf Width: 16 cm',
-      };
-    }
-
-    if ([
-      'jumpsuit',
-      'romper',
-      'playsuit',
-      'overall',
-    ].any((k) => key.contains(k))) {
-      return {
-        'front':
-            '  • Chest width: 50 cm — horizontal arrow across the widest chest point\n'
-            '  • Waist width: 36 cm — horizontal arrow at the narrowest waist point\n'
-            '  • Hip width: 52 cm — horizontal arrow at the widest hip point\n'
-            '  • Total length: 130 cm — vertical arrow from shoulder to hem\n'
-            '  • Inseam length: 78 cm — vertical arrow from crotch to hem',
-        'back':
-            '  • Shoulder width: 40 cm — horizontal arrow across the full shoulder seam\n'
-            '  • Back length: 132 cm — vertical arrow from shoulder to hem\n'
-            '  • Sleeve length: 60 cm — arrow along the outer sleeve edge\n'
-            '  • Leg opening: 18 cm — horizontal arrow at the leg hem\n'
-            '  • Armhole depth: 22 cm — vertical arrow from shoulder seam to underarm',
-        'table':
-            '  Chest Width: 50 cm         Shoulder Width: 40 cm\n'
-            '  Waist Width: 36 cm         Back Length: 132 cm\n'
-            '  Hip Width: 52 cm           Sleeve Length: 60 cm\n'
-            '  Total Length: 130 cm       Leg Opening: 18 cm\n'
-            '  Inseam: 78 cm              Armhole Depth: 22 cm',
-      };
-    }
-
-    // Default fallback
     return {
-      'front':
-          '  • Neck opening width: 18 cm — horizontal arrow across the neckline opening at top\n'
-          '  • Chest width: 48 cm — horizontal arrow across the widest chest point\n'
-          '  • Front length: 65 cm — vertical arrow along the left outer edge, top to hem\n'
-          '  • Armhole depth: 22 cm — vertical arrow on the side from shoulder seam to underarm\n'
-          '  • Sleeve length: 60 cm — arrow along the outer sleeve edge from shoulder to cuff',
-      'back':
-          '  • Shoulder width: 38 cm — horizontal arrow across the full shoulder seam\n'
-          '  • Back length: 67 cm — vertical arrow along the right outer edge, top to hem\n'
-          '  • Collar height: 4 cm — vertical arrow at the collar stand\n'
-          '  • Cuff width: 11 cm — horizontal arrow across the cuff opening\n'
-          '  • Sleeve opening width: 12 cm — horizontal arrow at the sleeve hem/opening',
-      'table':
-          '  Neck Opening: 18 cm        Shoulder Width: 38 cm\n'
-          '  Chest Width: 48 cm         Back Length: 67 cm\n'
-          '  Front Length: 65 cm        Collar Height: 4 cm\n'
-          '  Armhole Depth: 22 cm       Cuff Width: 11 cm\n'
-          '  Sleeve Length: 60 cm       Sleeve Opening: 12 cm',
+      'front': bulletsFor(frontFields),
+      'back': bulletsFor(backFields),
+      'table': tableLines.join('\n'),
     };
+  }
+
+  /// Picks the one reference size the flat drawing displays: M if it was
+  /// selected, otherwise the first selected size, otherwise M as a final
+  /// fallback (no sizes selected at all).
+  static String _referenceSizeFor(List<String> selectedSizes) {
+    if (selectedSizes.contains('M')) return 'M';
+    if (selectedSizes.isNotEmpty) return selectedSizes.first;
+    return 'M';
+  }
+
+  /// Builds Page 2's MEASUREMENT TABLE section — every measurement in
+  /// `fields` (already the AI-curated, necessary-only set produced by
+  /// _generateMeasurementFields), across every selected size, using real
+  /// chart values first and computed base+grading values otherwise. This
+  /// is the exact same field data _techFlatMeasurements uses, so the two
+  /// pages can never show different numbers for the same size.
+  static String _buildMeasurementTableSection(
+    List<Map<String, dynamic>> fields,
+    List<String> selectedSizes, {
+    Map<String, Map<String, String>>? chartData,
+  }) {
+    final sizes = selectedSizes.isEmpty ? ['S', 'M', 'L'] : selectedSizes;
+
+    String valueFor(Map<String, dynamic> field, String size) {
+      final chartValue = _chartValueFor(chartData, size, field['label'] as String);
+      if (chartValue != null && chartValue.isNotEmpty) return chartValue;
+      final steps = _sizeStepFromM(size);
+      final computed = (field['base'] as double) + (field['grading'] as double) * steps;
+      return _fmtCm(computed);
+    }
+
+    final rows = fields
+        .map((f) => '${f['label']} | ${sizes.map((s) => valueFor(f, s)).join(' | ')}')
+        .join('\n');
+
+    return 'Render as a clean bordered grid table. Columns = ${sizes.join(', ')}. '
+        'Rows = exactly these measurements, with exactly these values — do NOT invent different numbers, do NOT add or remove rows:\n'
+        'Measurement (cm) | ${sizes.join(' | ')}\n'
+        '$rows\n'
+        'Tolerance: ±1 cm for all measurements.\n';
   }
 
   static Future<Map<String, String>> generateTechPackPrompts({
@@ -1456,8 +1514,17 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
           (techPackDetails['technical']?['accessories'] ?? '').toString(),
       'logoPlacement':
           (techPackDetails['labeling']?['logoPlacement'] ?? '').toString(),
+      'logoShape':
+          (techPackDetails['labeling']?['logoShape'] ?? '').toString(),
+      'logoWidth':
+          (techPackDetails['labeling']?['logoWidth'] ?? '').toString(),
+      'logoHeight':
+          (techPackDetails['labeling']?['logoHeight'] ?? '').toString(),
       'labelsNeeded':
           (techPackDetails['labeling']?['labelsNeeded'] ?? '').toString(),
+      'embroideryThreadPantone':
+          (techPackDetails['labeling']?['embroideryThreadPantone'] ?? '')
+              .toString(),
     };
     final emptyMeaningFields = await _detectEmptyMeaningFields(
       rawFreeTextFields,
@@ -1494,7 +1561,8 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       rawOrEmpty('fabricProperties'),
       'Standard',
     );
-    final sizeRange = techPackDetails['sizes']?['sizeRange'] ?? '';
+    final String sizeRange =
+        (techPackDetails['sizes']?['sizeRange'] ?? '').toString();
     final measurementChart =
         techPackDetails['sizes']?['measurementChart'] ?? '';
     final stitching = _resolveField(
@@ -1510,6 +1578,14 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       'Bartack at stress points',
     );
     final logoPlacement = rawOrEmpty('logoPlacement').trim();
+    // Optional — left blank (not defaulted) so the corresponding line in the
+    // document is simply omitted when not provided, rather than printing a
+    // filler value. See Accurate Logo Placement / Embroidery Thread Colors.
+    final logoShape = rawOrEmpty('logoShape').trim();
+    final logoWidth = rawOrEmpty('logoWidth').trim();
+    final logoHeight = rawOrEmpty('logoHeight').trim();
+    final embroideryThreadPantone = rawOrEmpty('embroideryThreadPantone')
+        .trim();
     final labelsNeeded = _resolveField(
       rawOrEmpty('labelsNeeded'),
       'No Label',
@@ -1524,29 +1600,47 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
     print('   📝 labelsNeeded.isNotEmpty: ${labelsNeeded.isNotEmpty}');
 
     // MEASUREMENT TABLE — grid table
-    String measurementTableSection = '';
-    if (sizeRange.isNotEmpty) {
-      measurementTableSection += 'Selected sizes: $sizeRange\n';
-    }
+    // Selected sizes as a list — drives both pages' per-size calculations.
+    final List<String> selectedSizesList = sizeRange
+        .split(',')
+        .map((s) => s.trim().toUpperCase())
+        .where((s) => s.isNotEmpty)
+        .toList();
 
+    // If a real chart was uploaded and successfully read, its numbers take
+    // priority (for whichever fields/sizes it actually covers) on BOTH
+    // pages — computed defaults only fill in whatever the chart doesn't.
+    Map<String, Map<String, String>>? chartData;
     if (measurementChartImagePath != null &&
         measurementChartImagePath.isNotEmpty) {
       final extractedSizes = await extractSizesFromChartImage(
         measurementChartImagePath,
       );
       if (extractedSizes != null && extractedSizes.isNotEmpty) {
-        measurementTableSection +=
-            'IMPORTANT: Use ONLY the following measurements extracted from the user\'s size chart. '
-            'Do NOT apply standard industry grading rules or default values. '
-            'Preserve the exact units as provided (cm, inches, mm — do NOT convert):\n$extractedSizes\n'
-            'Render as a clean bordered grid table. Columns = each size. Rows = each measurement name from the chart.\n'
-            'Tolerance: ±1 unit for all measurements.\n';
-      } else {
-        measurementTableSection += _standardMeasurementRules(measurementChart);
+        chartData = _parseChartMeasurements(extractedSizes);
       }
-    } else {
-      measurementTableSection += _standardMeasurementRules(measurementChart);
     }
+
+    // Ask AI once for the standard, necessary measurements for this garment
+    // (works for any garment type, including "Custom" — no fixed category
+    // list). This SAME set is reused for the flat drawing below, so the two
+    // pages can never disagree.
+    final measurementFields = await _generateMeasurementFields(garmentType);
+
+    String measurementTableSection = '';
+    if (sizeRange.isNotEmpty) {
+      measurementTableSection += 'Selected sizes: $sizeRange\n';
+    }
+    // Supplementary free-text measurement notes, if the user provided any —
+    // shown alongside the computed table, not in place of it.
+    if (measurementChart.isNotEmpty) {
+      measurementTableSection += 'Additional measurement notes: $measurementChart\n';
+    }
+    measurementTableSection += _buildMeasurementTableSection(
+      measurementFields,
+      selectedSizesList,
+      chartData: chartData,
+    );
 
     // CONSTRUCTION DETAILS — always 4 mandatory items
     final String constructionSection =
@@ -1565,8 +1659,17 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
       fabricSection += '-- Fabric properties: $fabricProperties\n';
 
     // LOGO AND LABELS — combined section
-    String logoAndLabelsSection =
-        '• Logo placement: $logoPlacement\n• Labels: $labelsNeeded\n';
+    String logoAndLabelsSection = '• Logo placement: $logoPlacement\n';
+    if (logoShape.isNotEmpty) {
+      logoAndLabelsSection += '• Logo shape: $logoShape\n';
+    }
+    // Only shown when BOTH width and height are provided — a dimension line
+    // with one side missing isn't meaningful, so it's omitted entirely.
+    if (logoWidth.isNotEmpty && logoHeight.isNotEmpty) {
+      logoAndLabelsSection +=
+          '• Logo dimensions: ${logoWidth}cm x ${logoHeight}cm (Width x Height)\n';
+    }
+    logoAndLabelsSection += '• Labels: $labelsNeeded\n';
 
     // Garment overview — clean lines
     String garmentOverviewSection = '• Garment Type: $garmentType\n';
@@ -1576,9 +1679,16 @@ Generate a comprehensive visual prompt that captures ALL the design elements fro
 
     // COLORS — dedicated section with drawn swatch blocks
     final bool hasColors = colorPalette != null && colorPalette.isNotEmpty;
-    final String colorsSection = _buildColorSwatchSection(
+    String colorsSection = _buildColorSwatchSection(
       hasColors ? colorPalette : null,
     );
+    // User-specified thread color — manually entered, no AI detection.
+    // Shown alongside the garment color(s) above, clearly labeled as thread
+    // rather than fabric, so the two are never confused with one another.
+    if (embroideryThreadPantone.isNotEmpty) {
+      colorsSection +=
+          '• Embroidery thread pantone: $embroideryThreadPantone — draw a small solid color swatch block (1.5cm x 1.5cm) filled with this color, with the text "Embroidery Thread: $embroideryThreadPantone" printed next to it (the words "Embroidery Thread:" MUST be printed as part of this label, so it is never mistaken for a garment/fabric color)\n';
+    }
 
     final String garmentTitle = garmentType.toUpperCase();
 
@@ -1654,18 +1764,34 @@ Style requirements:
         lp == 'n/a' ||
         lp == 'na';
 
-    // Translated ONLY for this drawing instruction — never shown anywhere.
+    // Classified ONLY for this drawing instruction — never shown anywhere.
     // The visible spec sheet (logoAndLabelsSection, above) still uses the
     // original, untranslated $logoPlacement exactly as the user typed it.
-    final String logoPlacementForDrawing = wantsNoLogo
-        ? ''
-        : await _translateLogoPlacementForDrawing(logoPlacement);
+    String technicalLogoPlacementText = '';
+    if (!wantsNoLogo) {
+      final classified = await _classifyLogoPlacement(logoPlacement, garmentType);
+      final view = classified['view']!;
+      final wearerSide = classified['side']!;
+      final zone = classified['zone']!;
+      final visualSide = _visualSideForView(view, wearerSide);
+      technicalLogoPlacementText = visualSide == 'center'
+          ? 'on the $view view, centered, in the $zone area'
+          : 'on the $view view, on the $visualSide side of that view, in the $zone area';
+    }
 
     final String technicalLogoInstruction = wantsNoLogo
         ? '\n- Logo placeholder: Do NOT draw any dashed LOGO box, logo mark, placeholder, or branding graphic on the FRONT VIEW or BACK VIEW. The garment must have zero logo boxes.'
-        : '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it. Place this box exactly at the user-requested location: "$logoPlacementForDrawing". If that location is on the back, draw it on the BACK VIEW (right half). If it is on a sleeve/bicep/arm, draw it on that sleeve of the matching view. If it is on the front/chest/neck, draw it on the FRONT VIEW (left half). Do not default to the chest. Do not place it 3 cm below the neckline unless the user asked for the neck. Add width (5 cm) and height (3 cm) dimension arrows outside the box. Do NOT draw any actual logo image or artwork inside the box.';
+        : '\n- Logo placeholder: Draw a dashed-border rectangle (5 cm W × 3 cm H) with the text "LOGO" centered inside it, and nothing else drawn on or around the box — no dimension arrows, no measurement labels, no size text of any kind. Place it $technicalLogoPlacementText. Do NOT draw any actual logo image or artwork inside the box.';
 
-    final measurements = _techFlatMeasurements(garmentType);
+    // Same AI-generated fields, same reference size, and the same chart (if
+    // any) that Page 2's table used above — guarantees this drawing's
+    // numbers can never disagree with the measurement table.
+    final String referenceSize = _referenceSizeFor(selectedSizesList);
+    final measurements = _techFlatMeasurements(
+      measurementFields,
+      referenceSize,
+      chartData: chartData,
+    );
 
     final technicalFlatPrompt =
         '''Technical flat drawing of a $garmentType. White background. Black line art only, no colors, no shading, no fill.
