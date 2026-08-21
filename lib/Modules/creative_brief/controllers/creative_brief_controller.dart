@@ -256,8 +256,14 @@ class CreativeBriefController extends GetxController {
     _startTimeUpdater();
     _updateCurrentTime();
 
-    // Check if we're in edit mode and pre-fill data
-    _checkForEditMode();
+    // Deferred to after the first frame: onInit() runs synchronously while
+    // GetPageRoute is still building this screen's widget tree, and
+    // _checkForEditMode() (via _loadExistingDataFromFirebase) shows
+    // snackbars, which insert into the Overlay — doing that mid-build
+    // throws "setState() or markNeedsBuild() called during build" and
+    // aborts the Firebase fetch before it ever runs, silently falling back
+    // to demo placeholder answers instead of the real saved data.
+    WidgetsBinding.instance.addPostFrameCallback((_) => _checkForEditMode());
   }
 
   void _checkForEditMode() {

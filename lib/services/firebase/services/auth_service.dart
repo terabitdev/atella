@@ -445,6 +445,7 @@ final oauthCredential = OAuthProvider("apple.com").credential(
 
   // Sign out the current user
   Future<void> signOut() async {
+    await PushNotificationService().removeTokenForCurrentUser();
     await _auth.signOut();
     await _googleSignIn.signOut();
   }

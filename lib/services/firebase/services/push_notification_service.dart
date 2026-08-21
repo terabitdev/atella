@@ -1,10 +1,12 @@
 import 'dart:async';
 
+import 'package:atella/Routes/app_routes.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_messaging/firebase_messaging.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_local_notifications/flutter_local_notifications.dart';
+import 'package:get/get.dart';
 
 /// Registers this device for push notifications and keeps the signed-in
 /// user's Firestore doc in sync with its FCM token, so Cloud Functions can
@@ -27,10 +29,14 @@ class PushNotificationService {
 
   StreamSubscription<String>? _tokenRefreshSubscription;
   StreamSubscription<RemoteMessage>? _foregroundMessageSubscription;
+  StreamSubscription<RemoteMessage>? _openedAppMessageSubscription;
 
   /// Requests notification permission, prepares local-notification display
-  /// for foreground messages, and starts listening for token refreshes.
-  /// Call once at app startup, after Firebase.initializeApp.
+  /// for foreground messages, starts listening for token refreshes, and
+  /// wires up tap-to-open routing for all three app states (killed,
+  /// backgrounded, foregrounded). Call once at app startup, after
+  /// Firebase.initializeApp and after runApp() so Get.toNamed() has a
+  /// mounted navigator to target.
   Future<void> initialize() async {
     try {
       await _messaging.requestPermission();
@@ -47,6 +53,19 @@ class PushNotificationService {
 
     _foregroundMessageSubscription?.cancel();
     _foregroundMessageSubscription = FirebaseMessaging.onMessage.listen(_showForegroundNotification);
+
+    // App was backgrounded (not killed) and the user tapped the
+    // system-tray notification to resume it.
+    _openedAppMessageSubscription?.cancel();
+    _openedAppMessageSubscription = FirebaseMessaging.onMessageOpenedApp.listen(
+      (message) => _navigateToConversation(message.data['conversationId']),
+    );
+
+    // App was killed and got cold-started by tapping the notification.
+    final initialMessage = await _messaging.getInitialMessage();
+    if (initialMessage != null) {
+      _navigateToConversation(initialMessage.data['conversationId']);
+    }
   }
 
   Future<void> _initializeLocalNotifications() async {
@@ -55,6 +74,7 @@ class PushNotificationService {
       const iosSettings = DarwinInitializationSettings();
       await _localNotifications.initialize(
         const InitializationSettings(android: androidSettings, iOS: iosSettings),
+        onDidReceiveNotificationResponse: (response) => _navigateToConversation(response.payload),
       );
 
       await _localNotifications
@@ -89,7 +109,13 @@ class PushNotificationService {
         ),
         iOS: DarwinNotificationDetails(),
       ),
+      payload: message.data['conversationId'],
     );
+  }
+
+  void _navigateToConversation(String? conversationId) {
+    if (conversationId == null || conversationId.isEmpty) return;
+    Get.toNamed(AppRoutes.chat, arguments: {'conversationId': conversationId});
   }
 
   /// Fetches the device's current FCM token and stores it on the signed-in
