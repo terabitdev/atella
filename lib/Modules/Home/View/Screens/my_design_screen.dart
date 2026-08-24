@@ -21,6 +21,14 @@ class MyDesignScreen extends StatefulWidget {
 class _MyDesignScreenState extends State<MyDesignScreen> {
   final controller = Get.find<HomeController>();
 
+  // When opened as a picker (e.g. from the supplier "Send Tech Pack" flow
+  // with no tech pack already in context), tapping a design returns it to
+  // the caller instead of opening it for viewing/editing.
+  bool get _selectionMode {
+    final args = Get.arguments;
+    return args is Map && args['selectionMode'] == true;
+  }
+
   @override
   void initState() {
     super.initState();
@@ -50,7 +58,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                   ),
                   SizedBox(width: 8.w),
                   Text(
-                    l10n.myDesigns,
+                    _selectionMode ? 'Select a Tech Pack' : l10n.myDesigns,
                     style: ssTitleTextTextStyle208001.copyWith(
                       color: Colors.black,
                     ),
@@ -84,9 +92,13 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                 // Empty state - no designs
                 if (!controller.hasDesigns &&
                     controller.searchQuery.value.isEmpty) {
-                  return HomeEmptyState(
-                    onCreateProject: controller.startNewProject,
-                  );
+                  return _selectionMode
+                      ? TechPackPickerEmptyState(
+                          onCreateProject: controller.startNewProject,
+                        )
+                      : HomeEmptyState(
+                          onCreateProject: controller.startNewProject,
+                        );
                 }
 
                 // Search empty state
@@ -117,12 +129,16 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                         techPack: techPack,
                         showFavoriteIcon: true,
                         onTap: () {
-                          Get.to(
-                            () => PreviewScreen(
-                              techPack: techPack,
-                              version: 'V2',
-                            ),
-                          );
+                          if (_selectionMode) {
+                            Get.back(result: techPack);
+                          } else {
+                            Get.to(
+                              () => PreviewScreen(
+                                techPack: techPack,
+                                version: 'V2',
+                              ),
+                            );
+                          }
                         },
                         onFavoriteToggle: () {
                           controller.toggleFavorite(techPack);

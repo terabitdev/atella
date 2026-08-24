@@ -1,5 +1,7 @@
 import 'package:atella/Modules/Home/Controllers/navbar_controller.dart';
+import 'package:atella/Modules/SupplierDirectory/Controllers/supplier_directory_controller.dart';
 import 'package:atella/core/constants/app_images.dart';
+import 'package:atella/core/themes/app_colors.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:flutter_svg/svg.dart';
@@ -14,6 +16,17 @@ class CustomNavigationBar extends StatefulWidget {
 
 class _CustomNavigationBarState extends State<CustomNavigationBar> {
   final controller = Get.put(NavBarController());
+
+  @override
+  void initState() {
+    super.initState();
+    // SupplierDirectoryScreen (embedded below as a tab body, not reached via
+    // Get.toNamed) expects Get.find<SupplierDirectoryController>() to
+    // already be registered — normally done by SupplierDirectoryBinding when
+    // this screen is navigated to as its own route, which doesn't happen
+    // here.
+    Get.put(SupplierDirectoryController());
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -61,8 +74,18 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
                 label: 'Favourite',
               ),
               NavigationDestination(
+                icon: Icon(
+                  Icons.factory_outlined,
+                  size: 25.sp,
+                  color: controller.selectedindex.value == 3
+                      ? AppColors.buttonColor
+                      : Colors.grey,
+                ),
+                label: 'Factory',
+              ),
+              NavigationDestination(
                 icon: SvgPicture.asset(
-                  controller.selectedindex.value == 3
+                  controller.selectedindex.value == 4
                       ? settingsFill
                       : settings,
                   height: 25.h,

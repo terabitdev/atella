@@ -76,40 +76,34 @@ class SupplierDetailScreen extends StatelessWidget {
 
                 SizedBox(height: 32.h),
 
-                if (controller.techPackId == null)
-                  Text(
-                    'Open this supplier from one of your tech packs to send it.',
-                    style: ssTitleTextTextStyle14400,
-                  )
-                else
-                  Obx(
-                    () => Column(
-                      children: [
+                Obx(
+                  () => Column(
+                    children: [
+                      RoundButton(
+                        title: controller.hasSent.value
+                            ? 'Sent ✓'
+                            : (controller.isSending.value ? 'Sending...' : 'Send Tech Pack'),
+                        color: controller.hasSent.value ? Colors.grey : AppColors.buttonColor,
+                        isloading: controller.isSending.value,
+                        onTap: (controller.isSending.value || controller.hasSent.value)
+                            ? null
+                            : controller.onSendPressed,
+                      ),
+                      if (controller.hasSent.value && controller.conversationId.value.isNotEmpty) ...[
+                        SizedBox(height: 12.h),
                         RoundButton(
-                          title: controller.hasSent.value
-                              ? 'Sent ✓'
-                              : (controller.isSending.value ? 'Sending...' : 'Send Tech Pack'),
-                          color: controller.hasSent.value ? Colors.grey : AppColors.buttonColor,
-                          isloading: controller.isSending.value,
-                          onTap: (controller.isSending.value || controller.hasSent.value)
-                              ? null
-                              : controller.sendTechPack,
-                        ),
-                        if (controller.hasSent.value && controller.conversationId.value.isNotEmpty) ...[
-                          SizedBox(height: 12.h),
-                          RoundButton(
-                            title: 'Message Supplier',
-                            color: AppColors.buttonColor,
-                            isloading: false,
-                            onTap: () => Get.toNamed(
-                              AppRoutes.chat,
-                              arguments: {'conversationId': controller.conversationId.value},
-                            ),
+                          title: 'Message Supplier',
+                          color: AppColors.buttonColor,
+                          isloading: false,
+                          onTap: () => Get.toNamed(
+                            AppRoutes.chat,
+                            arguments: {'conversationId': controller.conversationId.value},
                           ),
-                        ],
+                        ),
                       ],
-                    ),
+                    ],
                   ),
+                ),
                 SizedBox(height: 40.h),
               ],
             ),

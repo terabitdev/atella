@@ -97,6 +97,25 @@ class HomeEmptyState extends StatelessWidget {
   }
 }
 
+// Shown in the tech pack picker (Factory tab → supplier "Send Tech Pack")
+// when the user has no saved tech packs to pick from yet.
+class TechPackPickerEmptyState extends StatelessWidget {
+  final VoidCallback onCreateProject;
+
+  const TechPackPickerEmptyState({super.key, required this.onCreateProject});
+
+  @override
+  Widget build(BuildContext context) {
+    return EmptyStateWidget(
+      title: "You don't have any tech packs yet",
+      subtitle: 'Create one first, then come back here to send it to a manufacturer.',
+      buttonText: 'Create Tech Pack',
+      onButtonPressed: onCreateProject,
+      imagePath: "assets/images/empty.png",
+    );
+  }
+}
+
 class FavoritesEmptyState extends StatelessWidget {
   final VoidCallback onCreateProject;
 

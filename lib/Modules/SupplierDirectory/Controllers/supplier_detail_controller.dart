@@ -1,7 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:atella/Data/Models/supplier_model.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
+import 'package:atella/Modules/SupplierDirectory/View/Widgets/manufacturer_upgrade_dialog.dart';
+import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/utils/app_snackbar.dart';
+import 'package:atella/services/PaymentService/subscription_manager_service.dart';
 import 'package:atella/services/firebase/services/messaging_service.dart';
 import 'package:atella/services/firebase/services/supplier_submission_service.dart';
 import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
@@ -9,6 +13,7 @@ import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 class SupplierDetailController extends GetxController {
   final SupplierSubmissionService _service = SupplierSubmissionService();
   final MessagingService _messagingService = MessagingService();
+  final SubscriptionManagerService _subscriptionService = SubscriptionManagerService();
 
   final Rxn<SupplierModel> supplier = Rxn<SupplierModel>();
   final RxBool isLoading = true.obs;
@@ -39,6 +44,32 @@ class SupplierDetailController extends GetxController {
     isLoading.value = true;
     supplier.value = await _service.getSupplier(supplierId);
     isLoading.value = false;
+  }
+
+  /// Send button entry point. Gates on subscription first (Freemium users
+  /// can view supplier profiles but not contact them), then resolves which
+  /// tech pack to send — either the one already carried forward from a
+  /// tech-pack-first flow, or one the user picks now (when reached via the
+  /// Factory tab, which has no tech pack context yet).
+  Future<void> onSendPressed() async {
+    final canSend = await _subscriptionService.canUsePremiumFeature('manufacturers');
+    if (!canSend) {
+      final context = Get.context;
+      if (context != null) {
+        showDialog(context: context, builder: (_) => const ManufacturerUpgradeDialog());
+      }
+      return;
+    }
+
+    if (techPackId == null) {
+      final picked = await Get.toNamed(AppRoutes.myDesigns, arguments: {'selectionMode': true});
+      if (picked is! TechPackModel) return;
+      techPackId = picked.id;
+      techPackProjectName = picked.projectName;
+      techPackImageUrl = picked.displayImage;
+    }
+
+    await sendTechPack();
   }
 
   Future<void> sendTechPack() async {
