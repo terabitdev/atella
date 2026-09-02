@@ -12,7 +12,7 @@ class NavBarController extends GetxController {
     const HomeScreen(),
     const CreateScreen(),
     const FavouriteScreen(),
-    const SupplierDirectoryScreen(),
+    const SupplierDirectoryScreen(showBackButton: false),
     const SettingScreen(),
   ];
 }

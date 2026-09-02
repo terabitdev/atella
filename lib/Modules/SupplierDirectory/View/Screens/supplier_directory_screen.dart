@@ -9,7 +9,15 @@ import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 
 class SupplierDirectoryScreen extends StatelessWidget {
-  const SupplierDirectoryScreen({super.key});
+  // Embedded directly as the Factory tab body (no route push happens for
+  // it there), so there's nothing for its back button to pop back to —
+  // popping bubbles up and blanks the tab host screen behind it. When this
+  // screen is instead pushed as its own route (from a saved design or a
+  // generated tech pack's "Send to Manufacture"), the back button works
+  // normally and must stay.
+  final bool showBackButton;
+
+  const SupplierDirectoryScreen({super.key, this.showBackButton = true});
 
   @override
   Widget build(BuildContext context) {
@@ -18,11 +26,14 @@ class SupplierDirectoryScreen extends StatelessWidget {
     return Scaffold(
       body: SafeArea(
         child: Padding(
-          padding: EdgeInsets.symmetric(horizontal: 20.w, vertical: 20.h),
+          padding: EdgeInsets.only(left: 20.w, right: 20.w, bottom: 20.h),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              const GlobalHeader(title: 'Manufacturing Partners'),
+              GlobalHeader(
+                title: 'Manufacturing Partners',
+                showBackButton: showBackButton,
+              ),
               SizedBox(height: 16.h),
               Container(
                 height: 50.h,
