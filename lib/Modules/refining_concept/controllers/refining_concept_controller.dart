@@ -1783,45 +1783,15 @@ class RefiningConceptController extends GetxController {
           return;
         }
 
-        // Check email-based quota (persists across account deletions)
+        // Check email-based quota (persists across account deletions).
+        // This only checks eligibility — the design credit itself is spent
+        // later, at whichever of Save Design / Generate Tech Pack / 3rd
+        // modification happens first (see DesignCreditService).
         bool hasQuota = await _quotaService.hasRemainingQuota(user!.email!);
-        if (hasQuota) {
-          // Consume one email-based free design
-          try {
-            bool incrementSuccess = await _quotaService.incrementDesignUsage(
-              user.email!,
-            );
-            if (!incrementSuccess) {
-              showAppSnackbar(
-                'Error',
-                'Failed to track design usage. Please try again.',
-                snackPosition: SnackPosition.TOP,
-                backgroundColor: Colors.red,
-                colorText: Colors.white,
-              );
-              isStartingGeneration.value = false;
-              return;
-            }
-          } catch (e) {
-            showAppSnackbar(
-              'Error',
-              'Failed to track design usage. Please try again.',
-              snackPosition: SnackPosition.TOP,
-              backgroundColor: Colors.red,
-              colorText: Colors.white,
-            );
-            isStartingGeneration.value = false;
-            return;
-          }
-        } else {
-          // Email quota exhausted — check free add-on designs
-          if (subscription.hasFreeExtraDesigns) {
-            await _stripeService.incrementFreeExtraDesignUsage();
-          } else {
-            _showLimitExceededDialog();
-            isStartingGeneration.value = false;
-            return;
-          }
+        if (!hasQuota && !subscription.hasFreeExtraDesigns) {
+          _showLimitExceededDialog();
+          isStartingGeneration.value = false;
+          return;
         }
       } else {
         // For paid plans - use existing stripe service logic
@@ -1837,9 +1807,6 @@ class RefiningConceptController extends GetxController {
           isStartingGeneration.value = false;
           return;
         }
-
-        // Increment design usage count for paid plans
-        await _stripeService.incrementDesignUsage();
       }
     }
 
@@ -1953,7 +1920,7 @@ class RefiningConceptController extends GetxController {
       showAppSnackbar(
         l10n?.rcSnackbarRegeneratingDesigns ?? 'Regenerating Designs!',
         l10n?.rcSnackbarRegeneratingDesignsMessage ??
-            'Creating 3 new designs based on your updated preferences...',
+            'Creating a new design based on your updated preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,
@@ -1974,7 +1941,7 @@ class RefiningConceptController extends GetxController {
       showAppSnackbar(
         l10n?.rcSnackbarGeneratingDesigns ?? 'Generating Designs!',
         l10n?.rcSnackbarGeneratingDesignsMessage ??
-            'Creating 3 unique designs based on your preferences...',
+            'Creating your unique design based on your preferences...',
         snackPosition: SnackPosition.TOP,
         backgroundColor: Colors.black,
         colorText: Colors.white,

@@ -458,9 +458,9 @@
   "rcSnackbarExtraDesignsAdded": "Designs supplémentaires ajoutés !",
   "rcSnackbarExtraDesignsAddedMessage": "5 designs supplémentaires ont été ajoutés à votre compte.",
   "rcSnackbarRegeneratingDesigns": "Régénération des designs !",
-  "rcSnackbarRegeneratingDesignsMessage": "Création de 3 nouveaux designs basés sur vos préférences mises à jour...",
+  "rcSnackbarRegeneratingDesignsMessage": "Création d'un nouveau design basé sur vos préférences mises à jour...",
   "rcSnackbarGeneratingDesigns": "Génération des designs !",
-  "rcSnackbarGeneratingDesignsMessage": "Création de 3 designs uniques basés sur vos préférences...",
+  "rcSnackbarGeneratingDesignsMessage": "Création de votre design unique basé sur vos préférences...",
   "rcSnackbarInvalidInput": "Entrée invalide",
   "rcSnackbarInvalidInputCategoryMessage": "Veuillez entrer une réponse personnalisée pour {category}",
   "rcSnackbarInvalidInputMessage": "Veuillez entrer une réponse personnalisée",
@@ -511,9 +511,9 @@
   "fdOptionOther": "Autre : ?",
   "fdQuestionAdditional": "Super — n'hésitez pas à taper tout ce que vous avez en tête !",
   "fdSnackbarRegeneratingDesigns": "Régénération des Designs !",
-  "fdSnackbarRegeneratingMessage": "Création de 3 nouveaux designs basés sur vos préférences mises à jour...",
+  "fdSnackbarRegeneratingMessage": "Création d'un nouveau design basé sur vos préférences mises à jour...",
   "fdSnackbarGeneratingDesigns": "Génération des Designs !",
-  "fdSnackbarGeneratingMessage": "Création de 3 designs uniques basés sur vos préférences...",
+  "fdSnackbarGeneratingMessage": "Création de votre design unique basé sur vos préférences...",
   "fdSnackbarExtraDesigns": "Designs Supplémentaires Ajoutés !",
   "fdSnackbarExtraDesignsMessage": "5 designs supplémentaires ont été ajoutés à votre compte.",
   "fdDialogLimitExceeded": "Limite Dépassée",
@@ -535,7 +535,7 @@
   "tpDesignAssistant": "Assistant Design",
   "tpChooseFavoriteDesign": "Choisissez votre design préféré :",
   "tpCreatingDesigns": "Création de vos designs...",
-  "tpPleaseWaitGenerating": "Veuillez patienter pendant que nous générons 3 designs uniques basés sur vos préférences.",
+  "tpPleaseWaitGenerating": "Veuillez patienter pendant que nous générons votre design unique basé sur vos préférences.",
   "tpSomethingWentWrong": "Une erreur s'est produite",
   "tpRetry": "Réessayer",
   "tpWouldYouLikeChanges": "Souhaitez-vous apporter des modifications avant que je crée le dossier technique final ?",
@@ -559,6 +559,11 @@
   "tpSnackbarDesignUpdatedMessage": "Votre design a été mis à jour avec de nouvelles préférences",
   "tpSnackbarDesignSaved": "Design Enregistré",
   "tpSnackbarDesignSavedMessage": "Votre design sélectionné a été enregistré avec succès",
+  "tpSaveDesignButton": "Enregistrer le design",
+  "tpSnackbarDesignSavedToDashboard": "Design enregistré !",
+  "tpSnackbarDesignSavedToDashboardMessage": "Votre design a été enregistré dans le tableau de bord.",
+  "tpSnackbarSaveDesignFailed": "Échec de l'enregistrement",
+  "tpSnackbarSaveDesignFailedMessage": "Impossible d'enregistrer votre design. Veuillez réessayer.",
   "tpSnackbarGenerationFailed": "Échec de la Génération",
   "tpSnackbarGenerationFailedMessage": "Échec de la génération des designs. Veuillez réessayer.",
   "tpSnackbarNoDesignSelected": "Aucun Design Sélectionné",
@@ -1000,7 +1005,7 @@
   "@fdRegeneratingDesigns": {
     "description": "Snackbar title when regenerating designs in edit mode"
   },
-  "fdRegeneratingDesignsMessage": "Création de 3 nouveaux designs basés sur vos préférences mises à jour...",
+  "fdRegeneratingDesignsMessage": "Création d'un nouveau design basé sur vos préférences mises à jour...",
   "@fdRegeneratingDesignsMessage": {
     "description": "Snackbar message when regenerating designs"
   },
@@ -1008,7 +1013,7 @@
   "@fdGeneratingDesigns": {
     "description": "Snackbar title when generating new designs"
   },
-  "fdGeneratingDesignsMessage": "Création de 3 designs uniques basés sur vos préférences...",
+  "fdGeneratingDesignsMessage": "Création de votre design unique basé sur vos préférences...",
   "@fdGeneratingDesignsMessage": {
     "description": "Snackbar message when generating designs"
   },

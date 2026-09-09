@@ -2735,7 +2735,7 @@ abstract class AppLocalizations {
   /// Snackbar message when regenerating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 new designs based on your updated preferences...'**
+  /// **'Creating a new design based on your updated preferences...'**
   String get rcSnackbarRegeneratingDesignsMessage;
 
   /// Snackbar title when generating designs
@@ -2747,7 +2747,7 @@ abstract class AppLocalizations {
   /// Snackbar message when generating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 unique designs based on your preferences...'**
+  /// **'Creating your unique design based on your preferences...'**
   String get rcSnackbarGeneratingDesignsMessage;
 
   /// Snackbar title for invalid input
@@ -3053,7 +3053,7 @@ abstract class AppLocalizations {
   /// Snackbar message when regenerating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 new designs based on your updated preferences...'**
+  /// **'Creating a new design based on your updated preferences...'**
   String get fdSnackbarRegeneratingMessage;
 
   /// Snackbar title when generating designs
@@ -3065,7 +3065,7 @@ abstract class AppLocalizations {
   /// Snackbar message when generating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 unique designs based on your preferences...'**
+  /// **'Creating your unique design based on your preferences...'**
   String get fdSnackbarGeneratingMessage;
 
   /// Snackbar title when extra designs added
@@ -3197,7 +3197,7 @@ abstract class AppLocalizations {
   /// Loading description
   ///
   /// In en, this message translates to:
-  /// **'Please wait while we generate 3 unique designs based on your preferences.'**
+  /// **'Please wait while we generate your unique design based on your preferences.'**
   String get tpPleaseWaitGenerating;
 
   /// Error header
@@ -3337,6 +3337,36 @@ abstract class AppLocalizations {
   /// In en, this message translates to:
   /// **'Your selected design has been saved successfully'**
   String get tpSnackbarDesignSavedMessage;
+
+  /// Button to save the design only to the Dashboard, without generating a tech pack
+  ///
+  /// In en, this message translates to:
+  /// **'Save Design'**
+  String get tpSaveDesignButton;
+
+  /// Snackbar title when a design-only save to the Dashboard succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Design Saved!'**
+  String get tpSnackbarDesignSavedToDashboard;
+
+  /// Snackbar message when a design-only save to the Dashboard succeeds
+  ///
+  /// In en, this message translates to:
+  /// **'Your design has been saved to the Dashboard.'**
+  String get tpSnackbarDesignSavedToDashboardMessage;
+
+  /// Snackbar title when saving a design-only entry fails
+  ///
+  /// In en, this message translates to:
+  /// **'Save Failed'**
+  String get tpSnackbarSaveDesignFailed;
+
+  /// Snackbar message when saving a design-only entry fails
+  ///
+  /// In en, this message translates to:
+  /// **'Failed to save your design. Please try again.'**
+  String get tpSnackbarSaveDesignFailedMessage;
 
   /// Snackbar title when generation fails
   ///
@@ -5153,7 +5183,7 @@ abstract class AppLocalizations {
   /// Snackbar message when regenerating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 new designs based on your updated preferences...'**
+  /// **'Creating a new design based on your updated preferences...'**
   String get fdRegeneratingDesignsMessage;
 
   /// Snackbar title when generating new designs
@@ -5165,7 +5195,7 @@ abstract class AppLocalizations {
   /// Snackbar message when generating designs
   ///
   /// In en, this message translates to:
-  /// **'Creating 3 unique designs based on your preferences...'**
+  /// **'Creating your unique design based on your preferences...'**
   String get fdGeneratingDesignsMessage;
 
   /// Snackbar title when extra designs are purchased

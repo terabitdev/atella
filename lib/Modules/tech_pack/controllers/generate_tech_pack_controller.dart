@@ -2,11 +2,14 @@
 import 'package:get/get.dart';
 import 'package:flutter/material.dart';
 import 'package:atella/Data/api/openai_service.dart';
+import 'package:atella/services/firebase/techpack/tech_pack_service.dart';
+import 'package:atella/services/PaymentService/design_credit_service.dart';
 import 'package:atella/Data/Models/tech_pack_model.dart';
 import 'package:atella/Data/Models/user_subscription.dart';
 import 'package:atella/services/designservices/design_data_service.dart';
 import 'package:atella/services/designservices/designs_service.dart';
 import 'package:atella/services/firebase/edit/edit_data_service.dart';
+import 'package:atella/services/firebase/collections/collections_service.dart';
 import 'package:atella/services/PaymentService/stripe_subscription_service.dart';
 import 'package:atella/services/PaymentService/revenuecat_service.dart';
 import 'package:atella/services/PaymentService/subscription_callback_service.dart';
@@ -24,6 +27,7 @@ class TechPackController extends GetxController {
   final StripeSubscriptionService _subscriptionService =
       StripeSubscriptionService();
   final RevenueCatService _revenueCatService = RevenueCatService();
+  final CollectionsService _collectionsService = CollectionsService();
 
   // Live localized price string for the techpack add-on (iOS only).
   // Null on Android or if the RevenueCat fetch failed — dialogs fall back to localisation.
@@ -56,12 +60,74 @@ class TechPackController extends GetxController {
   final RxString savedDesignUrl = ''.obs;
   final RxString designSaveError = ''.obs;
 
+  // Save Design dialog state (name + collection), mirrors TechPackReadyController
+  final TextEditingController projectNameController = TextEditingController();
+  RxString selectedCollection = 'SUMMER COLLECTION'.obs;
+  RxList<String> collections = <String>['SUMMER COLLECTION', 'WINTER COLLECTION'].obs;
+
   @override
   void onInit() {
     super.onInit();
     _checkForEditMode();
     _initializeApiKey();
     _fetchAddonPrices();
+    _loadCollections();
+  }
+
+  @override
+  void onClose() {
+    projectNameController.dispose();
+    super.onClose();
+  }
+
+  // Load collections from Firebase
+  Future<void> _loadCollections() async {
+    try {
+      final userCollections = await _collectionsService.getUserCollections();
+      collections.value = userCollections;
+      if (userCollections.isNotEmpty) {
+        selectedCollection.value = userCollections.first;
+      }
+    } catch (e) {
+      print('Error loading collections: $e');
+    }
+  }
+
+  // Add new collection and save to Firebase
+  Future<void> addNewCollection(String collectionName) async {
+    try {
+      final upperCaseName = collectionName.toUpperCase();
+
+      if (collections.contains(upperCaseName)) {
+        showAppSnackbar(
+          _l10n.tprCollectionExists,
+          _l10n.tprCollectionAlreadyExists,
+          backgroundColor: Colors.black,
+          colorText: Colors.white,
+          snackPosition: SnackPosition.TOP,
+          duration: const Duration(milliseconds: 1500),
+        );
+        return;
+      }
+
+      await _collectionsService.addCollection(upperCaseName);
+
+      collections.add(upperCaseName);
+      selectedCollection.value = upperCaseName;
+    } catch (e) {
+      print('Error adding collection: $e');
+      showAppSnackbar(
+        _l10n.tprError,
+        _l10n.tprFailedToAddCollection,
+        backgroundColor: Colors.red,
+        colorText: Colors.white,
+      );
+    }
+  }
+
+  // Update selected collection
+  void updateSelectedCollection(String collection) {
+    selectedCollection.value = collection;
   }
 
   Future<void> _fetchAddonPrices() async {
@@ -183,7 +249,7 @@ class TechPackController extends GetxController {
 
       print('Generated Visual Prompt: ${currentPrompt.value}');
 
-      print('Generating 3 design images with GPT-IMAGE-1...');
+      print('Generating design image with GPT-IMAGE-1...');
 
       // Get inspiration image path from creative brief data
       final creativeBriefData = _dataService.getCreativeBriefData();
@@ -210,7 +276,7 @@ class TechPackController extends GetxController {
       // Generate design images (now returns base64-encoded images)
       final base64Images = await OpenAIService.generateDesignImages(
         prompt: currentPrompt.value,
-        numberOfImages: 3,
+        numberOfImages: 1,
         inspirationImagePath: inspirationImagePath,
       );
 
@@ -228,6 +294,11 @@ class TechPackController extends GetxController {
       generationProgress.value = 1.0;
       await Future.delayed(const Duration(milliseconds: 600));
       generatedImages.value = base64Images;
+      // Only one design is ever generated now, so it's selected automatically —
+      // no need to make the user tap it before Continue/Save Design are enabled.
+      if (generatedImages.isNotEmpty) {
+        selectedDesignIndex.value = 0;
+      }
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
 
       // Track successful generation
@@ -396,6 +467,76 @@ class TechPackController extends GetxController {
 
       // Save in background
       _saveDesignsInBackground();
+    }
+  }
+
+  // Save just the design (no tech pack) to the Dashboard.
+  // Reuses the tech_packs collection so it shows up on the Dashboard immediately,
+  // marked with hasTechPack: false so factory/export actions stay hidden for it.
+  Future<void> onSaveDesignOnly(String projectName, String collectionName) async {
+    if (selectedDesignIndex.value < 0 ||
+        selectedDesignIndex.value >= generatedImages.length) {
+      showAppSnackbar(
+        _l10n.tpSnackbarNoDesignSelected,
+        _l10n.tpSnackbarNoDesignSelectedMessage,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+      return;
+    }
+
+    isSaving.value = true;
+    try {
+      final techPackId = DateTime.now().millisecondsSinceEpoch.toString();
+      final base64Image = generatedImages[selectedDesignIndex.value];
+
+      await TechPackService.saveDesignOnly(
+        base64Image: base64Image,
+        techPackId: techPackId,
+        projectName: projectName,
+        collectionName: collectionName,
+        designData: _dataService.getAllDesignData(),
+      );
+
+      // Spend the design credit here, unless this is an edit of an
+      // already-existing (already-paid-for) design.
+      if (!_isEditMode.value) {
+        await DesignCreditService.spendDesignCredit();
+      }
+
+      PostHogAnalyticsService().trackEvent('design saved to dashboard');
+
+      showAppSnackbar(
+        _l10n.tpSnackbarDesignSavedToDashboard,
+        _l10n.tpSnackbarDesignSavedToDashboardMessage,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+        margin: const EdgeInsets.all(10),
+      );
+
+      // Delete controller so a fresh one is created next time this screen opens
+      if (Get.isRegistered<TechPackController>()) {
+        Get.delete<TechPackController>();
+      }
+
+      // Navigate to the Dashboard and force it to refresh so the new entry shows up
+      Get.offNamedUntil('/nav_bar', (route) => false, arguments: {'refresh': true});
+    } catch (e) {
+      print('Failed to save design only: $e');
+      showAppSnackbar(
+        _l10n.tpSnackbarSaveDesignFailed,
+        _l10n.tpSnackbarSaveDesignFailedMessage,
+        snackPosition: SnackPosition.TOP,
+        duration: const Duration(milliseconds: 1500),
+        backgroundColor: Colors.black,
+        colorText: Colors.white,
+      );
+    } finally {
+      isSaving.value = false;
     }
   }
 

@@ -3,18 +3,27 @@ import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
 import 'package:atella/l10n/generated/app_localizations.dart';
-import '../../controllers/tech_pack_ready_controller.dart';
 
 import 'package:atella/core/utils/app_snackbar.dart';
 class SaveTechPackDialog extends StatelessWidget {
+  final TextEditingController projectNameController;
+  final RxString selectedCollection;
+  final RxList<String> collections;
+  final Future<void> Function(String collectionName) onAddCollection;
+  final void Function(String collection) onSelectCollection;
   final Function(String projectName, String collectionName) onSave;
 
-  const SaveTechPackDialog({super.key, required this.onSave});
+  const SaveTechPackDialog({
+    super.key,
+    required this.projectNameController,
+    required this.selectedCollection,
+    required this.collections,
+    required this.onAddCollection,
+    required this.onSelectCollection,
+    required this.onSave,
+  });
 
-  void _showAddCollectionDialog(
-    BuildContext context,
-    TechPackReadyController controller,
-  ) {
+  void _showAddCollectionDialog(BuildContext context) {
     showGeneralDialog(
       context: context,
       barrierDismissible: true,
@@ -24,7 +33,7 @@ class SaveTechPackDialog extends StatelessWidget {
       pageBuilder: (context, animation1, animation2) {
         return AddCollectionDialog(
           onAdd: (String newCollection) {
-            controller.addNewCollection(newCollection);
+            onAddCollection(newCollection);
           },
         );
       },
@@ -52,7 +61,6 @@ class SaveTechPackDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<TechPackReadyController>();
     final l10n = AppLocalizations.of(context)!;
 
     return Material(
@@ -77,7 +85,7 @@ class SaveTechPackDialog extends StatelessWidget {
               Text(l10n.tpwProjectName, style: dbTitleTextTextStyle12400),
               SizedBox(height: 8.h),
               TextField(
-                controller: controller.projectNameController,
+                controller: projectNameController,
                 decoration: InputDecoration(
                   hintText: l10n.tpwEnterProjectName,
                   hintStyle: TextStyle(color: Color(0xFF999999), fontSize: 14.sp),
@@ -114,8 +122,8 @@ class SaveTechPackDialog extends StatelessWidget {
                   ),
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<String>(
-                      value: controller.selectedCollection.value,
-                      items: controller.collections.map((String collection) {
+                      value: selectedCollection.value,
+                      items: collections.map((String collection) {
                         return DropdownMenuItem<String>(
                           value: collection,
                           child: Text(
@@ -129,7 +137,7 @@ class SaveTechPackDialog extends StatelessWidget {
                       }).toList(),
                       onChanged: (String? newValue) {
                         if (newValue != null) {
-                          controller.updateSelectedCollection(newValue);
+                          onSelectCollection(newValue);
                         }
                       },
                       isExpanded: true,
@@ -144,8 +152,7 @@ class SaveTechPackDialog extends StatelessWidget {
                 children: [
                   Expanded(
                     child: OutlinedButton(
-                      onPressed: () =>
-                          _showAddCollectionDialog(context, controller),
+                      onPressed: () => _showAddCollectionDialog(context),
                       style: OutlinedButton.styleFrom(
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12.r),
@@ -167,9 +174,7 @@ class SaveTechPackDialog extends StatelessWidget {
                   Expanded(
                     child: ElevatedButton(
                       onPressed: () async {
-                        if (controller.projectNameController.text
-                            .trim()
-                            .isEmpty) {
+                        if (projectNameController.text.trim().isEmpty) {
                           showAppSnackbar(
                             l10n.tpwError,
                             l10n.tpwPleaseEnterProjectName,
@@ -186,8 +191,8 @@ class SaveTechPackDialog extends StatelessWidget {
                         await Future.delayed(Duration(milliseconds: 100));
 
                         onSave(
-                          controller.projectNameController.text.trim(),
-                          controller.selectedCollection.value,
+                          projectNameController.text.trim(),
+                          selectedCollection.value,
                         );
                       },
                       style: ElevatedButton.styleFrom(

@@ -111,12 +111,28 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                 }
 
                 // Show designs grid
+                // In the "send to factory" picker, only tech-pack entries are
+                // selectable — a design-only save has nothing to send yet.
+                final visibleDesigns = _selectionMode
+                    ? controller.myDesigns
+                        .where((techPack) => techPack.hasTechPack)
+                        .toList()
+                    : controller.myDesigns;
+
+                if (visibleDesigns.isEmpty) {
+                  return _selectionMode
+                      ? TechPackPickerEmptyState(
+                          onCreateProject: controller.startNewProject,
+                        )
+                      : const SizedBox.shrink();
+                }
+
                 return Padding(
                   padding: EdgeInsets.symmetric(horizontal: 16.w),
                   child: GridView.builder(
                     shrinkWrap: true,
                     physics: NeverScrollableScrollPhysics(),
-                    itemCount: controller.myDesigns.length,
+                    itemCount: visibleDesigns.length,
                     gridDelegate: SliverGridDelegateWithFixedCrossAxisCount(
                       crossAxisCount: 2,
                       crossAxisSpacing: 16.w,
@@ -124,7 +140,7 @@ class _MyDesignScreenState extends State<MyDesignScreen> {
                       childAspectRatio: 0.6,
                     ),
                     itemBuilder: (context, index) {
-                      final techPack = controller.myDesigns[index];
+                      final techPack = visibleDesigns[index];
                       return DesignGridItem(
                         techPack: techPack,
                         showFavoriteIcon: true,

@@ -77,6 +77,54 @@ class _PreviewScreenState extends State<PreviewScreen> {
 
   void showPopup() {
     final l10n = AppLocalizations.of(context)!;
+    final hasTechPack = widget.techPack.hasTechPack;
+
+    final items = <Widget>[
+      _PopupMenuItem(
+        icon: Icons.edit_outlined,
+        label: l10n.edit,
+        onTap: () {
+          Navigator.of(context).pop();
+          _handleEdit();
+        },
+      ),
+      _popupDivider(),
+      _PopupMenuItem(
+        icon: Icons.download_outlined,
+        label: l10n.download,
+        onTap: () {
+          Navigator.of(context).pop();
+          _handleDownload();
+        },
+      ),
+    ];
+
+    // Export (PDF/Word) and sending to a manufacturing partner both require
+    // an actual tech pack — hide them for design-only Dashboard entries.
+    if (hasTechPack) {
+      items.addAll([
+        _popupDivider(),
+        _PopupMenuItem(
+          icon: Icons.ios_share_outlined,
+          label: l10n.tpwExportButton,
+          onTap: () {
+            Navigator.of(context).pop();
+            _showExportDialog();
+          },
+        ),
+        _popupDivider(),
+        _PopupMenuItem(
+          icon: Icons.send_outlined,
+          label: 'Send to Manufacturing Partner',
+          onTap: () {
+            Navigator.of(context).pop();
+            _handleSendToSupplier();
+          },
+          isLast: true,
+        ),
+      ]);
+    }
+
     showDialog(
       context: context,
       barrierColor: Colors.black.withValues(alpha: 0.35),
@@ -91,44 +139,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
             width: 260.w,
             child: Column(
               mainAxisSize: MainAxisSize.min,
-              children: [
-                _PopupMenuItem(
-                  icon: Icons.edit_outlined,
-                  label: l10n.edit,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleEdit();
-                  },
-                ),
-                _popupDivider(),
-                _PopupMenuItem(
-                  icon: Icons.download_outlined,
-                  label: l10n.download,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleDownload();
-                  },
-                ),
-                _popupDivider(),
-                _PopupMenuItem(
-                  icon: Icons.ios_share_outlined,
-                  label: l10n.tpwExportButton,
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _showExportDialog();
-                  },
-                ),
-                _popupDivider(),
-                _PopupMenuItem(
-                  icon: Icons.send_outlined,
-                  label: 'Send to Manufacturing Partner',
-                  onTap: () {
-                    Navigator.of(context).pop();
-                    _handleSendToSupplier();
-                  },
-                  isLast: true,
-                ),
-              ],
+              children: items,
             ),
           ),
         );

@@ -184,7 +184,7 @@ class OpenAIService {
 
   static Future<List<String>> generateDesignImages({
     required String prompt,
-    int numberOfImages = 3,
+    int numberOfImages = 1,
     String size = '1024x1024',
     String? inspirationImagePath,
   }) async {
