@@ -24,8 +24,20 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
     // Get.toNamed) expects Get.find<SupplierDirectoryController>() to
     // already be registered — normally done by SupplierDirectoryBinding when
     // this screen is navigated to as its own route, which doesn't happen
-    // here.
-    Get.put(SupplierDirectoryController());
+    // here. Shared with any screen pushed on top of this tab (e.g. "Send to
+    // Manufacturing Partner" from a saved design), so it must be permanent —
+    // otherwise GetX can dispose it (and its searchController) whenever this
+    // nav bar route is torn down/rebuilt elsewhere, crashing the still-active
+    // pushed screen's TextField with "used after disposed".
+    if (!Get.isRegistered<SupplierDirectoryController>(
+      tag: NavBarController.factoryControllerTag,
+    )) {
+      Get.put(
+        SupplierDirectoryController(),
+        tag: NavBarController.factoryControllerTag,
+        permanent: true,
+      );
+    }
   }
 
   @override
@@ -85,9 +97,7 @@ class _CustomNavigationBarState extends State<CustomNavigationBar> {
               ),
               NavigationDestination(
                 icon: SvgPicture.asset(
-                  controller.selectedindex.value == 4
-                      ? settingsFill
-                      : settings,
+                  controller.selectedindex.value == 4 ? settingsFill : settings,
                   height: 25.h,
                   width: 25.w,
                 ),

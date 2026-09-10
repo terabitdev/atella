@@ -303,14 +303,17 @@ class CreativeBriefController extends GetxController {
         _isEditMode.value = true;
         _editingTechPack = techPackModel;
         print('Stored TechPack: ${_editingTechPack?.projectName}');
+        _dataService.resetDesignCreditState();
         _loadExistingDataFromFirebase();
       } else {
         print('🔴 NORMAL MODE - Fresh start');
+        _dataService.resetDesignCreditState();
       }
     } else {
       print('🔴 NO ARGUMENTS OR WRONG FORMAT RECEIVED');
       print('Arguments is null: ${arguments == null}');
       print('Arguments is Map: ${arguments is Map<String, dynamic>}');
+      _dataService.resetDesignCreditState();
     }
   }
 

@@ -16,12 +16,19 @@ class SupplierDirectoryScreen extends StatelessWidget {
   // generated tech pack's "Send to Manufacture"), the back button works
   // normally and must stay.
   final bool showBackButton;
+  final String? controllerTag;
 
-  const SupplierDirectoryScreen({super.key, this.showBackButton = true});
+  const SupplierDirectoryScreen({
+    super.key,
+    this.showBackButton = true,
+    this.controllerTag,
+  });
 
   @override
   Widget build(BuildContext context) {
-    final controller = Get.find<SupplierDirectoryController>();
+    final controller = Get.find<SupplierDirectoryController>(
+      tag: controllerTag,
+    );
 
     return Scaffold(
       body: SafeArea(
@@ -50,7 +57,10 @@ class SupplierDirectoryScreen extends StatelessWidget {
                     hintStyle: osTextStyle165002,
                     prefixIcon: const Icon(Icons.search),
                     border: InputBorder.none,
-                    contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+                    contentPadding: EdgeInsets.symmetric(
+                      horizontal: 16.w,
+                      vertical: 12.h,
+                    ),
                   ),
                 ),
               ),
@@ -127,7 +137,10 @@ class _SupplierCard extends StatelessWidget {
                       width: 56.w,
                       height: 56.w,
                       color: const Color(0xFFF4F4F4),
-                      child: Icon(Icons.factory_outlined, color: Colors.grey[500]),
+                      child: Icon(
+                        Icons.factory_outlined,
+                        color: Colors.grey[500],
+                      ),
                     ),
             ),
             SizedBox(width: 14.w),
@@ -136,13 +149,20 @@ class _SupplierCard extends StatelessWidget {
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   Text(supplier.companyName, style: gsTextStyle16600),
-                  if (supplier.specialty != null && supplier.specialty!.isNotEmpty) ...[
+                  if (supplier.specialty != null &&
+                      supplier.specialty!.isNotEmpty) ...[
                     SizedBox(height: 4.h),
                     Text(supplier.specialty!, style: ssTitleTextTextStyle14400),
                   ],
-                  if (supplier.originCountry != null && supplier.originCountry!.isNotEmpty) ...[
+                  if (supplier.originCountry != null &&
+                      supplier.originCountry!.isNotEmpty) ...[
                     SizedBox(height: 2.h),
-                    Text(supplier.originCountry!, style: ssTitleTextTextStyle14400.copyWith(color: Colors.grey[500])),
+                    Text(
+                      supplier.originCountry!,
+                      style: ssTitleTextTextStyle14400.copyWith(
+                        color: Colors.grey[500],
+                      ),
+                    ),
                   ],
                 ],
               ),

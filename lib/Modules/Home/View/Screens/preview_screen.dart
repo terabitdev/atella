@@ -7,6 +7,7 @@ import 'package:atella/Modules/tech_pack/Views/Widgets/export_options_controller
 import 'package:atella/Modules/tech_pack/Views/Widgets/export_options_dialog.dart';
 import 'package:atella/services/analytics/posthog_analytics_service.dart';
 import 'package:atella/services/firebase/techpack/tech_pack_service.dart';
+import 'package:atella/services/firebase/edit/edit_data_service.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_screenutil/flutter_screenutil.dart';
 import 'package:get/get.dart';
@@ -119,6 +120,19 @@ class _PreviewScreenState extends State<PreviewScreen> {
           onTap: () {
             Navigator.of(context).pop();
             _handleSendToSupplier();
+          },
+          isLast: true,
+        ),
+      ]);
+    } else {
+      items.addAll([
+        _popupDivider(),
+        _PopupMenuItem(
+          icon: Icons.construction_outlined,
+          label: l10n.tpdGenerateTechPack,
+          onTap: () {
+            Navigator.of(context).pop();
+            _handleGenerateTechPack();
           },
           isLast: true,
         ),
@@ -301,6 +315,49 @@ class _PreviewScreenState extends State<PreviewScreen> {
         'techPackId': widget.techPack.id,
         'techPackProjectName': widget.techPack.projectName,
         'techPackImageUrl': widget.techPack.displayImage,
+      },
+    );
+  }
+
+  // Start the fabric/sizing/logo questionnaire directly for a design-only
+  // entry — skips creative brief/refining concept/final details since the
+  // design image is already final. Passes editMode + the existing entry so
+  // the eventual save reuses the same tech pack ID instead of creating a
+  // duplicate Dashboard card.
+  Future<void> _handleGenerateTechPack() async {
+    if (!mounted) return;
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => AlertDialog(
+        backgroundColor: Colors.white,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(16.r),
+        ),
+        content: SizedBox(
+          height: 80.h,
+          child: const Center(
+            child: CircularProgressIndicator(color: Colors.black),
+          ),
+        ),
+      ),
+    );
+
+    final editData = await EditDataService().getTechPackEditData(
+      widget.techPack.id,
+    );
+
+    if (!mounted) return;
+    Navigator.of(context, rootNavigator: true).pop();
+
+    Get.toNamed(
+      AppRoutes.techPackDetails,
+      arguments: {
+        'selectedDesignUrl': widget.techPack.displayImage,
+        'designData': editData?['designQuestionnaire'] ?? {},
+        'editMode': true,
+        'techPackModel': widget.techPack,
       },
     );
   }

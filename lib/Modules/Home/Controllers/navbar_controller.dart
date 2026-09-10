@@ -7,12 +7,16 @@ import 'package:get/get.dart';
 
 class NavBarController extends GetxController {
   final Rx<int> selectedindex = 0.obs;
+  static const String factoryControllerTag = 'factoryDirectoryController';
 
   final Screens = [
     const HomeScreen(),
     const CreateScreen(),
     const FavouriteScreen(),
-    const SupplierDirectoryScreen(showBackButton: false),
+    const SupplierDirectoryScreen(
+      showBackButton: false,
+      controllerTag: factoryControllerTag,
+    ),
     const SettingScreen(),
   ];
 }

@@ -7,7 +7,24 @@ class DesignDataService extends GetxService {
   final RxMap<String, dynamic> creativeBriefData = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> refinedConceptData = <String, dynamic>{}.obs;
   final RxMap<String, dynamic> finalDetailsData = <String, dynamic>{}.obs;
-  
+
+  // Design-credit iteration tracking (survives the "Make changes" loop,
+  // since TechPackController gets destroyed/recreated on every iteration).
+  // Reset via resetDesignCreditState() whenever a genuinely new design starts.
+  bool hasGeneratedFirstDesign = false;
+  int modificationCount = 0;
+
+  // True once any of the three triggers (3rd modification, Save Design,
+  // Generate Tech Pack) has spent this session's design credit — the other
+  // triggers check this so the design credit is only ever spent once.
+  bool designCreditSpent = false;
+
+  void resetDesignCreditState() {
+    hasGeneratedFirstDesign = false;
+    modificationCount = 0;
+    designCreditSpent = false;
+  }
+
   // Creative Brief Methods
   void updateCreativeBrief(String key, dynamic value) {
     creativeBriefData[key] = value;

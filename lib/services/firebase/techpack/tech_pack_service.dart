@@ -68,6 +68,7 @@ class TechPackService {
       Map<String, dynamic> techPackData = {
         'tech_pack_id': techPackId,
         'images': uploadedUrls,
+        'has_tech_pack': true,
         'created_at': FieldValue.serverTimestamp(),
         'updated_at': FieldValue.serverTimestamp(),
       };

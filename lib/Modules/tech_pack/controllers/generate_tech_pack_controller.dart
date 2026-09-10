@@ -299,6 +299,21 @@ class TechPackController extends GetxController {
       if (generatedImages.isNotEmpty) {
         selectedDesignIndex.value = 0;
       }
+
+      // Count modifications (regenerations) for the 3-iteration design-credit
+      // rule. The very first generation of a session doesn't count.
+      if (!_dataService.hasGeneratedFirstDesign) {
+        _dataService.hasGeneratedFirstDesign = true;
+      } else {
+        _dataService.modificationCount += 1;
+        if (_dataService.modificationCount == 3 &&
+            !_isEditMode.value &&
+            !_dataService.designCreditSpent) {
+          await DesignCreditService.spendDesignCredit();
+          _dataService.designCreditSpent = true;
+        }
+      }
+
       print('=== DESIGN GENERATION COMPLETED SUCCESSFULLY ===');
 
       // Track successful generation
@@ -501,9 +516,11 @@ class TechPackController extends GetxController {
       );
 
       // Spend the design credit here, unless this is an edit of an
-      // already-existing (already-paid-for) design.
-      if (!_isEditMode.value) {
+      // already-existing (already-paid-for) design, or it was already spent
+      // earlier this session (e.g. via the 3-modification trigger).
+      if (!_isEditMode.value && !_dataService.designCreditSpent) {
         await DesignCreditService.spendDesignCredit();
+        _dataService.designCreditSpent = true;
       }
 
       PostHogAnalyticsService().trackEvent('design saved to dashboard');
@@ -518,9 +535,11 @@ class TechPackController extends GetxController {
         margin: const EdgeInsets.all(10),
       );
 
-      // Delete controller so a fresh one is created next time this screen opens
+      // Delete controller so a fresh one is created next time this screen opens.
+      // force: true is required — it was registered with permanent: true, so a
+      // plain delete() silently no-ops and leaves a stale instance registered.
       if (Get.isRegistered<TechPackController>()) {
-        Get.delete<TechPackController>();
+        Get.delete<TechPackController>(force: true);
       }
 
       // Navigate to the Dashboard and force it to refresh so the new entry shows up

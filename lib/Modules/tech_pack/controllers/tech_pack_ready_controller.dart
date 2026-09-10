@@ -291,9 +291,15 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
       final isUpdatingExisting =
           (isEditMode && editingTechPack != null) || hasSessionSavedId;
 
-      // Get selected design image URL
-      final selectedDesignImageUrl = await TechPackService.getSelectedDesignImageUrl();
-      
+      // Get selected design image URL — use the design actually tied to this
+      // session/save (passed in as an argument at the start of this flow),
+      // not the unrelated "most recently added design across the whole
+      // account" lookup, which only happened to be correct by write-order
+      // coincidence in the normal flow and is wrong whenever that ordering
+      // doesn't hold (e.g. generating a tech pack for a saved design-only
+      // entry, which never wrote into that other collection at all).
+      final selectedDesignImageUrl = _detailsController.selectedDesignImagePath.value;
+
       // Collect tech pack questionnaire data
       Map<String, dynamic> techPackQuestionnaireData = {
         'materials': {
@@ -444,7 +450,7 @@ Sizes: ${_detailsController.selectedSizes.join(', ')}
 
       if (techPackId == null) return;
 
-      final imageUrl = await TechPackService.getSelectedDesignImageUrl();
+      final imageUrl = _detailsController.selectedDesignImagePath.value;
 
       Get.toNamed(
         AppRoutes.supplierDirectory,

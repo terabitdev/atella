@@ -41,7 +41,8 @@ class SupplierDirectoryController extends GetxController {
 
   @override
   void onClose() {
-    searchController.dispose();
+    // Don't dispose searchController since this controller is permanent
+    // (shared with the "Factory" nav tab) — matches HomeController's pattern.
     super.onClose();
   }
 }

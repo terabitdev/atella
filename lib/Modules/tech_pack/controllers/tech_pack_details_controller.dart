@@ -7,6 +7,7 @@ import '../../../Data/api/openai_service.dart';
 import '../../../Data/Models/tech_pack_model.dart';
 import '../../../Data/Models/user_subscription.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
+import '../../../services/designservices/design_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
 import '../../../services/PaymentService/design_credit_service.dart';
 import '../../../services/PaymentService/revenuecat_service.dart';
@@ -1142,9 +1143,11 @@ class TechPackDetailsController extends GetxController {
     }
 
     // Spend the design credit here too, unless this is an edit of an
-    // already-existing (already-paid-for) design.
-    if (!_isEditMode.value) {
+    // already-existing (already-paid-for) design, or it was already spent
+    // earlier this session (e.g. via the 3-modification trigger).
+    if (!_isEditMode.value && !DesignDataService.instance.designCreditSpent) {
       await DesignCreditService.spendDesignCredit();
+      DesignDataService.instance.designCreditSpent = true;
     }
 
     // Set in-flight flag to prevent concurrent generations
@@ -1318,9 +1321,11 @@ class TechPackDetailsController extends GetxController {
         print('✅ Tech pack usage incremented BEFORE generation (after add-on purchase)');
 
         // Spend the design credit here too, unless this is an edit of an
-        // already-existing (already-paid-for) design.
-        if (!_isEditMode.value) {
+        // already-existing (already-paid-for) design, or it was already
+        // spent earlier this session (e.g. via the 3-modification trigger).
+        if (!_isEditMode.value && !DesignDataService.instance.designCreditSpent) {
           await DesignCreditService.spendDesignCredit();
+          DesignDataService.instance.designCreditSpent = true;
         }
 
         generationCancelled.value = false; // Reset cancellation flag
