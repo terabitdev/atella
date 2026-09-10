@@ -57,6 +57,11 @@ class TechPackReadyScreen extends StatelessWidget {
   ) {
     Get.dialog(
       SaveTechPackDialog(
+        projectNameController: controller.projectNameController,
+        selectedCollection: controller.selectedCollection,
+        collections: controller.collections,
+        onAddCollection: controller.addNewCollection,
+        onSelectCollection: controller.updateSelectedCollection,
         onSave: (projectName, collectionName) async {
           await controller.saveTechPackWithDetails(
             projectName,

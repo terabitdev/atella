@@ -114,6 +114,85 @@ class TechPackService {
     }
   }
 
+  // Save a design-only entry to the Dashboard (no tech pack pages yet).
+  // Writes to the same users/{uid}/tech_packs collection as saveTechPackImages,
+  // with has_tech_pack: false, so it shows up on the Dashboard immediately
+  // without any of the tech-pack/export/factory actions.
+  static Future<String> saveDesignOnly({
+    required String base64Image,
+    required String techPackId,
+    String? projectName,
+    String? collectionName,
+    Map<String, dynamic>? designData,
+  }) async {
+    final user = _auth.currentUser;
+    if (user == null) throw Exception('User not authenticated');
+
+    try {
+      final bytes = base64Decode(base64Image);
+
+      final fileName = 'design_${DateTime.now().millisecondsSinceEpoch}.png';
+      final ref = _storage
+          .ref()
+          .child('users')
+          .child(user.uid)
+          .child('tech_packs')
+          .child(techPackId)
+          .child(fileName);
+
+      final uploadTask = await ref.putData(
+        bytes,
+        SettableMetadata(
+          contentType: 'image/png',
+          customMetadata: {
+            'uploaded_by': user.uid,
+            'tech_pack_id': techPackId,
+          },
+        ),
+      );
+
+      final downloadUrl = await uploadTask.ref.getDownloadURL();
+
+      Map<String, dynamic> designOnlyData = {
+        'tech_pack_id': techPackId,
+        'images': <String, String>{},
+        'selected_design_image_url': downloadUrl,
+        'has_tech_pack': false,
+        'created_at': FieldValue.serverTimestamp(),
+        'updated_at': FieldValue.serverTimestamp(),
+      };
+
+      if (projectName != null) {
+        designOnlyData['project_name'] = projectName;
+      }
+      if (collectionName != null) {
+        designOnlyData['collection_name'] = collectionName;
+      }
+      if (designData != null) {
+        designOnlyData['design_questionnaire'] = designData;
+      }
+
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .collection('tech_packs')
+          .doc(techPackId)
+          .set(designOnlyData, SetOptions(merge: true));
+
+      // Trigger a refresh event for any listening screens
+      await _firestore
+          .collection('users')
+          .doc(user.uid)
+          .set({
+            'last_tech_pack_update': FieldValue.serverTimestamp(),
+          }, SetOptions(merge: true));
+
+      return downloadUrl;
+    } catch (e) {
+      throw Exception('Failed to save design: $e');
+    }
+  }
+
   // Request storage permission for Android
   static Future<bool> _requestStoragePermission() async {
     if (Platform.isAndroid) {

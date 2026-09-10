@@ -1542,7 +1542,7 @@
   "@rcSnackbarRegeneratingDesigns": {
     "description": "Snackbar title when regenerating designs"
   },
-  "rcSnackbarRegeneratingDesignsMessage": "Creating 3 new designs based on your updated preferences...",
+  "rcSnackbarRegeneratingDesignsMessage": "Creating a new design based on your updated preferences...",
   "@rcSnackbarRegeneratingDesignsMessage": {
     "description": "Snackbar message when regenerating designs"
   },
@@ -1550,7 +1550,7 @@
   "@rcSnackbarGeneratingDesigns": {
     "description": "Snackbar title when generating designs"
   },
-  "rcSnackbarGeneratingDesignsMessage": "Creating 3 unique designs based on your preferences...",
+  "rcSnackbarGeneratingDesignsMessage": "Creating your unique design based on your preferences...",
   "@rcSnackbarGeneratingDesignsMessage": {
     "description": "Snackbar message when generating designs"
   },
@@ -1759,7 +1759,7 @@
   "@fdSnackbarRegeneratingDesigns": {
     "description": "Snackbar title when regenerating designs"
   },
-  "fdSnackbarRegeneratingMessage": "Creating 3 new designs based on your updated preferences...",
+  "fdSnackbarRegeneratingMessage": "Creating a new design based on your updated preferences...",
   "@fdSnackbarRegeneratingMessage": {
     "description": "Snackbar message when regenerating designs"
   },
@@ -1767,7 +1767,7 @@
   "@fdSnackbarGeneratingDesigns": {
     "description": "Snackbar title when generating designs"
   },
-  "fdSnackbarGeneratingMessage": "Creating 3 unique designs based on your preferences...",
+  "fdSnackbarGeneratingMessage": "Creating your unique design based on your preferences...",
   "@fdSnackbarGeneratingMessage": {
     "description": "Snackbar message when generating designs"
   },
@@ -1889,7 +1889,7 @@
   "@tpCreatingDesigns": {
     "description": "Loading header when creating designs"
   },
-  "tpPleaseWaitGenerating": "Please wait while we generate 3 unique designs based on your preferences.",
+  "tpPleaseWaitGenerating": "Please wait while we generate your unique design based on your preferences.",
   "@tpPleaseWaitGenerating": {
     "description": "Loading description"
   },
@@ -1992,6 +1992,26 @@
   "tpSnackbarDesignSavedMessage": "Your selected design has been saved successfully",
   "@tpSnackbarDesignSavedMessage": {
     "description": "Snackbar message when design saved"
+  },
+  "tpSaveDesignButton": "Save Design",
+  "@tpSaveDesignButton": {
+    "description": "Button to save the design only to the Dashboard, without generating a tech pack"
+  },
+  "tpSnackbarDesignSavedToDashboard": "Design Saved!",
+  "@tpSnackbarDesignSavedToDashboard": {
+    "description": "Snackbar title when a design-only save to the Dashboard succeeds"
+  },
+  "tpSnackbarDesignSavedToDashboardMessage": "Your design has been saved to the Dashboard.",
+  "@tpSnackbarDesignSavedToDashboardMessage": {
+    "description": "Snackbar message when a design-only save to the Dashboard succeeds"
+  },
+  "tpSnackbarSaveDesignFailed": "Save Failed",
+  "@tpSnackbarSaveDesignFailed": {
+    "description": "Snackbar title when saving a design-only entry fails"
+  },
+  "tpSnackbarSaveDesignFailedMessage": "Failed to save your design. Please try again.",
+  "@tpSnackbarSaveDesignFailedMessage": {
+    "description": "Snackbar message when saving a design-only entry fails"
   },
   "tpSnackbarGenerationFailed": "Generation Failed",
   "@tpSnackbarGenerationFailed": {
@@ -3392,7 +3412,7 @@
   "@fdRegeneratingDesigns": {
     "description": "Snackbar title when regenerating designs in edit mode"
   },
-  "fdRegeneratingDesignsMessage": "Creating 3 new designs based on your updated preferences...",
+  "fdRegeneratingDesignsMessage": "Creating a new design based on your updated preferences...",
   "@fdRegeneratingDesignsMessage": {
     "description": "Snackbar message when regenerating designs"
   },
@@ -3400,7 +3420,7 @@
   "@fdGeneratingDesigns": {
     "description": "Snackbar title when generating new designs"
   },
-  "fdGeneratingDesignsMessage": "Creating 3 unique designs based on your preferences...",
+  "fdGeneratingDesignsMessage": "Creating your unique design based on your preferences...",
   "@fdGeneratingDesignsMessage": {
     "description": "Snackbar message when generating designs"
   },

@@ -8,6 +8,7 @@ import '../../../Data/Models/tech_pack_model.dart';
 import '../../../Data/Models/user_subscription.dart';
 import '../../../services/firebase/edit/edit_data_service.dart';
 import '../../../services/PaymentService/stripe_subscription_service.dart';
+import '../../../services/PaymentService/design_credit_service.dart';
 import '../../../services/PaymentService/revenuecat_service.dart';
 import '../../../services/PaymentService/subscription_callback_service.dart';
 import '../../../services/internet_connectivity_checker.dart';
@@ -1140,6 +1141,12 @@ class TechPackDetailsController extends GetxController {
       await _subscriptionService.incrementTechpackUsage();
     }
 
+    // Spend the design credit here too, unless this is an edit of an
+    // already-existing (already-paid-for) design.
+    if (!_isEditMode.value) {
+      await DesignCreditService.spendDesignCredit();
+    }
+
     // Set in-flight flag to prevent concurrent generations
     _isGenerationInFlight = true;
 
@@ -1309,6 +1316,12 @@ class TechPackDetailsController extends GetxController {
         // CRITICAL: Increment counter IMMEDIATELY before generation starts
         await _subscriptionService.incrementTechpackUsage();
         print('✅ Tech pack usage incremented BEFORE generation (after add-on purchase)');
+
+        // Spend the design credit here too, unless this is an edit of an
+        // already-existing (already-paid-for) design.
+        if (!_isEditMode.value) {
+          await DesignCreditService.spendDesignCredit();
+        }
 
         generationCancelled.value = false; // Reset cancellation flag
         generationProgress.value = 0.1;

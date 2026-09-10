@@ -7,6 +7,7 @@ class TechPackModel {
   final DateTime createdAt;
   final DateTime updatedAt;
   bool isFavorite;
+  final bool hasTechPack;
 
   TechPackModel({
     required this.id,
@@ -17,6 +18,7 @@ class TechPackModel {
     required this.createdAt,
     required this.updatedAt,
     this.isFavorite = false,
+    this.hasTechPack = true,
   });
 
   // Get the selected design image for display (preferred) or fallback to tech pack image
@@ -43,6 +45,7 @@ class TechPackModel {
       createdAt: map['created_at']?.toDate() ?? DateTime.now(),
       updatedAt: map['updated_at']?.toDate() ?? DateTime.now(),
       isFavorite: map['is_favorite'] ?? false,
+      hasTechPack: map['has_tech_pack'] ?? true,
     );
   }
 
@@ -56,6 +59,7 @@ class TechPackModel {
       'created_at': createdAt,
       'updated_at': updatedAt,
       'is_favorite': isFavorite,
+      'has_tech_pack': hasTechPack,
     };
   }
 
@@ -69,6 +73,7 @@ class TechPackModel {
     DateTime? createdAt,
     DateTime? updatedAt,
     bool? isFavorite,
+    bool? hasTechPack,
   }) {
     return TechPackModel(
       id: id ?? this.id,
@@ -79,6 +84,7 @@ class TechPackModel {
       createdAt: createdAt ?? this.createdAt,
       updatedAt: updatedAt ?? this.updatedAt,
       isFavorite: isFavorite ?? this.isFavorite,
+      hasTechPack: hasTechPack ?? this.hasTechPack,
     );
   }
 

@@ -1,4 +1,5 @@
 import 'package:atella/Modules/tech_pack/Views/Widgets/outline_genrate_round_button.dart';
+import 'package:atella/Modules/tech_pack/Views/Widgets/save_tech_pack_dialog.dart';
 import 'package:atella/Widgets/animated_dots_text.dart';
 import 'package:percent_indicator/percent_indicator.dart';
 import 'package:atella/Modules/tech_pack/controllers/generate_tech_pack_controller.dart';
@@ -64,7 +65,7 @@ class GenerateTechPackScreen extends StatelessWidget {
                     child: Obx(() {
                       return Column(
                         children: [
-                          ...List.generate(3, (index) {
+                          ...List.generate(1, (index) {
                             if (controller.isLoading.value) {
                               return _buildDynamicLoadingCard(index, l10n);
                             } else if (controller.hasError.value) {
@@ -430,6 +431,22 @@ class GenerateTechPackScreen extends StatelessWidget {
     });
   }
 
+  void _showSaveDesignDialog() {
+    Get.dialog(
+      SaveTechPackDialog(
+        projectNameController: controller.projectNameController,
+        selectedCollection: controller.selectedCollection,
+        collections: controller.collections,
+        onAddCollection: controller.addNewCollection,
+        onSelectCollection: controller.updateSelectedCollection,
+        onSave: (projectName, collectionName) async {
+          await controller.onSaveDesignOnly(projectName, collectionName);
+        },
+      ),
+      barrierDismissible: true,
+    );
+  }
+
   Widget _buildActionButtons(AppLocalizations l10n) {
     return Column(
       children: [
@@ -491,6 +508,17 @@ class GenerateTechPackScreen extends StatelessWidget {
                 : () {},
             color: isDesignSelected ? const Color(0xFF1A1A1A) : Colors.grey,
             imagePath: 'assets/images/techpackgenerate.png',
+          );
+        }),
+        SizedBox(height: 12.h),
+        Obx(() {
+          final isDesignSelected = controller.selectedDesignIndex.value >= 0;
+
+          return OutlineGenerateRoundButton(
+            title: l10n.tpSaveDesignButton,
+            onTap: isDesignSelected ? _showSaveDesignDialog : () {},
+            loading: controller.isSaving.value,
+            color: isDesignSelected ? const Color(0xFF1A1A1A) : Colors.grey,
           );
         }),
         SizedBox(height: 24.h),

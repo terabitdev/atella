@@ -1416,14 +1416,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get rcSnackbarRegeneratingDesignsMessage =>
-      'Creating 3 new designs based on your updated preferences...';
+      'Creating a new design based on your updated preferences...';
 
   @override
   String get rcSnackbarGeneratingDesigns => 'Generating Designs!';
 
   @override
   String get rcSnackbarGeneratingDesignsMessage =>
-      'Creating 3 unique designs based on your preferences...';
+      'Creating your unique design based on your preferences...';
 
   @override
   String get rcSnackbarInvalidInput => 'Invalid Input';
@@ -1587,14 +1587,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fdSnackbarRegeneratingMessage =>
-      'Creating 3 new designs based on your updated preferences...';
+      'Creating a new design based on your updated preferences...';
 
   @override
   String get fdSnackbarGeneratingDesigns => 'Generating Designs!';
 
   @override
   String get fdSnackbarGeneratingMessage =>
-      'Creating 3 unique designs based on your preferences...';
+      'Creating your unique design based on your preferences...';
 
   @override
   String get fdSnackbarExtraDesigns => 'Extra Designs Added!';
@@ -1674,7 +1674,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get tpPleaseWaitGenerating =>
-      'Please wait while we generate 3 unique designs based on your preferences.';
+      'Please wait while we generate your unique design based on your preferences.';
 
   @override
   String get tpSomethingWentWrong => 'Something went wrong';
@@ -1752,6 +1752,23 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get tpSnackbarDesignSavedMessage =>
       'Your selected design has been saved successfully';
+
+  @override
+  String get tpSaveDesignButton => 'Save Design';
+
+  @override
+  String get tpSnackbarDesignSavedToDashboard => 'Design Saved!';
+
+  @override
+  String get tpSnackbarDesignSavedToDashboardMessage =>
+      'Your design has been saved to the Dashboard.';
+
+  @override
+  String get tpSnackbarSaveDesignFailed => 'Save Failed';
+
+  @override
+  String get tpSnackbarSaveDesignFailedMessage =>
+      'Failed to save your design. Please try again.';
 
   @override
   String get tpSnackbarGenerationFailed => 'Generation Failed';
@@ -2774,14 +2791,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get fdRegeneratingDesignsMessage =>
-      'Creating 3 new designs based on your updated preferences...';
+      'Creating a new design based on your updated preferences...';
 
   @override
   String get fdGeneratingDesigns => 'Generating Designs!';
 
   @override
   String get fdGeneratingDesignsMessage =>
-      'Creating 3 unique designs based on your preferences...';
+      'Creating your unique design based on your preferences...';
 
   @override
   String get fdExtraDesignsAdded => 'Extra Designs Added!';
