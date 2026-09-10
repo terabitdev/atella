@@ -1,6 +1,7 @@
 export { stripeWebhook } from './subscriptions/subscriptionWebhook';
 export { verifyUserForPayment } from './subscriptions/verifyUserForPayment';
 export { bootstrapAdmin } from './admin/bootstrapAdmin';
+export { onUserAccountTypeChanged } from './admin/syncAccountTypeClaim';
 export {
   createSupplierInvite,
   revokeSupplierInvite,

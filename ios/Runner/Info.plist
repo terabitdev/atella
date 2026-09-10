@@ -19,7 +19,7 @@
 	<key>CFBundlePackageType</key>
 	<string>APPL</string>
 	<key>CFBundleShortVersionString</key>
-	<string>22</string>
+	<string>28</string>
 	<key>CFBundleSignature</key>
 	<string>????</string>
 	<key>CFBundleURLTypes</key>
@@ -44,11 +44,15 @@
 		</dict>
 	</array>
 	<key>CFBundleVersion</key>
-	<string>22</string>
+	<string>28</string>
+	<key>FlutterDeepLinkingEnabled</key>
+	<false/>
 	<key>LSRequiresIPhoneOS</key>
 	<true/>
 	<key>NSCameraUsageDescription</key>
 	<string>This app needs access to camera to take photos for tech pack measurements.</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Atelia may use your location to help connect you with nearby suppliers and factories.</string>
 	<key>NSPhotoLibraryAddUsageDescription</key>
 	<string>This app needs access to save images to your photo library.</string>
 	<key>NSPhotoLibraryUsageDescription</key>
@@ -96,12 +100,6 @@
 		<string>UIInterfaceOrientationLandscapeRight</string>
 	</array>
 	<key>com.posthog.posthog.AUTO_INIT</key>
-	<false/>
-	<!-- Deep links are handled ourselves via the app_links package +
-	     DeepLinkService. Without this, Flutter's engine tries to use the
-	     incoming Universal Link URL as the GetX initial route name, which
-	     doesn't match any registered route and crashes route resolution. -->
-	<key>FlutterDeepLinkingEnabled</key>
 	<false/>
 </dict>
 </plist>
