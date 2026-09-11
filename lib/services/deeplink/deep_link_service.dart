@@ -18,6 +18,11 @@ class DeepLinkService {
   final AppLinks _appLinks = AppLinks();
   StreamSubscription<Uri>? _subscription;
 
+  // Set right before navigating to a deep-link screen so other startup logic
+  // (see SplashServices.navigateToHome) can avoid stomping over it once its
+  // own, unrelated redirect finishes later.
+  static bool isHandlingDeepLink = false;
+
   Future<void> initialize() async {
     try {
       final initialUri = await _appLinks.getInitialLink();
@@ -69,6 +74,7 @@ class DeepLinkService {
     // `Future.delayed` inside the post-frame callback pushes the actual
     // navigation into a later event-loop turn, after that lock is released,
     // while the post-frame callback still guarantees the tree exists first.
+    isHandlingDeepLink = true;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       Future.delayed(Duration.zero, () {
         Get.toNamed(AppRoutes.supplierInviteSignup, arguments: {'token': token});

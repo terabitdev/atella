@@ -1,4 +1,6 @@
 import 'package:atella/Data/Models/message_model.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
+import 'package:atella/Modules/Home/View/Screens/preview_screen.dart';
 import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/Widgets/custom_roundbutton.dart';
 import 'package:atella/core/themes/app_colors.dart';
@@ -101,7 +103,9 @@ class MessageBubble extends StatelessWidget {
     if (message.type == 'tech_pack_shared') {
       return Align(
         alignment: isMe ? Alignment.centerRight : Alignment.centerLeft,
-        child: Container(
+        child: GestureDetector(
+          onTap: () => _openTechPack(context),
+          child: Container(
           constraints: BoxConstraints(maxWidth: 240.w),
           margin: EdgeInsets.symmetric(vertical: 6.h),
           padding: EdgeInsets.all(10.w),
@@ -154,6 +158,7 @@ class MessageBubble extends StatelessWidget {
                 child: Text('Tech pack shared', style: ssTitleTextTextStyle14400.copyWith(color: Colors.grey[500])),
               ),
             ],
+          ),
           ),
         ),
       );
@@ -239,6 +244,28 @@ class MessageBubble extends StatelessWidget {
               ),
             ],
           ],
+        ),
+      ),
+    );
+  }
+
+  // Reconstructs a TechPackModel from the snapshot stored on this message
+  // and opens it in PreviewScreen — the same screen/actions (view, download,
+  // export/share) already used for the user's own saved tech packs.
+  void _openTechPack(BuildContext context) {
+    if (message.techPackId == null || message.techPackSnapshot == null) return;
+
+    final techPack = TechPackModel.fromMap(
+      message.techPackSnapshot!,
+      message.techPackId!,
+    );
+
+    Navigator.of(context).push(
+      MaterialPageRoute(
+        builder: (_) => PreviewScreen(
+          techPack: techPack,
+          version: 'shared',
+          isSupplierView: true,
         ),
       ),
     );

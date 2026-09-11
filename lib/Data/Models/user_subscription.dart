@@ -113,9 +113,25 @@ class UserSubscription {
     };
   }
 
+  // True only if the subscription's status says active/trialing AND its
+  // current billing period hasn't already ended. Guards against a stale
+  // `subscriptionStatus` that never got flipped by a renewal webhook —
+  // relying on the status string alone let an expired-but-unrenewed
+  // subscription keep paid access indefinitely.
+  bool get isCurrentlyValid {
+    if (subscriptionStatus != 'active' && subscriptionStatus != 'trialing') {
+      return false;
+    }
+    if (currentPeriodEnd != null && DateTime.now().isAfter(currentPeriodEnd!)) {
+      return false;
+    }
+    return true;
+  }
+
   bool get canGenerateTechpack {
-    // CRITICAL: Only allow if subscription is actually active or in trial
-    if (subscriptionStatus != 'active' && subscriptionStatus != 'trialing') return false;
+    // CRITICAL: Only allow if subscription is actually active/trialing AND
+    // its billing period hasn't already lapsed.
+    if (!isCurrentlyValid) return false;
 
     if (subscriptionPlan == 'FREE') return false;
 
@@ -192,8 +208,9 @@ class UserSubscription {
       return freeDesignsGeneratedThisMonth < baseLimit;
     }
 
-    // CRITICAL: For paid plans, validate subscription is active
-    if (subscriptionStatus != 'active' && subscriptionStatus != 'trialing') return false;
+    // CRITICAL: For paid plans, validate subscription is active/trialing AND
+    // its billing period hasn't already lapsed.
+    if (!isCurrentlyValid) return false;
 
     int baseLimit = _getBaseDesignLimit();
     // Check if user has consumed all monthly quota

@@ -406,13 +406,13 @@ class StripeSubscriptionService {
         );
         break;
       case 'pdf_export':
-        canUse = subscription.subscriptionPlan != 'FREE';
+        canUse = subscription.subscriptionPlan != 'FREE' && subscription.isCurrentlyValid;
         print(
           '🔍 PDF export access check: ${subscription.subscriptionPlan} plan, access: $canUse',
         );
         break;
       case 'manufacturers':
-        canUse = subscription.subscriptionPlan != 'FREE';
+        canUse = subscription.subscriptionPlan != 'FREE' && subscription.isCurrentlyValid;
         print(
           '🔍 Manufacturers access check: ${subscription.subscriptionPlan} plan, access: $canUse',
         );
@@ -844,10 +844,14 @@ class StripeSubscriptionService {
       // NOTE: Add-ons (extraDesignsPurchased, extraTechpacksPurchased, extraDesignsUsed, extraTechpacksUsed) are NOT reset monthly
       // They accumulate across months - users can purchase multiple add-on packs
       // Example: Buy pack in Jan + buy pack in Feb = 2 packs total available
-      'currentPeriodStart': FieldValue.serverTimestamp(),
-      'currentPeriodEnd': Timestamp.fromDate(
-        DateTime.now().add(Duration(days: 30)),
-      ), // Always 30 days for monthly reset
+      //
+      // currentPeriodStart/currentPeriodEnd are intentionally NOT touched
+      // here. Those values are owned exclusively by the Stripe webhook
+      // (see functions/src/subscriptions/subscriptionWebhook.ts) — inventing
+      // a new period locally, with no payment verification, would silently
+      // keep granting free access if a renewal ever failed or was delayed.
+      // Access itself is separately gated by UserSubscription.isCurrentlyValid,
+      // which checks the real currentPeriodEnd from Firestore.
     };
 
     // Note: techpacksUsedThisYear is only reset at the yearly billing cycle, not monthly
@@ -937,7 +941,7 @@ class StripeSubscriptionService {
           : subscription.subscriptionPlan.startsWith('STARTER')
           ? 2
           : 0,
-      'isActive': subscription.subscriptionStatus == 'active',
+      'isActive': subscription.isCurrentlyValid,
       'periodEnd': subscription.currentPeriodEnd,
     };
   }

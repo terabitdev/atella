@@ -94,7 +94,11 @@ Three distinct webhook secrets exist in total: `STRIPE_WEBHOOK_SECRET` (subscrip
 Real Android App Links + iOS Universal Links replace the original non-clickable `atella://` custom scheme (most messaging apps won't auto-linkify unrecognized schemes).
 
 - **Firebase Hosting** (`atelia-123.web.app`, free default domain, no new domain purchase) serves:
-  - `public/.well-known/assetlinks.json` — Android Digital Asset Links, `com.company.atella` + both release and debug SHA-256 cert fingerprints.
+  - `public/.well-known/assetlinks.json` — Android Digital Asset Links, `com.company.atella` + SHA-256 cert fingerprints. JSON doesn't support comments, so the four entries are labeled here instead (in array order):
+    1. `C1:4B:51:...:0E:55` — original debug fingerprint (whoever first set up this feature; machine unknown).
+    2. `2A:4C:86:...:5F:F2` — original release/upload-key fingerprint (from that same original setup; may or may not match the actual Play Store distribution certificate below).
+    3. `9C:C8:11:...:89:6F` — **Play Store production signing certificate** (from Play Console → Setup → App integrity → "App signing key certificate"). This is the one real Play Store downloads are actually signed with — every user gets this same fingerprint.
+    4. `A3:A2:C9:...:4D:27` — debug fingerprint for a specific developer machine (retrieved via `keytool -list -v -keystore "$env:USERPROFILE\.android\debug.keystore" -alias androiddebugkey -storepass android -keypass android`). Each developer's debug keystore is unique per machine — add your own the same way if App Links don't open in your local `flutter run` builds.
   - `public/.well-known/apple-app-site-association` — `appID: "YM28RS6N8K.com.example.atella"`, `paths: ["/supplier-invite*"]`; served with `Content-Type: application/json` via a `firebase.json` header override (no file extension, so Hosting won't set the type correctly by default).
   - `public/supplier-invite/index.html` — fallback page if opened without the app installed.
 - **Android**: second intent-filter in `AndroidManifest.xml` with `android:autoVerify="true"`, `scheme="https"`, `host="atelia-123.web.app"`, `pathPrefix="/supplier-invite"` (old `atella://` filter kept for backward compatibility). `flutter_deeplinking_enabled=false` meta-data tag added to disable Flutter engine's own native deep-link route interception (it was hijacking the launch URL as GetX's initial route, causing a null-check crash in `PageRedirect.page`).

@@ -20,9 +20,17 @@ import 'package:share_plus/share_plus.dart';
 class PreviewScreen extends StatefulWidget {
   final TechPackModel techPack;
   final String version;
+  // True when opened by a supplier viewing a tech pack shared with them in
+  // chat — hides actions that only make sense for the tech pack's owner
+  // (editing the design, sending it on to a manufacturing partner).
+  final bool isSupplierView;
 
-  const PreviewScreen({Key? key, required this.techPack, required this.version})
-    : super(key: key);
+  const PreviewScreen({
+    Key? key,
+    required this.techPack,
+    required this.version,
+    this.isSupplierView = false,
+  }) : super(key: key);
 
   @override
   State<PreviewScreen> createState() => _PreviewScreenState();
@@ -79,17 +87,26 @@ class _PreviewScreenState extends State<PreviewScreen> {
   void showPopup() {
     final l10n = AppLocalizations.of(context)!;
     final hasTechPack = widget.techPack.hasTechPack;
+    final isSupplierView = widget.isSupplierView;
 
-    final items = <Widget>[
-      _PopupMenuItem(
-        icon: Icons.edit_outlined,
-        label: l10n.edit,
-        onTap: () {
-          Navigator.of(context).pop();
-          _handleEdit();
-        },
-      ),
-      _popupDivider(),
+    final items = <Widget>[];
+
+    // Editing the design only makes sense for the tech pack's owner.
+    if (!isSupplierView) {
+      items.add(
+        _PopupMenuItem(
+          icon: Icons.edit_outlined,
+          label: l10n.edit,
+          onTap: () {
+            Navigator.of(context).pop();
+            _handleEdit();
+          },
+        ),
+      );
+      items.add(_popupDivider());
+    }
+
+    items.add(
       _PopupMenuItem(
         icon: Icons.download_outlined,
         label: l10n.download,
@@ -97,14 +114,17 @@ class _PreviewScreenState extends State<PreviewScreen> {
           Navigator.of(context).pop();
           _handleDownload();
         },
+        isLast: !hasTechPack,
       ),
-    ];
+    );
 
     // Export (PDF/Word) and sending to a manufacturing partner both require
     // an actual tech pack — hide them for design-only Dashboard entries.
+    // "Send to Manufacturing Partner" additionally only makes sense for the
+    // tech pack's owner, not a supplier viewing something shared with them.
     if (hasTechPack) {
-      items.addAll([
-        _popupDivider(),
+      items.add(_popupDivider());
+      items.add(
         _PopupMenuItem(
           icon: Icons.ios_share_outlined,
           label: l10n.tpwExportButton,
@@ -112,21 +132,26 @@ class _PreviewScreenState extends State<PreviewScreen> {
             Navigator.of(context).pop();
             _showExportDialog();
           },
+          isLast: isSupplierView,
         ),
-        _popupDivider(),
-        _PopupMenuItem(
-          icon: Icons.send_outlined,
-          label: 'Send to Manufacturing Partner',
-          onTap: () {
-            Navigator.of(context).pop();
-            _handleSendToSupplier();
-          },
-          isLast: true,
-        ),
-      ]);
-    } else {
-      items.addAll([
-        _popupDivider(),
+      );
+      if (!isSupplierView) {
+        items.add(_popupDivider());
+        items.add(
+          _PopupMenuItem(
+            icon: Icons.send_outlined,
+            label: 'Send to Manufacturing Partner',
+            onTap: () {
+              Navigator.of(context).pop();
+              _handleSendToSupplier();
+            },
+            isLast: true,
+          ),
+        );
+      }
+    } else if (!isSupplierView) {
+      items.add(_popupDivider());
+      items.add(
         _PopupMenuItem(
           icon: Icons.construction_outlined,
           label: l10n.tpdGenerateTechPack,
@@ -136,7 +161,7 @@ class _PreviewScreenState extends State<PreviewScreen> {
           },
           isLast: true,
         ),
-      ]);
+      );
     }
 
     showDialog(

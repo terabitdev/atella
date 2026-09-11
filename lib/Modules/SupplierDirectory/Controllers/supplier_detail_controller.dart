@@ -7,6 +7,7 @@ import 'package:atella/Routes/app_routes.dart';
 import 'package:atella/core/utils/app_snackbar.dart';
 import 'package:atella/services/PaymentService/subscription_manager_service.dart';
 import 'package:atella/services/firebase/services/messaging_service.dart';
+import 'package:atella/services/firebase/techpack/tech_pack_service.dart';
 import 'package:atella/services/firebase/services/supplier_submission_service.dart';
 import 'package:atella/services/analytics/appsflyer_analytics_service.dart';
 
@@ -80,6 +81,12 @@ class SupplierDetailController extends GetxController {
 
     isSending.value = true;
     try {
+      // Snapshot the full tech pack (all images, collection, etc.) now,
+      // while we're still on the owner's own account — the shared chat
+      // message carries this snapshot so the supplier can view/download/
+      // share every image without needing read access to the owner's data.
+      final fullTechPack = await TechPackService.getTechPackById(techPackId!);
+
       final submissionId = await _service.sendTechPackToSupplier(
         supplierId: supplierId,
         techPackId: techPackId!,
@@ -91,6 +98,8 @@ class SupplierDetailController extends GetxController {
         conversationId.value,
         techPackProjectName: techPackProjectName,
         techPackImageUrl: techPackImageUrl,
+        techPackId: techPackId,
+        techPackSnapshot: fullTechPack?.toMap(),
       );
       hasSent.value = true;
       showAppSnackbar('Sent!', 'Your tech pack has been sent to ${supplier.value?.companyName ?? "the supplier"}.', backgroundColor: Colors.black, colorText: Colors.white);

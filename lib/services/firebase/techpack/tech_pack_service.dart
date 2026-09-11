@@ -9,6 +9,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:permission_handler/permission_handler.dart';
 import 'package:flutter/services.dart' show rootBundle;
 import 'package:docx_template_fork/docx_template_fork.dart';
+import 'package:atella/Data/Models/tech_pack_model.dart';
 
 class TechPackService {
   static final FirebaseStorage _storage = FirebaseStorage.instance;
@@ -192,6 +193,24 @@ class TechPackService {
     } catch (e) {
       throw Exception('Failed to save design: $e');
     }
+  }
+
+  // Fetch a single tech pack belonging to the current user, e.g. to snapshot
+  // its full data (all images, collection, etc.) before sharing it elsewhere
+  // — like into a chat message — where only an id was carried forward.
+  static Future<TechPackModel?> getTechPackById(String techPackId) async {
+    final user = _auth.currentUser;
+    if (user == null) return null;
+
+    final doc = await _firestore
+        .collection('users')
+        .doc(user.uid)
+        .collection('tech_packs')
+        .doc(techPackId)
+        .get();
+
+    if (!doc.exists) return null;
+    return TechPackModel.fromMap(doc.data()!, doc.id);
   }
 
   // Request storage permission for Android

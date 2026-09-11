@@ -112,6 +112,8 @@ class MessagingService {
     String conversationId, {
     String? techPackProjectName,
     String? techPackImageUrl,
+    String? techPackId,
+    Map<String, dynamic>? techPackSnapshot,
   }) async {
     final uid = _uid;
     if (uid == null) throw Exception('Not signed in');
@@ -122,6 +124,8 @@ class MessagingService {
       text: techPackProjectName ?? 'Tech Pack',
       attachmentUrl: techPackImageUrl,
       type: 'tech_pack_shared',
+      techPackId: techPackId,
+      techPackSnapshot: techPackSnapshot,
     );
     await _firestore
         .collection('conversations')

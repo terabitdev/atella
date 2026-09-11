@@ -170,8 +170,7 @@ class _SettingScreenState extends State<SettingScreen> {
                             final isPaid =
                                 sub != null &&
                                 sub.subscriptionPlan != 'FREE' &&
-                                (sub.subscriptionStatus == 'active' ||
-                                    sub.subscriptionStatus == 'trialing');
+                                sub.isCurrentlyValid;
 
                             if (isPaid) {
                               // Paid user card — plan name + billing + View Plan
