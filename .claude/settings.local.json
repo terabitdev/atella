@@ -6,7 +6,8 @@
       "Bash(firebase functions:delete:*)",
       "Bash(firebase deploy:*)",
       "Bash(firebase functions:list:*)",
-      "Bash(cp \"C:/Users/DELL/AppData/Local/Temp/claude/c--Users-DELL-Documents-Apps-Dev-atella/a1bb5096-10e7-4807-b88d-4b729c8eb49d/scratchpad/Atelia_Feasibility_Review.pdf\" \"/c/Users/DELL/Documents/Apps Dev/atella/Atelia_Feasibility_Review.pdf\" && ls -la \"/c/Users/DELL/Documents/Apps Dev/atella/Atelia_Feasibility_Review.pdf\")"
+      "Bash(cp \"C:/Users/DELL/AppData/Local/Temp/claude/c--Users-DELL-Documents-Apps-Dev-atella/a1bb5096-10e7-4807-b88d-4b729c8eb49d/scratchpad/Atelia_Feasibility_Review.pdf\" \"/c/Users/DELL/Documents/Apps Dev/atella/Atelia_Feasibility_Review.pdf\" && ls -la \"/c/Users/DELL/Documents/Apps Dev/atella/Atelia_Feasibility_Review.pdf\")",
+      "PowerShell(& \"C:\\\\Users\\\\Nexgen\\\\AppData\\\\Local\\\\Android\\\\Sdk\\\\build-tools\\\\34.0.0\\\\apksigner.bat\" verify --print-certs build\\\\app\\\\outputs\\\\apk\\\\release\\\\app-release.apk)"
     ],
     "deny": [],
     "additionalDirectories": [

@@ -5,6 +5,8 @@
       "namespace": "android_app",
       "package_name": "com.company.atella",
       "sha256_cert_fingerprints": [
+        "C1:4B:51:2D:0E:B4:D3:C4:E1:80:CF:F9:97:5E:A3:16:CD:35:AB:A2:1E:E8:06:17:97:67:A6:EF:3F:10:0E:55",
+        "2A:4C:86:7C:A3:10:93:D3:66:68:62:AB:30:2F:1A:B9:3A:E6:10:B4:A8:79:7E:FE:50:90:F1:AA:8C:69:5F:F2",
         "9C:C8:11:3D:63:3F:B8:1D:79:FE:0C:70:3C:A2:5E:97:79:B8:98:51:59:85:E4:10:B0:A6:05:D5:FC:13:89:6F",
         "A3:A2:C9:F4:70:E0:88:0C:93:CD:3C:61:C2:EE:92:52:97:5A:D0:5B:7A:FA:DC:2C:E7:0B:E1:10:03:F1:4D:27"
       ]
